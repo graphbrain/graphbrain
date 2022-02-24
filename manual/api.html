@@ -69,26 +69,40 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hypergraph">hypergraph module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.patterns">patterns module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.processor">processor module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.__init__">package functions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#meaning-package">meaning package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#actors-module">actors module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#concepts-module">concepts module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#corefs-module">corefs module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lemmas-module">lemmas module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#ontology-module">ontology module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.meaning.extractor">extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.meaning.tests">tests module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#case-generator-module">case_generator module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#cognition-package">cognition package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id1">package functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#system-module">system module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agent-module">agent module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils-package">utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.concepts">concepts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.conjunctions">conjunctions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.lemmas">lemmas module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.number">number module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.ontology">ontology module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.notebook">notebook module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#readers-package">readers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.reader">reader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.txt">txt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.dir">dir module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.csv">csv module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.wikipedia">wikipedia module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.reddit">reddit module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#corefs-package">corefs package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.corefs.names">names module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.corefs.onto">onto module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1038,6 +1052,9 @@ parameter.</p>
 <section id="module-graphbrain.patterns">
 <span id="patterns-module"></span><h2>patterns module<a class="headerlink" href="#module-graphbrain.patterns" title="Permalink to this headline"></a></h2>
 </section>
+<section id="module-graphbrain.processor">
+<span id="processor-module"></span><h2>processor module<a class="headerlink" href="#module-graphbrain.processor" title="Permalink to this headline"></a></h2>
+</section>
 <section id="parsers-package">
 <h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline"></a></h2>
 <section id="module-graphbrain.parsers.__init__">
@@ -1096,45 +1113,141 @@ corresponding text.</p>
 </section>
 <section id="meaning-package">
 <h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this headline"></a></h2>
-<section id="actors-module">
-<h3>actors module<a class="headerlink" href="#actors-module" title="Permalink to this headline"></a></h3>
+<section id="module-graphbrain.meaning.extractor">
+<span id="extractor-module"></span><h3>extractor module<a class="headerlink" href="#module-graphbrain.meaning.extractor" title="Permalink to this headline"></a></h3>
 </section>
-<section id="concepts-module">
-<h3>concepts module<a class="headerlink" href="#concepts-module" title="Permalink to this headline"></a></h3>
+<section id="module-graphbrain.meaning.tests">
+<span id="tests-module"></span><h3>tests module<a class="headerlink" href="#module-graphbrain.meaning.tests" title="Permalink to this headline"></a></h3>
 </section>
-<section id="corefs-module">
-<h3>corefs module<a class="headerlink" href="#corefs-module" title="Permalink to this headline"></a></h3>
-</section>
-<section id="lemmas-module">
-<h3>lemmas module<a class="headerlink" href="#lemmas-module" title="Permalink to this headline"></a></h3>
-</section>
-<section id="ontology-module">
-<h3>ontology module<a class="headerlink" href="#ontology-module" title="Permalink to this headline"></a></h3>
+<section id="case-generator-module">
+<h3>case_generator module<a class="headerlink" href="#case-generator-module" title="Permalink to this headline"></a></h3>
 </section>
 </section>
-<section id="cognition-package">
-<h2>cognition package<a class="headerlink" href="#cognition-package" title="Permalink to this headline"></a></h2>
-<section id="id1">
-<h3>package functions<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
-</section>
-<section id="system-module">
-<h3>system module<a class="headerlink" href="#system-module" title="Permalink to this headline"></a></h3>
-</section>
-<section id="agent-module">
-<h3>agent module<a class="headerlink" href="#agent-module" title="Permalink to this headline"></a></h3>
-</section>
-</section>
-<section id="module-graphbrain.notebook">
-<span id="notebook-module"></span><h2>notebook module<a class="headerlink" href="#module-graphbrain.notebook" title="Permalink to this headline"></a></h2>
+<section id="utils-package">
+<h2>utils package<a class="headerlink" href="#utils-package" title="Permalink to this headline"></a></h2>
+<section id="module-graphbrain.utils.concepts">
+<span id="concepts-module"></span><h3>concepts module<a class="headerlink" href="#module-graphbrain.utils.concepts" title="Permalink to this headline"></a></h3>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphbrain.notebook.show">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.notebook.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indented'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/notebook.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.notebook.show" title="Permalink to this definition"></a></dt>
-<dd><p>Displays a representation of the edge in the notebook.</p>
-<p>Keyword arguments:
-style – render style (‘indented’, ‘line’)
-(default: ‘indented’)</p>
+<dt class="sig sig-object py" id="graphbrain.utils.concepts.all_concepts">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.concepts.</span></span><span class="sig-name descname"><span class="pre">all_concepts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/concepts.html#all_concepts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.concepts.all_concepts" title="Permalink to this definition"></a></dt>
+<dd><p>Recursively search for all concepts contained in the edge, returning
+a set that can also contain itself.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.concepts.has_common_or_proper_concept">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.concepts.</span></span><span class="sig-name descname"><span class="pre">has_common_or_proper_concept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/concepts.html#has_common_or_proper_concept"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.concepts.has_common_or_proper_concept" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the concept either is a common/proper edge, or contains one.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.concepts.has_proper_concept">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.concepts.</span></span><span class="sig-name descname"><span class="pre">has_proper_concept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/concepts.html#has_proper_concept"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.concepts.has_proper_concept" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the concept either is a proper edge, or contains one.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.concepts.strip_concept">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.concepts.</span></span><span class="sig-name descname"><span class="pre">strip_concept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/concepts.html#strip_concept"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.concepts.strip_concept" title="Permalink to this definition"></a></dt>
+<dd><p>Strip away nesting edges with connectors such as triggers and
+subpredicates, to expose the outmost and leftmost concept that can be
+found. May be the edge itself.</p>
+<p>For example:</p>
+<p>(against/T (the/M (of/B treaty/C paris/C)))</p>
+<p>becomes</p>
+<p>(the/M (of/B treaty/C paris/C))</p>
+</dd></dl>
+
+</section>
+<section id="module-graphbrain.utils.conjunctions">
+<span id="conjunctions-module"></span><h3>conjunctions module<a class="headerlink" href="#module-graphbrain.utils.conjunctions" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.utils.lemmas">
+<span id="lemmas-module"></span><h3>lemmas module<a class="headerlink" href="#module-graphbrain.utils.lemmas" title="Permalink to this headline"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.lemmas.deep_lemma">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.lemmas.</span></span><span class="sig-name descname"><span class="pre">deep_lemma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">same_if_none</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/lemmas.html#deep_lemma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.lemmas.deep_lemma" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the lemma of an atomic edge, or the lemma of the first atom
+found by recursively descending the hyperedge, always choosing the
+subedge immediatly after the connector.</p>
+<p>This is useful, for example, to find the lemma of the central verb
+in a non-atomic predicate edge. For example:</p>
+<p>(not/A (is/A going/P))</p>
+<p>could return</p>
+<p>go/P</p>
+<p>Keyword argument:
+same_if_none – if False, returns None when lemma does not exist. If True,
+returns atom items when lemma does not exist. (default: False)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.lemmas.lemma">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.lemmas.</span></span><span class="sig-name descname"><span class="pre">lemma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">same_if_none</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/lemmas.html#lemma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.lemmas.lemma" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the lemma of the given atom if it exists, None otherwise.</p>
+<p>Keyword argument:
+same_if_none – if False, returns None when lemma does not exist. If True,
+returns atom items when lemma does not exist. (default: False)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.lemmas.lemma_degrees">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.lemmas.</span></span><span class="sig-name descname"><span class="pre">lemma_degrees</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/lemmas.html#lemma_degrees"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.lemmas.lemma_degrees" title="Permalink to this definition"></a></dt>
+<dd><p>Finds all the atoms that share the same given lemma
+and computes the sum of both their degrees and deep degrees.
+These two sums are returned.</p>
+<p>If the parameter edge is non-atomic, this function simply returns
+the degree and deep degree of that edge.</p>
+</dd></dl>
+
+</section>
+<section id="module-graphbrain.utils.number">
+<span id="number-module"></span><h3>number module<a class="headerlink" href="#module-graphbrain.utils.number" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.utils.ontology">
+<span id="ontology-module"></span><h3>ontology module<a class="headerlink" href="#module-graphbrain.utils.ontology" title="Permalink to this headline"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.ontology.subtypes">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.ontology.</span></span><span class="sig-name descname"><span class="pre">subtypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/ontology.html#subtypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.ontology.subtypes" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all subtypes of the given edge.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.ontology.supertypes">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.ontology.</span></span><span class="sig-name descname"><span class="pre">supertypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/ontology.html#supertypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.ontology.supertypes" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all supertypes of the given edge.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="readers-package">
+<h2>readers package<a class="headerlink" href="#readers-package" title="Permalink to this headline"></a></h2>
+<section id="module-graphbrain.readers.reader">
+<span id="reader-module"></span><h3>reader module<a class="headerlink" href="#module-graphbrain.readers.reader" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.txt">
+<span id="txt-module"></span><h3>txt module<a class="headerlink" href="#module-graphbrain.readers.txt" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.dir">
+<span id="dir-module"></span><h3>dir module<a class="headerlink" href="#module-graphbrain.readers.dir" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.csv">
+<span id="csv-module"></span><h3>csv module<a class="headerlink" href="#module-graphbrain.readers.csv" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.wikipedia">
+<span id="wikipedia-module"></span><h3>wikipedia module<a class="headerlink" href="#module-graphbrain.readers.wikipedia" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.reddit">
+<span id="reddit-module"></span><h3>reddit module<a class="headerlink" href="#module-graphbrain.readers.reddit" title="Permalink to this headline"></a></h3>
+</section>
+</section>
+<section id="corefs-package">
+<h2>corefs package<a class="headerlink" href="#corefs-package" title="Permalink to this headline"></a></h2>
+<section id="module-graphbrain.corefs.names">
+<span id="names-module"></span><h3>names module<a class="headerlink" href="#module-graphbrain.corefs.names" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.corefs.onto">
+<span id="onto-module"></span><h3>onto module<a class="headerlink" href="#module-graphbrain.corefs.onto" title="Permalink to this headline"></a></h3>
+</section>
 </section>
 </section>
 
