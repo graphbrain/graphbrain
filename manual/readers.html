@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Internals and extending Graphbrain &mdash; Graphbrain 0.6.0-dev documentation</title>
+  <title>Readers &mdash; Graphbrain 0.6.0-dev documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Creating and training a new parser" href="internals/create-parser.html" />
-    <link rel="prev" title="Command-line interface" href="cli.html" /> 
+    <link rel="next" title="Co-reference resolution" href="corefs.html" />
+    <link rel="prev" title="Parsing natural language" href="parsing.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,17 +57,13 @@
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing natural language</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readers.html">Readers</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Readers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="corefs.html">Co-reference resolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="meaning.html">Meaning extraction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backends.html">Hypergraph database backends</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Internals and extending Graphbrain</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="internals/create-parser.html">Creating and training a new parser</a></li>
-<li class="toctree-l3"><a class="reference internal" href="internals/create-backend.html">Creating a new hypergraph database backend</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 </li>
@@ -91,7 +87,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../manual.html">Manual</a> &raquo;</li>
-      <li>Internals and extending Graphbrain</li>
+      <li>Readers</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
@@ -102,33 +98,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="internals-and-extending-graphbrain">
-<h1>Internals and extending Graphbrain<a class="headerlink" href="#internals-and-extending-graphbrain" title="Permalink to this headline"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="internals/create-parser.html">Creating and training a new parser</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#extending-the-alphabeta-class">Extending the AlphaBeta class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#collecting-a-corpus-of-sample-texts">Collecting a corpus of sample texts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#extracting-sentences">Extracting sentences</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#annotating-sentences-to-generate-a-parser-training-dataset">Annotating sentences to generate a parser training dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#splitting-into-training-and-testing-datasets">Splitting into training and testing datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#generating-alpha-training-data">Generating alpha training data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#testing-the-alpha-stage">Testing the alpha stage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="internals/create-parser.html#manual-parser-testing">Manual parser testing</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="internals/create-backend.html">Creating a new hypergraph database backend</a></li>
-</ul>
-</div>
+  <section id="readers">
+<h1>Readers<a class="headerlink" href="#readers" title="Permalink to this headline"></a></h1>
+<p>TODO</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cli.html" class="btn btn-neutral float-left" title="Command-line interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="internals/create-parser.html" class="btn btn-neutral float-right" title="Creating and training a new parser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="parsing.html" class="btn btn-neutral float-left" title="Parsing natural language" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="corefs.html" class="btn btn-neutral float-right" title="Co-reference resolution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

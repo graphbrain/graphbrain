@@ -13,7 +13,9 @@ Manual
    manual/patterns.rst
    manual/discovering-patterns.rst
    manual/parsing.rst
-   manual/agents.rst
+   manual/readers.rst
+   manual/corefs.rst
+   manual/meaning.rst
    manual/backends.rst
    manual/notebooks.rst
    manual/cli.rst

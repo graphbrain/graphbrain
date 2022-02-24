@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graphbrain.parsers.parser &mdash; Graphbrain 0.5.1-dev documentation</title>
+  <title>graphbrain.parsers.parser &mdash; Graphbrain 0.6.0-dev documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
@@ -127,16 +127,18 @@
         <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">corefs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_corefs</span><span class="p">(</span><span class="n">parse_results</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
+                <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">parse_results</span></div>
 
     <span class="k">def</span> <span class="nf">parse_and_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
+            <span class="n">main_edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">corefs</span><span class="p">:</span>
-                <span class="n">main_edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span>
                 <span class="n">unresolved_edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">main_edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
                 <span class="n">unresolved_edge</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="c1"># add main edge</span>
             <span class="k">if</span> <span class="n">main_edge</span><span class="p">:</span>

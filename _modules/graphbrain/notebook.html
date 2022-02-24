@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graphbrain.notebook &mdash; Graphbrain 0.5.1-dev documentation</title>
+  <title>graphbrain.notebook &mdash; Graphbrain 0.6.0-dev documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
@@ -83,6 +83,7 @@
 <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">HTML</span>
 
 <span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="kn">from</span> <span class="nn">graphbrain.meaning.case_generators</span> <span class="kn">import</span> <span class="n">InteractiveCaseGenerator</span>
 
 
 <span class="n">TYPE_COLORS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="s1">&#39;#268bd2&#39;</span><span class="p">,</span>
@@ -337,6 +338,11 @@
     <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;div style=&quot;background-color:#fcfcfc; padding:50px&quot;&gt;</span><span class="si">{}</span><span class="s1">&#39;</span>\
            <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
     <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">interactive_case_generator</span><span class="p">(</span><span class="n">tests</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">InteractiveCaseGenerator</span><span class="p">(</span><span class="n">tests</span><span class="p">,</span> <span class="n">extractor</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+                                                          <span class="n">keywords</span><span class="o">=</span><span class="n">keywords</span><span class="p">)</span>
 </pre></div>
 
            </div>
