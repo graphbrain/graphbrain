@@ -21,6 +21,7 @@
 - graphbrain.patterns.normalize_edge().
 - graphbrain.stats obsolete package.
 - graphbrain.cognition obsolete package.
+- graphbrain.op obsolete module.
 
 ## [0.5.0] - 28-07-2021
 ### Added
