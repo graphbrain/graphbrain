@@ -70,7 +70,7 @@ tests module
 case_generator module
 ---------------------
 
-.. automodule:: graphbrain.meaning.case_generator
+.. automodule:: graphbrain.meaning.case_generators
     :members:
 
 
