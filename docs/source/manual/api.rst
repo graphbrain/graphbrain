@@ -29,6 +29,75 @@ patterns module
     :members:
 
 
+processor module
+================
+
+.. automodule:: graphbrain.processor
+    :members:
+
+
+corefs package
+==============
+
+names module
+------------
+
+.. automodule:: graphbrain.corefs.names
+    :members:
+
+onto module
+-----------
+
+.. automodule:: graphbrain.corefs.onto
+    :members:
+
+
+meaning package
+===============
+
+extractor module
+----------------
+
+.. automodule:: graphbrain.meaning.extractor
+    :members:
+
+tests module
+------------
+
+.. automodule:: graphbrain.meaning.tests
+    :members:
+
+case_generator module
+---------------------
+
+.. automodule:: graphbrain.meaning.case_generators
+    :members:
+
+
+memory package
+==============
+
+leveldb module
+--------------
+
+.. automodule:: graphbrain.memory.leveldb
+    :members:
+
+
+permutations module
+-------------------
+
+.. automodule:: graphbrain.memory.permutations
+    :members:
+
+
+sqlite module
+-------------
+
+.. automodule:: graphbrain.memory.sqlite
+    :members:
+
+
 parsers package
 ===============
 
@@ -45,64 +114,75 @@ parser module
     :members:
 
 
-meaning package
+readers package
 ===============
 
-actors module
+reader module
 -------------
 
-.. automodule:: graphbrain.meaning.actors
+.. automodule:: graphbrain.readers.reader
     :members:
+
+txt module
+----------
+
+.. automodule:: graphbrain.readers.txt
+    :members:
+
+dir module
+----------
+
+.. automodule:: graphbrain.readers.dir
+    :members:
+
+csv module
+----------
+
+.. automodule:: graphbrain.readers.csv
+    :members:
+
+wikipedia module
+----------------
+
+.. automodule:: graphbrain.readers.wikipedia
+    :members:
+
+reddit module
+-------------
+
+.. automodule:: graphbrain.readers.reddit
+    :members:
+
+
+utils package
+=============
 
 concepts module
 ---------------
 
-.. automodule:: graphbrain.meaning.concepts
+.. automodule:: graphbrain.utils.concepts
     :members:
 
-corefs module
--------------
+conjunctions module
+-------------------
 
-.. automodule:: graphbrain.meaning.corefs
+.. automodule:: graphbrain.utils.conjunctions
     :members:
 
 lemmas module
 -------------
 
-.. automodule:: graphbrain.meaning.lemmas
+.. automodule:: graphbrain.utils.lemmas
+    :members:
+
+number module
+-------------
+
+.. automodule:: graphbrain.utils.number
     :members:
 
 ontology module
 ---------------
 
-.. automodule:: graphbrain.meaning.ontology
-    :members:
-
-
-cognition package
-=================
-
-package functions
------------------
-
-.. automodule:: graphbrain.cognition.__init__
-    :members:
-
-system module
--------------
-
-.. automodule:: graphbrain.cognition.system
-    :members:
-
-agent module
--------------
-
-.. automodule:: graphbrain.cognition.agent
-    :members:
-
-
-notebook module
-===============
-
-.. automodule:: graphbrain.notebook
+.. automodule:: graphbrain.utils.ontology
     :members:
