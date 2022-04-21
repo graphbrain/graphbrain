@@ -98,6 +98,7 @@ install_requires = [
         'plyvel',
         'progressbar2',
         'scikit-learn',
+        'spacy',
         'termcolor'
     ]
 
