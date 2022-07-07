@@ -1,6 +1,22 @@
 import graphbrain.constants as const
 
 from graphbrain import hedge
+from graphbrain.hyperedge import UniqueAtom
+
+
+def _edge2text(edge, atom2token):
+    atoms = [UniqueAtom(atom) for atom in edge.atoms()]
+    tokens = [atom2token[atom] for atom in atoms if atom in atom2token]
+    tokens = sorted(tokens, key=lambda x: x.i)
+    return ''.join([token.text_with_ws for token in tokens]).strip()
+
+
+def _set_edges_text(edge, hg, parse):
+    text = _edge2text(edge, parse['atom2token'])
+    hg.set_attribute(edge, 'text', text)
+    if not edge.is_atom():
+        for subedge in edge:
+            _set_edges_text(subedge, hg, parse)
 
 
 class Parser(object):
@@ -53,7 +69,7 @@ class Parser(object):
                 parse['resolved_corefs'] = parse['main_edge']
         return parse_results
 
-    def parse_and_add(self, text, hg, sequence=None):
+    def parse_and_add(self, text, hg, sequence=None, set_text=True):
         parse_results = self.parse(text)
         for parse in parse_results['parses']:
             main_edge = parse['resolved_corefs']
@@ -67,9 +83,11 @@ class Parser(object):
                     hg.add_to_sequence(sequence, main_edge)
                 else:
                     hg.add(main_edge)
-                # attach text to edge
-                hg.set_attribute(main_edge, 'text', parse['text'])
+                # attach text to edge and subedges
+                _set_edges_text(main_edge, hg, parse)
                 if self.corefs:
+                    if unresolved_edge != main_edge:
+                         _set_edges_text(main_edge, hg, parse)
                     coref_res_edge = hedge(
                         (const.coref_res_pred, unresolved_edge, main_edge))
                     hg.add(coref_res_edge)
