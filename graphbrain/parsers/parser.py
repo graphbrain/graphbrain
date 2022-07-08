@@ -1,18 +1,36 @@
+import re
+
 import graphbrain.constants as const
 
 from graphbrain import hedge
 from graphbrain.hyperedge import UniqueAtom
 
 
-def _edge2text(edge, atom2token):
-    atoms = [UniqueAtom(atom) for atom in edge.atoms()]
-    tokens = [atom2token[atom] for atom in atoms if atom in atom2token]
+def _edge2text(edge, parse):
+    atoms = [UniqueAtom(atom) for atom in edge.all_atoms()]
+    tokens = [parse['atom2token'][atom] for atom in atoms
+              if atom in parse['atom2token']]
+    if len(tokens) == 0:
+        return ''
     tokens = sorted(tokens, key=lambda x: x.i)
-    return ''.join([token.text_with_ws for token in tokens]).strip()
+    prev_txt = tokens[0].text
+    txt_parts = [prev_txt]
+    for token in tokens[1:]:
+        txt = token.text
+        sentence = str(parse['spacy_sentence'])
+        sep = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
+                                            re.escape(txt)),
+                        sentence).group(1)
+        if any(letter.isalnum() for letter in sep):
+            sep = ' '
+        txt_parts.append(sep)
+        txt_parts.append(token.text)
+        prev_txt = txt
+    return ''.join(txt_parts)
 
 
 def _set_edges_text(edge, hg, parse):
-    text = _edge2text(edge, parse['atom2token'])
+    text = _edge2text(edge, parse)
     hg.set_attribute(edge, 'text', text)
     if not edge.is_atom():
         for subedge in edge:
