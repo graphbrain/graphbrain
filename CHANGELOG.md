@@ -2,6 +2,7 @@
 
 ## [0.6.0] - ongoing work
 ### Added
+- Hypergraph.text().
 - Parser.parse_and_add().
 - Parser.sentences().
 - Hyperedge.normalized().

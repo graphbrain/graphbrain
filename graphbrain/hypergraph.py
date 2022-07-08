@@ -321,6 +321,14 @@ class Hypergraph(object):
         for edge in self.search((const.sequence_pred, '*', '0', '*')):
             yield edge[1].to_str()
 
+    def text(self, edge):
+        """Returns the text representation of an edge."""
+        txt = self.get_str_attribute(edge, 'text')
+        if txt is None:
+            return edge.label()
+        else:
+            return txt
+
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes
     # ==============================================================
