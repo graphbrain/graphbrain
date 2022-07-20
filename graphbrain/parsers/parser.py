@@ -18,6 +18,8 @@ def _edge2text(edge, parse):
             prev_txt = ''
     txt_parts = [prev_txt]
     sentence = str(parse['spacy_sentence'])
+    if sentence is None:
+        return ''
     for token in tokens[1:]: 
         txt = token.text
         if txt is not None:
