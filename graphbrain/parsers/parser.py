@@ -17,16 +17,17 @@ def _edge2text(edge, parse):
     txt_parts = [prev_txt]
     sentence = str(parse['spacy_sentence'])
     for token in tokens[1:]:
+        if prev_txt is None:
+            prev_txt = '' 
         txt = token.text
-        if txt:
-            sep = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
-                                                re.escape(txt)),
-                            sentence).group(1)
-            if any(letter.isalnum() for letter in sep):
-                sep = ' '
-            txt_parts.append(sep)
-            txt_parts.append(token.text)
-            prev_txt = txt
+        sep = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
+                                            re.escape(txt)),
+                        sentence).group(1)
+        if any(letter.isalnum() for letter in sep):
+            sep = ' '
+        txt_parts.append(sep)
+        txt_parts.append(token.text)
+        prev_txt = txt
     return ''.join(txt_parts)
 
 
