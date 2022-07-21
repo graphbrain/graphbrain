@@ -14,23 +14,22 @@ def _edge2text(edge, parse):
         return ''
     tokens = sorted(tokens, key=lambda x: x.i)
     prev_txt = tokens[0].text
-    if prev_txt is None:
-            prev_txt = ''
     txt_parts = [prev_txt]
     sentence = str(parse['spacy_sentence'])
-    if sentence is None:
-        return ''
     for token in tokens[1:]: 
         txt = token.text
-        if txt is not None:
-            sep = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
-                                                re.escape(txt)),
-                            sentence).group(1)
-            if any(letter.isalnum() for letter in sep):
-                sep = ' '
-            txt_parts.append(sep)
-            txt_parts.append(token.text)
-            prev_txt = txt
+        res = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
+                                            re.escape(txt)),
+                        sentence).group(1)
+        if res:
+            sep = res.group(1)
+        else:
+            sep = ' '
+        if any(letter.isalnum() for letter in sep):
+            sep = ' '
+        txt_parts.append(sep)
+        txt_parts.append(token.text)
+        prev_txt = txt
     return ''.join(txt_parts)
 
 
