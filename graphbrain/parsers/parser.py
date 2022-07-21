@@ -20,7 +20,7 @@ def _edge2text(edge, parse):
         txt = token.text
         res = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
                                             re.escape(txt)),
-                        sentence).group(1)
+                        sentence)
         if res:
             sep = res.group(1)
         else:
