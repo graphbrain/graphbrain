@@ -164,9 +164,9 @@ def cli():
                      lang=args.lang,
                      corefs=args.corefs).read()
     elif args.command == 'names':
-        CorefsNames(hg=hgraph(args.hg), sequence=args.sequence)
+        CorefsNames(hg=hgraph(args.hg), sequence=args.sequence).run()
     elif args.command == 'onto':
-        CorefsOnto(hg=hgraph(args.hg), sequence=args.sequence)
+        CorefsOnto(hg=hgraph(args.hg), sequence=args.sequence).run()
     else:
         raise RuntimeError('Unknown command: {}'.format(args.command))
 
