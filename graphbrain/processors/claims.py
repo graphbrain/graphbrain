@@ -1,4 +1,3 @@
-import argparse
 from collections import Counter
 
 import progressbar
@@ -110,7 +109,7 @@ class Claims(Processor):
         self.male = set()
         self.non_human = set()
 
-        self.logger.debug('assigning genders')
+        print('assigning genders')
         i = 0
         with progressbar.ProgressBar(max_value=len(self.actors)) as bar:
             for actor in self.actors:
@@ -133,7 +132,7 @@ class Claims(Processor):
                 bar.update(i)
 
         # write claims
-        self.logger.debug('writing claims')
+        print('writing claims')
         i = 0
         with progressbar.ProgressBar(max_value=len(self.claims)) as bar:
             for claim_data in self.claims:
@@ -155,11 +154,11 @@ class Claims(Processor):
                         resolve = actor in self.non_human
 
                     if resolve:
-                        self.logger.debug('ANAPHORA')
-                        self.logger.debug('actor: {}'.format(actor))
-                        self.logger.debug('before: {}'.format(claim))
+                        print('ANAPHORA')
+                        print('actor: {}'.format(actor))
+                        print('before: {}'.format(claim))
                         claim = replace_subject(claim, actor)
-                        self.logger.debug('after: {}'.format(claim))
+                        print('after: {}'.format(claim))
                         self.anaphoras += 1
 
                 # write claim

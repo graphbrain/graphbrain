@@ -1,5 +1,3 @@
-import argparse
-
 from graphbrain import hedge
 from graphbrain.processor import Processor
 from graphbrain.utils.corefs import main_coref
