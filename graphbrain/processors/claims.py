@@ -1,12 +1,12 @@
+import argparse
 from collections import Counter
 
 import progressbar
 
 from graphbrain import hedge
-from graphbrain.corefs import main_coref
+from graphbrain.utils.corefs import main_coref
 from graphbrain.processor import Processor
-from graphbrain.utils.concepts import has_proper_concept
-from graphbrain.utils.concepts import strip_concept
+from graphbrain.utils.concepts import has_proper_concept, strip_concept
 from graphbrain.utils.lemmas import deep_lemma
 
 
@@ -79,16 +79,14 @@ class Claims(Processor):
         # record claim
         self.claims.append({'actor': actor, 'claim': claim, 'edge': edge})
 
-    def process_edge(self, edge, depth):
-        hg = self.system.get_hg(self)
-
+    def process_edge(self, edge):
         if not edge.is_atom():
             ct = edge.connector_type()
             if ct[0] == 'P':
                 pred = edge[0]
                 if (len(edge) > 2 and
                         deep_lemma(
-                            hg,
+                            self.hg,
                             pred,
                             same_if_none=True).root() in CLAIM_PRED_LEMMAS):
                     subjects = edge.edges_with_argrole('s')
@@ -96,7 +94,7 @@ class Claims(Processor):
                     if len(subjects) == 1 and len(claims) >= 1:
                         subject = strip_concept(subjects[0])
                         if subject and has_proper_concept(subject):
-                            actor = main_coref(hg, subject)
+                            actor = main_coref(self.hg, subject)
                             self.actors.add(actor)
                             for claim in claims:
                                 # if specificatin, claim is inside

@@ -1,6 +1,8 @@
+import argparse
+
 from graphbrain import hedge
 from graphbrain.processor import Processor
-from graphbrain.corefs import main_coref
+from graphbrain.utils.corefs import main_coref
 from graphbrain.utils.concepts import all_concepts
 from graphbrain.utils.concepts import has_proper_concept
 from graphbrain.utils.concepts import strip_concept
@@ -19,26 +21,24 @@ class Conflicts(Processor):
         self.conflicts = 0
         self.conflict_topics = 0
 
-    def _topics(self, hg, actor_orig, actor_targ, edge):
+    def _process_topics(self, actor_orig, actor_targ, edge):
         for item in edge[1:]:
             if item.type()[0] == 'S':
                 if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
                     for concept in all_concepts(item[1]):
-                        if hg.degree(concept) > 1:
+                        if self.hg.degree(concept) > 1:
                             self.hg.add(('conflict-topic/P/.', actor_orig,
                                         actor_targ, concept, edge))
                             self.conflict_topics += 1
 
-    def process_edge(self, edge, depth):
-        hg = self.system.get_hg(self)
-
+    def process_edge(self, edge):
         if not edge.is_atom():
             ct = edge.connector_type()
             if ct[0] == 'P':
                 pred = edge[0]
                 if (len(edge) > 2 and
                         deep_lemma(
-                            hg,
+                            self.hg,
                             pred,
                             same_if_none=True).root() in CONFLICT_PRED_LEMMAS):
                     subjects = edge.edges_with_argrole('s')
@@ -49,14 +49,12 @@ class Conflicts(Processor):
                         if (subject and obj and
                                 has_proper_concept(subject) and
                                 has_proper_concept(obj)):
-                            actor_orig = main_coref(hg, subject)
-                            actor_targ = main_coref(hg, obj)
+                            actor_orig = main_coref(self.hg, subject)
+                            actor_targ = main_coref(self.hg, obj)
                             conflict_edge = hedge(
                                 ('conflict/P/.', actor_orig, actor_targ, edge))
                             self.hg.add(conflict_edge)
-                            for wedge in self._topics(
-                                    hg, actor_orig, actor_targ, edge):
-                                yield wedge
+                            self._process_topics(actor_orig, actor_targ, edge)
                             self.conflicts += 1
 
     def report(self):

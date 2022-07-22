@@ -121,6 +121,9 @@ def edges2str(edges, roots_only=False):
 def _matches_wildcard(edge, wildcard):
     wparts = wildcard.parts()
 
+    if len(wparts) == 0 or len(wparts[0]) == 0:
+        return False
+
     # structural match
     struct_code = wparts[0][0]
     if struct_code == '.':
@@ -214,7 +217,9 @@ def _matches_wildcard(edge, wildcard):
 
 def _varname(atom):
     label = atom.parts()[0]
-    if label[0] in {'*', '.'}:
+    if len(label) == 0:
+        return label
+    elif label[0] in {'*', '.'}:
         return label[1:]
     elif label[:3] == '...':
         return label[3:]

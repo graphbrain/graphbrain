@@ -3,7 +3,7 @@ from collections import defaultdict
 import progressbar
 
 import graphbrain.constants as const
-from graphbrain.corefs import make_corefs
+from graphbrain.utils.corefs import make_corefs
 from graphbrain.processor import Processor
 from graphbrain.utils.number import make_singular_plural
 from graphbrain.utils.number import number
@@ -17,20 +17,18 @@ class Number(Processor):
         self.corefs = 0
 
     def _make_singular_plural_relation(self, singular, plural):
-        hg = self.system.get_hg(self)
-
         self.logger.debug('singular: {}; plural: {}'.format(singular, plural))
 
-        make_singular_plural(hg, singular, plural)
+        make_singular_plural(self.hg, singular, plural)
         self.sng_pl += 1
 
-        make_corefs(hg, singular, plural)
+        make_corefs(self.hg, singular, plural)
 
         self.corefs += 1
 
-        for subtype in subtypes(hg, singular):
+        for subtype in subtypes(self.hg, singular):
             plural_edge = subtype.replace_main_concept(plural)
-            if plural_edge and hg.exists(plural_edge):
+            if plural_edge and self.hg.exists(plural_edge):
                 self._make_singular_plural_relation(subtype, plural_edge)
 
     def _check_apply_plural(self, pair):

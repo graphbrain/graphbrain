@@ -2,9 +2,7 @@ import random
 import string
 
 from graphbrain import hedge
-from graphbrain.constants import coref_pred
-from graphbrain.constants import coref_set_id_key
-from graphbrain.constants import main_coref_pred
+from graphbrain.constants import coref_pred, coref_set_id_key, main_coref_pred
 
 
 def _new_coref_id():

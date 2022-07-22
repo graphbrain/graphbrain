@@ -3,7 +3,7 @@ import itertools
 import networkx as nx
 import progressbar
 
-from graphbrain.corefs import make_corefs
+from graphbrain.utils.corefs import make_corefs
 from graphbrain.processor import Processor
 from graphbrain.hyperedge import hedge, build_atom
 from graphbrain.utils.concepts import has_proper_concept

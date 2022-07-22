@@ -1,4 +1,4 @@
-from graphbrain.corefs import make_corefs
+from graphbrain.utils.corefs import make_corefs
 from graphbrain.processor import Processor
 from graphbrain.utils.ontology import subtypes
 

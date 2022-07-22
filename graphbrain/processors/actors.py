@@ -1,9 +1,8 @@
 from collections import Counter
 
-from graphbrain.corefs import main_coref
+from graphbrain.utils.corefs import main_coref
 from graphbrain.processor import Processor
-from graphbrain.utils.concepts import has_proper_concept
-from graphbrain.utils.concepts import strip_concept
+from graphbrain.utils.concepts import has_proper_concept, strip_concept
 from graphbrain.utils.lemmas import deep_lemma
 
 
@@ -64,4 +63,3 @@ class Actors(Processor):
 
     def report(self):
         return 'actors found: {}'.format(len(self.actor_counter))
-    

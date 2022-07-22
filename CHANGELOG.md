@@ -8,7 +8,7 @@
 - Hyperedge.normalized().
 - New package graphbrain.meaning, for meaning extractors.
 - New package graphbrain.readers, for text readers from various sources.
-- New package graphbrain.corefs, for coreferences resolution.
+- New package graphbrain.processors, for miscellaneous processors.
 - Processor class.
 
 ### Changed

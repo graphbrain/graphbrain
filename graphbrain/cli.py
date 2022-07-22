@@ -6,9 +6,14 @@ from termcolor import colored
 
 import graphbrain.constants as const
 from graphbrain import hgraph, hedge
-from graphbrain.corefs.names import CorefsNames
-from graphbrain.corefs.onto import CorefsOnto
 from graphbrain.parsers import parser_lang
+from graphbrain.processors.actors import Actors
+from graphbrain.processors.claims import Claims
+from graphbrain.processors.conflicts import Conflicts
+from graphbrain.processors.names import CorefsNames
+from graphbrain.processors.number import Number
+from graphbrain.processors.onto import CorefsOnto
+from graphbrain.processors.taxonomy import Taxonomy
 from graphbrain.readers.txt import TxtReader
 from graphbrain.readers.dir import DirReader
 from graphbrain.readers.csv import CsvReader
@@ -163,10 +168,20 @@ def cli():
                      sequence=args.sequence,
                      lang=args.lang,
                      corefs=args.corefs).read()
+    elif args.command == 'actors':
+        Actors(hg=hgraph(args.hg), sequence=args.sequence).run()
+    elif args.command == 'claims':
+        Claims(hg=hgraph(args.hg), sequence=args.sequence).run()
+    elif args.command == 'conflicts':
+        Conflicts(hg=hgraph(args.hg), sequence=args.sequence).run()
     elif args.command == 'names':
         CorefsNames(hg=hgraph(args.hg), sequence=args.sequence).run()
+    elif args.command == 'number':
+        Number(hg=hgraph(args.hg), sequence=args.sequence).run()
     elif args.command == 'onto':
         CorefsOnto(hg=hgraph(args.hg), sequence=args.sequence).run()
+    elif args.command == 'taxonomy':
+        Taxonomy(hg=hgraph(args.hg), sequence=args.sequence).run()
     else:
         raise RuntimeError('Unknown command: {}'.format(args.command))
 
