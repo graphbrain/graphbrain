@@ -6,10 +6,10 @@ class Processor:
     def process_edge(self, edge):
         pass
 
-    def on_end(self, edge):
+    def on_end(self):
         pass
 
-    def report(self, edge):
+    def report(self):
         return ''
 
     def run(self):
