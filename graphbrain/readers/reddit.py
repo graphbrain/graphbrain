@@ -41,10 +41,7 @@ class RedditReader(Reader):
 
         if len(title_edge) > 1:
             # add title edge
-            if self.sequence:
-                self.hg.add_to_sequence(self.sequence, title_edge)
-            else:
-                self.hg.add(title_edge)
+            self.hg.add(title_edge)
             self.hg.set_attribute(title_edge, 'author', post['author'])
             self.hg.set_attribute(title_edge, 'url', post['url'])
             self.hg.set_attribute(title_edge, 'created', post['created'])
