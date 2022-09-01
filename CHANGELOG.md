@@ -12,6 +12,7 @@
 - Processor class.
 
 ### Changed
+- Improved Hyperedge.main_concepts().
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.
 - Improved wikipedia agent.
 - Improved coreference resolution.

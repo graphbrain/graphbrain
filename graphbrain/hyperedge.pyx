@@ -862,7 +862,7 @@ class Hyperedge(tuple):
     def main_concepts(self):
         """Returns the list of main concepts in an concept edge.
         A main concept is a central concept in a built concept, e.g.:
-        in ('s/Bp.am zimbabwe/Mp economy/Cn.s), economy/Cn.s is the main
+        in ('s/Bp.am zimbabwe/Cp economy/Cn.s), economy/Cn.s is the main
         concept.
 
         If entity is not an edge, or its connector is not of type builder,
@@ -870,15 +870,9 @@ class Hyperedge(tuple):
         concept is annotated as the main one, then an empty list is
         returned.
         """
-
-        concepts = []
-        connector = self[0]
-        if not connector.is_atom():
-            return concepts
-        if connector.type()[0] != 'B':
-            return concepts
-
-        return self.edges_with_argrole('m')
+        if self[0].type()[0] == 'B':
+            return self.edges_with_argrole('m')
+        return []
 
     def replace_main_concept(self, new_main):
         """TODO: document and test"""
