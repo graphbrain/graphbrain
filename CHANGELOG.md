@@ -2,6 +2,7 @@
 
 ## [0.6.0] - ongoing work
 ### Added
+- Moved all patterns functions to graphbrain.patterns.
 - Hypergraph.text().
 - Parser.parse_and_add().
 - Parser.sentences().

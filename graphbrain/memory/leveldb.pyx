@@ -4,13 +4,13 @@ import plyvel
 
 from graphbrain.hyperedge import edges2str
 from graphbrain.hyperedge import hedge
-from graphbrain.hyperedge import match_pattern
 from graphbrain.hyperedge import split_edge_str
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.memory.permutations import do_with_edge_permutations
 from graphbrain.memory.permutations import first_permutation
 from graphbrain.memory.permutations import perm2edge
 from graphbrain.memory.permutations import str_plus_1
+from graphbrain.patterns import match_pattern, is_pattern, is_full_pattern
 
 
 def _edge2key(edge):
@@ -130,14 +130,14 @@ class LevelDB(Hypergraph):
             yield result[0]
 
     def _match_structure(self, pattern, strict):
-        if not strict or pattern.is_full_pattern():
+        if not strict or is_full_pattern(pattern):
             for edge in self.all():
                 yield edge
         else:
             nodes = []
             positions = []
             for i, node in enumerate(pattern):
-                if not node.is_pattern():
+                if not is_pattern(node):
                     nodes.append(node)
                     positions.append(i)
             start_str = edges2str(nodes)

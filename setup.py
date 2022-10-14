@@ -35,6 +35,8 @@ if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],
                   include_dirs=['.']),
+        Extension('graphbrain.patterns', ['graphbrain/patterns.pyx'],
+                  include_dirs=['.']),
         Extension('graphbrain.memory.sqlite',
                   ['graphbrain/memory/sqlite.pyx'],
                   include_dirs=['.']),
@@ -61,6 +63,8 @@ if USE_CYTHON:
 else:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'],
+                  include_dirs=['.']),
+        Extension('graphbrain.patterns', ['graphbrain/patterns.c'],
                   include_dirs=['.']),
         Extension('graphbrain.memory.sqlite',
                   ['graphbrain/memory/sqlite.c'],

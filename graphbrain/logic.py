@@ -1,3 +1,6 @@
+from graphbrain.patterns import apply_vars
+
+
 class Inference(object):
     def __init__(self, edge=None, matches=(), variables={}):
         self.edge = edge
@@ -37,7 +40,7 @@ def match_premise(hg, premise, curvars={}):
         for inference in match_premises(hg, premise[1:], Inference()):
             yield inference
     else:
-        pattern = premise.apply_vars(curvars)
+        pattern = apply_vars(premise, curvars)
         for edge, results in hg.match(pattern):
             for result in results:
                 yield Inference(
@@ -50,5 +53,5 @@ def eval_rule(hg, rule):
         raise RuntimeError('Not a valid rule: {}'.format(rule.to_str()))
 
     for inference in match_premise(hg, rule[2]):
-        inference.edge = rule[1].apply_vars(inference.variables)
+        inference.edge = apply_vars(rule[1], inference.variables)
         yield inference
