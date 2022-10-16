@@ -358,10 +358,14 @@ class Hyperedge(tuple):
             return self[1].type()
         elif ptype[0] == 'T':
             outter_type = 'S'
+        elif ptype[0] == 'B':
+            outter_type = 'C'
         elif ptype[0] == 'J':
             return self[1].type()[0]
         else:
-            return 'C'
+            raise RuntimeError(
+                'Edge is malformed, type cannot be determined: {}'.format(
+                    str(self)))
 
         return '{}{}'.format(outter_type, ptype[1:])
 
@@ -754,15 +758,15 @@ class Atom(Hyperedge):
 
             ['Cp', 's']
 
-        If the atom only has a root, it is assumed to be a concept.
+        If the atom only has a root, it is assumed to be a conjunction.
         In this case, this function returns the role with just the
-        generic concept type:
+        generic conjunction type:
 
-            ['C'].
+            ['J'].
         """
         parts = self[0].split('/')
         if len(parts) < 2:
-            return list('C')
+            return list('J')
         else:
             return parts[1].split('.')
 
@@ -804,8 +808,8 @@ class Atom(Hyperedge):
         The type of an atom is its first subrole. For example, the
         type of graphbrain/Cp.s/1 is 'Cp'.
 
-        If the atom only has a root, it is assumed to be a concept.
-        In this case, this function returns the generic concept type: 'C'.
+        If the atom only has a root, it is assumed to be a conjunction.
+        In this case, this function returns the generic conjunction type: 'J'.
         """
         return self.role()[0]
 

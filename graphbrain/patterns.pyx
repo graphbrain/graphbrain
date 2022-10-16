@@ -2,6 +2,16 @@ import itertools
 
 from collections import Counter
 from graphbrain import hedge
+from graphbrain.utils.lemmas import lemma
+
+
+FUNS = {'atoms', 'lemma'}
+
+
+def is_fun_pattern(edge):
+    if edge.is_atom():
+        return False
+    return str(edge[0]) in FUNS
 
 
 def is_pattern(edge):
@@ -17,6 +27,8 @@ def is_pattern(edge):
                 edge[0][0] in {'*', '.'} or
                 edge[0][:3] == '...' or
                 edge[0][0].isupper())
+    elif is_fun_pattern(edge):
+        return True
     else:
         return any(is_pattern(item) for item in edge)
 
@@ -143,6 +155,8 @@ def _matches_wildcard(edge, wildcard):
 
 
 def _varname(atom):
+    if not atom.is_atom():
+        return ''
     label = atom.parts()[0]
     if len(label) == 0:
         return label
@@ -154,10 +168,25 @@ def _varname(atom):
         return label
 
 
-def _match_by_argroles(edge, pattern, role_counts, min_vars,
+# remove pattern functions from pattern, so that .argroles() works normally
+def _defun_pattern_argroles(edge):
+    if edge.is_atom():
+        return edge
+    
+    if is_fun_pattern(edge):
+        for atom in edge.atoms():
+            argroles = atom.argroles()
+            if argroles != '':
+                return atom
+        return edge
+    else:
+        return hedge([_defun_pattern_argroles(subedge) for subedge in edge])
+
+
+def _match_by_argroles(edge, pattern, role_counts, min_vars, hg,
                        matched=(), curvars={}):
     if len(role_counts) == 0:
-        return [{}]
+        return [curvars]
 
     argrole, n = role_counts[0]
 
@@ -172,88 +201,105 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars,
     # match specific argrole
     else:
         eitems = edge.edges_with_argrole(argrole)
-        pitems = pattern.edges_with_argrole(argrole)
-
-    if len(pitems) == 0:
-        return [{}]
+        pitems = _defun_pattern_argroles(pattern).edges_with_argrole(argrole)
 
     if len(eitems) < n:
         if len(curvars) >= min_vars:
-            return [{}]
+            return [curvars]
         else:
             return []
 
     result = []
 
-    perms = tuple(itertools.permutations(eitems, r=n))
-    for perm in perms:
-        success = False
-        vars = {}
+    for perm in tuple(itertools.permutations(eitems, r=n)):
+        perm_result = [{}]
         for i, eitem in enumerate(perm):
-            success = False
             pitem = pitems[i]
-            if pitem.is_atom():
-                if is_pattern(pitem):
-                    varname = _varname(pitem)
-                    # check if variable is already assigned
-                    if varname in curvars:
-                        if curvars[varname] != eitem:
-                            break
-                    elif varname in vars:
-                        if vars[varname] != eitem:
-                            break
-                    # if not, try to match
-                    elif _matches_wildcard(eitem, pitem):
-                        if len(varname) > 0:
-                            vars[varname] = eitem
-                    else:
-                        break
-                elif eitem != pitem and argrole != 'X':
-                    break
-                perm_result = [vars]
-            else:
-                if eitem.is_atom():
-                    break
-                else:
-                    all_vars = {**curvars, **vars}
-                    sresult = match_pattern(eitem, pitem, all_vars)
-                    if len(sresult) == 0:
-                        break
-                    perm_result = [{**all_vars, **subvars}
-                                   for subvars in sresult]
-            success = True
-        if success:
-            remaining_result = _match_by_argroles(edge,
-                                                  pattern,
-                                                  role_counts[1:],
-                                                  min_vars,
-                                                  matched + perm,
-                                                  {**curvars, **vars})
+            item_result = []
             for vars in perm_result:
-                for remaining_vars in remaining_result:
-                    all_vars = {**curvars, **vars, **remaining_vars}
-                    if all_vars not in result:
-                        result.append(all_vars)
+                item_result += match_pattern(eitem,
+                                             pitem,
+                                            {**curvars, **vars},
+                                            hg=hg)
+            perm_result = item_result
+            if len(item_result) == 0:
+                break
 
+        for vars in perm_result:
+            result += _match_by_argroles(edge,
+                                         pattern,
+                                         role_counts[1:],
+                                         min_vars,
+                                         hg,
+                                         matched + perm,
+                                         {**curvars, **vars})
+    
     return result
 
+def _match_atoms(atom_patterns, atoms, hg, matched_atoms=[], curvars={}):
+    if len(atom_patterns) == 0:
+        return [curvars]
+    
+    results = []
+    atom_pattern = atom_patterns[0]
 
-# def _matches_fun(edge, fun_pattern):
-#     fun = fun_pattern[0].root()
-#     if fun == 'atoms':
-#         atoms = edge.atoms()
-#         atom_patterns = fun_patterns[1:]
-#         for atom_pattern in atom_patterns:
-#             for atom in atoms:
-#                 
-# 
-#     elif fun == 'lemma':
-#         pass
-#     else:
-#         raise RuntimeError('Unknown functional pattern: {}'.format(fun))
+    for atom in atoms:
+        if atom not in matched_atoms:
+            svars = match_pattern(atom, atom_pattern, curvars, hg=hg)
+            for vars in svars:
+                results += _match_atoms(atom_patterns[1:],
+                                        atoms,
+                                        hg,
+                                        matched_atoms + [atom],
+                                        {**curvars, **vars})
+
+    return results
 
 
-def match_pattern(edge, pattern, curvars={}):
+# TODO: deal with argroles
+def _match_lemma(lemma_pattern, var, edge, hg):
+    if hg is None:
+        raise RuntimeError('Lemma pattern function requires hypergraph.')
+
+    if not edge.is_atom():
+        return []
+
+    _lemma = lemma(hg, edge, same_if_none=True)
+
+    # add argroles to _lemma if needed
+    ar = edge.argroles()
+    if ar != '':
+        parts = _lemma.parts()
+        parts[1] = '{}.{}'.format(parts[1], ar)
+        _lemma = hedge('/'.join(parts))
+
+    if _matches_wildcard(_lemma, lemma_pattern):
+    # if match_pattern(_lemma, lemma_pattern):
+        if var is None:
+            return [{}]
+        else:
+            return [{str(var): edge}]
+
+    return []
+
+
+def _matches_fun_pat(edge, fun_pattern, hg):
+    fun = fun_pattern[0].root()
+    if fun == 'atoms':
+        atoms = edge.atoms()
+        atom_patterns = fun_pattern[1:]
+        return _match_atoms(atom_patterns, atoms, hg)
+    elif fun == 'lemma':
+        if len(fun_pattern) > 2:
+            var = fun_pattern[2]
+        else:
+            var = None
+        return _match_lemma(fun_pattern[1], var, edge, hg)
+    else:
+        raise RuntimeError('Unknown pattern function: {}'.format(fun))
+
+
+def match_pattern(edge, pattern, curvars={}, hg=None):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
     pattern variable. If the pattern specifies no variables but the edge
@@ -298,14 +344,17 @@ def match_pattern(edge, pattern, curvars={}):
             if is_pattern(pattern):
                 varname = _varname(pattern)
                 if len(varname) > 0:
+                    if varname in curvars and curvars[varname] != edge:
+                        return []
                     vars[varname] = edge
             return [{**curvars, **vars}]
         else:
             return []
 
     # functional patterns
-    # if str(pattern[0])[-3:] == 'J/p':
-    #     pass
+    if is_fun_pattern(pattern):
+        result = _matches_fun_pat(edge, pattern, hg)
+        return list({**curvars, **vars} for vars in result)
 
     min_len = len(pattern)
     max_len = min_len
@@ -316,7 +365,8 @@ def match_pattern(edge, pattern, curvars={}):
         max_len = float('inf')
 
     result = [{}]
-    argroles_posopt = pattern[0].argroles().split('-')[0]
+    argroles_posopt =\
+        _defun_pattern_argroles(pattern)[0].argroles().split('-')[0]
     if len(argroles_posopt) > 0 and argroles_posopt[0] == '{':
         match_by_order = False
         argroles_posopt = argroles_posopt[1:-1]
@@ -328,39 +378,36 @@ def match_pattern(edge, pattern, curvars={}):
     if len(argroles) > 0:
         min_len = 1 + len(argroles)
         max_len = float('inf')
+    else:
+        match_by_order = True
 
     if len(edge) < min_len or len(edge) > max_len:
         return []
 
     # match by order
-    if len(argroles) == 0 or match_by_order:
+    if match_by_order:
         for i, pitem in enumerate(pattern):
             eitem = edge[i]
             _result = []
             for vars in result:
                 if pitem.is_atom():
-                    if is_pattern(pitem) or match_by_order:
-                        varname = _varname(pitem)
-                        if varname in curvars:
-                            if curvars[varname] != eitem:
-                                continue
-                        elif varname in vars:
-                            if vars[varname] != eitem:
-                                continue
-                        elif _matches_wildcard(eitem, pitem):
-                            if len(varname) > 0 and varname[0].isupper():
-                                vars[varname] = eitem
-                        else:
+                    varname = _varname(pitem)
+                    if varname in curvars:
+                        if curvars[varname] != eitem:
                             continue
-                    elif eitem != pitem:
+                    elif varname in vars:
+                        if vars[varname] != eitem:
+                            continue
+                    elif _matches_wildcard(eitem, pitem):
+                        if len(varname) > 0 and varname[0].isupper():
+                            vars[varname] = eitem
+                    else:
                         continue
                     _result.append(vars)
                 else:
-                    if not eitem.is_atom():
-                        sresult = match_pattern(
-                            eitem, pitem, {**curvars, **vars})
-                        for subvars in sresult:
-                            _result.append({**vars, **subvars})
+                    # if not eitem.is_atom():
+                    _result +=  match_pattern(
+                        eitem, pitem, {**curvars, **vars}, hg=hg)
             result = _result
     # match by argroles
     else:
@@ -368,7 +415,7 @@ def match_pattern(edge, pattern, curvars={}):
         # match connectors first
         econn = edge[0]
         pconn = pattern[0]
-        for vars in match_pattern(econn, pconn, curvars):
+        for vars in match_pattern(econn, pconn, curvars, hg=hg):
             role_counts = Counter(argroles_opt).most_common()
             unknown_roles = (len(pattern) - 1) - len(argroles_opt)
             if unknown_roles > 0:
@@ -379,14 +426,20 @@ def match_pattern(edge, pattern, curvars={}):
                                          pattern,
                                          role_counts,
                                          len(argroles),
+                                         hg,
                                          curvars={**curvars, **vars})
             for svars in sresult:
                 result.append({**vars, **svars})
 
-    return list({**curvars, **vars} for vars in result)
+    unique_vars = []
+    for vars in result:
+        v = {**curvars, **vars}
+        if v not in unique_vars:
+            unique_vars.append(v)
+    return unique_vars
 
 
-def edge_matches_pattern(edge, pattern):
+def edge_matches_pattern(edge, pattern, hg=None):
     """Check if an edge matches a pattern.
 
     Patterns are themselves edges. They can match families of edges
@@ -404,7 +457,7 @@ def edge_matches_pattern(edge, pattern):
     Examples: (is/Pd graphbrain/C .)
     (says/Pd * ...)
     """
-    result = match_pattern(edge, pattern)
+    result = match_pattern(edge, pattern, hg=hg)
     return len(result) > 0
 
 
@@ -425,14 +478,14 @@ def edge2pattern(edge, root=False, subtype=False):
         return hedge('{}.{}'.format(pattern, ar))
 
 
-def inner_edge_matches_pattern(edge, pattern):
+def inner_edge_matches_pattern(edge, pattern, hg=None):
     if edge.is_atom():
         return False
     for subedge in edge:
-        if edge_matches_pattern(subedge, pattern):
+        if edge_matches_pattern(subedge, pattern, hg=hg):
             return True
     for subedge in edge:
-        if inner_edge_matches_pattern(subedge, pattern):
+        if inner_edge_matches_pattern(subedge, pattern, hg=hg):
             return True
     return False
 

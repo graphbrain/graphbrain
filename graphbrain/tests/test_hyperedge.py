@@ -296,7 +296,9 @@ class TestHyperedge(unittest.TestCase):
 
     def test_atom_role(self):
         self.assertEqual(hedge('graphbrain/Cp.s/1').role(), ['Cp', 's'])
-        self.assertEqual(hedge('graphbrain').role(), ['C'])
+
+    def test_atom_role_implied_conjunction(self):
+        self.assertEqual(hedge('and').role(), ['J'])
 
     def test_atom_simplify_atom(self):
         self.assertEqual(hedge('graphbrain/Cp.s/1').simplify(),
@@ -334,7 +336,9 @@ class TestHyperedge(unittest.TestCase):
 
     def test_atom_type(self):
         self.assertEqual(hedge('graphbrain/Cp.s/1').type(), 'Cp')
-        self.assertEqual(hedge('graphbrain').type(), 'C')
+
+    def test_atom_type_implied_conjunction(self):
+        self.assertEqual(hedge('and').type(), 'J')
 
     def test_entity_type(self):
         self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s great/C)').type(),
@@ -353,7 +357,7 @@ class TestHyperedge(unittest.TestCase):
 
     def test_connector_type(self):
         self.assertEqual(hedge('graphbrain/Cp.s/1').connector_type(), 'Cp')
-        self.assertEqual(hedge('graphbrain').connector_type(), 'C')
+        self.assertEqual(hedge('graphbrain').connector_type(), 'J')
         self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
                                'great/C)').connector_type(), 'Pd')
         self.assertEqual(hedge('(red/M shoes/Cn.p)').connector_type(), 'M')
