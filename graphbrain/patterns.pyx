@@ -5,7 +5,7 @@ from graphbrain import hedge
 from graphbrain.utils.lemmas import lemma
 
 
-FUNS = {'atoms', 'lemma'}
+FUNS = {'var', 'atoms', 'lemma'}
 
 
 def is_fun_pattern(edge):
@@ -257,7 +257,7 @@ def _match_atoms(atom_patterns, atoms, hg, matched_atoms=[], curvars={}):
 
 
 # TODO: deal with argroles
-def _match_lemma(lemma_pattern, var, edge, hg):
+def _match_lemma(lemma_pattern, edge, hg):
     if hg is None:
         raise RuntimeError('Lemma pattern function requires hypergraph.')
 
@@ -274,27 +274,27 @@ def _match_lemma(lemma_pattern, var, edge, hg):
         _lemma = hedge('/'.join(parts))
 
     if _matches_wildcard(_lemma, lemma_pattern):
-    # if match_pattern(_lemma, lemma_pattern):
-        if var is None:
-            return [{}]
-        else:
-            return [{str(var): edge}]
+        return [{}]
 
     return []
 
 
 def _matches_fun_pat(edge, fun_pattern, hg):
     fun = fun_pattern[0].root()
-    if fun == 'atoms':
+    if fun == 'var':
+        var_name = fun_pattern[1].root()
+        curvars = {var_name: edge}
+        pattern = fun_pattern[2]
+        result = []
+        for vars in match_pattern(edge, pattern, hg=hg):
+            result.append({**curvars, **vars})
+        return result
+    elif fun == 'atoms':
         atoms = edge.atoms()
         atom_patterns = fun_pattern[1:]
         return _match_atoms(atom_patterns, atoms, hg)
     elif fun == 'lemma':
-        if len(fun_pattern) > 2:
-            var = fun_pattern[2]
-        else:
-            var = None
-        return _match_lemma(fun_pattern[1], var, edge, hg)
+        return _match_lemma(fun_pattern[1], edge, hg)
     else:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
