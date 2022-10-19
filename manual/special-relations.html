@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -104,9 +106,9 @@
            <div itemprop="articleBody">
              
   <section id="special-relations">
-<h1>Special relations<a class="headerlink" href="#special-relations" title="Permalink to this headline"></a></h1>
+<h1>Special relations<a class="headerlink" href="#special-relations" title="Permalink to this heading"></a></h1>
 <section id="coreferences">
-<h2>Coreferences<a class="headerlink" href="#coreferences" title="Permalink to this headline"></a></h2>
+<h2>Coreferences<a class="headerlink" href="#coreferences" title="Permalink to this heading"></a></h2>
 <p>Coreferences indicate hyperedges that refer to the same thing. They are specified in the hypergraph using hyperedges with the special connector <code class="docutils literal notranslate"><span class="pre">coref/P/.</span></code>. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">coref</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">turing</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span> <span class="p">(</span><span class="o">+/</span><span class="n">B</span><span class="o">/.</span> <span class="n">alan</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span> <span class="n">turing</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
 </pre></div>
@@ -118,14 +120,14 @@
 <p>In the above case, <code class="docutils literal notranslate"><span class="pre">berlin/Cp.s</span></code> is the main coreference for the coreference set that <code class="docutils literal notranslate"><span class="pre">(of/B.ma</span> <span class="pre">city/Cc.s</span> <span class="pre">berlin/Cp.s)</span></code> belongs to.</p>
 </section>
 <section id="taxonomies">
-<h2>Taxonomies<a class="headerlink" href="#taxonomies" title="Permalink to this headline"></a></h2>
+<h2>Taxonomies<a class="headerlink" href="#taxonomies" title="Permalink to this heading"></a></h2>
 <p>Taxonomies can be built using <em>type-of</em> relations between hyperedges, with the help of the special predicate <code class="docutils literal notranslate"><span class="pre">type_of/P/.</span></code>. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="n">city</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span> <span class="n">berlin</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">city</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="lemmas">
-<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this headline"></a></h2>
+<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this heading"></a></h2>
 <p>In informal and simple terms, <em>lemma</em> refers to the root of a word. Words and derived from lemma for example by verb conjugation, gender, number, grammatical case, etc. It can be useful to know that two atoms share the same lemma, e.g. to infer that two predicates refer to the same verb.</p>
 <p>Lemma relations are stored in the hypergraph using the following hyperedge format:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">lemma</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">asked</span><span class="o">/</span><span class="n">Pd</span><span class="o">.</span><span class="n">so</span><span class="o">.&lt;</span><span class="n">pf</span><span class="o">----/</span><span class="n">en</span> <span class="n">ask</span><span class="o">/</span><span class="n">P</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>

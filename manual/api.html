@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -65,10 +67,32 @@
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">API reference</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.__init__">main functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hypergraph">hypergraph module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.patterns">patterns module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.__init__">main functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.__init__.hgraph"><code class="docutils literal notranslate"><span class="pre">hgraph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.Atom"><code class="docutils literal notranslate"><span class="pre">Atom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge"><code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.UniqueAtom"><code class="docutils literal notranslate"><span class="pre">UniqueAtom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.build_atom"><code class="docutils literal notranslate"><span class="pre">build_atom()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.edges2str"><code class="docutils literal notranslate"><span class="pre">edges2str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.hedge"><code class="docutils literal notranslate"><span class="pre">hedge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.split_edge_str"><code class="docutils literal notranslate"><span class="pre">split_edge_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.str2atom"><code class="docutils literal notranslate"><span class="pre">str2atom()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hypergraph">hypergraph module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hypergraph.Hypergraph"><code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.patterns">patterns module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.edge_matches_pattern"><code class="docutils literal notranslate"><span class="pre">edge_matches_pattern()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.is_full_pattern"><code class="docutils literal notranslate"><span class="pre">is_full_pattern()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.is_pattern"><code class="docutils literal notranslate"><span class="pre">is_pattern()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.match_pattern"><code class="docutils literal notranslate"><span class="pre">match_pattern()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.processor">processor module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#corefs-package">corefs package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.corefs.names">names module</a></li>
@@ -145,9 +169,9 @@
            <div itemprop="articleBody">
              
   <section id="api-reference">
-<h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline"></a></h1>
+<h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h1>
 <section id="module-graphbrain.__init__">
-<span id="main-functions"></span><h2>main functions<a class="headerlink" href="#module-graphbrain.__init__" title="Permalink to this headline"></a></h2>
+<span id="main-functions"></span><h2>main functions<a class="headerlink" href="#module-graphbrain.__init__" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.__init__.hgraph">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.__init__.</span></span><span class="sig-name descname"><span class="pre">hgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/__init__.html#hgraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.__init__.hgraph" title="Permalink to this definition"></a></dt>
@@ -158,10 +182,10 @@ The hypergraph will be created if it does not exist.</p>
 
 </section>
 <section id="module-graphbrain.hyperedge">
-<span id="hyperedge-module"></span><h2>hyperedge module<a class="headerlink" href="#module-graphbrain.hyperedge" title="Permalink to this headline"></a></h2>
+<span id="hyperedge-module"></span><h2>hyperedge module<a class="headerlink" href="#module-graphbrain.hyperedge" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">Atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">Atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom" title="Permalink to this definition"></a></dt>
 <dd><p>Atomic hyperedge.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.all_atoms">
@@ -261,25 +285,6 @@ returns:
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.is_full_pattern">
-<span class="sig-name descname"><span class="pre">is_full_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.is_full_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Check if every atom is a pattern matcher.</p>
-<p>Pattern matchers are:
-‘*’, ‘.’, ‘(*)’, ‘…’ and variables (atom label starting with an
-uppercase letter)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.is_pattern">
-<span class="sig-name descname"><span class="pre">is_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.is_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Check if this edge defines a pattern, i.e. if it includes at least
-one pattern matcher.</p>
-<p>Pattern matchers are:
-‘*’, ‘.’, ‘(*)’, ‘…’ and variables (atom label starting with an
-uppercase letter)</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.label">
 <span class="sig-name descname"><span class="pre">label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.label" title="Permalink to this definition"></a></dt>
 <dd><p>Generate human-readable label from entity.</p>
@@ -362,11 +367,11 @@ the role of graphbrain/Cp.s/1 is:</p>
 <blockquote>
 <div><p>[‘Cp’, ‘s’]</p>
 </div></blockquote>
-<p>If the atom only has a root, it is assumed to be a concept.
+<p>If the atom only has a root, it is assumed to be a conjunction.
 In this case, this function returns the role with just the
-generic concept type:</p>
+generic conjunction type:</p>
 <blockquote>
-<div><p>[‘C’].</p>
+<div><p>[‘J’].</p>
 </div></blockquote>
 </dd></dl>
 
@@ -422,15 +427,15 @@ the string representation.</p>
 <dd><p>Returns the type of the atom.</p>
 <p>The type of an atom is its first subrole. For example, the
 type of graphbrain/Cp.s/1 is ‘Cp’.</p>
-<p>If the atom only has a root, it is assumed to be a concept.
-In this case, this function returns the generic concept type: ‘C’.</p>
+<p>If the atom only has a root, it is assumed to be a conjunction.
+In this case, this function returns the generic conjunction type: ‘J’.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">Hyperedge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">Hyperedge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge" title="Permalink to this definition"></a></dt>
 <dd><p>Non-atomic hyperedge.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.all_atoms">
@@ -555,25 +560,6 @@ returns:
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.is_full_pattern">
-<span class="sig-name descname"><span class="pre">is_full_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.is_full_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Check if every atom is a pattern matcher.</p>
-<p>Pattern matchers are:
-‘*’, ‘.’, ‘(*)’, ‘…’ and variables (atom label starting with an
-uppercase letter)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.is_pattern">
-<span class="sig-name descname"><span class="pre">is_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.is_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Check if this edge defines a pattern, i.e. if it includes at least
-one pattern matcher.</p>
-<p>Pattern matchers are:
-‘*’, ‘.’, ‘(*)’, ‘…’ and variables (atom label starting with an
-uppercase letter)</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.label">
 <span class="sig-name descname"><span class="pre">label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.label" title="Permalink to this definition"></a></dt>
 <dd><p>Generate human-readable label for edge.</p>
@@ -584,7 +570,7 @@ uppercase letter)</p>
 <span class="sig-name descname"><span class="pre">main_concepts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.main_concepts" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the list of main concepts in an concept edge.
 A main concept is a central concept in a built concept, e.g.:
-in (‘s/Bp.am zimbabwe/Mp economy/Cn.s), economy/Cn.s is the main
+in (‘s/Bp.am zimbabwe/Cp economy/Cn.s), economy/Cn.s is the main
 concept.</p>
 <p>If entity is not an edge, or its connector is not of type builder,
 or the builder does not contain concept role annotations, or no
@@ -704,28 +690,13 @@ Type inference is performed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.UniqueAtom">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">UniqueAtom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.UniqueAtom" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">UniqueAtom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.UniqueAtom" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.build_atom">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">build_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.build_atom" title="Permalink to this definition"></a></dt>
 <dd><p>Build an atom from text and other parts.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.edge_matches_pattern">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">edge_matches_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.edge_matches_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Check if an edge matches a pattern.</p>
-<p>Patterns are themselves edges. They can match families of edges
-by employing special atoms:</p>
-<p>-&gt; ‘*’ represents a general wildcard (matches any entity)</p>
-<p>-&gt; ‘.’ represents an atomic wildcard (matches any atom)</p>
-<p>-&gt; ‘(*)’ represents an edge wildcard (matches any edge)</p>
-<p>-&gt; ‘…’ at the end indicates an open-ended pattern.</p>
-<p>The pattern can be any valid hyperedge, including the above special atoms.
-Examples: (is/Pd graphbrain/C .)
-(says/Pd * …)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -739,34 +710,6 @@ Examples: (is/Pd graphbrain/C .)
 <dt class="sig sig-object py" id="graphbrain.hyperedge.hedge">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">hedge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.hedge" title="Permalink to this definition"></a></dt>
 <dd><p>Create an hyperedge.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.match_pattern">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">match_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.match_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Matches an edge to a pattern. This means that, if the edge fits the
-pattern, then a dictionary will be returned with the values for each
-pattern variable. If the pattern specifies no variables but the edge
-matches it, then an empty dictionary is returned. If the edge does
-not match the pattern, None is returned.</p>
-<p>Patterns are themselves edges. They can match families of edges
-by employing special atoms:</p>
-<p>-&gt; ‘*’ represents a general wildcard (matches any entity)</p>
-<p>-&gt; ‘.’ represents an atomic wildcard (matches any atom)</p>
-<p>-&gt; ‘(*)’ represents an edge wildcard (matches any edge)</p>
-<p>-&gt; ‘…’ at the end indicates an open-ended pattern.</p>
-<p>The wildcards (’*’, ‘.’ and ‘(*)’) can be used to specify variables,
-for example ‘*x’, ‘(CLAIM)’ or ‘.ACTOR’. In case of a match, these
-variables are assigned the hyperedge they correspond to. For example,</p>
-<p>(1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-applied to the pattern: (is/Pd (my/Mp name/Cn) *NAME)
-produces the result: {‘NAME’, mary/Cp}</p>
-<p>(2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-applied to the pattern: (is/Pd (my/Mp name/Cn) (NAME))
-produces the result: {}</p>
-<p>(3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-applied to the pattern: (is/Pd . *NAME)
-produces the result: None</p>
 </dd></dl>
 
 <dl class="py function">
@@ -784,10 +727,10 @@ without outer parenthesis.</p>
 
 </section>
 <section id="module-graphbrain.hypergraph">
-<span id="hypergraph-module"></span><h2>hypergraph module<a class="headerlink" href="#module-graphbrain.hypergraph" title="Permalink to this headline"></a></h2>
+<span id="hypergraph-module"></span><h2>hypergraph module<a class="headerlink" href="#module-graphbrain.hypergraph" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.hypergraph.</span></span><span class="sig-name descname"><span class="pre">Hypergraph</span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.hypergraph.</span></span><span class="sig-name descname"><span class="pre">Hypergraph</span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph" title="Permalink to this definition"></a></dt>
 <dd><p>Hypergraph interface.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph.add">
@@ -1052,43 +995,111 @@ parameter.</p>
 <dd><p>Returns sum of the degrees of all edges contained in the parameter.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph.text">
+<span class="sig-name descname"><span class="pre">text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.text" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the text representation of an edge.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
 <section id="module-graphbrain.patterns">
-<span id="patterns-module"></span><h2>patterns module<a class="headerlink" href="#module-graphbrain.patterns" title="Permalink to this headline"></a></h2>
+<span id="patterns-module"></span><h2>patterns module<a class="headerlink" href="#module-graphbrain.patterns" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.patterns.edge_matches_pattern">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">edge_matches_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.edge_matches_pattern" title="Permalink to this definition"></a></dt>
+<dd><p>Check if an edge matches a pattern.</p>
+<p>Patterns are themselves edges. They can match families of edges
+by employing special atoms:</p>
+<p>-&gt; ‘*’ represents a general wildcard (matches any entity)</p>
+<p>-&gt; ‘.’ represents an atomic wildcard (matches any atom)</p>
+<p>-&gt; ‘(*)’ represents an edge wildcard (matches any edge)</p>
+<p>-&gt; ‘…’ at the end indicates an open-ended pattern.</p>
+<p>The pattern can be any valid hyperedge, including the above special atoms.
+Examples: (is/Pd graphbrain/C .)
+(says/Pd * …)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.patterns.is_full_pattern">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_full_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_full_pattern" title="Permalink to this definition"></a></dt>
+<dd><p>Check if every atom is a pattern matcher.</p>
+<p>Pattern matchers are:
+‘*’, ‘.’, ‘(*)’, ‘…’ and variables (atom label starting with an
+uppercase letter)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.patterns.is_pattern">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_pattern" title="Permalink to this definition"></a></dt>
+<dd><p>Check if this edge defines a pattern, i.e. if it includes at least
+one pattern matcher.</p>
+<p>Pattern matchers are:
+‘*’, ‘.’, ‘(*)’, ‘…’ and variables (atom label starting with an
+uppercase letter)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.patterns.match_pattern">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">match_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.match_pattern" title="Permalink to this definition"></a></dt>
+<dd><p>Matches an edge to a pattern. This means that, if the edge fits the
+pattern, then a dictionary will be returned with the values for each
+pattern variable. If the pattern specifies no variables but the edge
+matches it, then an empty dictionary is returned. If the edge does
+not match the pattern, None is returned.</p>
+<p>Patterns are themselves edges. They can match families of edges
+by employing special atoms:</p>
+<p>-&gt; ‘*’ represents a general wildcard (matches any entity)</p>
+<p>-&gt; ‘.’ represents an atomic wildcard (matches any atom)</p>
+<p>-&gt; ‘(*)’ represents an edge wildcard (matches any edge)</p>
+<p>-&gt; ‘…’ at the end indicates an open-ended pattern.</p>
+<p>The wildcards (’*’, ‘.’ and ‘(*)’) can be used to specify variables,
+for example ‘*x’, ‘(CLAIM)’ or ‘.ACTOR’. In case of a match, these
+variables are assigned the hyperedge they correspond to. For example,</p>
+<p>(1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+applied to the pattern: (is/Pd (my/Mp name/Cn) *NAME)
+produces the result: {‘NAME’, mary/Cp}</p>
+<p>(2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+applied to the pattern: (is/Pd (my/Mp name/Cn) (NAME))
+produces the result: {}</p>
+<p>(3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+applied to the pattern: (is/Pd . *NAME)
+produces the result: None</p>
+</dd></dl>
+
 </section>
 <section id="module-graphbrain.processor">
-<span id="processor-module"></span><h2>processor module<a class="headerlink" href="#module-graphbrain.processor" title="Permalink to this headline"></a></h2>
+<span id="processor-module"></span><h2>processor module<a class="headerlink" href="#module-graphbrain.processor" title="Permalink to this heading"></a></h2>
 </section>
 <section id="corefs-package">
-<h2>corefs package<a class="headerlink" href="#corefs-package" title="Permalink to this headline"></a></h2>
+<h2>corefs package<a class="headerlink" href="#corefs-package" title="Permalink to this heading"></a></h2>
 <section id="module-graphbrain.corefs.names">
-<span id="names-module"></span><h3>names module<a class="headerlink" href="#module-graphbrain.corefs.names" title="Permalink to this headline"></a></h3>
+<span id="names-module"></span><h3>names module<a class="headerlink" href="#module-graphbrain.corefs.names" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.corefs.onto">
-<span id="onto-module"></span><h3>onto module<a class="headerlink" href="#module-graphbrain.corefs.onto" title="Permalink to this headline"></a></h3>
+<span id="onto-module"></span><h3>onto module<a class="headerlink" href="#module-graphbrain.corefs.onto" title="Permalink to this heading"></a></h3>
 </section>
 </section>
 <section id="meaning-package">
-<h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this headline"></a></h2>
+<h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this heading"></a></h2>
 <section id="module-graphbrain.meaning.extractor">
-<span id="extractor-module"></span><h3>extractor module<a class="headerlink" href="#module-graphbrain.meaning.extractor" title="Permalink to this headline"></a></h3>
+<span id="extractor-module"></span><h3>extractor module<a class="headerlink" href="#module-graphbrain.meaning.extractor" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.meaning.tests">
-<span id="tests-module"></span><h3>tests module<a class="headerlink" href="#module-graphbrain.meaning.tests" title="Permalink to this headline"></a></h3>
+<span id="tests-module"></span><h3>tests module<a class="headerlink" href="#module-graphbrain.meaning.tests" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.meaning.case_generators">
-<span id="case-generator-module"></span><h3>case_generator module<a class="headerlink" href="#module-graphbrain.meaning.case_generators" title="Permalink to this headline"></a></h3>
+<span id="case-generator-module"></span><h3>case_generator module<a class="headerlink" href="#module-graphbrain.meaning.case_generators" title="Permalink to this heading"></a></h3>
 </section>
 </section>
 <section id="memory-package">
-<h2>memory package<a class="headerlink" href="#memory-package" title="Permalink to this headline"></a></h2>
+<h2>memory package<a class="headerlink" href="#memory-package" title="Permalink to this heading"></a></h2>
 <section id="module-graphbrain.memory.leveldb">
-<span id="leveldb-module"></span><h3>leveldb module<a class="headerlink" href="#module-graphbrain.memory.leveldb" title="Permalink to this headline"></a></h3>
+<span id="leveldb-module"></span><h3>leveldb module<a class="headerlink" href="#module-graphbrain.memory.leveldb" title="Permalink to this heading"></a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.leveldb.</span></span><span class="sig-name descname"><span class="pre">LevelDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.leveldb.</span></span><span class="sig-name descname"><span class="pre">LevelDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB" title="Permalink to this definition"></a></dt>
 <dd><p>Implements LevelDB hypergraph storage.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.add_with_attributes">
@@ -1134,7 +1145,7 @@ the second is a dictionary of attribute values
 
 </section>
 <section id="module-graphbrain.memory.permutations">
-<span id="permutations-module"></span><h3>permutations module<a class="headerlink" href="#module-graphbrain.memory.permutations" title="Permalink to this headline"></a></h3>
+<span id="permutations-module"></span><h3>permutations module<a class="headerlink" href="#module-graphbrain.memory.permutations" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.memory.permutations.do_with_edge_permutations">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">do_with_edge_permutations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.do_with_edge_permutations" title="Permalink to this definition"></a></dt>
@@ -1170,10 +1181,10 @@ specified by nper.</p>
 
 </section>
 <section id="module-graphbrain.memory.sqlite">
-<span id="sqlite-module"></span><h3>sqlite module<a class="headerlink" href="#module-graphbrain.memory.sqlite" title="Permalink to this headline"></a></h3>
+<span id="sqlite-module"></span><h3>sqlite module<a class="headerlink" href="#module-graphbrain.memory.sqlite" title="Permalink to this heading"></a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.sqlite.</span></span><span class="sig-name descname"><span class="pre">SQLite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.sqlite.</span></span><span class="sig-name descname"><span class="pre">SQLite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite" title="Permalink to this definition"></a></dt>
 <dd><p>Implements SQLite hypergraph storage.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.add_with_attributes">
@@ -1220,9 +1231,9 @@ the second is a dictionary of attribute values
 </section>
 </section>
 <section id="parsers-package">
-<h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline"></a></h2>
+<h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this heading"></a></h2>
 <section id="module-graphbrain.parsers.__init__">
-<span id="package-functions"></span><h3>package functions<a class="headerlink" href="#module-graphbrain.parsers.__init__" title="Permalink to this headline"></a></h3>
+<span id="package-functions"></span><h3>package functions<a class="headerlink" href="#module-graphbrain.parsers.__init__" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.parsers.__init__.create_parser">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.parsers.__init__.</span></span><span class="sig-name descname"><span class="pre">create_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lemmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corefs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'repair'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/__init__.html#create_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.parsers.__init__.create_parser" title="Permalink to this definition"></a></dt>
@@ -1245,10 +1256,10 @@ post_process – perform hyperedge post-processing (default: True)</p>
 
 </section>
 <section id="module-graphbrain.parsers.parser">
-<span id="parser-module"></span><h3>parser module<a class="headerlink" href="#module-graphbrain.parsers.parser" title="Permalink to this headline"></a></h3>
+<span id="parser-module"></span><h3>parser module<a class="headerlink" href="#module-graphbrain.parsers.parser" title="Permalink to this heading"></a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphbrain.parsers.parser.Parser">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.parsers.parser.</span></span><span class="sig-name descname"><span class="pre">Parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lemmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corefs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.parsers.parser.</span></span><span class="sig-name descname"><span class="pre">Parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lemmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corefs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Permalink to this definition"></a></dt>
 <dd><p>Defines the common interface for parser objects.
 Parsers transofrm natural text into graphbrain hyperedges.</p>
 <dl class="py method">
@@ -1276,30 +1287,30 @@ corresponding text.</p>
 </section>
 </section>
 <section id="readers-package">
-<h2>readers package<a class="headerlink" href="#readers-package" title="Permalink to this headline"></a></h2>
+<h2>readers package<a class="headerlink" href="#readers-package" title="Permalink to this heading"></a></h2>
 <section id="module-graphbrain.readers.reader">
-<span id="reader-module"></span><h3>reader module<a class="headerlink" href="#module-graphbrain.readers.reader" title="Permalink to this headline"></a></h3>
+<span id="reader-module"></span><h3>reader module<a class="headerlink" href="#module-graphbrain.readers.reader" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.readers.txt">
-<span id="txt-module"></span><h3>txt module<a class="headerlink" href="#module-graphbrain.readers.txt" title="Permalink to this headline"></a></h3>
+<span id="txt-module"></span><h3>txt module<a class="headerlink" href="#module-graphbrain.readers.txt" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.readers.dir">
-<span id="dir-module"></span><h3>dir module<a class="headerlink" href="#module-graphbrain.readers.dir" title="Permalink to this headline"></a></h3>
+<span id="dir-module"></span><h3>dir module<a class="headerlink" href="#module-graphbrain.readers.dir" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.readers.csv">
-<span id="csv-module"></span><h3>csv module<a class="headerlink" href="#module-graphbrain.readers.csv" title="Permalink to this headline"></a></h3>
+<span id="csv-module"></span><h3>csv module<a class="headerlink" href="#module-graphbrain.readers.csv" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.readers.wikipedia">
-<span id="wikipedia-module"></span><h3>wikipedia module<a class="headerlink" href="#module-graphbrain.readers.wikipedia" title="Permalink to this headline"></a></h3>
+<span id="wikipedia-module"></span><h3>wikipedia module<a class="headerlink" href="#module-graphbrain.readers.wikipedia" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.readers.reddit">
-<span id="reddit-module"></span><h3>reddit module<a class="headerlink" href="#module-graphbrain.readers.reddit" title="Permalink to this headline"></a></h3>
+<span id="reddit-module"></span><h3>reddit module<a class="headerlink" href="#module-graphbrain.readers.reddit" title="Permalink to this heading"></a></h3>
 </section>
 </section>
 <section id="utils-package">
-<h2>utils package<a class="headerlink" href="#utils-package" title="Permalink to this headline"></a></h2>
+<h2>utils package<a class="headerlink" href="#utils-package" title="Permalink to this heading"></a></h2>
 <section id="module-graphbrain.utils.concepts">
-<span id="concepts-module"></span><h3>concepts module<a class="headerlink" href="#module-graphbrain.utils.concepts" title="Permalink to this headline"></a></h3>
+<span id="concepts-module"></span><h3>concepts module<a class="headerlink" href="#module-graphbrain.utils.concepts" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.utils.concepts.all_concepts">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.utils.concepts.</span></span><span class="sig-name descname"><span class="pre">all_concepts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/concepts.html#all_concepts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.concepts.all_concepts" title="Permalink to this definition"></a></dt>
@@ -1333,10 +1344,10 @@ found. May be the edge itself.</p>
 
 </section>
 <section id="module-graphbrain.utils.conjunctions">
-<span id="conjunctions-module"></span><h3>conjunctions module<a class="headerlink" href="#module-graphbrain.utils.conjunctions" title="Permalink to this headline"></a></h3>
+<span id="conjunctions-module"></span><h3>conjunctions module<a class="headerlink" href="#module-graphbrain.utils.conjunctions" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.utils.lemmas">
-<span id="lemmas-module"></span><h3>lemmas module<a class="headerlink" href="#module-graphbrain.utils.lemmas" title="Permalink to this headline"></a></h3>
+<span id="lemmas-module"></span><h3>lemmas module<a class="headerlink" href="#module-graphbrain.utils.lemmas" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.utils.lemmas.deep_lemma">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.utils.lemmas.</span></span><span class="sig-name descname"><span class="pre">deep_lemma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">same_if_none</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/lemmas.html#deep_lemma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.lemmas.deep_lemma" title="Permalink to this definition"></a></dt>
@@ -1374,10 +1385,10 @@ the degree and deep degree of that edge.</p>
 
 </section>
 <section id="module-graphbrain.utils.number">
-<span id="number-module"></span><h3>number module<a class="headerlink" href="#module-graphbrain.utils.number" title="Permalink to this headline"></a></h3>
+<span id="number-module"></span><h3>number module<a class="headerlink" href="#module-graphbrain.utils.number" title="Permalink to this heading"></a></h3>
 </section>
 <section id="module-graphbrain.utils.ontology">
-<span id="ontology-module"></span><h3>ontology module<a class="headerlink" href="#module-graphbrain.utils.ontology" title="Permalink to this headline"></a></h3>
+<span id="ontology-module"></span><h3>ontology module<a class="headerlink" href="#module-graphbrain.utils.ontology" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.utils.ontology.subtypes">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.utils.ontology.</span></span><span class="sig-name descname"><span class="pre">subtypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/ontology.html#subtypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.ontology.subtypes" title="Permalink to this definition"></a></dt>

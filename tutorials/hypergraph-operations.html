@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -95,7 +97,7 @@
            <div itemprop="articleBody">
              
   <section id="hypergraph-operations">
-<h1>Hypergraph operations<a class="headerlink" href="#hypergraph-operations" title="Permalink to this headline"></a></h1>
+<h1>Hypergraph operations<a class="headerlink" href="#hypergraph-operations" title="Permalink to this heading"></a></h1>
 <p>An hypergraph can also be seen as a type of database, that stores knowledge in the form of sets of hyperedges, and provides functions that make it easy to add and search for hyperedges in useful ways. We will see here how to perform some fundamental tasks with hypergraphs.</p>
 <p>The notebook for this tutorial can be found here:</p>
 <p><a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/notebooks/hypergraph.ipynb">https://github.com/graphbrain/graphbrain/blob/master/notebooks/hypergraph.ipynb</a></p>
@@ -106,7 +108,7 @@
 </pre></div>
 </div>
 <section id="create-an-hypergraph">
-<h2>Create an hypergraph<a class="headerlink" href="#create-an-hypergraph" title="Permalink to this headline"></a></h2>
+<h2>Create an hypergraph<a class="headerlink" href="#create-an-hypergraph" title="Permalink to this heading"></a></h2>
 <p>Creating an hypergraph is straightforward:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
 </pre></div>
@@ -114,7 +116,7 @@
 <p>This assigns a hypergraph instance to <code class="docutils literal notranslate"><span class="pre">hg</span></code>, which is physically stored as ‘example.db’. If this hypergraph already exists, it is simply opened. If it does not exist, an empty one is created.</p>
 </section>
 <section id="parse-sentence-and-add-hyperedge-to-hypergraph">
-<h2>Parse sentence and add hyperedge to hypergraph<a class="headerlink" href="#parse-sentence-and-add-hyperedge-to-hypergraph" title="Permalink to this headline"></a></h2>
+<h2>Parse sentence and add hyperedge to hypergraph<a class="headerlink" href="#parse-sentence-and-add-hyperedge-to-hypergraph" title="Permalink to this heading"></a></h2>
 <p>Let’s create a parser to obtain an hyperedge from a sentence, and then add it to the hypergraph:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
 <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Mary is playing a very old violin.&quot;</span>
@@ -128,7 +130,7 @@
 <p>Notice that the <code class="docutils literal notranslate"><span class="pre">add()</span></code> function works recursively. We will see in the next subsection that not only the top hyperedge, but all of their children are added to the hypergraph.</p>
 </section>
 <section id="iterate-through-all-edges">
-<h2>Iterate through all edges<a class="headerlink" href="#iterate-through-all-edges" title="Permalink to this headline"></a></h2>
+<h2>Iterate through all edges<a class="headerlink" href="#iterate-through-all-edges" title="Permalink to this heading"></a></h2>
 <p>Hyoergraph objects include the function <code class="docutils literal notranslate"><span class="pre">all()</span></code>, which returns an iterator that can be used to transverse all the hyperedges contained in the hypergraph. Let’s see an example, in this case assuming that we are in a notebook environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
     <span class="n">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
@@ -160,7 +162,7 @@
 
 <br /><br /></section>
 <section id="search-with-patterns">
-<h2>Search with patterns<a class="headerlink" href="#search-with-patterns" title="Permalink to this headline"></a></h2>
+<h2>Search with patterns<a class="headerlink" href="#search-with-patterns" title="Permalink to this heading"></a></h2>
 <p>Hypergraph objects have a generic <code class="docutils literal notranslate"><span class="pre">search()</span></code> function, which returns iterators corresponding to sets of hyperedges that match a given pattern.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">edge_iterator</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
 </pre></div>

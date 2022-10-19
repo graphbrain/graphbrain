@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -105,10 +107,10 @@
            <div itemprop="articleBody">
              
   <section id="patterns">
-<h1>Patterns<a class="headerlink" href="#patterns" title="Permalink to this headline"></a></h1>
+<h1>Patterns<a class="headerlink" href="#patterns" title="Permalink to this heading"></a></h1>
 <p>As briefly discussed before, Graphbrain provides a pattern language to query and match hyperedges in the hypergraph. These patterns are valid hyperedges, and can even be stored in the hypergraph themselves. Patterns are defined with the help of special atoms: <em>wildcards</em> and <em>variables</em>. The former are useful for simply querying and matching, while the latter allow for the extraction of specific parts of a hyperedge.</p>
 <section id="searching-with-wildcards">
-<h2>Searching with wildcards<a class="headerlink" href="#searching-with-wildcards" title="Permalink to this headline"></a></h2>
+<h2>Searching with wildcards<a class="headerlink" href="#searching-with-wildcards" title="Permalink to this heading"></a></h2>
 <p>The basic wildcard is <code class="docutils literal notranslate"><span class="pre">*</span></code>. It matches any hyperedge. It allows for the definition of patterns like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
@@ -142,7 +144,7 @@
 </div>
 </section>
 <section id="non-strict-search">
-<h2>Non-strict search<a class="headerlink" href="#non-strict-search" title="Permalink to this headline"></a></h2>
+<h2>Non-strict search<a class="headerlink" href="#non-strict-search" title="Permalink to this heading"></a></h2>
 <p>Non-strict search allows for patterns to match atoms in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in this example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
@@ -156,7 +158,7 @@
 <p>Non-strict search is semantically more powerful, at the expense of performance. Strict search can take advantage of the structure of the hypergraph database to perform fast queries, while non-strict search iterates through all edges in the hypergraph looking for matches.</p>
 </section>
 <section id="matching-argroles">
-<h2>Matching argroles<a class="headerlink" href="#matching-argroles" title="Permalink to this headline"></a></h2>
+<h2>Matching argroles<a class="headerlink" href="#matching-argroles" title="Permalink to this heading"></a></h2>
 <p>Argroles can be specified in patterns. So:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
@@ -194,7 +196,7 @@
 <p>When using <code class="docutils literal notranslate"><span class="pre">Hypergraph,search()</span></code>, order-independent (curly-braces) and argrole exclusions (-) only work in non-strict mode.</p>
 </section>
 <section id="patterns-with-variables-for-information-extraction">
-<h2>Patterns with variables for information extraction<a class="headerlink" href="#patterns-with-variables-for-information-extraction" title="Permalink to this headline"></a></h2>
+<h2>Patterns with variables for information extraction<a class="headerlink" href="#patterns-with-variables-for-information-extraction" title="Permalink to this heading"></a></h2>
 <p>Let us introduce the concept of <em>variable</em>. Like a wildcard, a variable indicates a placeholder that can match a hyperedge, but can then be used to refer to that matched hyperedge. In SH representation, an atom label that starts with upper case represents a variable. For example: <code class="docutils literal notranslate"><span class="pre">PLAYER/C</span></code>. One can define perfectly valid hyperedges that include variables, as well as wildcards, so for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">so</span><span class="p">}</span> <span class="n">PLAYER</span><span class="o">/</span><span class="n">C</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>

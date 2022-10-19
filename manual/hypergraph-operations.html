@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -112,11 +114,11 @@
            <div itemprop="articleBody">
              
   <section id="basic-hypergraph-operations">
-<h1>Basic hypergraph operations<a class="headerlink" href="#basic-hypergraph-operations" title="Permalink to this headline"></a></h1>
+<h1>Basic hypergraph operations<a class="headerlink" href="#basic-hypergraph-operations" title="Permalink to this heading"></a></h1>
 <p>At the heart of Graphbrain lies the Semantic Hypergraph (SH). In practical terms, we will talk simply about <em>hypergraphs</em>, and we will treat them as a type of database, which contains a searchable collection of hyperedges.</p>
 <p>Graphbrain provides abstractions to create, modify and search persistent hypergraph databases, as well as to define and manipulate hyperedges. In this section we introduce these basic operations, upon which all aspects of the library rely on.</p>
 <section id="the-two-central-functions-of-graphbrain-hgraph-and-hedge">
-<h2>The two central functions of Graphbrain: hgraph() and hedge()<a class="headerlink" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge" title="Permalink to this headline"></a></h2>
+<h2>The two central functions of Graphbrain: hgraph() and hedge()<a class="headerlink" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge" title="Permalink to this heading"></a></h2>
 <p>The root namespace <code class="docutils literal notranslate"><span class="pre">graphbrain</span></code> contains the two most fundamental functions of the library:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">hgraph(locator_string)</span></code>, which creates/opens a persistent hypergraph.</p></li>
@@ -125,7 +127,7 @@
 <p>In fact, the latter is implemented in <code class="docutils literal notranslate"><span class="pre">graphbrain.hyperedge</span></code>, but it is imported to the root namespace by default for convenience. We will see that, with just these two functions, a lot can be achieved.</p>
 </section>
 <section id="creating-and-manipulating-hyperedges">
-<h2>Creating and manipulating hyperedges<a class="headerlink" href="#creating-and-manipulating-hyperedges" title="Permalink to this headline"></a></h2>
+<h2>Creating and manipulating hyperedges<a class="headerlink" href="#creating-and-manipulating-hyperedges" title="Permalink to this heading"></a></h2>
 <p>Graphbrain defines the object class <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code>, which provides a variety of methods to work with hyperedges. The full interface of this class is described in the API reference. However, these objects are not meant to be instantiated directly. Instead, the <code class="docutils literal notranslate"><span class="pre">hedge</span></code> function can be used to create such an object directly from a string representation conforming to the SH notation. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
 <span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so mary/C chess/C)&#39;</span><span class="p">)</span>
@@ -160,7 +162,7 @@
 </div>
 </section>
 <section id="creating-and-populating-hypergraphs">
-<h2>Creating and populating hypergraphs<a class="headerlink" href="#creating-and-populating-hypergraphs" title="Permalink to this headline"></a></h2>
+<h2>Creating and populating hypergraphs<a class="headerlink" href="#creating-and-populating-hypergraphs" title="Permalink to this heading"></a></h2>
 <p>Graphbrain hypergraphs are created and/or opened like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hgraph</span>
 <span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
@@ -200,7 +202,7 @@
 <p>As with <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code>, the full range of methods of <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> is documented in the API reference.</p>
 </section>
 <section id="adding-many-hyperedges-as-a-batch-for-speed">
-<h2>Adding many hyperedges as a batch (for speed)<a class="headerlink" href="#adding-many-hyperedges-as-a-batch-for-speed" title="Permalink to this headline"></a></h2>
+<h2>Adding many hyperedges as a batch (for speed)<a class="headerlink" href="#adding-many-hyperedges-as-a-batch-for-speed" title="Permalink to this heading"></a></h2>
 <p>With some hypergraph database backends, as is the case for the default one (SQLite 3), adding a large number of edges can be much faster if done in a batch. To help define such bath operations, Graphbrain includes the <code class="docutils literal notranslate"><span class="pre">hopen()</span></code> context manager, to be used with Python’s <code class="docutils literal notranslate"><span class="pre">with</span></code> statements. This works in a very similarly to the <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">open...</span></code> expressions often used with files:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">hopen</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hg</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">large_edge_list</span><span class="p">:</span>
@@ -210,7 +212,7 @@
 <p>Since it never hurts performance, it is advisable to always use <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">hopen...</span></code> when adding large number of hyperedges to a hypergraph database.</p>
 </section>
 <section id="the-neighborhood-of-a-hyperedge-star">
-<h2>The neighborhood of a hyperedge (star)<a class="headerlink" href="#the-neighborhood-of-a-hyperedge-star" title="Permalink to this headline"></a></h2>
+<h2>The neighborhood of a hyperedge (star)<a class="headerlink" href="#the-neighborhood-of-a-hyperedge-star" title="Permalink to this heading"></a></h2>
 <p>Hypergraphs are fundamentally about relationships. In an analogous fashion to graphs/networks, the neighborhood of an entity (other entities that it is directly connected to) is a simple but powerful concept. With graphbrain, the <code class="docutils literal notranslate"><span class="pre">star()</span></code> method provides one type of neighborhood that is particularly natural for hypergraphs and has wide applicability: it produces the set of hyperedges that contain a given hyperedge. For example, let us populate a hypergraph like this:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(of/B.ma moon/C jupiter/C)&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(of/B.ma moon/C saturn/C)&#39;</span><span class="p">))</span>
@@ -237,7 +239,7 @@
 <p>The set <code class="docutils literal notranslate"><span class="pre">concepts</span></code> will then contain: <code class="docutils literal notranslate"><span class="pre">moon/C</span></code>, <code class="docutils literal notranslate"><span class="pre">jupiter/C</span></code>, <code class="docutils literal notranslate"><span class="pre">saturn/C</span></code>.</p>
 </section>
 <section id="hyperedges-containing-a-given-set-of-hyperedges">
-<h2>Hyperedges containing a given set of hyperedges<a class="headerlink" href="#hyperedges-containing-a-given-set-of-hyperedges" title="Permalink to this headline"></a></h2>
+<h2>Hyperedges containing a given set of hyperedges<a class="headerlink" href="#hyperedges-containing-a-given-set-of-hyperedges" title="Permalink to this heading"></a></h2>
 <p>The hypergraph database provides a very efficient way to query for all hyperedges that include a given set of hyperedges, with the method <code class="docutils literal notranslate"><span class="pre">edges_with_edges()</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/P mary/C chess/C)&#39;</span><span class="p">)</span>
 <span class="go">(plays/P mary/C chess/C)</span>
@@ -256,7 +258,7 @@
 </div>
 </section>
 <section id="searching-for-hyperedges">
-<h2>Searching for hyperedges<a class="headerlink" href="#searching-for-hyperedges" title="Permalink to this headline"></a></h2>
+<h2>Searching for hyperedges<a class="headerlink" href="#searching-for-hyperedges" title="Permalink to this heading"></a></h2>
 <p>Another fundamental way to query a hyperedge is by search patterns. Search patterns are templates that match hyperedges. Graphbrain provides a sophisticated pattern language that allows for semantically rich modes of matching. This will be discussed in greater detail in the next section. For now, let us just consider the wildcard <code class="docutils literal notranslate"><span class="pre">*</span></code>, which matches any hyperedge (atomic or not). For example, the pattern <code class="docutils literal notranslate"><span class="pre">(of/B.ma</span> <span class="pre">*</span> <span class="pre">*)</span></code> matches both of the previously defined hyperedges. The <code class="docutils literal notranslate"><span class="pre">search()</span></code> method of <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> allows for search using these patterns. Like <code class="docutils literal notranslate"><span class="pre">star()</span></code>, it returns a generator:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(of/B.ma * *)&#39;</span><span class="p">))</span>
 <span class="go">[(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]</span>
@@ -264,7 +266,7 @@
 </div>
 </section>
 <section id="degrees-and-deep-degrees">
-<h2>Degrees and deep degrees<a class="headerlink" href="#degrees-and-deep-degrees" title="Permalink to this headline"></a></h2>
+<h2>Degrees and deep degrees<a class="headerlink" href="#degrees-and-deep-degrees" title="Permalink to this heading"></a></h2>
 <p>In conventional graph theory, there is the notion of the degree of a node, which is the number of other nodes that it is directly connected to. This is a simple but generally useful measure of the <em>centrality</em> of a node in the graph. In hypergraphs we can also have the same notion of degree, with the only difference that a single hyperedge can connect one entity to several others. Graphbrain keeps track of the degree of every hyperedge, and the <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> class provides a method to obtain it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
@@ -299,7 +301,7 @@
 </div>
 </section>
 <section id="hyperedge-attributes">
-<h2>Hyperedge attributes<a class="headerlink" href="#hyperedge-attributes" title="Permalink to this headline"></a></h2>
+<h2>Hyperedge attributes<a class="headerlink" href="#hyperedge-attributes" title="Permalink to this heading"></a></h2>
 <p>The hypergraph database allows for the association of attributes to hyperedges. These can be strings, integer or floats, and are identified by a label. For example, one can associate a hyperedge to the text that it corresponds to:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;(in/B alice/C wonderland/C)&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;Alice in Wonderland&#39;</span><span class="p">)</span>
 <span class="go">True</span>
@@ -336,7 +338,7 @@
 </div>
 </section>
 <section id="local-and-global-counters">
-<h2>Local and global counters<a class="headerlink" href="#local-and-global-counters" title="Permalink to this headline"></a></h2>
+<h2>Local and global counters<a class="headerlink" href="#local-and-global-counters" title="Permalink to this heading"></a></h2>
 <p>Normally, when adding a hyperedge that already exists, nothing is changed. It is sometimes useful to count occurrences while adding hyperedges, and in this case the <code class="docutils literal notranslate"><span class="pre">count=True</span></code> optional argument can be specified when calling <code class="docutils literal notranslate"><span class="pre">add()</span></code>. This increments the <code class="docutils literal notranslate"><span class="pre">count</span></code> integer argument of the hyperedge every time it is added:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(counting/P sheep/C)&#39;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">(counting/P sheep/C)</span>
@@ -357,7 +359,7 @@
 </ul>
 </section>
 <section id="working-with-hyperedge-sequences">
-<h2>Working with hyperedge sequences<a class="headerlink" href="#working-with-hyperedge-sequences" title="Permalink to this headline"></a></h2>
+<h2>Working with hyperedge sequences<a class="headerlink" href="#working-with-hyperedge-sequences" title="Permalink to this heading"></a></h2>
 <p>The hypergraph database provides for a mechanism to organize hyperedges into sequences. This is useful when storing hyperedges extracted from natural language sources where the order in which they appear can be relevant. For example, we might be interested in parsing every sentence in a book into a hyperedge and then being able to know which hyperedges correspond to the sentence that came before and after.</p>
 <p>A hyperedge can be added to the end of a given sequence in the hypergraph (identified by a string label). For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add_to_sequence</span><span class="p">(</span><span class="s1">&#39;sentences&#39;</span><span class="p">,</span> <span class="s1">&#39;(is/P this/C (the/M (first/M sentence/C)))&#39;</span><span class="p">)</span>

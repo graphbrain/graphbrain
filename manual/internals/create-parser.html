@@ -15,7 +15,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -114,14 +116,14 @@
            <div itemprop="articleBody">
              
   <section id="creating-and-training-a-new-parser">
-<h1>Creating and training a new parser<a class="headerlink" href="#creating-and-training-a-new-parser" title="Permalink to this headline"></a></h1>
+<h1>Creating and training a new parser<a class="headerlink" href="#creating-and-training-a-new-parser" title="Permalink to this heading"></a></h1>
 <section id="extending-the-alphabeta-class">
-<h2>Extending the AlphaBeta class<a class="headerlink" href="#extending-the-alphabeta-class" title="Permalink to this headline"></a></h2>
+<h2>Extending the AlphaBeta class<a class="headerlink" href="#extending-the-alphabeta-class" title="Permalink to this heading"></a></h2>
 <p>TODO</p>
 <p>A skeleton for extending the <code class="docutils literal notranslate"><span class="pre">AlphaBeta</span></code> class and defining a new parser class can be found here: <a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/skeletons/parser_xx.py">https://github.com/graphbrain/graphbrain/blob/master/skeletons/parser_xx.py</a></p>
 </section>
 <section id="collecting-a-corpus-of-sample-texts">
-<h2>Collecting a corpus of sample texts<a class="headerlink" href="#collecting-a-corpus-of-sample-texts" title="Permalink to this headline"></a></h2>
+<h2>Collecting a corpus of sample texts<a class="headerlink" href="#collecting-a-corpus-of-sample-texts" title="Permalink to this heading"></a></h2>
 <p>TODO</p>
 <p>Files should be named by category and then number. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wikipedia1</span><span class="o">.</span><span class="n">txt</span>
@@ -134,21 +136,21 @@
 <p>This allows for the generation of balanced training datasets later on, as well as the testing of accuracy by category.</p>
 </section>
 <section id="extracting-sentences">
-<h2>Extracting sentences<a class="headerlink" href="#extracting-sentences" title="Permalink to this headline"></a></h2>
+<h2>Extracting sentences<a class="headerlink" href="#extracting-sentences" title="Permalink to this heading"></a></h2>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.extract-sentences --parser .parser_xx.ParserXX --infile parser-training-data/xx/text-samples/wikipedia1.txt --outfile parser-training-data/xx/sentences/wikipedia1.txt
 </pre></div>
 </div>
 </section>
 <section id="annotating-sentences-to-generate-a-parser-training-dataset">
-<h2>Annotating sentences to generate a parser training dataset<a class="headerlink" href="#annotating-sentences-to-generate-a-parser-training-dataset" title="Permalink to this headline"></a></h2>
+<h2>Annotating sentences to generate a parser training dataset<a class="headerlink" href="#annotating-sentences-to-generate-a-parser-training-dataset" title="Permalink to this heading"></a></h2>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.generate-parser-training-data --parser .parser_xx.ParserXX --indir parser-training-data/de/sentences --outfile parser-training-data/xx/sentence-parses.json
 </pre></div>
 </div>
 </section>
 <section id="splitting-into-training-and-testing-datasets">
-<h2>Splitting into training and testing datasets<a class="headerlink" href="#splitting-into-training-and-testing-datasets" title="Permalink to this headline"></a></h2>
+<h2>Splitting into training and testing datasets<a class="headerlink" href="#splitting-into-training-and-testing-datasets" title="Permalink to this heading"></a></h2>
 <p>To split the sentence parses dataset into training (66%) and testing (33%) datasets, the following script can be used:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.split-parser-training-data --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentence-parses.json
 </pre></div>
@@ -156,7 +158,7 @@
 <p>The files <code class="docutils literal notranslate"><span class="pre">sentence-parses-train.json</span></code> and <code class="docutils literal notranslate"><span class="pre">sentence-parses-test.json</span></code> will be created in the same directory as the original file, in this case <code class="docutils literal notranslate"><span class="pre">parser-training-data/xx</span></code>.</p>
 </section>
 <section id="generating-alpha-training-data">
-<h2>Generating alpha training data<a class="headerlink" href="#generating-alpha-training-data" title="Permalink to this headline"></a></h2>
+<h2>Generating alpha training data<a class="headerlink" href="#generating-alpha-training-data" title="Permalink to this heading"></a></h2>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.generate-alpha-training-data --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentence-parses.json --outfile parser-training-data/xx/atoms.csv
 </pre></div>
@@ -164,7 +166,7 @@
 <p>Notice that <code class="docutils literal notranslate"><span class="pre">atoms-train.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">atoms-test.csv</span></code> can be generated from the previous split.</p>
 </section>
 <section id="testing-the-alpha-stage">
-<h2>Testing the alpha stage<a class="headerlink" href="#testing-the-alpha-stage" title="Permalink to this headline"></a></h2>
+<h2>Testing the alpha stage<a class="headerlink" href="#testing-the-alpha-stage" title="Permalink to this heading"></a></h2>
 <p>With this script and the two datasets, it is now possible to test the accuracy of the alpha stage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.test-alpha --parser .parser_xx.ParserXX --infile parser-training-data/xx/atoms-test.csv --training_data parser-training-data/xx/atoms-train.csv
 </pre></div>
@@ -181,7 +183,7 @@
 </div>
 </section>
 <section id="manual-parser-testing">
-<h2>Manual parser testing<a class="headerlink" href="#manual-parser-testing" title="Permalink to this headline"></a></h2>
+<h2>Manual parser testing<a class="headerlink" href="#manual-parser-testing" title="Permalink to this heading"></a></h2>
 <p>The full parser can be manually tested. An interactive script is provided for this, that uses as input a sentence file generated by the <code class="docutils literal notranslate"><span class="pre">extract-sentences</span></code> script discussed above. Of course, it is necessary to use a text corpus different from the one used to train the parser to obtain meaningful results:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.manual-parser-test --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentences/manual-test-sentences.txt --outfile parser-training-data/de/manual-test-results.csv
 </pre></div>

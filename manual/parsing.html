@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -103,7 +105,7 @@
            <div itemprop="articleBody">
              
   <section id="parsing-natural-language">
-<h1>Parsing natural language<a class="headerlink" href="#parsing-natural-language" title="Permalink to this headline"></a></h1>
+<h1>Parsing natural language<a class="headerlink" href="#parsing-natural-language" title="Permalink to this heading"></a></h1>
 <p>Parsing natural language to semantic hypergraphs is another crucial aspect of Graphbrain. This aspect of the library is covered by the <code class="docutils literal notranslate"><span class="pre">graphbrain.parsers</span></code> package. Let us see how to create a parser, and how to use it to parse a sentence:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="n">create_parser</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
@@ -154,7 +156,7 @@
 <li><p>‘spacy_sentence’: the spaCy structure representing the sentence.</p></li>
 </ul>
 <section id="lemmas">
-<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this headline"></a></h2>
+<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this heading"></a></h2>
 <p>When creating a parser, it is possible to require it to also produce lemma relationships. Lemmas are linguistic roots of words, for example the infinitive tense of a verb or the singular form of a known. They are represented by Graphbrain in hyperedges like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">lemma</span><span class="o">/</span><span class="n">J</span><span class="o">/.</span> <span class="n">published</span><span class="o">/</span><span class="n">P</span><span class="o">/</span><span class="n">en</span> <span class="n">publish</span><span class="o">/</span><span class="n">P</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
 </pre></div>
@@ -199,7 +201,7 @@
 </div>
 </section>
 <section id="parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy">
-<h2>Parser-level coreference resolution and inference of gender, number and animacy<a class="headerlink" href="#parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy" title="Permalink to this headline"></a></h2>
+<h2>Parser-level coreference resolution and inference of gender, number and animacy<a class="headerlink" href="#parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy" title="Permalink to this heading"></a></h2>
 <p><strong>NOTE:</strong> Currently, the default distribution of Graphbrain does not support parser-level coreference resolution. Please refer to the installation instructions on how to build graphbrain with this feature.</p>
 <p>Currently, parser-level coreference resolution relies on neuralcoref, which requires Python ==3.7 and spaCy &gt;=2.1.0, &lt;3.0.0. These restrictions are the reason why we kept it out of the default distribution. Once the successor of neuralcoref is released, we hope to use it to enable parser-level coreference resolution by default in the default distribution.</p>
 <p>Consider the sentence:</p>

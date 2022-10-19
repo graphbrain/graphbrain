@@ -14,7 +14,9 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -77,9 +79,47 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphbrain.parsers.parser</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">graphbrain.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">graphbrain.constants</span> <span class="k">as</span> <span class="nn">const</span>
 
 <span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="n">UniqueAtom</span>
+
+
+<span class="k">def</span> <span class="nf">_edge2text</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">parse</span><span class="p">):</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">UniqueAtom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">all_atoms</span><span class="p">()]</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">parse</span><span class="p">[</span><span class="s1">&#39;atom2token&#39;</span><span class="p">][</span><span class="n">atom</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span>
+              <span class="k">if</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;atom2token&#39;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">prev_txt</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">txt_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">prev_txt</span><span class="p">]</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parse</span><span class="p">[</span><span class="s1">&#39;spacy_sentence&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span> 
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(.*?)</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">prev_txt</span><span class="p">),</span>
+                                            <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">txt</span><span class="p">)),</span>
+                        <span class="n">sentence</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">letter</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">sep</span><span class="p">):</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="n">txt_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
+        <span class="n">txt_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">prev_txt</span> <span class="o">=</span> <span class="n">txt</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt_parts</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_set_edges_text</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">_edge2text</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
+    <span class="n">hg</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
+            <span class="n">_set_edges_text</span><span class="p">(</span><span class="n">subedge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.parsers.parser.Parser">[docs]</a><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -132,7 +172,7 @@
                 <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">parse_results</span></div>
 
-    <span class="k">def</span> <span class="nf">parse_and_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">parse_and_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_text</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
             <span class="n">main_edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span>
@@ -146,9 +186,11 @@
                     <span class="n">hg</span><span class="o">.</span><span class="n">add_to_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">main_edge</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">main_edge</span><span class="p">)</span>
-                <span class="c1"># attach text to edge</span>
-                <span class="n">hg</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="n">main_edge</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+                <span class="c1"># attach text to edge and subedges</span>
+                <span class="n">_set_edges_text</span><span class="p">(</span><span class="n">main_edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">corefs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">unresolved_edge</span> <span class="o">!=</span> <span class="n">main_edge</span><span class="p">:</span>
+                         <span class="n">_set_edges_text</span><span class="p">(</span><span class="n">main_edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
                     <span class="n">coref_res_edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span>
                         <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">coref_res_pred</span><span class="p">,</span> <span class="n">unresolved_edge</span><span class="p">,</span> <span class="n">main_edge</span><span class="p">))</span>
                     <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">coref_res_edge</span><span class="p">)</span>

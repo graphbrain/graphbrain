@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -92,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="parsing-a-sentence">
-<h1>Parsing a sentence<a class="headerlink" href="#parsing-a-sentence" title="Permalink to this headline"></a></h1>
+<h1>Parsing a sentence<a class="headerlink" href="#parsing-a-sentence" title="Permalink to this heading"></a></h1>
 <p>Transforming a sentence in natural language into an hyperedge is the most fundamental and quintessential task one can perform with Graphbrain.</p>
 <p>We start by creating a parser, in this case for the English language:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="o">*</span>
@@ -113,7 +115,7 @@
 <p>Calling the <code class="docutils literal notranslate"><span class="pre">parse()</span></code> method on a parser object returns a collection of parses – one per sentence. Each parse object is a dictionary, where ‘main_edge’ contains the hyperedge that directly corresponds to the sentence. Hyperedge objects have a <code class="docutils literal notranslate"><span class="pre">to_str()</span></code> method that can be used to produce a string representation. The code above should cause a single hyperedge to be printed to the screen.</p>
 <p>Experiment with changing the text that is passed to the parser object and see what happens.</p>
 <section id="working-with-notebooks">
-<h2>Working with notebooks<a class="headerlink" href="#working-with-notebooks" title="Permalink to this headline"></a></h2>
+<h2>Working with notebooks<a class="headerlink" href="#working-with-notebooks" title="Permalink to this heading"></a></h2>
 <p>Jupyter notebooks are a particularly handy way to perform exploratory computation with Python, and very popular for scientific applications. Graphbrain is no exception. The notebook corresponding to this tutorial can be found here:</p>
 <p><a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb">https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb</a></p>
 <p>Notice how to import the utility functions that exist specifically for working with notebooks:</p>

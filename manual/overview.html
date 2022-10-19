@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -106,7 +108,7 @@
            <div itemprop="articleBody">
              
   <section id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h1>
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h1>
 <p>The <em>Semantic Hypergraph</em> is central to Graphbrain, both conceptually and functionally. It can be seen from three different perspectives:</p>
 <ul class="simple">
 <li><p>as an intermediary between natural and formal languages</p></li>
@@ -115,7 +117,7 @@
 </ul>
 <p>We will elaborate, but first let us discuss the general concept of <em>hypergraph</em>.</p>
 <section id="hypergraphs">
-<h2>Hypergraphs<a class="headerlink" href="#hypergraphs" title="Permalink to this headline"></a></h2>
+<h2>Hypergraphs<a class="headerlink" href="#hypergraphs" title="Permalink to this heading"></a></h2>
 <p>The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express n-ary relationships.</p>
 <p>While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing n-ary connections.</p>
 <p>We further generalize hypergraphs in two ways: hyperedges may be ordered and recursive. Ordering entails that the position in which a vertex participates in the hyperedge is relevant (a similarity can be drawn with the concept of directed graphs). Recursivity means that hyperedges can participate as vertices in other hyperedges, which is to say: relationships between entities can themselves play the role of entities in higher-order relationships.</p>
@@ -126,7 +128,7 @@
 <p>The above hyperedge connects the entities <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code> and <code class="docutils literal notranslate"><span class="pre">(d</span> <span class="pre">e</span> <span class="pre">f)</span></code>. <code class="docutils literal notranslate"><span class="pre">(d</span> <span class="pre">e</span> <span class="pre">f)</span></code> is itself a hyperedge, connecting the entitied <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code> and <code class="docutils literal notranslate"><span class="pre">f</span></code>.</p>
 </section>
 <section id="as-language-syntactic-rules">
-<h2>As language: syntactic rules<a class="headerlink" href="#as-language-syntactic-rules" title="Permalink to this headline"></a></h2>
+<h2>As language: syntactic rules<a class="headerlink" href="#as-language-syntactic-rules" title="Permalink to this heading"></a></h2>
 <p>In a general sense, the hyperedge is the fundamental and unifying construct that carries meaning within the formalism we propose. The syntactic rules are simple and universal: the first element in the hyperedge is a connector, followed by one or more arguments, possibly in a recursive fashion. It is syntactically valid to place any entity (i.e.: any arbitrary hyperedge or atom) in any of these two roles. A hyperedge defines a semantic construct by combining other semantic constructs. The purpose of the connector is to specify <em>in which sense</em> these inner constructs are connected.</p>
 <p>We illustrate with specific roles that a connector can play. For example, <strong>as predicate</strong>: in this case the hyperedge defines a proposition. For instance, the simple sentence “Berlin is nice” is represented as:</p>
 <p><code class="docutils literal notranslate"><span class="pre">(is</span> <span class="pre">berlin</span> <span class="pre">nice)</span></code></p>
@@ -144,7 +146,7 @@
 <p>Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to S-expressions. This is not purely accidental. Lisp is very close to λ-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of “race to space” and “race in space” are both associated to the concepts “race” and “space”, but the combination of these two concepts yields different meaning by application of either the connector “in” or “to”.</p>
 </section>
 <section id="as-knowledge-model">
-<h2>As knowledge model<a class="headerlink" href="#as-knowledge-model" title="Permalink to this headline"></a></h2>
+<h2>As knowledge model<a class="headerlink" href="#as-knowledge-model" title="Permalink to this heading"></a></h2>
 <img alt="Hypergraph vs. Graph" src="../_images/hyper-vs-graph.png" />
 <p>As cab be seen in the third example above, and thanks to nesting, it is possible to represent facts about facts. for instance, the fact that Mary states that Berlin is nice could be expressed by:</p>
 <p><code class="docutils literal notranslate"><span class="pre">(claims</span> <span class="pre">mary</span> <span class="pre">(is</span> <span class="pre">berlin</span> <span class="pre">nice))</span></code></p>
@@ -152,7 +154,7 @@
 <p>Thus, another relevant concept is that of a <em>claim</em>. A claim is an assertion that can be attributed to a source. We thus have a knowledge representation without the need for a notion of ground truth, where instead every assertion can be modeled as a claim by a hyperedge (source) of a hyperedge (fact). This is of particular importance, e.g. for the analysis of discussions on controversial topics, where multiple actors have contradictory views on a same issue.</p>
 </section>
 <section id="as-database">
-<h2>As database<a class="headerlink" href="#as-database" title="Permalink to this headline"></a></h2>
+<h2>As database<a class="headerlink" href="#as-database" title="Permalink to this heading"></a></h2>
 <p>At a more concrete level, Graphbrain provides an actual database system that allows for persistent storage and manipulation of semantic hypergraphs.</p>
 <p>The idea is for this database system to guarantee a certain interface (API), and allow for various backend implementations (e.g.: local, distributed, memory-only). This interface allows for fundamental tasks such as:</p>
 <ol class="arabic simple">
@@ -163,7 +165,7 @@
 <p>Currently there is a single backend implementation, that is based on LevelDB (a very efficient sorted key-value store that is stored in a local directory). Hypergraphs stored in this format can only be accessed by one process/thread at a time.</p>
 </section>
 <section id="knowledge-agents">
-<h2>Knowledge Agents<a class="headerlink" href="#knowledge-agents" title="Permalink to this headline"></a></h2>
+<h2>Knowledge Agents<a class="headerlink" href="#knowledge-agents" title="Permalink to this heading"></a></h2>
 <p>Knowledge agents are programs that manipulate hypergraphs in some way. They can be introspective, working only on the current contents of the hypergraph to derive new knowledge. For example, the <em>taxonomy</em> agent infers simple taxonomies from concepts. It can infer that ‘black cat’ is a type of ‘cat’ or that ‘city of Berlin’ is a type of ‘city’.</p>
 <p>It produces new hyperedges such as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">city</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">B</span> <span class="n">city</span><span class="o">/</span><span class="n">C</span> <span class="n">berlin</span><span class="o">/</span><span class="n">C</span><span class="p">))</span>
