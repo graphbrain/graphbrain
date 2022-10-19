@@ -14,6 +14,8 @@
 - Processor class.
 
 ### Changed
+- Coreference resolution now using the new spaCy experimental model.
+- Now using latest spaCy transformer models.
 - Improved Hyperedge.main_concepts().
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.
 - Improved wikipedia agent.

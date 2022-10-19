@@ -2,11 +2,11 @@
 Installation
 ============
 
-Graphbrain is compatible with 64-bit CPython >=3.6, <3.9 and runs on macOS, Linux and Windows. 
+Graphbrain is compatible with 64-bit CPython >=3.6, <=3.9 and runs on macOS, Linux and Windows. 
 
 We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. `For such cases or to build from the sources, check the prerequisites for your OS <#prerequisites>`_.
 
-Make sure you are using Python 3, with version >=3.6, <3.9. (==3.7 if you want to support parser-level coreference resolution, please read below)
+Make sure you are using Python 3, with version >=3.6, <=3.9.
 
 *Important for macOS users:* You will need to install a specific version of LevelDB before installing Graphbrain. Please refer to the prerequisites section below for details.
 
@@ -40,8 +40,11 @@ Then to switch to the virtual environment and install graphbrain::
 
 It is still necessary to download a spaCy language model::
 
-   $ python -m spacy download en_core_web_lg
+   $ python -m spacy download en_core_web_trf
 
+If you want to use coreference resolution, you will also need to install the following model::
+
+   pip install https://github.com/explosion/spacy-experimental/releases/download/v0.6.0/en_coreference_web_trf-3.4.0a0-py3-none-any.whl
 
 Install from the code repository (github)
 =========================================
@@ -64,31 +67,7 @@ Now we can build and install graphbrain::
 
    $ pip install .
 
-It is then necessary to download a spaCy language model::
-
-   $ python -m spacy download en_core_web_lg
-
-
-Building Graphbrain with parser-level coreference resolution support
---------------------------------------------------------------------
-
-Graphbrain's parser-level coreference resolution support relies on neuralcoref. This library currently introduces some aditional restrictions on the dependencies:
-
-* Python version ==3.7.*
-* spaCy version >=2.1.0, <3.0.0
-
-To accomodate this, the best solution is to install an appropriate spaCy version first::
-
-   $ pip install spacy==2.3.7
-
-It is still necessary to download a spaCy language model::
-
-   $ python -m spacy download en_core_web_lg
-
-The next step is to install neuralcoref from source, follwing the instructions in the repository:
-https://github.com/huggingface/neuralcoref
-
-Finally, Graphbrain can be installed from source, as per above.
+It is then necessary to download a spaCy language model and optionally the coreference resolution model, as detailed above.
 
 For developers
 --------------

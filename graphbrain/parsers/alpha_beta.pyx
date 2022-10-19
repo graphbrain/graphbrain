@@ -2,8 +2,6 @@ import traceback
 from collections import Counter
 from collections import defaultdict
 
-import spacy
-
 import graphbrain.constants as const
 from .parser import Parser
 from graphbrain.hyperedge import build_atom
@@ -12,12 +10,6 @@ from graphbrain.hyperedge import non_unique
 from graphbrain.hyperedge import unique
 from graphbrain.hyperedge import UniqueAtom
 from graphbrain.utils.concepts import has_common_or_proper_concept
-
-try:
-    import neuralcoref
-    NEURALCOREF = True
-except Exception:
-    NEURALCOREF = False
 
 
 class Rule:
@@ -87,9 +79,19 @@ def _apply_rule(rule, sentence, pos):
 
 
 class AlphaBeta(Parser):
-    def __init__(self, model_name, lemmas=False, corefs=False, beta='repair',
+    def __init__(self, nlp, lemmas=False, corefs=False, beta='repair',
                  normalize=True, post_process=True):
         super().__init__(lemmas=lemmas, corefs=corefs)
+        self.nlp = nlp
+        if beta == 'strict':
+            self.rules = strict_rules
+        elif beta == 'repair':
+            self.rules = repair_rules
+        else:
+            raise RuntimeError('unkown beta stage: {}'.format(beta))
+        self.normalize = normalize
+        self.post_process = post_process
+
         self.atom2token = None
         self.temp_atoms = None
         self.orig_atom = None
@@ -102,22 +104,9 @@ class AlphaBeta(Parser):
         self.edge2coref = None
         self.cur_text = None
         self.extra_edges = set()
-        self.nlp = spacy.load(model_name)
         self.doc = None
         self.alpha = None
-        self.coref_component = None
-        if NEURALCOREF and corefs:
-            self.coref_component = neuralcoref.NeuralCoref(self.nlp.vocab)
-            self.nlp.add_pipe(self.coref_component, name='neuralcoref')
-        if beta == 'strict':
-            self.rules = strict_rules
-        elif beta == 'repair':
-            self.rules = repair_rules
-        else:
-            raise RuntimeError('unkown beta stage: {}'.format(beta))
         self.beta = beta
-        self.normalize = normalize
-        self.post_process = post_process
 
     # ========================================================================
     # Language-specific abstract methods, to be implemented in derived classes
@@ -662,11 +651,7 @@ class AlphaBeta(Parser):
         return {'parses': parses, 'inferred_edges': []}
 
     def sentences(self, text):
-        if self.coref_component:
-            self.nlp.remove_pipe('neuralcoref')
         doc = self.nlp(text.strip())
-        if self.coref_component:
-            self.nlp.add_pipe(self.coref_component, name='neuralcoref')
         return [str(sent).strip() for sent in doc.sents]
 
     def _coref_inferences(self, main_edge, edges):
@@ -742,15 +727,25 @@ class AlphaBeta(Parser):
                 self._edge2toks(subedge)
 
     def _resolve_corefs(self, parse_results):
-        if NEURALCOREF:
+        if self.corefs:
             for parse in parse_results['parses']:
                 if parse['main_edge'] is not None:
                     self._edge2toks(parse['main_edge'])
 
+            coref_clusters = []
+            i = 1
+            while True:
+                key = 'coref_clusters_{}'.format(i)
+                if key in self.doc.spans:
+                    coref_clusters.append(self.doc.spans[key])
+                    i += 1
+                else:
+                    break
+
             toks2resolved = {}
             clusters = {}
-            for cluster in self.doc._.coref_clusters:
-                mtoks = tuple(sorted(list(cluster.main)))
+            for cluster in coref_clusters:
+                mtoks = tuple(sorted(list(cluster[0])))
                 if mtoks in self.toks2edge:
                     redge = self.toks2edge[mtoks]
                     clusters[redge] = []
@@ -771,8 +766,14 @@ class AlphaBeta(Parser):
                         self.edge2coref[edge] = redge
 
             for parse in parse_results['parses']:
-                parse['resolved_corefs'] = self._resolve_corefs_edge(
-                    parse['main_edge'])
+                resolved_edge = parse['main_edge']
+                while True:
+                    edge = self._resolve_corefs_edge(resolved_edge)
+                    if edge == resolved_edge:
+                        break
+                    else:
+                        resolved_edge = edge
+                parse['resolved_corefs'] = resolved_edge
 
             parse_results['inferred_edges'] = inferred_edges
         else:

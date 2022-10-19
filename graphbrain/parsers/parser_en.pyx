@@ -1,5 +1,7 @@
 import pkg_resources
 
+import spacy
+
 from graphbrain import hedge
 from graphbrain.parsers.alpha import Alpha
 from graphbrain.parsers.alpha_beta import AlphaBeta
@@ -44,9 +46,17 @@ _p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en",
 class ParserEN(AlphaBeta):
     def __init__(self, lemmas=False, corefs=False, beta='repair',
                  normalize=True, post_process=True):
-        super().__init__('en_core_web_lg', lemmas=lemmas,
-                         corefs=corefs, beta=beta, normalize=normalize,
-                         post_process=post_process)
+        nlp = spacy.load('en_core_web_trf')
+        if corefs:
+            nlp_coref = spacy.load('en_coreference_web_trf')
+            nlp.add_pipe(
+                'transformer', name='coref_transformer', source=nlp_coref) 
+            nlp.add_pipe('coref', source=nlp_coref)
+            nlp.add_pipe('span_resolver', source=nlp_coref)
+            nlp.add_pipe('span_cleaner', source=nlp_coref)
+             
+        super().__init__(nlp, lemmas=lemmas, corefs=corefs, beta=beta,
+                         normalize=normalize, post_process=post_process)
         self.lang = LANG
         cases_str = pkg_resources.resource_string(
             'graphbrain', 'data/atoms-en.csv').decode('utf-8')
