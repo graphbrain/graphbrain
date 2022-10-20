@@ -129,14 +129,17 @@ def show(edge, style='indented'):
 def _edge2html_vblocks(edge):
     tcolor = TYPE_COLORS[edge.type()[0]]
     if edge.is_atom():
-        html_root = '<span style="color:#fdf6e3;font-weight:bold">{}'\
+        html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
                     '</span>'.format(edge.root())
-        parts = '/'.join(edge.parts()[1:])
-        html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}'\
-                     '</span>'.format(parts)
+        parts = edge.parts()
+        if len(parts) > 1:
+            parts_str = '/'.join(edge.parts()[1:])
+            html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}'\
+                         '</span>'.format(parts_str)
+            html_atom = ''.join((html_atom, html_parts))
         html = '<div style="padding:5px;background-color:{};'\
-               'border:2px solid #fdf6e3;border-radius:10px">{}{}'\
-               '</div>'.format(tcolor, html_root, html_parts)
+               'border:2px solid #fdf6e3;border-radius:10px">{}'\
+               '</div>'.format(tcolor, html_atom)
         return html
     elif len(edge) == 2 or all(subedge.is_atom() for subedge in edge):
         conn_html = _edge2html_vblocks(edge[0])
@@ -195,15 +198,17 @@ def vblocks(edge, subtypes=False, argroles=True, namespaces=False):
 def _edge2html_blocks(edge):
     tcolor = TYPE_COLORS[edge.type()[0]]
     if edge.is_atom():
-        html_root = '<span style="color:#fdf6e3;font-weight:bold">{}'\
+        html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
                     '</span>'.format(edge.root())
-        parts = '/'.join(edge.parts()[1:])
-        html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}'\
-                     '</span>'.format(parts)
+        parts = edge.parts()
+        if len(parts) > 1:
+            parts_str = '/'.join(edge.parts()[1:])
+            html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}'\
+                         '</span>'.format(parts_str)
+            html_atom = ''.join((html_atom, html_parts))
         html = '<div style="padding:5px;background-color:{};'\
-               'border:2px solid #fdf6e3; border-radius:10px;'\
-               'text-align:center">{}{}</div>'.format(
-                tcolor, html_root, html_parts)
+               'border:2px solid #fdf6e3;border-radius:10px;'\
+               'text-align:center">{}</div>'.format(tcolor, html_atom)
         return html
     elif len(edge) > 2:
         conn_html = _edge2html_blocks(edge[0])
