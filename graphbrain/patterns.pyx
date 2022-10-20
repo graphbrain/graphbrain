@@ -282,9 +282,11 @@ def _match_lemma(lemma_pattern, edge, hg):
 def _matches_fun_pat(edge, fun_pattern, hg):
     fun = fun_pattern[0].root()
     if fun == 'var':
-        var_name = fun_pattern[1].root()
+        if len(fun_pattern) != 3:
+            raise RuntimeError('var pattern function must have two arguments')
+        pattern = fun_pattern[1]
+        var_name = fun_pattern[2].root()
         curvars = {var_name: edge}
-        pattern = fun_pattern[2]
         result = []
         for vars in match_pattern(edge, pattern, hg=hg):
             result.append({**curvars, **vars})
