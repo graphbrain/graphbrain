@@ -94,17 +94,6 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.processor">processor module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#corefs-package">corefs package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#names-module">names module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#onto-module">onto module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#meaning-package">meaning package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.meaning.extractor">extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.meaning.tests">tests module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.meaning.case_generators">case_generator module</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#memory-package">memory package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.memory.leveldb">leveldb module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.memory.permutations">permutations module</a></li>
@@ -128,9 +117,20 @@
 <li class="toctree-l3"><a class="reference internal" href="#utils-package">utils package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.concepts">concepts module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.conjunctions">conjunctions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.corefs">corefs module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.lemmas">lemmas module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.number">number module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.ontology">ontology module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#processors-package">processors package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.processors.actors">actors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.processors.claims">claims module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.processors.conflicts">conflicts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.processors.names">names module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">number module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.processors.onto">onto module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.processors.taxonomy">taxonomy module</a></li>
 </ul>
 </li>
 </ul>
@@ -1162,27 +1162,6 @@ produces the result: None</p>
 <section id="module-graphbrain.processor">
 <span id="processor-module"></span><h2>processor module<a class="headerlink" href="#module-graphbrain.processor" title="Permalink to this heading"></a></h2>
 </section>
-<section id="corefs-package">
-<h2>corefs package<a class="headerlink" href="#corefs-package" title="Permalink to this heading"></a></h2>
-<section id="names-module">
-<h3>names module<a class="headerlink" href="#names-module" title="Permalink to this heading"></a></h3>
-</section>
-<section id="onto-module">
-<h3>onto module<a class="headerlink" href="#onto-module" title="Permalink to this heading"></a></h3>
-</section>
-</section>
-<section id="meaning-package">
-<h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this heading"></a></h2>
-<section id="module-graphbrain.meaning.extractor">
-<span id="extractor-module"></span><h3>extractor module<a class="headerlink" href="#module-graphbrain.meaning.extractor" title="Permalink to this heading"></a></h3>
-</section>
-<section id="module-graphbrain.meaning.tests">
-<span id="tests-module"></span><h3>tests module<a class="headerlink" href="#module-graphbrain.meaning.tests" title="Permalink to this heading"></a></h3>
-</section>
-<section id="module-graphbrain.meaning.case_generators">
-<span id="case-generator-module"></span><h3>case_generator module<a class="headerlink" href="#module-graphbrain.meaning.case_generators" title="Permalink to this heading"></a></h3>
-</section>
-</section>
 <section id="memory-package">
 <h2>memory package<a class="headerlink" href="#memory-package" title="Permalink to this heading"></a></h2>
 <section id="module-graphbrain.memory.leveldb">
@@ -1436,6 +1415,49 @@ found. May be the edge itself.</p>
 <section id="module-graphbrain.utils.conjunctions">
 <span id="conjunctions-module"></span><h3>conjunctions module<a class="headerlink" href="#module-graphbrain.utils.conjunctions" title="Permalink to this heading"></a></h3>
 </section>
+<section id="module-graphbrain.utils.corefs">
+<span id="corefs-module"></span><h3>corefs module<a class="headerlink" href="#module-graphbrain.utils.corefs" title="Permalink to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.corefs.are_corefs">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.corefs.</span></span><span class="sig-name descname"><span class="pre">are_corefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corefs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/corefs.html#are_corefs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.corefs.are_corefs" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the two given edges are coreferences.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.corefs.coref_id">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.corefs.</span></span><span class="sig-name descname"><span class="pre">coref_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/corefs.html#coref_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.corefs.coref_id" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the coreference identifier of the edge.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.corefs.coref_set">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.corefs.</span></span><span class="sig-name descname"><span class="pre">coref_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corefs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/corefs.html#coref_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.corefs.coref_set" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the set of coreferences that the given edge belongs to.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.corefs.main_coref">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.corefs.</span></span><span class="sig-name descname"><span class="pre">main_coref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/corefs.html#main_coref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.corefs.main_coref" title="Permalink to this definition"></a></dt>
+<dd><p>Returns main edge for the coreference set that the given edge
+belongs to.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.corefs.main_coref_from_id">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.corefs.</span></span><span class="sig-name descname"><span class="pre">main_coref_from_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cref_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/corefs.html#main_coref_from_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.corefs.main_coref_from_id" title="Permalink to this definition"></a></dt>
+<dd><p>Returns main edge in the coreference set for the given identifier.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.utils.corefs.make_corefs">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.utils.corefs.</span></span><span class="sig-name descname"><span class="pre">make_corefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/utils/corefs.html#make_corefs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.utils.corefs.make_corefs" title="Permalink to this definition"></a></dt>
+<dd><p>Make the two given edges belong to the same corefernce set.</p>
+<p>This may trigger further updates to maintain consistency, such as
+merging existing coreference sets and recomputing the main edge of
+a coreference set.</p>
+</dd></dl>
+
+</section>
 <section id="module-graphbrain.utils.lemmas">
 <span id="lemmas-module"></span><h3>lemmas module<a class="headerlink" href="#module-graphbrain.utils.lemmas" title="Permalink to this heading"></a></h3>
 <dl class="py function">
@@ -1491,6 +1513,48 @@ the degree and deep degree of that edge.</p>
 <dd><p>Returns all supertypes of the given edge.</p>
 </dd></dl>
 
+</section>
+</section>
+<section id="processors-package">
+<h2>processors package<a class="headerlink" href="#processors-package" title="Permalink to this heading"></a></h2>
+<section id="module-graphbrain.processors.actors">
+<span id="actors-module"></span><h3>actors module<a class="headerlink" href="#module-graphbrain.processors.actors" title="Permalink to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.processors.actors.actors">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.processors.actors.</span></span><span class="sig-name descname"><span class="pre">actors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/processors/actors.html#actors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.processors.actors.actors" title="Permalink to this definition"></a></dt>
+<dd><p>“Returns an iterator over all actors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.processors.actors.find_actors">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.processors.actors.</span></span><span class="sig-name descname"><span class="pre">find_actors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/processors/actors.html#find_actors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.processors.actors.find_actors" title="Permalink to this definition"></a></dt>
+<dd><p>Returns set of all coreferences to actors found in the edge.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.processors.actors.is_actor">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.processors.actors.</span></span><span class="sig-name descname"><span class="pre">is_actor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/processors/actors.html#is_actor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.processors.actors.is_actor" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the edge is a coreference to an actor.</p>
+</dd></dl>
+
+</section>
+<section id="module-graphbrain.processors.claims">
+<span id="claims-module"></span><h3>claims module<a class="headerlink" href="#module-graphbrain.processors.claims" title="Permalink to this heading"></a></h3>
+</section>
+<section id="module-graphbrain.processors.conflicts">
+<span id="conflicts-module"></span><h3>conflicts module<a class="headerlink" href="#module-graphbrain.processors.conflicts" title="Permalink to this heading"></a></h3>
+</section>
+<section id="module-graphbrain.processors.names">
+<span id="names-module"></span><h3>names module<a class="headerlink" href="#module-graphbrain.processors.names" title="Permalink to this heading"></a></h3>
+</section>
+<section id="id1">
+<h3>number module<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<span class="target" id="module-graphbrain.processors.number"></span></section>
+<section id="module-graphbrain.processors.onto">
+<span id="onto-module"></span><h3>onto module<a class="headerlink" href="#module-graphbrain.processors.onto" title="Permalink to this heading"></a></h3>
+</section>
+<section id="module-graphbrain.processors.taxonomy">
+<span id="taxonomy-module"></span><h3>taxonomy module<a class="headerlink" href="#module-graphbrain.processors.taxonomy" title="Permalink to this heading"></a></h3>
 </section>
 </section>
 </section>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphbrain.processors.actors &mdash; Graphbrain 0.6.0-dev documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+            <a href="../../../index.html">
+            <img src="../../../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
+    </a>
+    </div>
+    
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials and examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../manual.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../thanks.html">Thanks</a></li>
+</ul>
+
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #333" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Graphbrain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>graphbrain.processors.actors</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphbrain.processors.actors</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="kn">from</span> <span class="nn">graphbrain.utils.corefs</span> <span class="kn">import</span> <span class="n">main_coref</span>
+<span class="kn">from</span> <span class="nn">graphbrain.processor</span> <span class="kn">import</span> <span class="n">Processor</span>
+<span class="kn">from</span> <span class="nn">graphbrain.utils.concepts</span> <span class="kn">import</span> <span class="n">has_proper_concept</span><span class="p">,</span> <span class="n">strip_concept</span>
+<span class="kn">from</span> <span class="nn">graphbrain.utils.lemmas</span> <span class="kn">import</span> <span class="n">deep_lemma</span>
+
+
+<div class="viewcode-block" id="is_actor"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.processors.actors.is_actor">[docs]</a><span class="k">def</span> <span class="nf">is_actor</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks if the edge is a coreference to an actor.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hg</span><span class="o">.</span><span class="n">exists</span><span class="p">((</span><span class="s1">&#39;actor/P/.&#39;</span><span class="p">,</span> <span class="n">main_coref</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="find_actors"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.processors.actors.find_actors">[docs]</a><span class="k">def</span> <span class="nf">find_actors</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns set of all coreferences to actors found in the edge.&quot;&quot;&quot;</span>
+    <span class="n">actors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">is_actor</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="n">actors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">main_coref</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
+            <span class="n">actors</span> <span class="o">|=</span> <span class="n">find_actors</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">actors</span></div>
+
+
+<div class="viewcode-block" id="actors"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.processors.actors.actors">[docs]</a><span class="k">def</span> <span class="nf">actors</span><span class="p">(</span><span class="n">hg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;&quot;Returns an iterator over all actors.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(actor/P/. *)&#39;</span><span class="p">)]</span></div>
+
+
+<span class="n">ACTOR_PRED_LEMMAS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;say&#39;</span><span class="p">,</span> <span class="s1">&#39;claim&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;kill&#39;</span><span class="p">,</span> <span class="s1">&#39;accuse&#39;</span><span class="p">,</span> <span class="s1">&#39;condemn&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;slam&#39;</span><span class="p">,</span> <span class="s1">&#39;arrest&#39;</span><span class="p">,</span> <span class="s1">&#39;clash&#39;</span><span class="p">,</span> <span class="s1">&#39;blame&#39;</span><span class="p">,</span> <span class="s1">&#39;want&#39;</span><span class="p">,</span> <span class="s1">&#39;call&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;tell&#39;</span><span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">Actors</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">hg</span><span class="o">=</span><span class="n">hg</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actor_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">process_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+            <span class="n">ct</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">connector_type</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ct</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span>
+                <span class="n">subjects</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">edges_with_argrole</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">subject</span> <span class="o">=</span> <span class="n">strip_concept</span><span class="p">(</span><span class="n">subjects</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">subject</span> <span class="ow">and</span> <span class="n">has_proper_concept</span><span class="p">(</span><span class="n">subject</span><span class="p">):</span>
+                        <span class="n">pred</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">dlemma</span> <span class="o">=</span> <span class="n">deep_lemma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span><span class="o">.</span><span class="n">root</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">dlemma</span> <span class="ow">in</span> <span class="n">ACTOR_PRED_LEMMAS</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">actor</span> <span class="o">=</span> <span class="n">main_coref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">actor_counter</span><span class="p">[</span><span class="n">actor</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">on_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">actor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor_counter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s1">&#39;actor/P/.&#39;</span><span class="p">,</span> <span class="n">actor</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;actors found: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actor_counter</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022 CNRS.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
