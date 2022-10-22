@@ -206,6 +206,12 @@ in this case, edge.all_atoms() returns:
 Otherwise returns empty string.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.atom">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">atom</span></span><a class="headerlink" href="#graphbrain.hyperedge.Atom.atom" title="Permalink to this definition"></a></dt>
+<dd><p>True if edge is an atom.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.atom_with_type">
 <span class="sig-name descname"><span class="pre">atom_with_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.atom_with_type" title="Permalink to this definition"></a></dt>
@@ -227,6 +233,17 @@ b/Cp</p>
 (the/Md (of/Br mayor/Cc (the/Md city/Cs)))
 in this case, edge.atoms() returns:
 [the/Md, of/Br, mayor/Cc, city/Cs]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.connector_atom">
+<span class="sig-name descname"><span class="pre">connector_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.connector_atom" title="Permalink to this definition"></a></dt>
+<dd><p>The inner atom of the connector.</p>
+<p>For example, condider:
+(does/M (not/M like/P.so) john/C chess/C)
+The connector atom is:
+like/P.so</p>
+<p>The connector atom of an atom is None.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -258,6 +275,24 @@ deep – search recursively (default: False)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.inner_atom">
+<span class="sig-name descname"><span class="pre">inner_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.inner_atom" title="Permalink to this definition"></a></dt>
+<dd><p>The inner atom inside of a modifier structure.</p>
+<p>For example, condider:
+(red/M shoes/C)
+The inner atom is:
+shoes/C
+Or, the more complex case:
+((and/J slow/M steady/M) go/P)
+Yields:
+gp/P</p>
+<p>This method should not be used on structures that contain more than
+one inner atom, for example concepts constructed with builders or
+relations.</p>
+<p>The inner atom of an atom is itself.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.insert_argrole">
 <span class="sig-name descname"><span class="pre">insert_argrole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argrole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.insert_argrole" title="Permalink to this definition"></a></dt>
 <dd><p>Returns an atom with the given argrole inserted at the specified
@@ -278,9 +313,9 @@ returns:
 (a (d e) b c)</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.is_atom">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_atom</span></span><a class="headerlink" href="#graphbrain.hyperedge.Atom.is_atom" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.is_atom" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if edge is an atom.</p>
 </dd></dl>
 
@@ -301,6 +336,12 @@ concept.</p>
 or the builder does not contain concept role annotations, or no
 concept is annotated as the main one, then an empty list is
 returned.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.not_atom">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">not_atom</span></span><a class="headerlink" href="#graphbrain.hyperedge.Atom.not_atom" title="Permalink to this definition"></a></dt>
+<dd><p>True if edge is not an atom.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -456,6 +497,12 @@ in this case, edge.all_atoms() returns:
 Otherwise returns empty string.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.atom">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">atom</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.atom" title="Permalink to this definition"></a></dt>
+<dd><p>True if edge is an atom.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.atom_with_type">
 <span class="sig-name descname"><span class="pre">atom_with_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.atom_with_type" title="Permalink to this definition"></a></dt>
@@ -487,6 +534,17 @@ end of this edge. ‘arguments’ must be a collection.</p>
 <p>For example, connecting the edge (a b) with the ‘arguments’
 (c d) produces:
 (a b c d)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.connector_atom">
+<span class="sig-name descname"><span class="pre">connector_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.connector_atom" title="Permalink to this definition"></a></dt>
+<dd><p>The inner atom of the connector.</p>
+<p>For example, condider:
+(does/M (not/M like/P.so) john/C chess/C)
+The connector atom is:
+like/P.so</p>
+<p>The connector atom of an atom is None.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -525,6 +583,24 @@ The edge is searched recursively, so the atom can appear at any depth.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.inner_atom">
+<span class="sig-name descname"><span class="pre">inner_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.inner_atom" title="Permalink to this definition"></a></dt>
+<dd><p>The inner atom inside of a modifier structure.</p>
+<p>For example, condider:
+(red/M shoes/C)
+The inner atom is:
+shoes/C
+Or, the more complex case:
+((and/J slow/M steady/M) go/P)
+Yields:
+gp/P</p>
+<p>This method should not be used on structures that contain more than
+one inner atom, for example concepts constructed with builders or
+relations.</p>
+<p>The inner atom of an atom is itself.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.insert_argrole">
 <span class="sig-name descname"><span class="pre">insert_argrole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argrole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.insert_argrole" title="Permalink to this definition"></a></dt>
 <dd><p>Returns an edge with the given argrole inserted at the specified
@@ -553,9 +629,9 @@ returns:
 (a (d e) b c)</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.is_atom">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_atom</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.is_atom" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.is_atom" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if edge is an atom.</p>
 </dd></dl>
 
@@ -576,6 +652,12 @@ concept.</p>
 or the builder does not contain concept role annotations, or no
 concept is annotated as the main one, then an empty list is
 returned.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.not_atom">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">not_atom</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.not_atom" title="Permalink to this definition"></a></dt>
+<dd><p>True if edge is not an atom.</p>
 </dd></dl>
 
 <dl class="py method">

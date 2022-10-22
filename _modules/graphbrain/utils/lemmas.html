@@ -89,7 +89,7 @@
 <span class="sd">    same_if_none -- if False, returns None when lemma does not exist. If True,</span>
 <span class="sd">    returns atom items when lemma does not exist. (default: False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="n">satom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">lemma_edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lemma_pred</span><span class="p">,</span> <span class="n">satom</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)):</span>
             <span class="k">return</span> <span class="n">lemma_edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -117,7 +117,7 @@
 <span class="sd">    same_if_none -- if False, returns None when lemma does not exist. If True,</span>
 <span class="sd">    returns atom items when lemma does not exist. (default: False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span><span class="n">same_if_none</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
@@ -131,7 +131,7 @@
 <span class="sd">    If the parameter edge is non-atomic, this function simply returns</span>
 <span class="sd">    the degree and deep degree of that edge.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="n">roots</span> <span class="o">=</span> <span class="p">{</span><span class="n">edge</span><span class="o">.</span><span class="n">root</span><span class="p">()}</span>
 
         <span class="c1"># find lemma</span>

@@ -94,7 +94,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">edge</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">strip_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span></div>
@@ -102,7 +102,7 @@
 
 <div class="viewcode-block" id="has_proper_concept"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.concepts.has_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check if the concept either is a proper edge, or contains one.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Cp&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
@@ -113,7 +113,7 @@
 
 <div class="viewcode-block" id="has_common_or_proper_concept"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.concepts.has_common_or_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_common_or_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check if the concept either is a common/proper edge, or contains one.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Cp&#39;</span> <span class="ow">or</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Cc&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
@@ -128,7 +128,7 @@
     <span class="n">concepts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
         <span class="n">concepts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
             <span class="n">concepts</span> <span class="o">|=</span> <span class="n">all_concepts</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">concepts</span></div>

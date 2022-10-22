@@ -117,7 +117,7 @@
 <span class="k">def</span> <span class="nf">_set_edges_text</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">):</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">_edge2text</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
     <span class="n">hg</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
             <span class="n">_set_edges_text</span><span class="p">(</span><span class="n">subedge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
 
