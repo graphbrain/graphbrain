@@ -162,6 +162,16 @@ class Hyperedge(tuple):
     def __new__(cls, edges):
         return super(Hyperedge, cls).__new__(cls, tuple(edges))
 
+    @property
+    def atom(self):
+        """True if edge is an atom."""
+        return False
+
+    @property
+    def not_atom(self):
+        """True if edge is not an atom."""
+        return True
+
     def is_atom(self):
         """Checks if edge is an atom."""
         return False
@@ -637,6 +647,16 @@ class Atom(Hyperedge):
         atom = super(Hyperedge, cls).__new__(cls, tuple(edge))
         atom.parens = parens
         return atom
+
+    @property
+    def atom(self):
+        """True if edge is an atom."""
+        return True
+
+    @property
+    def not_atom(self):
+        """True if edge is not an atom."""
+        return False    
 
     def is_atom(self):
         """Checks if edge is an atom."""
