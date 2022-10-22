@@ -317,8 +317,7 @@ returns:
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.is_atom">
 <span class="sig-name descname"><span class="pre">is_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.is_atom" title="Permalink to this definition"></a></dt>
 <dd><div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 1.21: </span>This decorator is retained for compatibility with the nose testing framework, which is being phased out.
-Please use the nose2 or pytest frameworks instead.</p>
+<p><span class="versionmodified deprecated">Deprecated since version 0.6.0: </span>Please use the properties .atom and .not_atom instead.</p>
 </div>
 <p>Checks if edge is an atom.</p>
 </dd></dl>
@@ -352,21 +351,6 @@ returned.</p>
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.parts">
 <span class="sig-name descname"><span class="pre">parts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.parts" title="Permalink to this definition"></a></dt>
 <dd><p>Splits atom into its parts.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.predicate">
-<span class="sig-name descname"><span class="pre">predicate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.predicate" title="Permalink to this definition"></a></dt>
-<dd><p>Returns predicate if this edge is a relation. Returns itself if it
-is a predicate. Returns None otherwise.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Atom.predicate_atom">
-<span class="sig-name descname"><span class="pre">predicate_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.predicate_atom" title="Permalink to this definition"></a></dt>
-<dd><p>Returns predicate atom if this edge is a non-atom of type
-relation or predicate. Returns itself if it is an atom of type
-predicate. Returns None otherwise.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -637,8 +621,7 @@ returns:
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.is_atom">
 <span class="sig-name descname"><span class="pre">is_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.is_atom" title="Permalink to this definition"></a></dt>
 <dd><div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 1.21: </span>This decorator is retained for compatibility with the nose testing framework, which is being phased out.
-Please use the nose2 or pytest frameworks instead.</p>
+<p><span class="versionmodified deprecated">Deprecated since version 0.6.0: </span>Please use the properties .atom and .not_atom instead.</p>
 </div>
 <p>Checks if edge is an atom.</p>
 </dd></dl>
@@ -666,21 +649,6 @@ returned.</p>
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.not_atom">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">not_atom</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.not_atom" title="Permalink to this definition"></a></dt>
 <dd><p>True if edge is not an atom.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.predicate">
-<span class="sig-name descname"><span class="pre">predicate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.predicate" title="Permalink to this definition"></a></dt>
-<dd><p>Returns predicate if this edge is a relation. Returns itself if it
-is a predicate. Returns None otherwise.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.predicate_atom">
-<span class="sig-name descname"><span class="pre">predicate_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.predicate_atom" title="Permalink to this definition"></a></dt>
-<dd><p>Returns predicate atom if this edge is a non-atom of type
-relation or predicate. Returns itself if it is an atom of type
-predicate. Returns None otherwise.</p>
 </dd></dl>
 
 <dl class="py method">

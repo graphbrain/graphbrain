@@ -141,7 +141,7 @@
 <div class="viewcode-block" id="Hypergraph.all_non_atoms"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.all_non_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">all_non_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a generator of all the edges that are not atoms.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">not_atom</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">edge</span></div>
 
 <div class="viewcode-block" id="Hypergraph.exists"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
@@ -476,7 +476,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021 CNRS.</p>
+    <p>&#169; Copyright 2022 CNRS.</p>
   </div>
 
    

@@ -100,7 +100,7 @@
     <span class="n">actors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">is_actor</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
         <span class="n">actors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">main_coref</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">not_atom</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
             <span class="n">actors</span> <span class="o">|=</span> <span class="n">find_actors</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">actors</span></div>
@@ -122,7 +122,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">actor_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">process_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">not_atom</span><span class="p">:</span>
             <span class="n">ct</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">connector_type</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">ct</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span>
                 <span class="n">subjects</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">edges_with_argrole</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
