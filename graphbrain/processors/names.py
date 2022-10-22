@@ -10,7 +10,7 @@ from graphbrain.utils.concepts import has_proper_concept
 
 
 def clean_edge(edge):
-    if not edge.is_atom():
+    if edge.not_atom:
         return hedge([clean_edge(subedge) for subedge in edge])
     root = edge.label()
     root = root.replace('_', '').replace('.', '')
@@ -18,7 +18,7 @@ def clean_edge(edge):
 
 
 def belongs_to_clique(edge, clique):
-    if edge.is_atom():
+    if edge.atom:
         return clean_edge(edge) in clique
     else:
         return all([clean_edge(x) in clique for x in edge[1:]])
@@ -43,7 +43,7 @@ def clique_number(edge, cliques, concepts):
 def main_concepts(edge):
     if not edge.type()[0] == 'C':
         return []
-    if edge.is_atom():
+    if edge.atom:
         return [edge]
     conn = edge[0]
     if conn.type()[0] == 'B':
@@ -67,7 +67,7 @@ def infer_concepts(edge):
     concepts = set()
     if edge.type()[0] == 'C':
         concepts.add(edge)
-    if not edge.is_atom():
+    if edge.not_atom:
         mc = main_concepts(edge)
         if len(mc) == 1:
             concepts.add(mc[0])
@@ -81,7 +81,7 @@ def extract_concepts(edge):
     concepts = set()
     if edge.type()[0] == 'C':
         concepts |= infer_concepts(edge)
-    if not edge.is_atom():
+    if edge.not_atom:
         for item in edge:
             for concept in extract_concepts(item):
                 concepts |= infer_concepts(concept)
@@ -131,7 +131,7 @@ class CorefsNames(Processor):
         return coref_sets
 
     def process_edge(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             conn = edge[0]
             ct = edge.connector_type()
             if ct[0] == 'B' and edge.connector_atom().root() == '+':

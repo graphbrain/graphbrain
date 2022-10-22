@@ -36,7 +36,7 @@ def _edge2text(edge, parse):
 def _set_edges_text(edge, hg, parse):
     text = _edge2text(edge, parse)
     hg.set_attribute(edge, 'text', text)
-    if not edge.is_atom():
+    if edge.not_atom:
         for subedge in edge:
             _set_edges_text(subedge, hg, parse)
 

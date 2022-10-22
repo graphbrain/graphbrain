@@ -311,7 +311,7 @@ class AlphaBeta(Parser):
         return build_atom(text, et, self.lang)
 
     def _repair(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             edge = hedge([self._repair(subedge) for subedge in edge])
 
             if edge.connector_type()[0] == 'B':
@@ -350,12 +350,12 @@ class AlphaBeta(Parser):
         return edge
 
     def _normalize(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             edge = hedge([self._normalize(subedge) for subedge in edge])
 
             # Move modifier to internal connector if it is applied to
             # relations, specifiers or conjunctions
-            if edge.connector_type()[0] == 'M' and not edge[1].is_atom():
+            if edge.connector_type()[0] == 'M' and not edge[1].atom:
                 innner_conn = edge[1].connector_type()[0]
                 if innner_conn in {'P', 'T', 'J'}:
                     return hedge(((edge[0], edge[1][0]),) + edge[1][1:])
@@ -363,7 +363,7 @@ class AlphaBeta(Parser):
         return edge
 
     def _is_temporal(self, edge):
-        if edge.is_atom():
+        if edge.atom:
             token = self.atom2token.get(UniqueAtom(edge))
             if token:
                 ent_type = self.atom2token[UniqueAtom(edge)].ent_type_
@@ -377,7 +377,7 @@ class AlphaBeta(Parser):
             return False
 
     def _post_process(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             edge = hedge([self._post_process(subedge) for subedge in edge])
 
             if edge.connector_type()[0] == 'T':
@@ -408,7 +408,7 @@ class AlphaBeta(Parser):
         self.extra_edges.add(lemma_edge)
 
     def _apply_arg_roles(self, edge):
-        if edge.is_atom():
+        if edge.atom:
             return edge
 
         new_entity = edge
@@ -661,7 +661,7 @@ class AlphaBeta(Parser):
         number_cnt = Counter()
         animacy_cnt = Counter()
         for edge in edges:
-            if edge.is_atom():
+            if edge.atom:
                 gender = self.atom_gender(edge)
                 if gender is not None:
                     gender_cnt[gender] += 1
@@ -701,7 +701,7 @@ class AlphaBeta(Parser):
         elif (edge in self.edge2coref and
               edge.type()[0] == self.edge2coref[edge].type()[0]):
             return self.edge2coref[edge]
-        elif edge.is_atom():
+        elif edge.atom:
             return edge
         # e.g. "ihr Hund", "son chien", "her dog", ...
         # (her/Mp dog/Cc) -> (poss/Bp.am/. mary/Cp dog/Cc)
@@ -722,7 +722,7 @@ class AlphaBeta(Parser):
                         if uatom in self.atom2token]))
         self.edge2toks[edge] = toks
         self.toks2edge[toks] = edge
-        if not edge.is_atom():
+        if edge.not_atom:
             for subedge in edge:
                 self._edge2toks(subedge)
 

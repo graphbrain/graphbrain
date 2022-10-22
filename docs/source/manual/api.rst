@@ -36,44 +36,6 @@ processor module
     :members:
 
 
-corefs package
-==============
-
-names module
-------------
-
-.. automodule:: graphbrain.corefs.names
-    :members:
-
-onto module
------------
-
-.. automodule:: graphbrain.corefs.onto
-    :members:
-
-
-meaning package
-===============
-
-extractor module
-----------------
-
-.. automodule:: graphbrain.meaning.extractor
-    :members:
-
-tests module
-------------
-
-.. automodule:: graphbrain.meaning.tests
-    :members:
-
-case_generator module
----------------------
-
-.. automodule:: graphbrain.meaning.case_generators
-    :members:
-
-
 memory package
 ==============
 
@@ -169,6 +131,12 @@ conjunctions module
 .. automodule:: graphbrain.utils.conjunctions
     :members:
 
+corefs module
+-------------
+
+.. automodule:: graphbrain.utils.corefs
+    :members:
+
 lemmas module
 -------------
 
@@ -185,4 +153,50 @@ ontology module
 ---------------
 
 .. automodule:: graphbrain.utils.ontology
+    :members:
+
+
+processors package
+==================
+
+actors module
+-------------
+
+.. automodule:: graphbrain.processors.actors
+    :members:
+
+claims module
+-------------
+
+.. automodule:: graphbrain.processors.claims
+    :members:
+
+conflicts module
+----------------
+
+.. automodule:: graphbrain.processors.conflicts
+    :members:
+
+names module
+------------
+
+.. automodule:: graphbrain.processors.names
+    :members:
+
+number module
+-------------
+
+.. automodule:: graphbrain.processors.number
+    :members:
+
+onto module
+-----------
+
+.. automodule:: graphbrain.processors.onto
+    :members:
+
+taxonomy module
+---------------
+
+.. automodule:: graphbrain.processors.taxonomy
     :members:

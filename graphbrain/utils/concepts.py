@@ -13,7 +13,7 @@ def strip_concept(edge):
     """
     if edge.type()[0] == 'C':
         return edge
-    elif not edge.is_atom():
+    elif edge.not_atom:
         return strip_concept(edge[1])
     else:
         return None
@@ -21,7 +21,7 @@ def strip_concept(edge):
 
 def has_proper_concept(edge):
     """Check if the concept either is a proper edge, or contains one."""
-    if edge.is_atom():
+    if edge.atom:
         return edge.type()[:2] == 'Cp'
     else:
         for subedge in edge[1:]:
@@ -32,7 +32,7 @@ def has_proper_concept(edge):
 
 def has_common_or_proper_concept(edge):
     """Check if the concept either is a common/proper edge, or contains one."""
-    if edge.is_atom():
+    if edge.atom:
         return edge.type()[:2] == 'Cp' or edge.type()[:2] == 'Cc'
     else:
         for subedge in edge[1:]:
@@ -47,7 +47,7 @@ def all_concepts(edge):
     concepts = set()
     if edge.type()[0] == 'C':
         concepts.add(edge)
-    if not edge.is_atom():
+    if edge.not_atom:
         for item in edge:
             concepts |= all_concepts(item)
     return concepts

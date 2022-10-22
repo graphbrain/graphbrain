@@ -8,7 +8,7 @@ def lemma(hg, atom, same_if_none=False):
     same_if_none -- if False, returns None when lemma does not exist. If True,
     returns atom items when lemma does not exist. (default: False)
     """
-    if atom.is_atom():
+    if atom.atom:
         satom = atom.simplify()
         for lemma_edge in hg.search((const.lemma_pred, satom, '*')):
             return lemma_edge[2]
@@ -36,7 +36,7 @@ def deep_lemma(hg, edge, same_if_none=False):
     same_if_none -- if False, returns None when lemma does not exist. If True,
     returns atom items when lemma does not exist. (default: False)
     """
-    if edge.is_atom():
+    if edge.atom:
         return lemma(hg, edge,same_if_none)
     else:
         return deep_lemma(hg, edge[1])
@@ -50,7 +50,7 @@ def lemma_degrees(hg, edge):
     If the parameter edge is non-atomic, this function simply returns
     the degree and deep degree of that edge.
     """
-    if edge.is_atom():
+    if edge.atom:
         roots = {edge.root()}
 
         # find lemma

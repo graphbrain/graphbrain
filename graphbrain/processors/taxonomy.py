@@ -8,7 +8,7 @@ class Taxonomy(Processor):
         self.relations = 0
 
     def process_edge(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             et = edge.type()
             if et[0] == 'C':
                 ct = edge[0].connector_type()

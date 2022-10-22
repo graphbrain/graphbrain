@@ -54,13 +54,13 @@ class Hypergraph(object):
     def all_atoms(self):
         """Returns a generator of all the atoms."""
         for edge in self.all():
-            if edge.is_atom():
+            if edge.atom:
                 yield edge
 
     def all_non_atoms(self):
         """Returns a generator of all the edges that are not atoms."""
         for edge in self.all():
-            if not edge.is_atom():
+            if edge.not_atom:
                 yield edge
 
     def exists(self, edge):
@@ -83,7 +83,7 @@ class Hypergraph(object):
         edge already exists, the counter is incremented.
         """
         if isinstance(edge, Hyperedge):
-            if edge.is_atom():
+            if edge.atom:
                 return edge
             else:
                 # recursively add all sub-edges as non-primary edges.
@@ -144,7 +144,7 @@ class Hypergraph(object):
         """
         pattern = hedge(pattern)
 
-        if pattern.is_atom() and len(pattern.parts()) == 1:
+        if pattern.atom and len(pattern.parts()) == 1:
             if pattern.parens:
                 return self.all_non_atoms()
             elif pattern[0][0] == '*':
@@ -267,7 +267,7 @@ class Hypergraph(object):
         If the parameter edge is non-atomic, this function simply returns
         the degree and deep degree of that edge.
         """
-        if edge.is_atom():
+        if edge.atom:
             atoms = tuple(self.atoms_with_root(edge.root()))
             d = sum([self.degree(atom) for atom in atoms])
             dd = sum([self.deep_degree(atom) for atom in atoms])

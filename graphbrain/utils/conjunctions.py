@@ -3,7 +3,7 @@ from graphbrain import hedge
 
 # TODO: make concepts decomposition configurable
 def conjunctions_decomposition(edge, concepts=False):
-    if edge.is_atom():
+    if edge.atom:
         return []
 
     # relationship conjunctions
@@ -36,7 +36,7 @@ def conjunctions_decomposition(edge, concepts=False):
     # concept conjunctions
     if concepts:
         for pos, subedge in enumerate(edge):
-            if not subedge.is_atom():
+            if not subedge.atom:
                 if subedge[0].type() == 'J' and subedge.type()[0] == 'C':
                     edges = []
                     for list_item in subedge[1:]:

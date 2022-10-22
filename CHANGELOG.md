@@ -17,6 +17,7 @@
 ### Changed
 - Coreference resolution now using the new spaCy experimental model.
 - Now using latest spaCy transformer models.
+- Hyperedge.is_atom() deprecated.
 - Improved Hyperedge.main_concepts().
 - Hyperedge.atom() renamed to .inner_atom().
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.

@@ -173,7 +173,12 @@ class Hyperedge(tuple):
         return True
 
     def is_atom(self):
-        """Checks if edge is an atom."""
+        """
+        .. deprecated:: 0.6.0
+            Please use the properties .atom and .not_atom instead.
+
+        Checks if edge is an atom.
+        """
         return False
 
     def to_str(self, roots_only=False):
@@ -629,7 +634,7 @@ class Hyperedge(tuple):
     def __add__(self, other):
         if type(other) in {tuple, list}:
             return Hyperedge(super(Hyperedge, self).__add__(other))
-        elif other.is_atom():
+        elif other.atom:
             return Hyperedge(super(Hyperedge, self).__add__((other,)))
         else:
             return Hyperedge(super(Hyperedge, self).__add__(other))
@@ -659,7 +664,12 @@ class Atom(Hyperedge):
         return False    
 
     def is_atom(self):
-        """Checks if edge is an atom."""
+        """
+        .. deprecated:: 0.6.0
+            Please use the properties .atom and .not_atom instead.
+
+        Checks if edge is an atom.
+        """
         return True
 
     def parts(self):
@@ -1019,7 +1029,7 @@ class Atom(Hyperedge):
     def __add__(self, other):
         if type(other) in {tuple, list}:
             return Hyperedge((self,) + other)
-        elif other.is_atom():
+        elif other.atom:
             return Hyperedge((self, other))
         else:
             return Hyperedge((self,) + other)
@@ -1027,17 +1037,17 @@ class Atom(Hyperedge):
 
 class UniqueAtom(Atom):
     def __init__(self, atom):
-        self.atom = atom
+        self._atom = atom
 
     def __hash__(self):
-        return id(self.atom)
+        return id(self._atom)
 
     def __eq__(self, other):
-        return id(self.atom) == id(other.atom)
+        return id(self._atom) == id(other._atom)
 
 
 def unique(edge):
-    if edge.is_atom():
+    if edge.atom:
         if type(edge) == UniqueAtom:
             return edge
         else:
@@ -1047,7 +1057,7 @@ def unique(edge):
 
 
 def non_unique(edge):
-    if edge.is_atom():
+    if edge.atom:
         if type(edge) == UniqueAtom:
             return edge.atom
         else:

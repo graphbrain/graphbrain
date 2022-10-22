@@ -22,11 +22,11 @@ class TestHyperedge(unittest.TestCase):
                          '((is my) (brain/1) (super great/1))')
 
     def test_is_atom(self):
-        self.assertTrue(hedge('a').is_atom())
-        self.assertTrue(hedge('graphbrain/C').is_atom())
-        self.assertTrue(hedge('graphbrain/Cn.p/1').is_atom())
-        self.assertTrue(hedge('(X/C)').is_atom())
-        self.assertFalse(hedge('(is/Pd.sc graphbrain/Cp.s great/C)').is_atom())
+        self.assertTrue(hedge('a').atom)
+        self.assertTrue(hedge('graphbrain/C').atom)
+        self.assertTrue(hedge('graphbrain/Cn.p/1').atom)
+        self.assertTrue(hedge('(X/C)').atom)
+        self.assertFalse(hedge('(is/Pd.sc graphbrain/Cp.s great/C)').atom)
 
     def test_atom_parts(self):
         self.assertEqual(hedge('graphbrain/C').parts(), ['graphbrain', 'C'])

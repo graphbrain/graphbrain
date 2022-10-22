@@ -82,7 +82,7 @@ class SQLite(Hypergraph):
         self.begin_transaction()
         key = _edge2key(edge)
         self._add_key(key, attributes)
-        if not edge.is_atom():
+        if edge.not_atom:
             self._write_edge_permutations(edge)
         self.end_transaction()
         return edge
@@ -115,7 +115,7 @@ class SQLite(Hypergraph):
                 self._inc_degrees(edge)
             else:
                 self._add_key(key, {'p': 0, 'd': 0, 'dd': 0})
-            if not edge.is_atom():
+            if edge.not_atom:
                 self._write_edge_permutations(edge)
         # if an edge is to be added as primary, but it already exists as
         # non-primary, then make it primary and update the degrees
@@ -129,7 +129,7 @@ class SQLite(Hypergraph):
         self.begin_transaction()
         primary = self.is_primary(edge)
 
-        if not edge.is_atom():
+        if edge.not_atom:
             if deep:
                 for child in edge:
                     self._remove(child, deep=True)
@@ -139,7 +139,7 @@ class SQLite(Hypergraph):
 
         key = _edge2key(edge)
         if self._exists_key(key):
-            if not edge.is_atom():
+            if edge.not_atom:
                 self._remove_edge_permutations(edge)
             self._remove_key(key)
         self.end_transaction()
@@ -401,7 +401,7 @@ class SQLite(Hypergraph):
                 if depth == 1:
                     self._inc_attribute_key(key, 'd')
                 self._inc_attribute_key(key, 'dd')
-        if not edge.is_atom():
+        if edge.not_atom:
             for child in edge:
                 self._inc_degrees(child, depth + 1)
 
@@ -411,6 +411,6 @@ class SQLite(Hypergraph):
             if depth == 1:
                 self._dec_attribute_key(key, 'd')
             self._dec_attribute_key(key, 'dd')
-        if not edge.is_atom():
+        if edge.not_atom:
             for child in edge:
                 self._dec_degrees(child, depth + 1)

@@ -79,7 +79,7 @@ class Claims(Processor):
         self.claims.append({'actor': actor, 'claim': claim, 'edge': edge})
 
     def process_edge(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             ct = edge.connector_type()
             if ct[0] == 'P':
                 pred = edge[0]

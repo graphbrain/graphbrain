@@ -19,7 +19,7 @@ def find_actors(hg, edge):
     actors = set()
     if is_actor(hg, edge):
         actors.add(main_coref(hg, edge))
-    if not edge.is_atom():
+    if edge.not_atom:
         for item in edge:
             actors |= find_actors(hg, item)
     return actors
@@ -41,7 +41,7 @@ class Actors(Processor):
         self.actor_counter = Counter()
 
     def process_edge(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             ct = edge.connector_type()
             if ct[0] == 'P':
                 subjects = edge.edges_with_argrole('s')

@@ -30,7 +30,7 @@ class Conflicts(Processor):
                             self.conflict_topics += 1
 
     def process_edge(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             ct = edge.connector_type()
             if ct[0] == 'P':
                 pred = edge[0]

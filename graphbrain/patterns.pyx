@@ -9,7 +9,7 @@ FUNS = {'var', 'atoms', 'lemma'}
 
 
 def is_fun_pattern(edge):
-    if edge.is_atom():
+    if edge.atom:
         return False
     return str(edge[0]) in FUNS
 
@@ -22,7 +22,7 @@ def is_pattern(edge):
     '\*', '.', '(\*)', '...' and variables (atom label starting with an
     uppercase letter)
     """
-    if edge.is_atom():
+    if edge.atom:
         return (edge.parens or
                 edge[0][0] in {'*', '.'} or
                 edge[0][:3] == '...' or
@@ -40,14 +40,14 @@ def is_full_pattern(edge):
     '\*', '.', '(\*)', '...' and variables (atom label starting with an
     uppercase letter)
     """
-    if edge.is_atom():
+    if edge.atom:
         return is_pattern(edge)
     else:
         return all(is_pattern(item) for item in edge)
 
 
 def apply_vars(edge, vars):
-    if edge.is_atom():
+    if edge.atom:
         if is_pattern(edge):
             varname = _varname(edge)
             if len(varname) > 0 and varname in vars:
@@ -66,13 +66,13 @@ def _matches_wildcard(edge, wildcard):
     # structural match
     struct_code = wparts[0][0]
     if struct_code == '.':
-        if not edge.is_atom():
+        if edge.not_atom:
             return False
     elif wildcard.parens:
-        if edge.is_atom():
+        if edge.atom:
             return False
     elif struct_code != '*' and not struct_code.isupper():
-        if not edge.is_atom():
+        if edge.not_atom:
             return False
         if edge.root() != wildcard.root():
             return False
@@ -155,7 +155,7 @@ def _matches_wildcard(edge, wildcard):
 
 
 def _varname(atom):
-    if not atom.is_atom():
+    if not atom.atom:
         return ''
     label = atom.parts()[0]
     if len(label) == 0:
@@ -170,7 +170,7 @@ def _varname(atom):
 
 # remove pattern functions from pattern, so that .argroles() works normally
 def _defun_pattern_argroles(edge):
-    if edge.is_atom():
+    if edge.atom:
         return edge
     
     if is_fun_pattern(edge):
@@ -261,7 +261,7 @@ def _match_lemma(lemma_pattern, edge, hg):
     if hg is None:
         raise RuntimeError('Lemma pattern function requires hypergraph.')
 
-    if not edge.is_atom():
+    if edge.not_atom:
         return []
 
     _lemma = lemma(hg, edge, same_if_none=True)
@@ -340,7 +340,7 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
     pattern = hedge(pattern)
 
     # atomic patterns
-    if pattern.is_atom():
+    if pattern.atom:
         if _matches_wildcard(edge, pattern):
             vars = {}
             if is_pattern(pattern):
@@ -392,7 +392,7 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
             eitem = edge[i]
             _result = []
             for vars in result:
-                if pitem.is_atom():
+                if pitem.atom:
                     varname = _varname(pitem)
                     if varname in curvars:
                         if curvars[varname] != eitem:
@@ -407,7 +407,7 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
                         continue
                     _result.append(vars)
                 else:
-                    # if not eitem.is_atom():
+                    # if not eitem.atom:
                     _result +=  match_pattern(
                         eitem, pitem, {**curvars, **vars}, hg=hg)
             result = _result
@@ -464,7 +464,7 @@ def edge_matches_pattern(edge, pattern, hg=None):
 
 
 def edge2pattern(edge, root=False, subtype=False):
-    if root and edge.is_atom():
+    if root and edge.atom:
         root_str = edge.root()
     else:
         root_str = '*'
@@ -481,7 +481,7 @@ def edge2pattern(edge, root=False, subtype=False):
 
 
 def inner_edge_matches_pattern(edge, pattern, hg=None):
-    if edge.is_atom():
+    if edge.atom:
         return False
     for subedge in edge:
         if edge_matches_pattern(subedge, pattern, hg=hg):
@@ -544,12 +544,12 @@ class PatternCounter:
         f_force_expansion |= force_expansion
         root = force_root | f_force_root
 
-        if f_force_expansion and not first.is_atom():
+        if f_force_expansion and not first.atom:
             hpats = []
         else:
             hpats = [edge2pattern(first, root=root, subtype=f_force_subtypes)]
 
-        if not first.is_atom() and (self._matches_expansions(first) or
+        if not first.atom and (self._matches_expansions(first) or
                                     f_force_expansion):
             hpats += self._list2patterns(
                 list(first), depth + 1, force_expansion=f_force_expansion,
@@ -576,7 +576,7 @@ class PatternCounter:
                                            force_expansion=False))
 
     def count(self, edge):
-        if not edge.is_atom():
+        if edge.not_atom:
             if self._matches_expansions(edge):
                 for pattern in self._edge2patterns(edge):
                     self.patterns[hedge(pattern)] += 1

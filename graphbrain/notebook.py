@@ -35,7 +35,7 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
 
     color_html = 'color:{}'.format(color)
 
-    if edge.is_atom():
+    if edge.atom:
         html = '<span style="{}">{}</span>'.format(
             color_html, escape(str(edge.root())))
 
@@ -47,7 +47,7 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
     else:
         et = edge.type()[0]
         arity = len(edge)
-        contains_edges = any(not child.is_atom() for child in edge)
+        contains_edges = any(not child.atom for child in edge)
         color_html = 'color:{}'.format(color)
 
         # render opening symbol
@@ -69,14 +69,14 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
                 if style == 'indented':
                     # edges with only two items are rendered in one line
                     child_indent = arity > 2
-                    if child_indent and child.is_atom() and not contains_edges:
+                    if child_indent and child.atom and not contains_edges:
                         child_indent = False
                 elif style == 'oneline':
                     child_indent = False
 
                 sep = ' '
 
-            if child.is_atom():
+            if child.atom:
                 child_html, _ = _edge2html_show(child,
                                                 style=style,
                                                 indent=child_indent)
@@ -127,7 +127,7 @@ def show(edge, style='indented'):
 
 def _edge2html_vblocks(edge):
     tcolor = TYPE_COLORS[edge.type()[0]]
-    if edge.is_atom():
+    if edge.atom:
         html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
                     '</span>'.format(edge.root())
         parts = edge.parts()
@@ -140,7 +140,7 @@ def _edge2html_vblocks(edge):
                'border:2px solid #fdf6e3;border-radius:10px">{}'\
                '</div>'.format(tcolor, html_atom)
         return html
-    elif len(edge) == 2 or all(subedge.is_atom() for subedge in edge):
+    elif len(edge) == 2 or all(subedge.atom for subedge in edge):
         conn_html = _edge2html_vblocks(edge[0])
         arg_htmls = ['<div style="display: table-cell;vertical-align: middle"'
                      '>{}</div>'.format(_edge2html_vblocks(arg))
@@ -196,7 +196,7 @@ def vblocks(edge, subtypes=False, argroles=True, namespaces=False):
 
 def _edge2html_blocks(edge):
     tcolor = TYPE_COLORS[edge.type()[0]]
-    if edge.is_atom():
+    if edge.atom:
         html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
                     '</span>'.format(edge.root())
         parts = edge.parts()

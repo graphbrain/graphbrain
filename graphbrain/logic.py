@@ -15,13 +15,13 @@ class Inference(object):
 
 
 def is_rule(edge):
-    if edge.is_atom():
+    if edge.atom:
         return False
     if len(edge) != 3:
         return False
     if edge[0].to_str() != ':-':
         return False
-    if edge[1].is_atom() or edge[2].is_atom():
+    if edge[1].atom or edge[2].atom:
         return False
     return True
 

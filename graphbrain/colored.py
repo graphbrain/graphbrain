@@ -47,7 +47,7 @@ def colored_edge(edge, colors=True):
         return None
     if not colors:
         return edge.to_str()
-    elif edge.is_atom():
+    elif edge.atom:
         return colored_atom(edge)
     else:
         return '({})'.format(
@@ -55,14 +55,14 @@ def colored_edge(edge, colors=True):
 
 
 def colored_diff(edge1, edge2):
-    if ((edge1.is_atom() != edge2.is_atom()) or
+    if ((edge1.atom != edge2.atom) or
             (len(edge1) != len(edge2)) or
-            (edge1.is_atom() and (edge1 != edge2))):
+            (edge1.atom and (edge1 != edge2))):
         dedge1 = colored(edge1.to_str(), 'red')
         dedge2 = colored(edge2.to_str(), 'red')
         return True, dedge1, dedge2
 
-    if edge1.is_atom():
+    if edge1.atom:
         return False, edge1.to_str(), edge2.to_str()
 
     dedge1 = []
@@ -82,7 +82,7 @@ def colored_diff(edge1, edge2):
 
 def indented(edge, colors=True, depth=0):
     lines = []
-    if edge.is_atom() or all([sedge.is_atom() for sedge in edge[1:]]):
+    if edge.atom or all([sedge.atom for sedge in edge[1:]]):
         lines.append(colored_edge(edge, colors=colors))
     else:
         if colors:
