@@ -356,8 +356,8 @@ class TestHyperedge(unittest.TestCase):
             hedge('(and/J (is/Pd.so graphbrain/Cp.s great/C))').type(), 'R')
 
     def test_connector_type(self):
-        self.assertEqual(hedge('graphbrain/Cp.s/1').connector_type(), 'Cp')
-        self.assertEqual(hedge('graphbrain').connector_type(), 'J')
+        self.assertEqual(hedge('graphbrain/Cp.s/1').connector_type(), None)
+        self.assertEqual(hedge('graphbrain').connector_type(), None)
         self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
                                'great/C)').connector_type(), 'Pd')
         self.assertEqual(hedge('(red/M shoes/Cn.p)').connector_type(), 'M')

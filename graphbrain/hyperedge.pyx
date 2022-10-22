@@ -412,8 +412,8 @@ class Hyperedge(tuple):
 
     def connector_type(self):
         """Returns the type of the edge's connector.
-        If the edge has no connector (i.e. it's an atom), then the atom
-        type is returned.
+        If the edge has no connector (i.e. it's an atom), then None is
+        returned.
         """
         return self[0].type()
 
@@ -868,10 +868,10 @@ class Atom(Hyperedge):
 
     def connector_type(self):
         """Returns the type of the edge's connector.
-        If the edge has no connector (i.e. it's an atom), then the atom
-        type is returned.
+        If the edge has no connector (i.e. it's an atom), then None is
+        returned.
         """
-        return self.type()
+        return None
 
     def atom_with_type(self, atom_type):
         """Returns the first atom found in the edge that has the given
