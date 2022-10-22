@@ -1,7 +1,6 @@
 from html import escape
 
-from IPython.core.display import display
-from IPython.core.display import HTML
+from IPython.display import display, HTML
 
 from graphbrain import hedge
 from graphbrain.meaning.case_generators import InteractiveCaseGenerator
