@@ -440,38 +440,6 @@ class Hyperedge(tuple):
         """
         return self.atom_with_type(atom_type) is not None
 
-    def predicate(self):
-        """Returns predicate if this edge is a relation. Returns itself if it
-        is a predicate. Returns None otherwise.
-        """
-        if self.type()[0] == 'R':
-            if self[0].type()[0] == 'P':
-                return self[0]
-            else:
-                return self[1].predicate()
-        elif self.type()[0] == 'P':
-            return self
-        else:
-            return None
-
-    def predicate_atom(self):
-        """Returns predicate atom if this edge is a non-atom of type
-        relation or predicate. Returns itself if it is an atom of type
-        predicate. Returns None otherwise.
-        """
-        ct = self[0].type()[0]
-        if ct == 'J':
-            return self[1].predicate_atom()
-        et = self.type()[0]
-        if et == 'R':
-            if ct == 'M':
-                return self[1].predicate_atom()
-            else:
-                return self[0].predicate_atom()
-        elif et == 'P':
-            return self[1].predicate_atom()
-        return None
-
     def argroles(self):
         """Returns the argument roles string of the edge, if it exists.
         Otherwise returns empty string.
@@ -922,23 +890,6 @@ class Atom(Hyperedge):
             return self
         else:
             return None
-
-    def predicate(self):
-        """Returns predicate if this edge is a relation. Returns itself if it
-        is a predicate. Returns None otherwise.
-        """
-        if self.type()[0] == 'P':
-            return self
-        return None
-
-    def predicate_atom(self):
-        """Returns predicate atom if this edge is a non-atom of type
-        relation or predicate. Returns itself if it is an atom of type
-        predicate. Returns None otherwise.
-        """
-        if self.type()[0] == 'P':
-            return self
-        return None
 
     def argroles(self):
         """Returns the argument roles string of the edge, if it exists.

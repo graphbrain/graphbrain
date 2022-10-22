@@ -1,6 +1,18 @@
 from graphbrain import hedge
 
 
+def predicate(edge):
+    if edge.type()[0] == 'R':
+        if edge[0].type()[0] == 'P':
+            return edge[0]
+        else:
+            return predicate(edge[1])
+    elif edge.type()[0] == 'P':
+        return edge
+    else:
+        return None
+
+
 # TODO: make concepts decomposition configurable
 def conjunctions_decomposition(edge, concepts=False):
     if edge.atom:
@@ -26,7 +38,7 @@ def conjunctions_decomposition(edge, concepts=False):
                 cur_subj = passive[0]
                 cur_role = 'p'
             elif cur_subj is not None and subedge.type()[0] == 'R':
-                newedge = hedge([subedge.predicate()]) + hedge(subedge[1:])
+                newedge = hedge([predicate(subedge)]) + hedge(subedge[1:])
                 newedge = newedge.insert_edge_with_argrole(
                     cur_subj, cur_role, 0)
             new_edges = conjunctions_decomposition(newedge, concepts=concepts)
