@@ -11,7 +11,7 @@ def strip_concept(edge):
 
     (the/M (of/B treaty/C paris/C))
     """
-    if edge.type()[0] == 'C':
+    if edge.mtype() == 'C':
         return edge
     elif edge.not_atom:
         return strip_concept(edge[1])
@@ -45,7 +45,7 @@ def all_concepts(edge):
     """Recursively search for all concepts contained in the edge, returning
     a set that can also contain itself."""
     concepts = set()
-    if edge.type()[0] == 'C':
+    if edge.mtype() == 'C':
         concepts.add(edge)
     if edge.not_atom:
         for item in edge:

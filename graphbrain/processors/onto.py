@@ -10,7 +10,7 @@ class CorefsOnto(Processor):
         self.done = set()
 
     def process_edge(self, edge):
-        if edge.type()[0] == 'C' and edge not in self.done:
+        if edge.mtype() == 'C' and edge not in self.done:
             self.done.add(edge)
 
             subs = tuple(subtypes(self.hg, edge))

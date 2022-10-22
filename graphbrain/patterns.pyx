@@ -471,7 +471,7 @@ def edge2pattern(edge, root=False, subtype=False):
     if subtype:
         et = edge.type()
     else:
-        et = edge.type()[0]
+        et = edge.mtype()
     pattern = '{}/{}'.format(root_str, et)
     ar = edge.argroles()
     if ar == '':

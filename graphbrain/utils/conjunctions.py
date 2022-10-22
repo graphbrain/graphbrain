@@ -2,12 +2,12 @@ from graphbrain import hedge
 
 
 def predicate(edge):
-    if edge.type()[0] == 'R':
-        if edge[0].type()[0] == 'P':
+    if edge.mtype() == 'R':
+        if edge[0].mtype() == 'P':
             return edge[0]
         else:
             return predicate(edge[1])
-    elif edge.type()[0] == 'P':
+    elif edge.mtype() == 'P':
         return edge
     else:
         return None
@@ -19,12 +19,12 @@ def conjunctions_decomposition(edge, concepts=False):
         return []
 
     # relationship conjunctions
-    if edge[0].type() == 'J' and edge.type()[0] != 'C':
+    if edge[0].type() == 'J' and edge.mtype() != 'C':
         cur_subj = None
         cur_role = None
         edges = []
         for subedge in edge[1:]:
-            if subedge.type()[0] != 'R':
+            if subedge.mtype() != 'R':
                 continue
 
             subj = subedge.edges_with_argrole('s')
@@ -37,7 +37,7 @@ def conjunctions_decomposition(edge, concepts=False):
             elif len(passive) > 0 and passive[0] is not None:
                 cur_subj = passive[0]
                 cur_role = 'p'
-            elif cur_subj is not None and subedge.type()[0] == 'R':
+            elif cur_subj is not None and subedge.mtype() == 'R':
                 newedge = hedge([predicate(subedge)]) + hedge(subedge[1:])
                 newedge = newedge.insert_edge_with_argrole(
                     cur_subj, cur_role, 0)
@@ -49,7 +49,7 @@ def conjunctions_decomposition(edge, concepts=False):
     if concepts:
         for pos, subedge in enumerate(edge):
             if not subedge.atom:
-                if subedge[0].type() == 'J' and subedge.type()[0] == 'C':
+                if subedge[0].type() == 'J' and subedge.mtype() == 'C':
                     edges = []
                     for list_item in subedge[1:]:
                         subedges = conjunctions_decomposition(

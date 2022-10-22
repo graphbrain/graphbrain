@@ -315,7 +315,7 @@ class ParserEN(AlphaBeta):
         appos = False
         min_appos_depth = 9999999
 
-        if all([edge.type()[0] == 'C' for edge in edges]):
+        if all([edge.mtype() == 'C' for edge in edges]):
             for edge in edges:
                 token = self._head_token(edge)
                 depth = self.depths[self.token2atom[token]]

@@ -56,7 +56,7 @@ def _apply_rule(rule, sentence, pos):
         for i in range(rule.size):
             edge = sentence[pos - rule.size + i + 1]
             if i == pivot_pos:
-                if edge.type()[0] == rule.first_type:
+                if edge.mtype() == rule.first_type:
                     if rule.connector:
                         args.append(edge)
                     else:
@@ -65,7 +65,7 @@ def _apply_rule(rule, sentence, pos):
                     valid = False
                     break
             else:
-                if edge.type()[0] in rule.arg_types:
+                if edge.mtype() in rule.arg_types:
                     args.append(edge)
                 else:
                     valid = False
@@ -314,8 +314,8 @@ class AlphaBeta(Parser):
         if edge.not_atom:
             edge = hedge([self._repair(subedge) for subedge in edge])
 
-            if edge.connector_type()[0] == 'B':
-                if 'R' in set(subedge.type()[0] for subedge in edge[1:]):
+            if edge.connector_mtype() == 'B':
+                if 'R' in set(subedge.mtype() for subedge in edge[1:]):
                     builder_atom = edge.connector_atom()
                     builder_parts = builder_atom.parts()
                     newparts = (builder_parts[0], 'J' + builder_parts[1][1:])
@@ -330,7 +330,7 @@ class AlphaBeta(Parser):
                     self.orig_atom[unew_trigger] = utrigger_atom
                     edge = edge.replace_atom(
                         builder_atom, new_builder, unique=True)
-            elif edge.connector_type()[0] == 'J':
+            elif edge.connector_mtype() == 'J':
                 if len(edge) == 2:
                     builder_atom = edge.connector_atom()
                     builder_parts = builder_atom.parts()
@@ -355,8 +355,8 @@ class AlphaBeta(Parser):
 
             # Move modifier to internal connector if it is applied to
             # relations, specifiers or conjunctions
-            if edge.connector_type()[0] == 'M' and not edge[1].atom:
-                innner_conn = edge[1].connector_type()[0]
+            if edge.connector_mtype() == 'M' and not edge[1].atom:
+                innner_conn = edge[1].connector_mtype()
                 if innner_conn in {'P', 'T', 'J'}:
                     return hedge(((edge[0], edge[1][0]),) + edge[1][1:])
 
@@ -380,7 +380,7 @@ class AlphaBeta(Parser):
         if edge.not_atom:
             edge = hedge([self._post_process(subedge) for subedge in edge])
 
-            if edge.connector_type()[0] == 'T':
+            if edge.connector_mtype() == 'T':
                 # Make triggers temporal, if appropriate.
                 # e.g.: (in/T 1976) -> (in/Tt 1976)
                 if self._is_temporal(edge):
@@ -414,7 +414,7 @@ class AlphaBeta(Parser):
         new_entity = edge
 
         # Extend predicate connectors with argument types
-        if edge.connector_type()[0] == 'P':
+        if edge.connector_mtype() == 'P':
             pred = edge.atom_with_type('P')
             subparts = pred.parts()[1].split('.')
             args = [self._relation_arg_role(param) for param in edge[1:]]
@@ -436,7 +436,7 @@ class AlphaBeta(Parser):
             new_entity = edge.replace_atom(pred, new_pred)
 
         # Extend builder connectors with argument types
-        elif edge.connector_type()[0] == 'B':
+        elif edge.connector_mtype() == 'B':
             builder = edge.atom_with_type('B')
             subparts = builder.parts()[1].split('.')
             arg_roles = self._builder_arg_roles(edge)
@@ -699,7 +699,7 @@ class AlphaBeta(Parser):
         if edge is None:
             return None
         elif (edge in self.edge2coref and
-              edge.type()[0] == self.edge2coref[edge].type()[0]):
+              edge.mtype() == self.edge2coref[edge].mtype()):
             return self.edge2coref[edge]
         elif edge.atom:
             return edge
@@ -708,7 +708,7 @@ class AlphaBeta(Parser):
         elif (edge[0].type() == 'Mp' and
               len(edge) == 2 and
               edge[0] in self.edge2coref and
-              self.edge2coref[edge[0]].type()[0] == 'C'):
+              self.edge2coref[edge[0]].mtype() == 'C'):
             return hedge(
                 (const.possessive_builder, self.edge2coref[edge[0]], edge[1]))
         else:

@@ -81,7 +81,7 @@ class TrainingDataGenerator:
 
     def annotate_token(self, token):
         if token in self.parser.token2atom:
-            suggested_type = self.parser.token2atom[token].atom.type()[0]
+            suggested_type = self.parser.token2atom[token].atom.mtype()
         else:
             suggested_type = 'X'
 

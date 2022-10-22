@@ -27,11 +27,11 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
         main_tag = 'span'
         margin = ''
 
-    et = edge.type()[0]
+    et = edge.mtype()
     if et == 'R':
         color = '#303030'
     else:
-        color = TYPE_COLORS[edge.type()[0]]
+        color = TYPE_COLORS[edge.mtype()]
 
     color_html = 'color:{}'.format(color)
 
@@ -45,7 +45,7 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
             html = '{}<span style="color:#000000;font-weight:lighter">/{}'\
                    '</span>'.format(html, escaped_codes)
     else:
-        et = edge.type()[0]
+        et = edge.mtype()
         arity = len(edge)
         contains_edges = any(not child.atom for child in edge)
         color_html = 'color:{}'.format(color)
@@ -126,7 +126,7 @@ def show(edge, style='indented'):
 
 
 def _edge2html_vblocks(edge):
-    tcolor = TYPE_COLORS[edge.type()[0]]
+    tcolor = TYPE_COLORS[edge.mtype()]
     if edge.atom:
         html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
                     '</span>'.format(edge.root())
@@ -195,7 +195,7 @@ def vblocks(edge, subtypes=False, argroles=True, namespaces=False):
 
 
 def _edge2html_blocks(edge):
-    tcolor = TYPE_COLORS[edge.type()[0]]
+    tcolor = TYPE_COLORS[edge.mtype()]
     if edge.atom:
         html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
                     '</span>'.format(edge.root())

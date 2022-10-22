@@ -21,7 +21,7 @@ class Conflicts(Processor):
 
     def _process_topics(self, actor_orig, actor_targ, edge):
         for item in edge[1:]:
-            if item.type()[0] == 'S':
+            if item.mtype() == 'S':
                 if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
                     for concept in all_concepts(item[1]):
                         if self.hg.degree(concept) > 1:

@@ -97,7 +97,7 @@ class Claims(Processor):
                             self.actors.add(actor)
                             for claim in claims:
                                 # if specificatin, claim is inside
-                                if claim.type()[0] == 'S':
+                                if claim.mtype() == 'S':
                                     self._process_claim(actor, claim[1], edge)
                                 else:
                                     self._process_claim(actor, claim, edge)

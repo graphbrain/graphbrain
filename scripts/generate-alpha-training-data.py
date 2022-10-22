@@ -61,7 +61,7 @@ def generate_alpha_training_data(args):
                     has_lefts = token.n_lefts > 0
                     has_rights = token.n_rights > 0
                     outfile.write(('{}' + '\t{}' * 25 + '\n').format(
-                        hedge(atom).type()[0],
+                        hedge(atom).mtype(),
                         str(token),
                         token.pos_,
                         token.tag_,

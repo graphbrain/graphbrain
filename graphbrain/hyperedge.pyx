@@ -402,7 +402,7 @@ class Hyperedge(tuple):
         elif ptype[0] == 'B':
             outter_type = 'C'
         elif ptype[0] == 'J':
-            return self[1].type()[0]
+            return self[1].mtype()
         else:
             raise RuntimeError(
                 'Edge is malformed, type cannot be determined: {}'.format(
@@ -416,6 +416,23 @@ class Hyperedge(tuple):
         returned.
         """
         return self[0].type()
+
+    def mtype(self):
+        """Returns the main type of this edge as a string of one character.
+        Type inference is performed.
+        """
+        return self.type()[0]
+
+    def mconnector_type(self):
+        """Returns the main type of the edge's connector.
+        If the edge has no connector (i.e. it's an atom), then None is
+        returned.
+        """
+        ct = self.connector_type()
+        if ct:
+            return ct[0]
+        else:
+            return None
 
     def atom_with_type(self, atom_type):
         """Returns the first atom found in the edge that has the given
@@ -444,7 +461,7 @@ class Hyperedge(tuple):
         """Returns the argument roles string of the edge, if it exists.
         Otherwise returns empty string.
         """
-        et = self.type()[0]
+        et = self.mtype()
         if et not in {'B', 'P'}:
             return ''
         return self[1].argroles()
@@ -453,7 +470,7 @@ class Hyperedge(tuple):
         """Returns an edge with the argroles of the connector atom replaced
         with the provided string.
         Returns same edge if the atom does not contain a role part."""
-        st = self.type()[0]
+        st = self.mtype()
         if st in {'C', 'R'}:
             new_edge = [self[0].replace_argroles(argroles)]
             new_edge += self[1:]
@@ -467,7 +484,7 @@ class Hyperedge(tuple):
         """Returns an edge with the given argrole inserted at the specified
         position in the argroles of the connector atom.
         Same restrictions as in replace_argroles() apply."""
-        st = self.type()[0]
+        st = self.mtype()
         if st in {'C', 'R'}:
             new_edge = [self[0].insert_argrole(argrole, pos)]
             new_edge += self[1:]
@@ -486,7 +503,7 @@ class Hyperedge(tuple):
 
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role."""
-        if self.type()[0] == 'R' and self[0].type()[0] == 'M':
+        if self.mtype() == 'R' and self[0].mtype() == 'M':
             return self[1].edges_with_argrole(argrole)
 
         edges = []
@@ -513,17 +530,17 @@ class Hyperedge(tuple):
         concept is annotated as the main one, then an empty list is
         returned.
         """
-        if self[0].type()[0] == 'B':
+        if self[0].mtype() == 'B':
             return self.edges_with_argrole('m')
         return []
 
     def replace_main_concept(self, new_main):
         """TODO: document and test"""
-        if self.type()[0] != 'C':
+        if self.mtype() != 'C':
             return None
-        if self[0].type()[0] == 'M':
+        if self[0].mtype() == 'M':
             return hedge((self[0], new_main))
-        elif self[0].type()[0] == 'B':
+        elif self[0].mtype() == 'B':
             if len(self) == 3:
                 if self[0].argroles() == 'ma':
                     return hedge((self[0], new_main, self[2]))
@@ -535,7 +552,7 @@ class Hyperedge(tuple):
         output = {}
         errors = []
 
-        ct = self[0].type()[0]
+        ct = self[0].mtype()
         # check if connector has valid type
         if ct not in {'P', 'M', 'B', 'T', 'J'}:
             errors.append('connector has incorrect type: {}'.format(ct))
@@ -548,7 +565,7 @@ class Hyperedge(tuple):
             if len(self) != 3:
                 errors.append('builders can only have two arguments')
             for arg in self[1:]:
-                at = arg.type()[0]
+                at = arg.mtype()
                 if at != 'C':
                     e = 'builder argument {} has incorrect type: {}'.format(
                         arg.to_str(), at)
@@ -558,7 +575,7 @@ class Hyperedge(tuple):
             if len(self) != 2:
                 errors.append('triggers can only have one arguments')
             for arg in self[1:]:
-                at = arg.type()[0]
+                at = arg.mtype()
                 if at not in {'C', 'R'}:
                     e = 'trigger argument {} has incorrect type: {}'.format(
                         arg.to_str(), at)
@@ -566,7 +583,7 @@ class Hyperedge(tuple):
         # check if predicate structure is correct
         elif ct == 'P':
             for arg in self[1:]:
-                at = arg.type()[0]
+                at = arg.mtype()
                 if at not in {'C', 'R', 'S'}:
                     e = 'predicate argument {} has incorrect type: {}'.format(
                         arg.to_str(), at)
@@ -840,7 +857,7 @@ class Atom(Hyperedge):
         if subtypes:
             role = self.type()
         else:
-            role = self.type()[0]
+            role = self.mtype()
 
         if argroles:
             ar = self.argroles()
@@ -895,7 +912,7 @@ class Atom(Hyperedge):
         """Returns the argument roles string of the edge, if it exists.
         Otherwise returns empty string.
         """
-        et = self.type()[0]
+        et = self.mtype()
         if et not in {'B', 'P'}:
             return ''
         role = self.role()
@@ -943,7 +960,7 @@ class Atom(Hyperedge):
 
     def replace_main_concept(self, new_main):
         """TODO: document and test"""
-        if self.type()[0] != 'C':
+        if self.mtype() != 'C':
             return None
 
         return new_main
@@ -952,7 +969,7 @@ class Atom(Hyperedge):
         output = {}
         errors = []
 
-        at = self.type()[0]
+        at = self.mtype()
         if at not in {'C', 'P', 'M', 'B', 'T', 'J'}:
             errors.append('{} is not a valid atom type'.format(at))
 
@@ -962,7 +979,7 @@ class Atom(Hyperedge):
         return output
 
     def normalized(self):
-        if self.type()[0] in {'B', 'P'}:
+        if self.mtype() in {'B', 'P'}:
             ar = self.argroles()
             if len(ar) > 0:
                 if ar[0] == '{':

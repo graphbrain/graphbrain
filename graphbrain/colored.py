@@ -86,7 +86,7 @@ def indented(edge, colors=True, depth=0):
         lines.append(colored_edge(edge, colors=colors))
     else:
         if colors:
-            et = edge.type()[0]
+            et = edge.mtype()
             opar = colored('(', TYPE_COLOR[et])
             cpar = colored(')', TYPE_COLOR[et])
         else:

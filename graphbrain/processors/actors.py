@@ -8,7 +8,7 @@ from graphbrain.utils.lemmas import deep_lemma
 
 def is_actor(hg, edge):
     """Checks if the edge is a coreference to an actor."""
-    if edge.type()[0] == 'C':
+    if edge.mtype() == 'C':
         return hg.exists(('actor/P/.', main_coref(hg, edge)))
     else:
         return False

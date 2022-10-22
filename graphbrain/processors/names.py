@@ -41,14 +41,14 @@ def clique_number(edge, cliques, concepts):
 
 
 def main_concepts(edge):
-    if not edge.type()[0] == 'C':
+    if not edge.mtype() == 'C':
         return []
     if edge.atom:
         return [edge]
     conn = edge[0]
-    if conn.type()[0] == 'B':
+    if conn.mtype() == 'B':
         return edge.main_concepts()
-    if conn.type()[0] == 'M':
+    if conn.mtype() == 'M':
         return main_concepts(edge[1])
     return []
 
@@ -65,7 +65,7 @@ def edges_with_seed(hg, seed):
 
 def infer_concepts(edge):
     concepts = set()
-    if edge.type()[0] == 'C':
+    if edge.mtype() == 'C':
         concepts.add(edge)
     if edge.not_atom:
         mc = main_concepts(edge)
@@ -79,7 +79,7 @@ def infer_concepts(edge):
 
 def extract_concepts(edge):
     concepts = set()
-    if edge.type()[0] == 'C':
+    if edge.mtype() == 'C':
         concepts |= infer_concepts(edge)
     if edge.not_atom:
         for item in edge:
