@@ -134,7 +134,7 @@ class CorefsNames(Processor):
         if not edge.is_atom():
             conn = edge[0]
             ct = edge.connector_type()
-            if ct[0] == 'B' and conn.atom().root() == '+':
+            if ct[0] == 'B' and edge.connector_atom().root() == '+':
                 if len(edge) > 2:
                     concepts = edge.main_concepts()
                     if len(concepts) == 1 and has_proper_concept(concepts[0]):

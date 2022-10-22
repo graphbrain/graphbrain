@@ -89,7 +89,7 @@ def _matches_wildcard(edge, wildcard):
         if len(etype) < n or etype[:n] != wtype:
             return False
 
-        eatom = edge.atom()
+        eatom = edge.inner_atom()
 
         if len(wrole) > 1:
             erole = eatom.role()

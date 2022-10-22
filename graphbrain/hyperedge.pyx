@@ -187,11 +187,37 @@ class Hyperedge(tuple):
             edge = (self[1], self[0]) + self[2:]
         return ' '.join([item.label() for item in edge])
 
-    def atom(self):
-        return self[1].atom()
+    def inner_atom(self):
+        """The inner atom inside of a modifier structure.
+
+        For example, condider:
+        (red/M shoes/C)
+        The inner atom is:
+        shoes/C
+        Or, the more complex case:
+        ((and/J slow/M steady/M) go/P)
+        Yields:
+        gp/P
+
+        This method should not be used on structures that contain more than
+        one inner atom, for example concepts constructed with builders or
+        relations.
+
+        The inner atom of an atom is itself.
+        """
+        return self[1].inner_atom()
 
     def connector_atom(self):
-        return self[0].atom()
+        """The inner atom of the connector.
+
+        For example, condider:
+        (does/M (not/M like/P.so) john/C chess/C)
+        The connector atom is:
+        like/P.so
+
+        The connector atom of an atom is None.
+        """
+        return self[0].inner_atom()
 
     def atoms(self):
         """Returns the set of atoms contained in the edge.
@@ -664,8 +690,37 @@ class Atom(Hyperedge):
 
         return label
 
-    def atom(self):
+    def inner_atom(self):
+        """The inner atom inside of a modifier structure.
+
+        For example, condider:
+        (red/M shoes/C)
+        The inner atom is:
+        shoes/C
+        Or, the more complex case:
+        ((and/J slow/M steady/M) go/P)
+        Yields:
+        gp/P
+
+        This method should not be used on structures that contain more than
+        one inner atom, for example concepts constructed with builders or
+        relations.
+
+        The inner atom of an atom is itself.
+        """
         return self
+
+    def connector_atom(self):
+        """The inner atom of the connector.
+
+        For example, condider:
+        (does/M (not/M like/P.so) john/C chess/C)
+        The connector atom is:
+        like/P.so
+
+        The connector atom of an atom is None.
+        """
+        return None
 
     def atoms(self):
         """Returns the set of atoms contained in the edge.
