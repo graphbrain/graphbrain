@@ -61,6 +61,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#non-strict-search">Non-strict search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#matching-argroles">Matching argroles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#patterns-with-variables-for-information-extraction">Patterns with variables for information extraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functional-patterns">Functional patterns</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#atoms">Atoms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lemma">Lemma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#var">Var</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
@@ -222,6 +228,52 @@
 </pre></div>
 </div>
 <p>The output is a list of tuples, where the first item is the matched hyperedge and the second is a dictionary with variables and their values.</p>
+</section>
+<section id="functional-patterns">
+<h2>Functional patterns<a class="headerlink" href="#functional-patterns" title="Permalink to this heading"></a></h2>
+<p>Even more sophisticated patterns can be represented with the help of functional pattern expressions. These expressions are akin to function application in LISP-like languages, and take the general form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">functional</span><span class="o">-</span><span class="n">pattern</span><span class="o">-</span><span class="n">name</span> <span class="n">argument_1</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="atoms">
+<h3>Atoms<a class="headerlink" href="#atoms" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">atoms</span></code> functional pattern matches any edge that contains all the atoms provided as arguments, at any depth:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">atoms</span> <span class="n">atom_1</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For example this pattern:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">atoms</span> <span class="n">going</span><span class="o">/</span><span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>would match the edge:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">M</span> <span class="p">(</span><span class="ow">not</span><span class="o">/</span><span class="n">M</span> <span class="n">going</span><span class="o">/</span><span class="n">P</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>In the same vein, this pattern:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">atoms</span> <span class="ow">not</span><span class="o">/</span><span class="n">M</span> <span class="n">going</span><span class="o">/</span><span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>would equally match the edge:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">M</span> <span class="p">(</span><span class="ow">not</span><span class="o">/</span><span class="n">M</span> <span class="n">going</span><span class="o">/</span><span class="n">P</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>bot not:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">M</span> <span class="n">going</span><span class="o">/</span><span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Futhermore, the atoms can define wildcards and all the pattern syntax specified above, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">atoms</span> <span class="ow">not</span><span class="o">/</span><span class="n">M</span> <span class="o">*/</span><span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="lemma">
+<h3>Lemma<a class="headerlink" href="#lemma" title="Permalink to this heading"></a></h3>
+<p>TODO</p>
+</section>
+<section id="var">
+<h3>Var<a class="headerlink" href="#var" title="Permalink to this heading"></a></h3>
+<p>TODO</p>
+</section>
 </section>
 </section>
 

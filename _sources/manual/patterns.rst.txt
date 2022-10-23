@@ -130,3 +130,52 @@ The ``Hypergraph`` object provides the ``match()`` method , which is similar to 
     ((is/Pd.sc (the/M sky/C) blue/Ca), [{'OBJ': (the/M sky/C), 'PROP': blue/Ca}])]
 
 The output is a list of tuples, where the first item is the matched hyperedge and the second is a dictionary with variables and their values.
+
+
+Functional patterns
+===================
+
+Even more sophisticated patterns can be represented with the help of functional pattern expressions. These expressions are akin to function application in LISP-like languages, and take the general form::
+
+   (functional-pattern-name argument_1 ...)
+
+Atoms
+-----
+
+The ``atoms`` functional pattern matches any edge that contains all the atoms provided as arguments, at any depth::
+
+   (atoms atom_1 ...)
+
+For example this pattern::
+
+   (atoms going/P)
+
+would match the edge::
+
+   (is/M (not/M going/P))
+
+In the same vein, this pattern::
+
+   (atoms not/M going/P)
+
+would equally match the edge::
+
+   (is/M (not/M going/P))
+
+bot not::
+
+   (is/M going/P)
+
+Futhermore, the atoms can define wildcards and all the pattern syntax specified above, for example::
+
+   (atoms not/M */P)
+
+Lemma
+-----
+
+TODO
+
+Var
+---
+
+TODO
