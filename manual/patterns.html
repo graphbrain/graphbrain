@@ -235,6 +235,10 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">functional</span><span class="o">-</span><span class="n">pattern</span><span class="o">-</span><span class="n">name</span> <span class="n">argument_1</span> <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To simplify the notation, Graphbrain applies the convention that an atom without at type annotation defaults to the conjunction type (<code class="docutils literal notranslate"><span class="pre">/J</span></code>). This means that any edge with a functional pattern connector can contain arguments of any other type and remain itself valid within the Semantic Hypergraph representation.</p>
+</div>
 <section id="atoms">
 <h3>Atoms<a class="headerlink" href="#atoms" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">atoms</span></code> functional pattern matches any edge that contains all the atoms provided as arguments, at any depth:</p>
@@ -268,7 +272,7 @@
 </section>
 <section id="lemma">
 <h3>Lemma<a class="headerlink" href="#lemma" title="Permalink to this heading"></a></h3>
-<p>TODO</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">lemma</span></code> functional pattern…</p>
 </section>
 <section id="var">
 <h3>Var<a class="headerlink" href="#var" title="Permalink to this heading"></a></h3>

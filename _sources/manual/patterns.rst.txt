@@ -139,6 +139,9 @@ Even more sophisticated patterns can be represented with the help of functional 
 
    (functional-pattern-name argument_1 ...)
 
+.. note::
+   To simplify the notation, Graphbrain applies the convention that an atom without at type annotation defaults to the conjunction type (``/J``). This means that any edge with a functional pattern connector can contain arguments of any other type and remain itself valid within the Semantic Hypergraph representation.
+
 Atoms
 -----
 
@@ -173,7 +176,7 @@ Futhermore, the atoms can define wildcards and all the pattern syntax specified 
 Lemma
 -----
 
-TODO
+The ``lemma`` functional pattern...
 
 Var
 ---
