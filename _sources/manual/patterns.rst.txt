@@ -98,7 +98,7 @@ does not match::
 
    (plays/P.sox alice/C chess/C (at/T (the/M club/C)))
 
-When using ``Hypergraph,search()``, order-independent (curly-braces) and argrole exclusions (-) only work in non-strict mode.
+When using ``Hypergraph.search()``, order-independent (curly-braces) and argrole exclusions (-) only work in non-strict mode.
 
 
 Patterns with variables for information extraction
@@ -111,7 +111,7 @@ Let us introduce the concept of *variable*. Like a wildcard, a variable indicate
 Then the ``match_pattern(edge, pattern)`` function can be used to apply patterns to edges. It works like this::
 
    >> from graphbrain import hedge
-   >> from graphbrain.hyperedge import match_pattern
+   >> from graphbrain.patterns import match_pattern
    >> pattern = hedge('(plays/P.{so} PLAYER/C *)')
    >> edge = hedge('(plays/P.so mary/C *)')
    >> match_pattern(edge, pattern)
@@ -165,7 +165,7 @@ would equally match the edge::
 
    (is/M (not/M going/P))
 
-bot not::
+but not::
 
    (is/M going/P)
 
@@ -187,6 +187,9 @@ could be used to match::
    is/P
    was/P
 
+.. note::
+   When using ``lemma``, it is necessary to specify some semantic hypergraph object when calling the pattern matching function: ``match_pattern(edge, pattern, hg=hg)``.
+
 Var
 ---
 
@@ -197,3 +200,4 @@ The ``var`` functional pattern is used to specify a part of a pattern while also
 This way, a complex expression such as the following can be captured in a variable::
 
    (var (atoms not/M (lemma be/P)) PREDICATE)
+   
