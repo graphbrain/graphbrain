@@ -286,10 +286,18 @@ def _matches_fun_pat(edge, fun_pattern, hg):
             raise RuntimeError('var pattern function must have two arguments')
         pattern = fun_pattern[1]
         var_name = fun_pattern[2].root()
-        curvars = {var_name: edge}
         result = []
-        for vars in match_pattern(edge, pattern, hg=hg):
-            result.append({**curvars, **vars})
+        if (edge.not_atom and
+                str(edge[0]) == 'var' and
+                len(edge) == 3 and
+                str(edge[2]) == var_name):
+            curvars = {var_name: edge[1]}
+            for vars in match_pattern(edge[1], pattern, hg=hg):
+                result.append({**curvars, **vars})
+        else:
+            curvars = {var_name: edge}
+            for vars in match_pattern(edge, pattern, hg=hg):
+                result.append({**curvars, **vars})
         return result
     elif fun == 'atoms':
         atoms = edge.atoms()

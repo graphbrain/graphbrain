@@ -532,6 +532,15 @@ class Testpatterns(unittest.TestCase):
             match_pattern(edge, pattern), [{'PRED': hedge('(will/M say/Pd)'),
                                             'VERB': hedge('say/Pd')}])
 
+    def test_match_pattern_fun_var3(self):
+        s = ("((var (*/M VERB/P) PRED) */C */C)")
+        pattern = hedge(s)
+        s = ("((var (will/M say/Pd) PRED) x/C y/C)")
+        edge = hedge(s)
+        self.assertEqual(
+            match_pattern(edge, pattern), [{'PRED': hedge('(will/M say/Pd)'),
+                                            'VERB': hedge('say/Pd')}])
+
     def test_match_pattern_fun_atoms1(self):
         s = ("(atoms */P)")
         pattern = hedge(s)
