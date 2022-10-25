@@ -518,9 +518,6 @@ class Hyperedge(tuple):
 
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role."""
-        if self.mtype() == 'R' and self[0].mtype() == 'M':
-            return self[1].edges_with_argrole(argrole)
-
         edges = []
         connector = self[0]
 
