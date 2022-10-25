@@ -586,6 +586,14 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(
             edge.insert_edge_with_argrole(hedge('today/C'), 'x', 100),
             hedge('(is/Pd.scx/en sky/C blue/C today/C)'))
+        edge = hedge('((not/M is/Pd.sc/en) sky/C blue/C)')
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('today/C'), 'x', 1),
+            hedge('((not/M is/Pd.sxc/en) sky/C today/C blue/C)'))
+        edge = hedge('((m/M b/B.am) x/C y/C)')
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('z/C'), 'a', 2),
+            hedge('((m/M b/B.ama) x/C y/C z/C)'))
 
     def test_edges_with_argrole(self):
         edge_str = ("((have/Mv.|f----/en (been/Mv.<pf---/en "
