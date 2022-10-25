@@ -173,18 +173,25 @@ def _defun_pattern_argroles(edge):
     if edge.atom:
         return edge
     
-    if is_fun_pattern(edge):
-        for atom in edge.atoms():
-            argroles = atom.argroles()
-            if argroles != '':
-                return atom
+    if edge[0].argroles() != '':
         return edge
+
+    if is_fun_pattern(edge):
+        fun = edge[0].root()
+        if fun == 'atoms':
+            for atom in edge.atoms():
+                argroles = atom.argroles()
+                if argroles != '':
+                    return atom
+        else:
+            return _defun_pattern_argroles(edge[1])
     else:
         return hedge([_defun_pattern_argroles(subedge) for subedge in edge])
 
 
 def _match_by_argroles(edge, pattern, role_counts, min_vars, hg,
                        matched=(), curvars={}):
+
     if len(role_counts) == 0:
         return [curvars]
 
@@ -236,7 +243,8 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg,
     
     return result
 
-def _match_atoms(atom_patterns, atoms, hg, matched_atoms=[], curvars={}):
+
+def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=[]):
     if len(atom_patterns) == 0:
         return [curvars]
     
@@ -249,15 +257,15 @@ def _match_atoms(atom_patterns, atoms, hg, matched_atoms=[], curvars={}):
             for vars in svars:
                 results += _match_atoms(atom_patterns[1:],
                                         atoms,
+                                        {**curvars, **vars},
                                         hg,
-                                        matched_atoms + [atom],
-                                        {**curvars, **vars})
+                                        matched_atoms + [atom])
 
     return results
 
 
 # TODO: deal with argroles
-def _match_lemma(lemma_pattern, edge, hg):
+def _match_lemma(lemma_pattern, edge, curvars, hg):
     if hg is None:
         raise RuntimeError('Lemma pattern function requires hypergraph.')
 
@@ -274,37 +282,35 @@ def _match_lemma(lemma_pattern, edge, hg):
         _lemma = hedge('/'.join(parts))
 
     if _matches_wildcard(_lemma, lemma_pattern):
-        return [{}]
+        return [curvars]
 
     return []
 
 
-def _matches_fun_pat(edge, fun_pattern, hg):
+def _matches_fun_pat(edge, fun_pattern, curvars, hg):
     fun = fun_pattern[0].root()
     if fun == 'var':
         if len(fun_pattern) != 3:
             raise RuntimeError('var pattern function must have two arguments')
         pattern = fun_pattern[1]
         var_name = fun_pattern[2].root()
-        result = []
         if (edge.not_atom and
                 str(edge[0]) == 'var' and
                 len(edge) == 3 and
                 str(edge[2]) == var_name):
-            curvars = {var_name: edge[1]}
-            for vars in match_pattern(edge[1], pattern, hg=hg):
-                result.append({**curvars, **vars})
+            this_var = {var_name: edge[1]}
+            return match_pattern(
+                edge[1], pattern, curvars={**curvars, **this_var}, hg=hg)
         else:
-            curvars = {var_name: edge}
-            for vars in match_pattern(edge, pattern, hg=hg):
-                result.append({**curvars, **vars})
-        return result
+            this_var = {var_name: edge}
+            return match_pattern(
+                edge, pattern, curvars={**curvars, **this_var}, hg=hg)
     elif fun == 'atoms':
         atoms = edge.atoms()
         atom_patterns = fun_pattern[1:]
-        return _match_atoms(atom_patterns, atoms, hg)
+        return _match_atoms(atom_patterns, atoms, curvars, hg)
     elif fun == 'lemma':
-        return _match_lemma(fun_pattern[1], edge, hg)
+        return _match_lemma(fun_pattern[1], edge, curvars, hg)
     else:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
@@ -363,8 +369,7 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
 
     # functional patterns
     if is_fun_pattern(pattern):
-        result = _matches_fun_pat(edge, pattern, hg)
-        return list({**curvars, **vars} for vars in result)
+        return _matches_fun_pat(edge, pattern, curvars, hg)
 
     min_len = len(pattern)
     max_len = min_len

@@ -728,6 +728,32 @@ class Testpatterns(unittest.TestCase):
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{'X': hedge('(has/M said/Pd.so)')}])
 
+    def test_match_pattern_fun_argroles8(self):
+        s = ("""
+        (says/Pd.{r}.|f--3s-/en (var (executes/P.{o}.|f--3s-/en (+/B.{mm}/. (15/M#/en people/Cc.p/en) (for/Br.{ma}/en 10/C#/en (+/B.{ma}/. convictions/Cc.p/en terrorism/Cc.s/en)))) CLAIM))
+        """)
+        pattern = hedge(s)
+        s = ("""
+        (says/Pd.r.|f--3s-/en (var (executes/P.o.|f--3s-/en (+/B.mm/. (15/M#/en people/Cc.p/en) (for/Br.ma/en 10/C#/en (+/B.am/. terrorism/Cc.s/en convictions/Cc.p/en)))) CLAIM))
+        """)
+        edge = hedge(s)
+        matches = match_pattern(edge, pattern, hg=self.hg)
+        self.assertFalse(matches == [])
+        # self.assertEqual(matches[0]['ACTOR'], hedge('jordan/Cp.s/en'))
+
+    def test_match_pattern_fun_argroles9(self):
+        s = ("""
+        (says/Pd.{sr}.|f--3s-/en (var jordan/Cp.s/en ACTOR) (var (executes/P.{o}.|f--3s-/en (+/B.{mm}/. (15/M#/en people/Cc.p/en) (for/Br.{ma}/en 10/C#/en (+/B.{ma}/. convictions/Cc.p/en terrorism/Cc.s/en)))) CLAIM))
+        """)
+        pattern = hedge(s)
+        s = ("""
+        (says/Pd.sr.|f--3s-/en (var jordan/Cp.s/en ACTOR) (var (executes/P.o.|f--3s-/en (+/B.mm/. (15/M#/en people/Cc.p/en) (for/Br.ma/en 10/C#/en (+/B.am/. terrorism/Cc.s/en convictions/Cc.p/en)))) CLAIM))
+        """)
+        edge = hedge(s)
+        matches = match_pattern(edge, pattern, hg=self.hg)
+        self.assertFalse(matches == [])
+        self.assertEqual(matches[0]['ACTOR'], hedge('jordan/Cp.s/en'))
+
     def test_counter1(self):
         pc = PatternCounter()
         pc.count(hedge('((not/M is/P.sc) mary/C (not/M nice/C))'))
