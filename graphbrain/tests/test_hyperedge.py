@@ -21,7 +21,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('((is my) (brain/1) (super great/1))').to_str(),
                          '((is my) (brain/1) (super great/1))')
 
-    def test_is_atom(self):
+    def test_atom(self):
         self.assertTrue(hedge('a').atom)
         self.assertTrue(hedge('graphbrain/C').atom)
         self.assertTrue(hedge('graphbrain/Cn.p/1').atom)
@@ -388,20 +388,42 @@ class TestHyperedge(unittest.TestCase):
                                'rich/C)').connector_type(), 'Pd')
         self.assertEqual(hedge('(play/T piano/Cn.s)').connector_type(), 'T')
 
-    def test_mconnector_type(self):
-        self.assertEqual(hedge('graphbrain/Cp.s/1').mconnector_type(), None)
-        self.assertEqual(hedge('graphbrain').mconnector_type(), None)
+    def test_connector_mtype(self):
+        self.assertEqual(hedge('graphbrain/Cp.s/1').connector_mtype(), None)
+        self.assertEqual(hedge('graphbrain').connector_mtype(), None)
         self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
-                               'great/C)').mconnector_type(), 'P')
-        self.assertEqual(hedge('(red/M shoes/Cn.p)').mconnector_type(), 'M')
-        self.assertEqual(hedge('(before/Tt noon/C)').mconnector_type(), 'T')
-        self.assertEqual(hedge('(very/M large/M)').mconnector_type(), 'M')
+                               'great/C)').connector_mtype(), 'P')
+        self.assertEqual(hedge('(red/M shoes/Cn.p)').connector_mtype(), 'M')
+        self.assertEqual(hedge('(before/Tt noon/C)').connector_mtype(), 'T')
+        self.assertEqual(hedge('(very/M large/M)').connector_mtype(), 'M')
         self.assertEqual(hedge('((very/M large/M) '
-                               'shoes/Cn.p)').mconnector_type(), 'M')
-        self.assertEqual(hedge('(will/M be/Pd.sc)').mconnector_type(), 'M')
+                               'shoes/Cn.p)').connector_mtype(), 'M')
+        self.assertEqual(hedge('(will/M be/Pd.sc)').connector_mtype(), 'M')
         self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s '
-                               'rich/C)').mconnector_type(), 'P')
-        self.assertEqual(hedge('(play/T piano/Cn.s)').mconnector_type(), 'T')
+                               'rich/C)').connector_mtype(), 'P')
+        self.assertEqual(hedge('(play/T piano/Cn.s)').connector_mtype(), 'T')
+
+    def test_t(self):
+        self.assertEqual(hedge('graphbrain/Cp.s/1').t, 'Cp')
+        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s great/C)').t, 'Rd')
+        self.assertEqual(hedge('(very/M large/M)').t, 'M')
+
+    def test_mt(self):
+        self.assertEqual(hedge('graphbrain/Cp.s/1').mt, 'C')
+        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s great/C)').mt, 'R')
+        self.assertEqual(hedge('(very/M large/M)').mt, 'M')
+
+    def test_ct(self):
+        self.assertEqual(hedge('graphbrain/Cp.s/1').ct, None)
+        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
+                               'great/C)').ct, 'Pd')
+        self.assertEqual(hedge('(red/M shoes/Cn.p)').ct, 'M')
+
+    def test_cmt(self):
+        self.assertEqual(hedge('graphbrain/Cp.s/1').cmt, None)
+        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
+                               'great/C)').cmt, 'P')
+        self.assertEqual(hedge('(red/M shoes/Cn.p)').cmt, 'M')
 
     def test_atom_with_type(self):
         self.assertEqual(hedge('(+/B a/Cn b/Cp)').atom_with_type('C'),

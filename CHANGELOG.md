@@ -3,7 +3,8 @@
 ## [0.6.0] - ongoing work
 ### Added
 - Hyperedge.atom and .not_atom properties.
-- Hyperedge.mtype() and .mconnector_type() methods.
+- Hyperedge.mtype() and .connector_mtype() methods.
+- Hyperedge.t, .mt, .ct and .cmt type shortcut properties.
 - Functional patterns: var, atoms, lemma.
 - Moved all patterns functions to graphbrain.patterns.
 - Hypergraph.text().

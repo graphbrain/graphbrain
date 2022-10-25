@@ -172,6 +172,34 @@ class Hyperedge(tuple):
         """True if edge is not an atom."""
         return True
 
+    @property
+    def t(self):
+        """ Edge type.
+        (this porperty is a shortcut for Hyperedge.type())
+        """
+        return self.type()
+
+    @property
+    def mt(self):
+        """ Edge main type.
+        (this porperty is a shortcut for Hyperedge.mtype())
+        """
+        return self.mtype()
+    
+    @property
+    def ct(self):
+        """ Edge connector type.
+        (this porperty is a shortcut for Hyperedge.connector_type())
+        """
+        return self.connector_type()
+
+    @property
+    def cmt(self):
+        """ Edge connector main type.
+        (this porperty is a shortcut for Hyperedge.mconnector_type())
+        """
+        return self.connector_mtype()
+
     def is_atom(self):
         """
         .. deprecated:: 0.6.0
@@ -423,7 +451,7 @@ class Hyperedge(tuple):
         """
         return self.type()[0]
 
-    def mconnector_type(self):
+    def connector_mtype(self):
         """Returns the main type of the edge's connector.
         If the edge has no connector (i.e. it's an atom), then None is
         returned.
