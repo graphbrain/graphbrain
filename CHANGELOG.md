@@ -26,6 +26,7 @@
 - Improved coreference resolution.
 - LevelDB included by default again.
 - Old package graphbrain.meaning renamed to graphbrain.utils.
+- Hyperedge.argroles() now also works at relation/concept level.
 
 ### Removed
 - graphbrain.patterns.normalize_edge().

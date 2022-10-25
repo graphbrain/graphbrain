@@ -423,7 +423,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertFalse(hedge('a/Cn').contains_atom_type('Cp'))
         self.assertFalse(hedge('a/Cn').contains_atom_type('P'))
 
-    def test_argroles_atom(self):
+    def test_argroles_connector_atom(self):
         edge = hedge('s/Bp.am')
         self.assertEqual(edge.argroles(), 'am')
         edge = hedge('come/Pd.sx.-i----/en')
@@ -435,12 +435,18 @@ class TestHyperedge(unittest.TestCase):
         edge = hedge('berlin/Cp.s/de')
         self.assertEqual(edge.argroles(), '')
 
-    def test_argroles_edge(self):
+    def test_argroles_connector_edge(self):
         edge = hedge('(is/Mv.|f--3s/en influenced/Pd.xpa.<pf---/en)')
         self.assertEqual(edge.argroles(), 'xpa')
         edge = hedge('(is/Mv.|f--3s/en influenced/Pd)')
         self.assertEqual(edge.argroles(), '')
-        edge = hedge('(looks/Pd.sc.|f--3s she/Ci (very/M beautiful/Ca))')
+
+    def test_argroles_edge(self):
+        edge = hedge('((not/M is/P.sc) bob/C sad/C)')
+        self.assertEqual(edge.argroles(), 'sc')
+        edge = hedge('(of/B.ma city/C berlin/C)')
+        self.assertEqual(edge.argroles(), 'ma')
+        edge = hedge('(of/B city/C berlin/C)')
         self.assertEqual(edge.argroles(), '')
 
     def test_replace_argroles_atom(self):

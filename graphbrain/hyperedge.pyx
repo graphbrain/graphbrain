@@ -460,8 +460,23 @@ class Hyperedge(tuple):
     def argroles(self):
         """Returns the argument roles string of the edge, if it exists.
         Otherwise returns empty string.
+        
+        Argument roles can be return for the entire edge that they apply to,
+        which can be a relation (R) or a concept (C). For example:
+
+        ((not/M is/P.sc) bob/C sad/C) has argument roles "sc",
+        (of/B.ma city/C berlin/C) has argument roles "ma".
+
+        Argument roles can also be returned for the connectors that define 
+        the outer edge, which can be of type predicate (P) or builder (B). For
+        example:
+
+        (not/M is/P.sc) has argument roles "sc",
+        of/B.ma has argument roles "ma".
         """
         et = self.mtype()
+        if et in {'R', 'C'} and self[0].mtype() in {'B', 'P'}:
+            return self[0].argroles()
         if et not in {'B', 'P'}:
             return ''
         return self[1].argroles()
@@ -911,6 +926,19 @@ class Atom(Hyperedge):
     def argroles(self):
         """Returns the argument roles string of the edge, if it exists.
         Otherwise returns empty string.
+        
+        Argument roles can be return for the entire edge that they apply to,
+        which can be a relation (R) or a concept (C). For example:
+
+        ((not/M is/P.sc) bob/C sad/C) has argument roles "sc",
+        (of/B.ma city/C berlin/C) has argument roles "ma".
+
+        Argument roles can also be returned for the connectors that define 
+        the outer edge, which can be of type predicate (P) or builder (B). For
+        example:
+
+        (not/M is/P.sc) has argument roles "sc",
+        of/B.ma has argument roles "ma".
         """
         et = self.mtype()
         if et not in {'B', 'P'}:
