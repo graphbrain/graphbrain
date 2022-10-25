@@ -506,12 +506,18 @@ class TestHyperedge(unittest.TestCase):
         edge = hedge('(s/Bp.am x/C y/C)')
         self.assertEqual(edge.replace_argroles('ma').to_str(),
                          '(s/Bp.ma x/C y/C)')
+        edge = hedge('((m/M s/Bp.am) x/C y/C)')
+        self.assertEqual(edge.replace_argroles('ma').to_str(),
+                         '((m/M s/Bp.ma) x/C y/C)')
         edge = hedge('(come/Pd.sx.-i----/en you/C here/C)')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
                          '(come/Pd.scx.-i----/en you/C here/C)')
         edge = hedge('(come/Pd/en you/C here/C)')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
                          '(come/Pd.scx/en you/C here/C)')
+        edge = hedge('((do/M come/Pd/en) you/C here/C)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '((do/M come/Pd.scx/en) you/C here/C)')
         edge = hedge('(come you/C here/C)')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
                          '(come you/C here/C)')
@@ -529,6 +535,9 @@ class TestHyperedge(unittest.TestCase):
         edge = hedge('(s/Bp.am x/C y/C)')
         self.assertEqual(
             edge.insert_argrole('m', 3).to_str(), '(s/Bp.amm x/C y/C)')
+        edge = hedge('((m/M s/Bp.am) x/C y/C)')
+        self.assertEqual(
+            edge.insert_argrole('m', 0).to_str(), '((m/M s/Bp.mam) x/C y/C)')
         edge = hedge('(come/Pd.sx.-i----/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('x', 0).to_str(),
                          '(come/Pd.xsx.-i----/en you/C here/C)')
@@ -559,6 +568,9 @@ class TestHyperedge(unittest.TestCase):
         edge = hedge('(come you/C here/C)')
         self.assertEqual(edge.insert_argrole('s', 100).to_str(),
                          '(come you/C here/C)')
+        edge = hedge('((do/M come/Pd.sx.-i----/en) you/C here/C)')
+        self.assertEqual(edge.insert_argrole('x', 2).to_str(),
+                         '((do/M come/Pd.sxx.-i----/en) you/C here/C)')
 
     def test_insert_edge_with_argrole(self):
         edge = hedge('(is/Pd.sc/en sky/C blue/C)')
