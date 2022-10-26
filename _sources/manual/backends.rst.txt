@@ -10,9 +10,9 @@ SQLite 3
 
 **File extensions:** ``.db``, ``.sqlite``, ``.sqlite3`` 
 
-**Pros:** universal support; native to Python; very fast; concurrent access; single file storage
+**Pros:** universal support; native to Python; concurrent access; single file storage
 
-**Cons:** not space-efficient; possibly not as fast as LevelDB
+**Cons:** not space-efficient; not as fast as LevelDB
 
 This backend comes with vamilla Graphbrain.
 
@@ -22,34 +22,11 @@ LevelDB
 
 **File extensions:** ``.hg``, ``.leveldb``
 
-**Pros:** very space-efficient; very fast
+**Pros:** space-efficient; fast
 
-**Cons:** no concurrent access; hard to install outside of Linux; directory structure not as nice as single file
+**Cons:** no concurrent access; directory structure not as convenient as single file
 
-LevelDB is a local filesytem-based high-performance key-value store. To support LevelDB, you will need to build Graphbrain from source with a special option set, `as explained in the installation instructions </installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases>`_. 
-
-The *plyvel* library is required for LevelDB support. Unfortunately, this library is currently hard to install outsisde of Linux systems. Below is the current best information we have for macOS and Windows.
-
-macOS
------
-
-LevelDB can be installed with brew, but currently the latest version is not compatible with the Python wrapper (plyvel). The solution is to install LevelDB version 1.22. With brew, this can be achieved in the following way::
-
-   $ brew tap bagonyi/homebrew-formulae git@github.com:bagonyi/homebrew-formulae.git
-   $ brew extract --version=1.22 leveldb bagonyi/formulae
-   $ brew install leveldb@1.22
-
-(from https://github.com/bagonyi/homebrew-formulae)
-
-The first command above might cause an error, but it appears it can be ignored. If a preexisting installation of LevelDB exists, it should be removed first::
-
-   $ brew uninstall leveldb
-
-Another option is to perform your own custom build of LevelDB 1.23, with the following line removed from its ``CMakeLists.txt``::
-
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
-
-For more details: https://github.com/wbolster/plyvel/issues/114.
+LevelDB is a local filesytem-based high-performance key-value store.
 
 Anaconda on macOS
 -----------------

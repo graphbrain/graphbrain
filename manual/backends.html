@@ -65,7 +65,6 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Hypergraph database backends</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#sqlite-3">SQLite 3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#leveldb">LevelDB</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#macos">macOS</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#anaconda-on-macos">Anaconda on macOS</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#windows">Windows</a></li>
 </ul>
@@ -115,36 +114,16 @@
 <section id="sqlite-3">
 <h2>SQLite 3<a class="headerlink" href="#sqlite-3" title="Permalink to this heading"></a></h2>
 <p><strong>File extensions:</strong> <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite3</span></code></p>
-<p><strong>Pros:</strong> universal support; native to Python; very fast; concurrent access; single file storage</p>
-<p><strong>Cons:</strong> not space-efficient; possibly not as fast as LevelDB</p>
+<p><strong>Pros:</strong> universal support; native to Python; concurrent access; single file storage</p>
+<p><strong>Cons:</strong> not space-efficient; not as fast as LevelDB</p>
 <p>This backend comes with vamilla Graphbrain.</p>
 </section>
 <section id="leveldb">
 <h2>LevelDB<a class="headerlink" href="#leveldb" title="Permalink to this heading"></a></h2>
 <p><strong>File extensions:</strong> <code class="docutils literal notranslate"><span class="pre">.hg</span></code>, <code class="docutils literal notranslate"><span class="pre">.leveldb</span></code></p>
-<p><strong>Pros:</strong> very space-efficient; very fast</p>
-<p><strong>Cons:</strong> no concurrent access; hard to install outside of Linux; directory structure not as nice as single file</p>
-<p>LevelDB is a local filesytem-based high-performance key-value store. To support LevelDB, you will need to build Graphbrain from source with a special option set, <a class="reference external" href="/installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases">as explained in the installation instructions</a>.</p>
-<p>The <em>plyvel</em> library is required for LevelDB support. Unfortunately, this library is currently hard to install outsisde of Linux systems. Below is the current best information we have for macOS and Windows.</p>
-<section id="macos">
-<h3>macOS<a class="headerlink" href="#macos" title="Permalink to this heading"></a></h3>
-<p>LevelDB can be installed with brew, but currently the latest version is not compatible with the Python wrapper (plyvel). The solution is to install LevelDB version 1.22. With brew, this can be achieved in the following way:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap bagonyi/homebrew-formulae git@github.com:bagonyi/homebrew-formulae.git
-$ brew extract --version=1.22 leveldb bagonyi/formulae
-$ brew install leveldb@1.22
-</pre></div>
-</div>
-<p>(from <a class="reference external" href="https://github.com/bagonyi/homebrew-formulae">https://github.com/bagonyi/homebrew-formulae</a>)</p>
-<p>The first command above might cause an error, but it appears it can be ignored. If a preexisting installation of LevelDB exists, it should be removed first:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew uninstall leveldb
-</pre></div>
-</div>
-<p>Another option is to perform your own custom build of LevelDB 1.23, with the following line removed from its <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">CMAKE_CXX_FLAGS</span> <span class="s2">&quot;$</span><span class="si">{CMAKE_CXX_FLAGS}</span><span class="s2"> -fno-rtti&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>For more details: <a class="reference external" href="https://github.com/wbolster/plyvel/issues/114">https://github.com/wbolster/plyvel/issues/114</a>.</p>
-</section>
+<p><strong>Pros:</strong> space-efficient; fast</p>
+<p><strong>Cons:</strong> no concurrent access; directory structure not as convenient as single file</p>
+<p>LevelDB is a local filesytem-based high-performance key-value store.</p>
 <section id="anaconda-on-macos">
 <h3>Anaconda on macOS<a class="headerlink" href="#anaconda-on-macos" title="Permalink to this heading"></a></h3>
 <p>We have found cases where the plyvel library that is installed as a dependency by Graphbrain does not work in Anaconda environments. This was observed on macOS Big Sur, on MacBook Pro laptops with the M1 chip. It is unknown if it might apply in other cases.</p>
