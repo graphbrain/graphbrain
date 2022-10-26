@@ -8,9 +8,9 @@ Patterns are useful to identify hyperedge structures from which knowledge can be
 A simple example
 ================
 
-To exemplify, let us first generate a hypergraph parsed from real text. For this, we will use the "wikipedia" agent. Agents will be discussed in a subsequent section, but for now it is enough to know that the "wikipedia" agent extracts the text from a Wikipedia page identified by it's URL, and then populates a hypergraph by parsing each sentence of the text into a hyperedge. Let us run the agent from the command line::
+To exemplify, let us first generate a hypergraph parsed from real text. For this, we will use the "wikipedia" reader / parser, which extracts the text from a Wikipedia page identified by it's URL, and then populates a hypergraph by parsing each sentence of the text into a hyperedge. Let us run this reader / parser from the command line::
 
-   $ graphbrain --hg ai.db --url https://en.wikipedia.org/wiki/Artificial_intelligence --agent wikipedia run
+   $ graphbrain --hg ai.db --url https://en.wikipedia.org/wiki/Artificial_intelligence wikipedia
 
 
 Once it finishes, we will have the ``ai.db`` hypergraph database in the current directory. Let us now simply find the most common patterns in this hypergraph::
