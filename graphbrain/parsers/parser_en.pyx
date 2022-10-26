@@ -46,7 +46,21 @@ _p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en",
 class ParserEN(AlphaBeta):
     def __init__(self, lemmas=False, corefs=False, beta='repair',
                  normalize=True, post_process=True):
-        nlp = spacy.load('en_core_web_trf')
+        if spacy.util.is_package('en_core_web_trf'):
+            nlp = spacy.load('en_core_web_trf')
+            print('Using language model: {}'.format('en_core_web_trf'))
+        else:
+            if corefs:
+                raise RuntimeError(
+                    'Coreference resolution requires en_core_web_trf English '
+                    'language model to be installed.')
+            elif spacy.util.is_package('en_core_web_lg'):
+                nlp = spacy.load('en_core_web_lg')
+                print('Using language model: {}'.format('en_core_web_lg'))
+            else:
+                raise RuntimeError(
+                    'Either en_core_web_trf or en_core_web_lg English language'
+                    ' model must be installed.')
         if corefs:
             nlp_coref = spacy.load('en_coreference_web_trf')
             nlp.add_pipe(

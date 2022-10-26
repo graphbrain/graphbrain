@@ -38,11 +38,22 @@ Then to switch to the virtual environment and install graphbrain::
    $ source venv/bin/activate
    $ pip install graphbrain
 
-It is still necessary to download a spaCy language model::
+Choose language model
+---------------------
+
+It is still necessary to download a spaCy language model. Graphbrain supports both the transformer model (modern, GPU optimized) and a CPU optimized model. The transformer model can be installed in the following way::
 
    $ python -m spacy download en_core_web_trf
 
-If you want to use coreference resolution, you will also need to install the following model::
+Or, to install the CPU optimized model (a faster option if your computer does not have a GPU)::
+
+   $ python -m spacy download en_core_web_lg
+
+In case both models are present, Graphbrain will use the transformer model. A spaCy language model can be uninstalled as a regular pip package, for example::
+
+   $ pip uninstall en_core_web_trf
+
+If you want to perform coreference resolution, you will need to install the transformer model and also the following model::
 
    pip install https://github.com/explosion/spacy-experimental/releases/download/v0.6.0/en_coreference_web_trf-3.4.0a0-py3-none-any.whl
 

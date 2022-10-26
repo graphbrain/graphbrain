@@ -17,7 +17,7 @@
 
 ### Changed
 - Coreference resolution now using the new spaCy experimental model.
-- Now using latest spaCy transformer models.
+- Now using spaCy transformer GPU models by default, can fallback to CPU model.
 - Hyperedge.is_atom() deprecated.
 - Improved Hyperedge.main_concepts().
 - Hyperedge.atom() renamed to .inner_atom().
