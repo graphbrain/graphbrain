@@ -14,12 +14,10 @@ All cases below work with both.
 
 Here's an overview of the interface::
 
-   usage: graphbrain [-h] [--agent AGENT] [--corefs] [--fields FIELDS] [--hg HG]
+   usage: graphbrain [-h] [--col COL] [--corefs] [--hg HG]
                      [--indir INDIR] [--infile INFILE] [--lang LANG]
-                     [--outdir OUTDIR] [--outfile OUTFILE] [--parser PARSER]
-                     [--pattern PATTERN] [--sequence SEQUENCE]
-                     [--show_namespaces] [--system SYSTEM] [--text TEXT]
-                     [--training_data TRAINING_DATA] [--url URL]
+                     [--outfile OUTFILE] [--parser PARSER]
+                     [--sequence SEQUENCE] [--url URL]
                      command
 
    positional arguments:
@@ -110,13 +108,13 @@ actors
 
 **Depends on**: coreference resolution
 
-We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:
+We define actors as specific entities that are capable of acting in some sense. This simple command identifies hyperedges corresponding to actor by applying the following criteria:
 
 1. The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation
 2. The hyperedge is of type concept and subtype proper concept
 3. If coreferences are used, the hyperedge is the main coreference
 
-This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following::
+This command transverses the entire hypergraph to identify actors, and then adds hyperedges like the following::
 
    (actor/P/. mary/Cp.s/en)
 

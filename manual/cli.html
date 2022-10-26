@@ -129,12 +129,10 @@
 </div>
 <p>All cases below work with both.</p>
 <p>Here’s an overview of the interface:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">graphbrain</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">agent</span> <span class="n">AGENT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">corefs</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hg</span> <span class="n">HG</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">graphbrain</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">col</span> <span class="n">COL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">corefs</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hg</span> <span class="n">HG</span><span class="p">]</span>
                   <span class="p">[</span><span class="o">--</span><span class="n">indir</span> <span class="n">INDIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span><span class="p">]</span>
-                  <span class="p">[</span><span class="o">--</span><span class="n">outdir</span> <span class="n">OUTDIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">parser</span> <span class="n">PARSER</span><span class="p">]</span>
-                  <span class="p">[</span><span class="o">--</span><span class="n">pattern</span> <span class="n">PATTERN</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sequence</span> <span class="n">SEQUENCE</span><span class="p">]</span>
-                  <span class="p">[</span><span class="o">--</span><span class="n">show_namespaces</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">system</span> <span class="n">SYSTEM</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">text</span> <span class="n">TEXT</span><span class="p">]</span>
-                  <span class="p">[</span><span class="o">--</span><span class="n">training_data</span> <span class="n">TRAINING_DATA</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">url</span> <span class="n">URL</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">parser</span> <span class="n">PARSER</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">sequence</span> <span class="n">SEQUENCE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">url</span> <span class="n">URL</span><span class="p">]</span>
                   <span class="n">command</span>
 
 <span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
@@ -214,13 +212,13 @@
 <section id="actors">
 <h3>actors<a class="headerlink" href="#actors" title="Permalink to this heading"></a></h3>
 <p><strong>Depends on</strong>: coreference resolution</p>
-<p>We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:</p>
+<p>We define actors as specific entities that are capable of acting in some sense. This simple command identifies hyperedges corresponding to actor by applying the following criteria:</p>
 <ol class="arabic simple">
 <li><p>The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation</p></li>
 <li><p>The hyperedge is of type concept and subtype proper concept</p></li>
 <li><p>If coreferences are used, the hyperedge is the main coreference</p></li>
 </ol>
-<p>This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following:</p>
+<p>This command transverses the entire hypergraph to identify actors, and then adds hyperedges like the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">actor</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">mary</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
 </pre></div>
 </div>
