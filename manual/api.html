@@ -204,6 +204,15 @@ in this case, edge.all_atoms() returns:
 <span class="sig-name descname"><span class="pre">argroles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.argroles" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the argument roles string of the edge, if it exists.
 Otherwise returns empty string.</p>
+<p>Argument roles can be return for the entire edge that they apply to,
+which can be a relation (R) or a concept (C). For example:</p>
+<p>((not/M is/P.sc) bob/C sad/C) has argument roles “sc”,
+(of/B.ma city/C berlin/C) has argument roles “ma”.</p>
+<p>Argument roles can also be returned for the connectors that define 
+the outer edge, which can be of type predicate (P) or builder (B). For
+example:</p>
+<p>(not/M is/P.sc) has argument roles “sc”,
+of/B.ma has argument roles “ma”.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -483,6 +492,15 @@ in this case, edge.all_atoms() returns:
 <span class="sig-name descname"><span class="pre">argroles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.argroles" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the argument roles string of the edge, if it exists.
 Otherwise returns empty string.</p>
+<p>Argument roles can be return for the entire edge that they apply to,
+which can be a relation (R) or a concept (C). For example:</p>
+<p>((not/M is/P.sc) bob/C sad/C) has argument roles “sc”,
+(of/B.ma city/C berlin/C) has argument roles “ma”.</p>
+<p>Argument roles can also be returned for the connectors that define 
+the outer edge, which can be of type predicate (P) or builder (B). For
+example:</p>
+<p>(not/M is/P.sc) has argument roles “sc”,
+of/B.ma has argument roles “ma”.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -514,6 +532,13 @@ in this case, edge.atoms() returns:
 [the/md, of/br, mayor/cc, city/cs]</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.cmt">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cmt</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.cmt" title="Permalink to this definition"></a></dt>
+<dd><p>Edge connector main type.
+(this porperty is a shortcut for Hyperedge.mconnector_type())</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.connect">
 <span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arguments</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.connect" title="Permalink to this definition"></a></dt>
@@ -533,6 +558,14 @@ end of this edge. ‘arguments’ must be a collection.</p>
 The connector atom is:
 like/P.so</p>
 <p>The connector atom of an atom is None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.connector_mtype">
+<span class="sig-name descname"><span class="pre">connector_mtype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.connector_mtype" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the main type of the edge’s connector.
+If the edge has no connector (i.e. it’s an atom), then None is
+returned.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -556,6 +589,13 @@ deep – search recursively (default False)</p>
 <span class="sig-name descname"><span class="pre">contains_atom_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.contains_atom_type" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if the edge contains any atom with the given type.
 The edge is searched recursively, so the atom can appear at any depth.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.ct">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ct</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.ct" title="Permalink to this definition"></a></dt>
+<dd><p>Edge connector type.
+(this porperty is a shortcut for Hyperedge.connector_type())</p>
 </dd></dl>
 
 <dl class="py method">
@@ -645,12 +685,11 @@ concept is annotated as the main one, then an empty list is
 returned.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.mconnector_type">
-<span class="sig-name descname"><span class="pre">mconnector_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.mconnector_type" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the main type of the edge’s connector.
-If the edge has no connector (i.e. it’s an atom), then None is
-returned.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.mt">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mt</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.mt" title="Permalink to this definition"></a></dt>
+<dd><p>Edge main type.
+(this porperty is a shortcut for Hyperedge.mtype())</p>
 </dd></dl>
 
 <dl class="py method">
@@ -741,6 +780,13 @@ namespaces – include namespaces (default: True).</p>
 <span class="sig-name descname"><span class="pre">subedges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.subedges" title="Permalink to this definition"></a></dt>
 <dd><p>Returns all the subedges contained in the edge, including atoms
 and itself.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphbrain.hyperedge.Hyperedge.t">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.t" title="Permalink to this definition"></a></dt>
+<dd><p>Edge type.
+(this porperty is a shortcut for Hyperedge.type())</p>
 </dd></dl>
 
 <dl class="py method">
