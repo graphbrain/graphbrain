@@ -14,12 +14,10 @@ All cases below work with both.
 
 Here's an overview of the interface::
 
-   usage: graphbrain [-h] [--agent AGENT] [--corefs] [--fields FIELDS] [--hg HG]
+   usage: graphbrain [-h] [--col COL] [--corefs] [--hg HG]
                      [--indir INDIR] [--infile INFILE] [--lang LANG]
-                     [--outdir OUTDIR] [--outfile OUTFILE] [--parser PARSER]
-                     [--pattern PATTERN] [--sequence SEQUENCE]
-                     [--show_namespaces] [--system SYSTEM] [--text TEXT]
-                     [--training_data TRAINING_DATA] [--url URL]
+                     [--outfile OUTFILE] [--parser PARSER]
+                     [--sequence SEQUENCE] [--url URL]
                      command
 
    positional arguments:
@@ -65,25 +63,114 @@ Imports a hypergraph database from a JSON file::
 
    graphbrain --hg <hypergraph_database> --infile <json_file> import
 
-run
+txt
 ---
 
-Run a knowledge agent::
+Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.
 
-   graphbrain --hg <hypergraph_database> --agent <agent name> run
+This is a very simple but also useful, general-purpose reader/parser.
 
-A knowledge agent is a program that manipulates an hypergraph in some way. It can be introspective, working only on the current contents of the hypergraph to derive new knowledge. For example, the *taxonomy* agent infers simple taxonomies from concepts. It can infer that 'black cat' is a type of 'cat' or that 'city of Berlin' is a type of 'city'. You can run it like this::
+wikipedia
+---------
 
-   graphbrain --hg <hypergraph_database> --agent taxonomy run
+Takes a wikipedia URL as input, extracts the contents and converts each one of its sentences to hyperedges, adding them to the hypergraph.
 
-It produces new hyperedges such as::
+reddit
+------
 
-   (type_of/P/. city/C (of/B city/C berlin/C))
+Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.
 
-Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the *txt_parser* agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge. You can run it like this::
+taxonomy
+--------
 
-   graphbrain --infile some_test_file.txt --hg <hypergraph_database> --agent txt_parser run
+Derives a taxonomy from concepts defined with builders of modifiers. For example, ``(of/Br.ma founder/Cc.s psychoanalysis/Cc.s)`` is a type of ``founder/Cc.s``, so the following hyperedge is added::
 
-You can find the full list of agents that are distributed with Graphbrain here:
+   (type_of/P/. (of/Br.ma founder/Cc.s psychoanalysis/Cc.s) founder/Cc.s)
 
-https://graphbrain.net/reference/agents.html
+Or, if we consider modifier-defined concepts such as ``(black/Ma cat/Cc.s)``::
+
+   (type_of/P/. (black/Ma cat/Cc.s) cat/Cc.s)
+
+names
+-----
+
+Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ for compound proper name concepts, for example detecting that "Barack Obama" and "Obama" refer to the same person but "Michelle Obama" refers to someone else).
+
+onto
+----
+
+**Depends on**: taxonomy
+
+Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ based on probabilistic reasoning over taxonomies. For example, detecting that "United States" and "United States of America" refer to the same entity.
+
+actors
+------
+
+**Depends on**: coreference resolution
+
+We define actors as specific entities that are capable of acting in some sense. This simple command identifies hyperedges corresponding to actor by applying the following criteria:
+
+1. The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation
+2. The hyperedge is of type concept and subtype proper concept
+3. If coreferences are used, the hyperedge is the main coreference
+
+This command transverses the entire hypergraph to identify actors, and then adds hyperedges like the following::
+
+   (actor/P/. mary/Cp.s/en)
+
+The above simply means that ``mary/Cp.s/en`` was identified as an actor.
+
+claims
+------
+
+**Depends on**: coreference resolution
+
+Identifies hyperedges that represent a claim. Claims are sentences such as: "North Korea says it's not afraid of US military strike". The claim is that "North Korea is not afraid of US military strike" and the author of the claim is "North Korea".
+
+More specifically, claims are detected according to the following criteria:
+
+1. Hyperedge is a relation with predicate of type ``Pd``.
+2. The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote a claim (e.g.: "say", "claim").
+3. The hyperedge has a subject and a clausal complement. The first is used to identify the actor making the claim, the second the claim itself.
+
+Claim relations follow the format::
+
+   (claim/P/. *actor* *claim* *edge*)
+
+Furthermore, simple anaphora resolution on the claim is performed (e.g. in "Pink Panther says that she loves pink.", the hyperedge for "she" is replaced with the hyperedge for "Pink Panther" in the claim). In these cases, pronouns are used to guess gender or nature of actors. Actors can be classified as female::
+
+   (female/P/. *actor*)
+
+Or as a group::
+
+   (group/P/. *actor*)
+
+Or as male::
+
+   (male/P/. *actor*)
+
+Or as non-human::
+
+   (non-human/P/. *actor*)
+
+conflicts
+---------
+
+**Depends on**: coreference resolution
+
+Identifies hyperedges that represent a conflict. Conflicts are sentences such as: "Germany warns Russia against military engagement in Syria". The source of the expression of conflict here is "Germany", the target is "Russia" and the topic is "military engagement in Syria".
+
+More specifically, claims are detected according to the following criteria:
+
+1. Hyperedge is a relation with predicate of type ``Pd``.
+2. The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote an expression of conflict (e.g.: "warn", "kill").
+3. The hyperedge has a subject and an object. The first is used to identify the actor originating the expression of conflict and the second the actor which is the target of this expression.
+4. [optional] Beyond subject and object, if any specifier arguments are present, and their trigger atoms belong to a predetermined list (e.g. "over", "against"), then topics of conflict are extracted from these specifiers.
+
+Conflict relations follow the format::
+
+   (conflict/P/. *actor_orig* *actor_targ* *edge*)
+
+These conflict relations are connected to their topics by further relations with the format::
+
+   (conflict-topic/P/. *actor_orig* *actor_targ* *concept* *edge*)
