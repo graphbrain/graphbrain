@@ -1080,7 +1080,7 @@ def unique(edge):
 def non_unique(edge):
     if edge.atom:
         if type(edge) == UniqueAtom:
-            return edge.atom
+            return edge._atom
         else:
             return edge
     else:
