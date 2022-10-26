@@ -102,6 +102,7 @@ class AlphaBeta(Parser):
         self.edge2toks = None
         self.toks2edge = None
         self.edge2coref = None
+        self.resolved_corefs = None
         self.cur_text = None
         self.extra_edges = set()
         self.doc = None
@@ -229,6 +230,7 @@ class AlphaBeta(Parser):
         self.edge2toks = {}
         self.toks2edge = {}
         self.edge2coref = {}
+        self.resolved_corefs = set()
         self.cur_text = text
 
     def _head_token(self, edge):
@@ -698,19 +700,24 @@ class AlphaBeta(Parser):
     def _resolve_corefs_edge(self, edge):
         if edge is None:
             return None
+        # e.g. "ihr Hund", "son chien", "her dog", ...
+        # (her/Mp dog/Cc) -> (poss/Bp.am/. mary/Cp dog/Cc)
+        elif (edge.not_atom and
+              edge[0].t == 'Mp' and
+              len(edge) == 2 and
+              edge[0] in self.edge2coref and
+              self.edge2coref[edge[0]].mt == 'C' and
+              (self.edge2coref[edge[0]].atom or
+                self.edge2coref[edge[0]][0].t != 'Mp')):
+            return hedge(
+                (const.possessive_builder, self.edge2coref[edge[0]], edge[1]))
+        elif edge in self.resolved_corefs:
+            return edge
         elif (edge in self.edge2coref and
               edge.mtype() == self.edge2coref[edge].mtype()):
             return self.edge2coref[edge]
         elif edge.atom:
             return edge
-        # e.g. "ihr Hund", "son chien", "her dog", ...
-        # (her/Mp dog/Cc) -> (poss/Bp.am/. mary/Cp dog/Cc)
-        elif (edge[0].type() == 'Mp' and
-              len(edge) == 2 and
-              edge[0] in self.edge2coref and
-              self.edge2coref[edge[0]].mtype() == 'C'):
-            return hedge(
-                (const.possessive_builder, self.edge2coref[edge[0]], edge[1]))
         else:
             return hedge([self._resolve_corefs_edge(subedge)
                           for subedge in edge])
@@ -764,15 +771,16 @@ class AlphaBeta(Parser):
                     redge = toks2resolved[toks]
                     if edge != redge:
                         self.edge2coref[edge] = redge
+                        self.resolved_corefs.add(redge)
 
             for parse in parse_results['parses']:
                 resolved_edge = parse['main_edge']
                 while True:
-                    edge = self._resolve_corefs_edge(resolved_edge)
-                    if edge == resolved_edge:
+                    new_edge = self._resolve_corefs_edge(resolved_edge)
+                    if new_edge == resolved_edge:
                         break
                     else:
-                        resolved_edge = edge
+                        resolved_edge = new_edge
                 parse['resolved_corefs'] = resolved_edge
 
             parse_results['inferred_edges'] = inferred_edges
