@@ -104,10 +104,6 @@ The special conjunction ``lemma/J/.`` indicates a lemma specification, followed 
 Parser-level coreference resolution and inference of gender, number and animacy
 ===============================================================================
 
-**NOTE:** Currently, the default distribution of Graphbrain does not support parser-level coreference resolution. Please refer to the installation instructions on how to build graphbrain with this feature.
-
-Currently, parser-level coreference resolution relies on neuralcoref, which requires Python ==3.7 and spaCy >=2.1.0, <3.0.0. These restrictions are the reason why we kept it out of the default distribution. Once the successor of neuralcoref is released, we hope to use it to enable parser-level coreference resolution by default in the default distribution.
-
 Consider the sentence::
 
    "Alice says that she likes her dog."
