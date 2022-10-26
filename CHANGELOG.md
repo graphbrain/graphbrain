@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.6.0] - ongoing work
+## [0.6.0] - 26-10-2022
 ### Added
 - Hyperedge.atom and .not_atom properties.
 - Hyperedge.mtype() and .connector_mtype() methods.
@@ -11,7 +11,6 @@
 - Parser.parse_and_add().
 - Parser.sentences().
 - Hyperedge.normalized().
-- New package graphbrain.meaning, for meaning extractors.
 - New package graphbrain.readers, for text readers from various sources.
 - New package graphbrain.processors, for miscellaneous processors.
 - Processor class.
@@ -23,7 +22,7 @@
 - Improved Hyperedge.main_concepts().
 - Hyperedge.atom() renamed to .inner_atom().
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.
-- Improved wikipedia agent.
+- Improved wikipedia reader.
 - Improved coreference resolution.
 - LevelDB included by default again.
 - Old package graphbrain.meaning renamed to graphbrain.utils.
