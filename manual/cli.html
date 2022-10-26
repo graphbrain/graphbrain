@@ -69,7 +69,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#create">create</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#export">export</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#import">import</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#run">run</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#txt">txt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wikipedia">wikipedia</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reddit">reddit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#taxonomy">taxonomy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#names">names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onto">onto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#actors">actors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#claims">claims</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conflicts">conflicts</a></li>
 </ul>
 </li>
 </ul>
@@ -134,23 +142,15 @@
 
 <span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">agent</span> <span class="n">AGENT</span>         <span class="n">agent</span> <span class="n">name</span>
+  <span class="o">--</span><span class="n">col</span>                 <span class="n">table</span> <span class="n">column</span>
   <span class="o">--</span><span class="n">corefs</span>              <span class="n">perform</span> <span class="n">coreference</span> <span class="n">resolution</span>
-  <span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span>       <span class="n">field</span> <span class="n">names</span>
   <span class="o">--</span><span class="n">hg</span> <span class="n">HG</span>               <span class="n">hypergraph</span> <span class="n">db</span>
   <span class="o">--</span><span class="n">indir</span> <span class="n">INDIR</span>         <span class="nb">input</span> <span class="n">directory</span>
   <span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span>       <span class="nb">input</span> <span class="n">file</span>
   <span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span>           <span class="n">language</span>
-  <span class="o">--</span><span class="n">outdir</span> <span class="n">OUTDIR</span>       <span class="n">output</span> <span class="n">directory</span>
   <span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span>     <span class="n">output</span> <span class="n">file</span>
   <span class="o">--</span><span class="n">parser</span> <span class="n">PARSER</span>       <span class="n">parser</span>
-  <span class="o">--</span><span class="n">pattern</span> <span class="n">PATTERN</span>     <span class="n">edge</span> <span class="n">pattern</span>
   <span class="o">--</span><span class="n">sequence</span> <span class="n">SEQUENCE</span>   <span class="n">sequence</span> <span class="n">name</span>
-  <span class="o">--</span><span class="n">show_namespaces</span>     <span class="n">show</span> <span class="n">namespaces</span>
-  <span class="o">--</span><span class="n">system</span> <span class="n">SYSTEM</span>       <span class="n">agent</span> <span class="n">system</span> <span class="n">file</span>
-  <span class="o">--</span><span class="n">text</span> <span class="n">TEXT</span>           <span class="n">text</span> <span class="n">identifier</span>
-  <span class="o">--</span><span class="n">training_data</span> <span class="n">TRAINING_DATA</span>
-                        <span class="n">training</span> <span class="n">data</span> <span class="k">for</span> <span class="n">ML</span> <span class="n">tasks</span>
   <span class="o">--</span><span class="n">url</span> <span class="n">URL</span>             <span class="n">url</span>
 </pre></div>
 </div>
@@ -178,26 +178,104 @@
 </pre></div>
 </div>
 </section>
-<section id="run">
-<h3>run<a class="headerlink" href="#run" title="Permalink to this heading"></a></h3>
-<p>Run a knowledge agent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="o">&lt;</span><span class="n">agent</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">run</span>
+<section id="txt">
+<h3>txt<a class="headerlink" href="#txt" title="Permalink to this heading"></a></h3>
+<p>Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
+<p>This is a very simple but also useful, general-purpose reader/parser.</p>
+</section>
+<section id="wikipedia">
+<h3>wikipedia<a class="headerlink" href="#wikipedia" title="Permalink to this heading"></a></h3>
+<p>Takes a wikipedia URL as input, extracts the contents and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
+</section>
+<section id="reddit">
+<h3>reddit<a class="headerlink" href="#reddit" title="Permalink to this heading"></a></h3>
+<p>Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.</p>
+</section>
+<section id="taxonomy">
+<h3>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this heading"></a></h3>
+<p>Derives a taxonomy from concepts defined with builders of modifiers. For example, <code class="docutils literal notranslate"><span class="pre">(of/Br.ma</span> <span class="pre">founder/Cc.s</span> <span class="pre">psychoanalysis/Cc.s)</span></code> is a type of <code class="docutils literal notranslate"><span class="pre">founder/Cc.s</span></code>, so the following hyperedge is added:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">Br</span><span class="o">.</span><span class="n">ma</span> <span class="n">founder</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span> <span class="n">psychoanalysis</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">founder</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>A knowledge agent is a program that manipulates an hypergraph in some way. It can be introspective, working only on the current contents of the hypergraph to derive new knowledge. For example, the <em>taxonomy</em> agent infers simple taxonomies from concepts. It can infer that ‘black cat’ is a type of ‘cat’ or that ‘city of Berlin’ is a type of ‘city’. You can run it like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="n">taxonomy</span> <span class="n">run</span>
+<p>Or, if we consider modifier-defined concepts such as <code class="docutils literal notranslate"><span class="pre">(black/Ma</span> <span class="pre">cat/Cc.s)</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="p">(</span><span class="n">black</span><span class="o">/</span><span class="n">Ma</span> <span class="n">cat</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">cat</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>It produces new hyperedges such as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">city</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">B</span> <span class="n">city</span><span class="o">/</span><span class="n">C</span> <span class="n">berlin</span><span class="o">/</span><span class="n">C</span><span class="p">))</span>
+</section>
+<section id="names">
+<h3>names<a class="headerlink" href="#names" title="Permalink to this heading"></a></h3>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for compound proper name concepts, for example detecting that “Barack Obama” and “Obama” refer to the same person but “Michelle Obama” refers to someone else).</p>
+</section>
+<section id="onto">
+<h3>onto<a class="headerlink" href="#onto" title="Permalink to this heading"></a></h3>
+<p><strong>Depends on</strong>: taxonomy</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> based on probabilistic reasoning over taxonomies. For example, detecting that “United States” and “United States of America” refer to the same entity.</p>
+</section>
+<section id="actors">
+<h3>actors<a class="headerlink" href="#actors" title="Permalink to this heading"></a></h3>
+<p><strong>Depends on</strong>: coreference resolution</p>
+<p>We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:</p>
+<ol class="arabic simple">
+<li><p>The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation</p></li>
+<li><p>The hyperedge is of type concept and subtype proper concept</p></li>
+<li><p>If coreferences are used, the hyperedge is the main coreference</p></li>
+</ol>
+<p>This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">actor</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">mary</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the <em>txt_parser</em> agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge. You can run it like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="n">some_test_file</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="n">txt_parser</span> <span class="n">run</span>
+<p>The above simply means that <code class="docutils literal notranslate"><span class="pre">mary/Cp.s/en</span></code> was identified as an actor.</p>
+</section>
+<section id="claims">
+<h3>claims<a class="headerlink" href="#claims" title="Permalink to this heading"></a></h3>
+<p><strong>Depends on</strong>: coreference resolution</p>
+<p>Identifies hyperedges that represent a claim. Claims are sentences such as: “North Korea says it’s not afraid of US military strike”. The claim is that “North Korea is not afraid of US military strike” and the author of the claim is “North Korea”.</p>
+<p>More specifically, claims are detected according to the following criteria:</p>
+<ol class="arabic simple">
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">Pd</span></code>.</p></li>
+<li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote a claim (e.g.: “say”, “claim”).</p></li>
+<li><p>The hyperedge has a subject and a clausal complement. The first is used to identify the actor making the claim, the second the claim itself.</p></li>
+</ol>
+<p>Claim relations follow the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can find the full list of agents that are distributed with Graphbrain here:</p>
-<p><a class="reference external" href="https://graphbrain.net/reference/agents.html">https://graphbrain.net/reference/agents.html</a></p>
+<p>Furthermore, simple anaphora resolution on the claim is performed (e.g. in “Pink Panther says that she loves pink.”, the hyperedge for “she” is replaced with the hyperedge for “Pink Panther” in the claim). In these cases, pronouns are used to guess gender or nature of actors. Actors can be classified as female:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">female</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as a group:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">group</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as male:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">male</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as non-human:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">non</span><span class="o">-</span><span class="n">human</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="conflicts">
+<h3>conflicts<a class="headerlink" href="#conflicts" title="Permalink to this heading"></a></h3>
+<p><strong>Depends on</strong>: coreference resolution</p>
+<p>Identifies hyperedges that represent a conflict. Conflicts are sentences such as: “Germany warns Russia against military engagement in Syria”. The source of the expression of conflict here is “Germany”, the target is “Russia” and the topic is “military engagement in Syria”.</p>
+<p>More specifically, claims are detected according to the following criteria:</p>
+<ol class="arabic simple">
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">Pd</span></code>.</p></li>
+<li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote an expression of conflict (e.g.: “warn”, “kill”).</p></li>
+<li><p>The hyperedge has a subject and an object. The first is used to identify the actor originating the expression of conflict and the second the actor which is the target of this expression.</p></li>
+<li><p>[optional] Beyond subject and object, if any specifier arguments are present, and their trigger atoms belong to a predetermined list (e.g. “over”, “against”), then topics of conflict are extracted from these specifiers.</p></li>
+</ol>
+<p>Conflict relations follow the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These conflict relations are connected to their topics by further relations with the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">-</span><span class="n">topic</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">concept</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>
