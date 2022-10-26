@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1] - ongoing
+### Added
+
+### Changed
+
+### Removed
+
 ## [0.6.0] - 27-10-2022
 ### Added
 - Hyperedge.atom and .not_atom properties.
