@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.6.0] - 26-10-2022
+## [0.6.0] - 27-10-2022
 ### Added
 - Hyperedge.atom and .not_atom properties.
 - Hyperedge.mtype() and .connector_mtype() methods.
