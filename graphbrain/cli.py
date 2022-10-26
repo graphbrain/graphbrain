@@ -38,34 +38,20 @@ def cli():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('command', type=str, help='command to execute')
-    parser.add_argument('--agent', type=str, help='agent name', default=None)
     parser.add_argument('--col', type=str, help='table column', default=None)
     parser.add_argument('--corefs', help='perform coreference resolution',
                         action='store_true')
-    parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--hg', type=str,
                         help='hypergraph db', default='gb.db')
     parser.add_argument('--indir', type=str,
                         help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--lang', type=str, help='language', default=None)
-    parser.add_argument('--outdir', type=str,
-                        help='output directory', default=None)
     parser.add_argument('--outfile', type=str,
                         help='output file', default=None)
     parser.add_argument('--parser', type=str, help='parser', default=None)
-    parser.add_argument('--pattern', type=str, help='edge pattern',
-                        default='*')
     parser.add_argument('--sequence', type=str, help='sequence name',
                         default=None)
-    parser.add_argument('--show_namespaces',
-                        help='show namespaces', action='store_true')
-    parser.add_argument('--system', type=str, help='agent system file',
-                        default=None)
-    parser.add_argument('--text', type=str, help='text identifier',
-                        default='title')
-    parser.add_argument('--training_data', type=str,
-                        help='training data for ML tasks', default=None)
     parser.add_argument('--url', type=str, help='url', default=None)
 
     args = parser.parse_args()
@@ -87,14 +73,14 @@ def cli():
 
     print(colored('{}\n'.format( 'command: {}'.format(args.command)), 'white'))
 
-    if args.agent:
-        print('agent: {}'.format(args.agent))
     if args.col:
         print('column: {}'.format(args.col))
     if args.corefs:
         print('coreferences: {}'.format(args.corefs))
     if args.hg:
         print('hypergraph: {}'.format(args.hg))
+    if args.indir:
+        print('input directory: {}'.format(args.indir))
     if args.infile:
         print('input file: {}'.format(args.infile))
     if args.lang:
@@ -105,10 +91,6 @@ def cli():
         print('output file: {}'.format(args.outfile))
     if args.sequence:
         print('sequence: {}'.format(args.sequence))
-    if args.system:
-        print('system: {}'.format(args.system))
-    if args.training_data:
-        print('training data: {}'.format(args.training_data))
     if args.url:
         print('url: {}'.format(args.url))
 

@@ -27,23 +27,15 @@ Here's an overview of the interface::
 
    optional arguments:
      -h, --help            show this help message and exit
-     --agent AGENT         agent name
+     --col                 table column
      --corefs              perform coreference resolution
-     --fields FIELDS       field names
      --hg HG               hypergraph db
      --indir INDIR         input directory
      --infile INFILE       input file
      --lang LANG           language
-     --outdir OUTDIR       output directory
      --outfile OUTFILE     output file
      --parser PARSER       parser
-     --pattern PATTERN     edge pattern
      --sequence SEQUENCE   sequence name
-     --show_namespaces     show namespaces
-     --system SYSTEM       agent system file
-     --text TEXT           text identifier
-     --training_data TRAINING_DATA
-                           training data for ML tasks
      --url URL             url
 
 The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the optional arguments. Presented below are the details for each command.
