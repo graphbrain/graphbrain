@@ -183,6 +183,8 @@ def _defun_pattern_argroles(edge):
                 argroles = atom.argroles()
                 if argroles != '':
                     return atom
+            # if no atom with argroles is found, just return the first one
+            return edge[1]
         else:
             return _defun_pattern_argroles(edge[1])
     else:
