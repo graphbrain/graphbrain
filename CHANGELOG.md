@@ -5,6 +5,7 @@
 
 ### Changed
 - Hyperedge.replace_argroles() .insert_argrole() and .insert_edge_with_argrole() now works with functional patterns such as var.
+- Fixed bug when matching patterns containing atoms functional pattern where no atom has argroles.
 
 ### Removed
 - interactive_case_generator() from graphbrain.notebook.
