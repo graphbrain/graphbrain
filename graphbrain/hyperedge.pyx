@@ -520,6 +520,7 @@ class Hyperedge(tuple):
             return Hyperedge(new_edge)
         elif st in {'P', 'B'}:
             new_edge = [self[0], self[1].replace_argroles(argroles)]
+            new_edge += list(self[2:])
             return Hyperedge(new_edge)
         return self
 
@@ -534,6 +535,7 @@ class Hyperedge(tuple):
             return Hyperedge(new_edge)
         elif st in {'P', 'B'}:
             new_edge = [self[0], self[1].insert_argrole(argrole, pos)]
+            new_edge += list(self[2:])
             return Hyperedge(new_edge)
         return self
 

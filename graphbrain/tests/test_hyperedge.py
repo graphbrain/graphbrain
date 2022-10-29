@@ -617,6 +617,50 @@ class TestHyperedge(unittest.TestCase):
             edge.insert_edge_with_argrole(hedge('z/C'), 'a', 2),
             hedge('((m/M b/B.ama) x/C y/C z/C)'))
 
+    def test_replace_argroles_var(self):
+        edge = hedge('((var s/Bp.am V) x/C y/C)')
+        self.assertEqual(edge.replace_argroles('ma').to_str(),
+                         '((var s/Bp.ma V) x/C y/C)')
+        edge = hedge('((var (m/M s/Bp.am) V) x/C y/C)')
+        self.assertEqual(edge.replace_argroles('ma').to_str(),
+                         '((var (m/M s/Bp.ma) V) x/C y/C)')
+        edge = hedge('((var come/Pd.sx.-i----/en V) you/C here/C)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '((var come/Pd.scx.-i----/en V) you/C here/C)')
+        edge = hedge('((var come/Pd/en V) you/C here/C)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '((var come/Pd.scx/en V) you/C here/C)')
+        edge = hedge('((var (do/M come/Pd/en) V) you/C here/C)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '((var (do/M come/Pd.scx/en) V) you/C here/C)')
+        edge = hedge('((var come V) you/C here/C)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '((var come V) you/C here/C)')
+
+    def test_insert_argrole_var(self):
+        edge = hedge('((var s/Bp.am V) x/C y/C)')
+        self.assertEqual(
+            edge.insert_argrole('m', 0).to_str(), '((var s/Bp.mam V) x/C y/C)')
+        edge = hedge('((var come/Pd.sx.-i----/en V) you/C here/C)')
+        self.assertEqual(edge.insert_argrole('x', 1).to_str(),
+                         '((var come/Pd.sxx.-i----/en V) you/C here/C)')
+        edge = hedge('((var come/Pd/en V) you/C here/C)')
+        self.assertEqual(edge.insert_argrole('s', 100).to_str(),
+                         '((var come/Pd.s/en V) you/C here/C)')
+        edge = hedge('((var (do/M come/Pd.sx.-i----/en) V) you/C here/C)')
+        self.assertEqual(edge.insert_argrole('x', 2).to_str(),
+                         '((var (do/M come/Pd.sxx.-i----/en) V) you/C here/C)')
+
+    def test_insert_edge_with_var(self):
+        edge = hedge('((var is/Pd.sc/en V) sky/C blue/C)')
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('today/C'), 'x', 0),
+            hedge('((var is/Pd.xsc/en V) today/C sky/C blue/C)'))
+        edge = hedge('((var (m/M b/B.am) V) x/C y/C)')
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('z/C'), 'a', 2),
+            hedge('((var (m/M b/B.ama) V) x/C y/C z/C)'))
+
     def test_edges_with_argrole(self):
         edge_str = ("((have/Mv.|f----/en (been/Mv.<pf---/en "
                     "tracking/Pd.sox.|pg---/en)) (from/Br.ma/en "

@@ -4,8 +4,10 @@
 ### Added
 
 ### Changed
+- Hyperedge.replace_argroles() .insert_argrole() and .insert_edge_with_argrole() now works with functional patterns such as var.
 
 ### Removed
+- interactive_case_generator() from graphbrain.notebook.
 
 ## [0.6.0] - 27-10-2022
 ### Added

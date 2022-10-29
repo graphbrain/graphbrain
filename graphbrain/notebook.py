@@ -3,7 +3,6 @@ from html import escape
 from IPython.display import display, HTML
 
 from graphbrain import hedge
-from graphbrain.meaning.case_generators import InteractiveCaseGenerator
 
 
 TYPE_COLORS = {'C': '#268bd2',
@@ -263,8 +262,3 @@ def blocks(edge, subtypes=False, argroles=True, namespaces=False):
     html = '<div style="background-color:#fcfcfc; padding:50px">{}'\
            '</div>'.format(html)
     display(HTML(html))
-
-
-def interactive_case_generator(tests, extractor, case=None, keywords=None):
-    return InteractiveCaseGenerator(tests, extractor).run(case=case,
-                                                          keywords=keywords)
