@@ -891,7 +891,10 @@ class Testpatterns(unittest.TestCase):
         """)
         pattern = hedge(s)
         s = ("""
-        ((var picks/Pd.sox.|f--3s-/en PRED) (var trump/Cc.s/en ARG1) (var (+/B.am/. lawyer/Cc.s/en (+/B.am/. ty/Cp.s/en cobb/Cp.s/en)) ARG2) ((to/Mi/en handle/Pd.o.-i-----/en) (+/B.am/. russia/Cp.s/en probe/Cc.s/en)))
+        ((var picks/Pd.sox.|f--3s-/en PRED) (var trump/Cc.s/en ARG1)
+        (var (+/B.am/. lawyer/Cc.s/en (+/B.am/. ty/Cp.s/en cobb/Cp.s/en)) ARG2)
+        ((to/Mi/en handle/Pd.o.-i-----/en)
+        (+/B.am/. russia/Cp.s/en probe/Cc.s/en)))
         """)
         edge = hedge(s)
         matches = match_pattern(edge, pattern, hg=self.hg)
