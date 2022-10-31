@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2] - ongoing
+### Added
+
+### Changed
+
+### Removed
+
 ## [0.6.1] - 31-10-2022
 ### Changed
 - Hyperedge.replace_argroles() .insert_argrole() and .insert_edge_with_argrole() now works with functional patterns such as var.
