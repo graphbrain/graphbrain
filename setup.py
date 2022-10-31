@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-import os
-import sys
-import distutils
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 
