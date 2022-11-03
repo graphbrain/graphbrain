@@ -38,6 +38,11 @@ Thumbs.db
 .idea
 .vscode
 
+
+# Python version/venv #
+#######################
+.python-version
+
 # Python bytecode #
 ###################
 __pycache__
