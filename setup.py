@@ -30,28 +30,20 @@ if USE_CYTHON:
 
 if USE_CYTHON:
     ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],
-                  include_dirs=['.']),
-        Extension('graphbrain.patterns', ['graphbrain/patterns.pyx'],
-                  include_dirs=['.']),
+        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx']),
+        Extension('graphbrain.patterns', ['graphbrain/patterns.pyx']),
         Extension('graphbrain.memory.sqlite',
-                  ['graphbrain/memory/sqlite.pyx'],
-                  include_dirs=['.']),
+                  ['graphbrain/memory/sqlite.pyx']),
         Extension('graphbrain.memory.leveldb',
-                      ['graphbrain/memory/leveldb.pyx'],
-                      include_dirs=['.']),
+                  ['graphbrain/memory/leveldb.pyx']),
         Extension('graphbrain.memory.permutations',
-                  ['graphbrain/memory/permutations.pyx'],
-                  include_dirs=['.']),
+                  ['graphbrain/memory/permutations.pyx']),
         Extension('graphbrain.parsers.alpha',
-                  ['graphbrain/parsers/alpha.pyx'],
-                  include_dirs=['.']),
+                  ['graphbrain/parsers/alpha.pyx']),
         Extension('graphbrain.parsers.alpha_beta',
-                  ['graphbrain/parsers/alpha_beta.pyx'],
-                  include_dirs=['.']),
+                  ['graphbrain/parsers/alpha_beta.pyx']),
         Extension('graphbrain.parsers.parser_en',
-                  ['graphbrain/parsers/parser_en.pyx'],
-                  include_dirs=['.'])
+                  ['graphbrain/parsers/parser_en.pyx'])
     ]
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,
