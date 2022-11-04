@@ -1,3 +1,5 @@
+from typing import Union
+
 import graphbrain.constants as const
 from graphbrain.hyperedge import hedge, Hyperedge, str2atom
 from graphbrain.logic import eval_rule
@@ -119,7 +121,7 @@ class Hypergraph(object):
         """
         self._set_primary(hedge(edge), value)
 
-    def search(self, pattern, strict=True):
+    def search(self, pattern: Union[str, list, tuple, Hyperedge], strict=True):
         """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
@@ -138,8 +140,8 @@ class Hypergraph(object):
 
         Keyword argument:
         strict -- strictly match the search pattern, or allow for more general
-        atoms to match target atome (e.g. plays/P matches plays/Pd.so in
-        non-strict mode, but only exactl plays/Pd.so matches it in strict mode)
+        atoms to match target atom (e.g. plays/P matches plays/Pd.so in
+        non-strict mode, but only exactly plays/Pd.so matches it in strict mode)
         Non-strict mode is slower. (default True)
         """
         pattern = hedge(pattern)
@@ -165,11 +167,7 @@ class Hypergraph(object):
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
         """
-        pattern = hedge(pattern)
-        n = 0
-        for _ in self._search(pattern, strict=strict):
-            n += 1
-        return n
+        return len(list(self.search(hedge(pattern))))
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the center.
