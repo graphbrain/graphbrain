@@ -121,7 +121,7 @@ class Hypergraph(object):
         """
         self._set_primary(hedge(edge), value)
 
-    def search(self, pattern: Union[str, list, tuple, Hyperedge], strict=True):
+    def search(self, pattern: Union[str, list, tuple, Hyperedge], strict=True, hg=None):
         """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
@@ -154,7 +154,7 @@ class Hypergraph(object):
             elif pattern[0][0] == '.':
                 return self.all_atoms()
 
-        return self._search(pattern, strict=strict)
+        return self._search(pattern, strict=strict, hg=hg)
 
     def match(self, pattern, strict=True, curvars={}):
         pattern = hedge(pattern)
@@ -346,7 +346,7 @@ class Hypergraph(object):
     def _set_primary(self, edge, value):
         raise NotImplementedError()
 
-    def _search(self, pattern):
+    def _search(self, pattern, strict: bool, hg):
         raise NotImplementedError()
 
     def _match(self, pattern, curvars={}):

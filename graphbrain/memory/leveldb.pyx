@@ -125,8 +125,8 @@ class LevelDB(Hypergraph):
     def _set_primary(self, edge, value):
         self._set_attribute(edge, 'p', 1 if value else 0)
 
-    def _search(self, pattern, strict=True):
-        for result in self._match(pattern, strict=strict):
+    def _search(self, pattern, strict=True, hg=None):
+        for result in self._match(pattern, strict=strict, hg=hg):
             yield result[0]
 
     def _match_structure(self, pattern, strict):
@@ -154,9 +154,9 @@ class LevelDB(Hypergraph):
                 if nper == first_permutation(len(tokens) - 1, positions):
                     yield perm2edge(perm_str[1:])
 
-    def _match(self, pattern, strict=True, curvars={}):
+    def _match(self, pattern, strict=True, curvars={}, hg=None):
         for edge in self._match_structure(pattern, strict):
-            results = match_pattern(edge, pattern, curvars=curvars)
+            results = match_pattern(edge, pattern, curvars=curvars, hg=hg)
             if len(results) > 0:
                 yield (edge, results)
 
