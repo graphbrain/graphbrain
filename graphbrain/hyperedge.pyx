@@ -119,7 +119,7 @@ def _parsed_token(token):
 
 
 def hedge(source):
-    """Create an hyperedge."""
+    """Create a hyperedge."""
     cdef str edge_str
     cdef str edge_inner_str
     if type(source) in {tuple, list}:

@@ -166,11 +166,7 @@ class Hypergraph(object):
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
         """
-        pattern = hedge(pattern)
-        n: int = 0
-        for _ in self._search(pattern, strict=strict):
-            n += 1
-        return n
+        return len(list(self.search(hedge(pattern))))
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the center.
