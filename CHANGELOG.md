@@ -6,6 +6,7 @@
 ### Changed
 
 ### Removed
+- graphbrain.logic obsolete module.
 
 ## [0.6.1] - 31-10-2022
 ### Changed

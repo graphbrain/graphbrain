@@ -894,30 +894,6 @@ class TestHypergraph(unittest.TestCase):
         edges = list(self.hg.sequence('test_seq'))
         self.assertEqual(edges, [])
 
-    def test_eval_rule(self):
-        self.hg.destroy()
-        edge = hedge('(is/Pd.sc (the/M sun/C) red/C)')
-        self.hg.add(edge)
-        edge = hedge('(is/Pd.sc red/C color/C)')
-        self.hg.add(edge)
-
-        rule = hedge("""
-        (:- (prop/P ENTITY PROP) (is/Pd.sc ENTITY PROP))
-        """)
-        result = list(inference.edge for inference in self.hg.eval(rule))
-        self.assertEqual(
-            result, [hedge('(prop/P (the/M sun/C) red/C)'),
-                     hedge('(prop/P red/C color/C)')])
-
-        rule = hedge("""
-        (:- (color/P ENTITY COLOR)
-            (and (is/Pd.sc (the/M ENTITY) COLOR)
-                 (is/Pd.sc COLOR color/C)))
-        """)
-        result = list(inference.edge for inference in self.hg.eval(rule))
-        self.assertEqual(
-            result, [hedge('(color/P sun/C red/C)')])
-
     def test_add_with_attributes1(self):
         self.hg.destroy()
         edge = hedge('(is graphbrain/1 great/1)')
