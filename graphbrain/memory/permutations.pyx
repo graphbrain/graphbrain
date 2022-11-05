@@ -69,14 +69,10 @@ def unpermutate(tokens, nper):
     """
     n = len(tokens)
     indices = nthperm(n, nper)
-
-    res = [None] * n
-    pos = 0
-    for i in indices:
+    res = [''] * n
+    for pos, i in enumerate(indices):
         res[i] = tokens[pos]
-        pos += 1
-
-    return tuple(res)
+    return res
 
 
 def first_permutation(elements, positions):

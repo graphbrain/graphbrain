@@ -15,8 +15,7 @@ TYPE_COLORS = {'C': '#268bd2',
                'S': '#6c71c4'}
 
 
-def _edge2html_show(edge, style='indented', indent=False, close=True,
-                    close_html=''):
+def _edge2html_show(edge, style='indented', indent=False, close=True, close_html=''):
     ret_close_html = ''
 
     if indent:
@@ -35,16 +34,13 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
     color_html = 'color:{}'.format(color)
 
     if edge.atom:
-        html = '<span style="{}">{}</span>'.format(
-            color_html, escape(str(edge.root())))
+        html = '<span style="{}">{}</span>'.format(color_html, escape(str(edge.root())))
 
         if len(edge.parts()) > 1:
             escaped_codes = '/'.join(edge.parts()[1:])
             escaped_codes = escape(escaped_codes).strip()
-            html = '{}<span style="color:#000000;font-weight:lighter">/{}'\
-                   '</span>'.format(html, escaped_codes)
+            html = '{}<span style="color:#000000;font-weight:lighter">/{}</span>'.format(html, escaped_codes)
     else:
-        et = edge.mtype()
         arity = len(edge)
         contains_edges = any(not child.atom for child in edge)
         color_html = 'color:{}'.format(color)
@@ -58,27 +54,22 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
         for i in range(arity):
             child = edge[i]
 
+            child_indent = False
             # first edge (connector)?
             if i == 0:
-                child_indent = False
                 sep = ''
             # not connector
             else:
                 # indent depending on style
                 if style == 'indented':
                     # edges with only two items are rendered in one line
-                    child_indent = arity > 2
-                    if child_indent and child.atom and not contains_edges:
-                        child_indent = False
-                elif style == 'oneline':
-                    child_indent = False
+                    if arity > 2 and (child.not_atom or contains_edges):
+                        child_indent = True
 
                 sep = ' '
 
             if child.atom:
-                child_html, _ = _edge2html_show(child,
-                                                style=style,
-                                                indent=child_indent)
+                child_html, _ = _edge2html_show(child, style=style, indent=child_indent)
             else:
                 # Do not render closing html of children that are the last
                 # edge in a hyperedge. Instead, let some higher-level edge
@@ -86,11 +77,7 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
                 # a sequence of edges.
                 child_close = i < arity - 1
 
-                child_html, child_cl_html = _edge2html_show(
-                    child,
-                    style=style,
-                    indent=child_indent,
-                    close=child_close)
+                child_html, child_cl_html = _edge2html_show(child, style=style, indent=child_indent, close=child_close)
                 # accumulate close_html of child
                 close_html = '{}{}'.format(child_cl_html, close_html)
             html = '{}{}{}'.format(html, sep, child_html)
@@ -106,8 +93,7 @@ def _edge2html_show(edge, style='indented', indent=False, close=True,
         html = '{}<span style="font-weight:bold">)</span></span>'.format(html)
 
     # render edge
-    html = '<{} style="{}{}">{}{}'.format(
-        main_tag, margin, color_html, html, close_html)
+    html = '<{} style="{}{}">{}{}'.format(main_tag, margin, color_html, html, close_html)
 
     return html, ret_close_html
 
@@ -127,22 +113,18 @@ def show(edge, style='indented'):
 def _edge2html_vblocks(edge):
     tcolor = TYPE_COLORS[edge.mtype()]
     if edge.atom:
-        html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
-                    '</span>'.format(edge.root())
+        html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}</span>'.format(edge.root())
         parts = edge.parts()
         if len(parts) > 1:
             parts_str = '/'.join(edge.parts()[1:])
-            html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}'\
-                         '</span>'.format(parts_str)
+            html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}</span>'.format(parts_str)
             html_atom = ''.join((html_atom, html_parts))
-        html = '<div style="padding:5px;background-color:{};'\
-               'border:2px solid #fdf6e3;border-radius:10px">{}'\
+        html = '<div style="padding:5px;background-color:{};border:2px solid #fdf6e3;border-radius:10px">{}'\
                '</div>'.format(tcolor, html_atom)
         return html
     elif len(edge) == 2 or all(subedge.atom for subedge in edge):
         conn_html = _edge2html_vblocks(edge[0])
-        arg_htmls = ['<div style="display: table-cell;vertical-align: middle"'
-                     '>{}</div>'.format(_edge2html_vblocks(arg))
+        arg_htmls = ['<div style="display: table-cell;vertical-align: middle">{}</div>'.format(_edge2html_vblocks(arg))
                      for arg in edge[1:]]
 
         html = '<div style="display:table;border:2px solid #fdf6e3;'\
@@ -162,8 +144,7 @@ def _edge2html_vblocks(edge):
         return html
     else:
         conn_html = _edge2html_vblocks(edge[0])
-        arg_htmls = ['<div>{}</div>'.format(_edge2html_vblocks(arg))
-                     for arg in edge[1:]]
+        arg_htmls = ['<div>{}</div>'.format(_edge2html_vblocks(arg)) for arg in edge[1:]]
 
         html = '<div style="display:table;border:2px solid #fdf6e3;'\
                'background-color:{};border-radius:10px;padding:3px">'\
@@ -184,25 +165,20 @@ def _edge2html_vblocks(edge):
 
 def vblocks(edge, subtypes=False, argroles=True, namespaces=False):
     edge = hedge(edge)
-    sedge = edge.simplify(subtypes=subtypes,
-                          argroles=argroles,
-                          namespaces=namespaces)
+    sedge = edge.simplify(subtypes=subtypes, argroles=argroles, namespaces=namespaces)
     html = _edge2html_vblocks(sedge)
-    html = '<div style="background-color:#fcfcfc; padding:50px">{}'\
-           '</div>'.format(html)
+    html = '<div style="background-color:#fcfcfc; padding:50px">{}</div>'.format(html)
     display(HTML(html))
 
 
 def _edge2html_blocks(edge):
     tcolor = TYPE_COLORS[edge.mtype()]
     if edge.atom:
-        html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}'\
-                    '</span>'.format(edge.root())
+        html_atom = '<span style="color:#fdf6e3;font-weight:bold">{}</span>'.format(edge.root())
         parts = edge.parts()
         if len(parts) > 1:
             parts_str = '/'.join(edge.parts()[1:])
-            html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}'\
-                         '</span>'.format(parts_str)
+            html_parts = '<span style="color:#eee8d5;font-weight:lighter">/{}</span>'.format(parts_str)
             html_atom = ''.join((html_atom, html_parts))
         html = '<div style="padding:5px;background-color:{};'\
                'border:2px solid #fdf6e3;border-radius:10px;'\
@@ -210,8 +186,7 @@ def _edge2html_blocks(edge):
         return html
     elif len(edge) > 2:
         conn_html = _edge2html_blocks(edge[0])
-        arg_htmls = ['<div style="display: table-cell;vertical-align: middle">'
-                     '{}</div>'.format(_edge2html_blocks(arg))
+        arg_htmls = ['<div style="display: table-cell;vertical-align: middle">{}</div>'.format(_edge2html_blocks(arg))
                      for arg in edge[1:]]
 
         html = '<div style="display:table;border:2px solid #fdf6e3;'\
@@ -231,9 +206,7 @@ def _edge2html_blocks(edge):
         return html
     else:
         conn_html = _edge2html_blocks(edge[0])
-        arg_htmls = ['<div style="display: table-row">{}</div>'.format(
-                        _edge2html_blocks(arg))
-                     for arg in edge[1:]]
+        arg_htmls = ['<div style="display: table-row">{}</div>'.format(_edge2html_blocks(arg)) for arg in edge[1:]]
 
         html = '<div style="display:table;border:2px solid #fdf6e3;'\
                'background-color:{};border-radius:10px;padding:8px">'\
@@ -255,10 +228,7 @@ def _edge2html_blocks(edge):
 
 def blocks(edge, subtypes=False, argroles=True, namespaces=False):
     edge = hedge(edge)
-    sedge = edge.simplify(subtypes=subtypes,
-                          argroles=argroles,
-                          namespaces=namespaces)
+    sedge = edge.simplify(subtypes=subtypes, argroles=argroles, namespaces=namespaces)
     html = _edge2html_blocks(sedge)
-    html = '<div style="background-color:#fcfcfc; padding:50px">{}'\
-           '</div>'.format(html)
+    html = '<div style="background-color:#fcfcfc; padding:50px">{}</div>'.format(html)
     display(HTML(html))

@@ -1,6 +1,5 @@
 import unittest
 
-from graphbrain import *
 from graphbrain.memory.permutations import *
 
 
@@ -64,48 +63,48 @@ class TestPermutations(unittest.TestCase):
 
     def test_unpermutate(self):
         edge = unpermutate(('a', 'b'), 0)
-        self.assertEqual(edge, ('a', 'b'))
+        self.assertEqual(edge, ['a', 'b'])
         edge = unpermutate(('b', 'a'), 1)
-        self.assertEqual(edge, ('a', 'b'))
+        self.assertEqual(edge, ['a', 'b'])
 
         edge = unpermutate(('a', 'b', 'c'), 0)
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, ['a', 'b', 'c'])
         edge = unpermutate(('a', 'c', 'b'), 1)
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, ['a', 'b', 'c'])
         edge = unpermutate(('b', 'a', 'c'), 2)
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, ['a', 'b', 'c'])
         edge = unpermutate(('b', 'c', 'a'), 3)
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, ['a', 'b', 'c'])
         edge = unpermutate(('c', 'a', 'b'), 4)
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, ['a', 'b', 'c'])
         edge = unpermutate(('c', 'b', 'a'), 5)
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, ['a', 'b', 'c'])
 
         edge = unpermutate(('a', 'b', 'c', 'd'), 0)
-        self.assertEqual(edge, ('a', 'b', 'c', 'd'))
+        self.assertEqual(edge, ['a', 'b', 'c', 'd'])
 
         edge = unpermutate(('a', 'b', 'd', 'c'), 1)
-        self.assertEqual(edge, ('a', 'b', 'c', 'd'))
+        self.assertEqual(edge, ['a', 'b', 'c', 'd'])
 
     def test_unpermutate2(self):
         edge = unpermutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 0)
-        self.assertEqual(edge, ('is/Pd.sc',
-                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        self.assertEqual(edge, ['is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'])
         edge = unpermutate(('is/Pd.sc', 'mary/Cp.s', ('my/M', 'name/Cn.s')), 1)
-        self.assertEqual(edge, ('is/Pd.sc',
-                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        self.assertEqual(edge, ['is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'])
         edge = unpermutate((('my/M', 'name/Cn.s'), 'is/Pd.sc', 'mary/Cp.s'), 2)
-        self.assertEqual(edge, ('is/Pd.sc',
-                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        self.assertEqual(edge, ['is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'])
         edge = unpermutate((('my/M', 'name/Cn.s'), 'mary/Cp.s', 'is/Pd.sc'), 3)
-        self.assertEqual(edge, ('is/Pd.sc',
-                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        self.assertEqual(edge, ['is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'])
         edge = unpermutate(('mary/Cp.s', 'is/Pd.sc', ('my/M', 'name/Cn.s')), 4)
-        self.assertEqual(edge, ('is/Pd.sc',
-                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        self.assertEqual(edge, ['is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'])
         edge = unpermutate(('mary/Cp.s', ('my/M', 'name/Cn.s'), 'is/Pd.sc'), 5)
-        self.assertEqual(edge, ('is/Pd.sc',
-                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        self.assertEqual(edge, ['is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'])
 
     def test_first_permutation(self):
         self.assertEqual(first_permutation(2, [0]), 0)

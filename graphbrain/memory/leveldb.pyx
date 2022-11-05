@@ -72,7 +72,7 @@ class LevelDB(Hypergraph):
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             edge = hedge(key.decode('utf-8')[1:])
             attributes = _decode_attributes(value)
-            yield (edge, attributes)
+            yield edge, attributes
 
     def add_with_attributes(self, edge, attributes):
         key = _edge2key(edge)
@@ -154,11 +154,13 @@ class LevelDB(Hypergraph):
                 if nper == first_permutation(len(tokens) - 1, positions):
                     yield perm2edge(perm_str[1:])
 
-    def _match(self, pattern, strict=True, curvars={}):
+    def _match(self, pattern, strict=True, curvars=None):
+        if curvars is None:
+            curvars = {}
         for edge in self._match_structure(pattern, strict):
             results = match_pattern(edge, pattern, curvars=curvars)
             if len(results) > 0:
-                yield (edge, results)
+                yield edge, results
 
     def _star(self, center, limit=None):
         center_str = center.to_str()
@@ -178,7 +180,7 @@ class LevelDB(Hypergraph):
                 nper = int(split_edge_str(perm_str[1:])[-1])
                 if nper == first_permutation(len(edge), (position,)):
                     count += 1
-                    yield(edge)
+                    yield edge
 
     def _atoms_with_root(self, root):
         start_str = ''.join((root, '/'))
@@ -188,7 +190,7 @@ class LevelDB(Hypergraph):
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             symb = hedge(key.decode('utf-8')[1:])
-            yield(symb)
+            yield symb
 
     def _edges_with_edges(self, edges, root):
         start_str = ' '.join([edge.to_str() for edge in edges])
@@ -207,10 +209,10 @@ class LevelDB(Hypergraph):
                         positions = [edge.index(item) for item in edges]
                         nper = int(split_edge_str(perm_str[1:])[-1])
                         if nper == first_permutation(len(edge), positions):
-                            yield(edge)
+                            yield edge
                 else:
                     # TODO: remove redundant results when a root is present
-                    yield(edge)
+                    yield edge
 
     def _set_attribute(self, edge, attribute, value):
         key = _edge2key(edge)
@@ -285,8 +287,7 @@ class LevelDB(Hypergraph):
             attributes = self._attribute_key(key)
             attributes[attribute] = value
         else:
-            attributes = {'p': 0, 'd': 0, 'dd': 0}
-            attributes[attribute] = value
+            attributes = {'p': 0, 'd': 0, 'dd': 0, attribute: value}
         self._add_key(key, attributes)
         return exists
 

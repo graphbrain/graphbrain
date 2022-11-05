@@ -154,7 +154,7 @@ class Hypergraph(object):
 
         return self._search(pattern, strict=strict)
 
-    def match(self, pattern, strict=True, curvars={}):
+    def match(self, pattern, strict=True, curvars=None):
         pattern = hedge(pattern)
         return self._match(pattern, strict=strict, curvars=curvars)
 
@@ -231,8 +231,7 @@ class Hypergraph(object):
         or_else -- value to return if the entity does not have
                    the give attribute. (default None)
         """
-        return self._get_float_attribute(hedge(edge), attribute,
-                                         or_else=or_else)
+        return self._get_float_attribute(hedge(edge), attribute, or_else=or_else)
 
     def degree(self, edge):
         """Returns the degree of an entity."""
@@ -306,8 +305,8 @@ class Hypergraph(object):
         pos = 0
         stop = False
         while not stop:
-            iter = self.search((const.sequence_pred, name, str(pos), '*'))
-            next_edge = next(iter, None)
+            iteration = self.search((const.sequence_pred, name, str(pos), '*'))
+            next_edge = next(iteration, None)
             if next_edge:
                 yield next_edge[3]
                 pos += 1
@@ -348,10 +347,10 @@ class Hypergraph(object):
     def _set_primary(self, edge, value):
         raise NotImplementedError()
 
-    def _search(self, pattern):
+    def _search(self, pattern, strict=True):
         raise NotImplementedError()
 
-    def _match(self, pattern, curvars={}):
+    def _match(self, pattern, strict=True, curvars=None):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):

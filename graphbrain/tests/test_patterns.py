@@ -443,13 +443,17 @@ class Testpatterns(unittest.TestCase):
 
     def test_match_pattern_debug_case_1(self):
         self.assertEqual(
-            match_pattern('(said/Pd.sr.<f-----/en entner/Cp.s/en (did/P.so.<f-----/en (of/Br.ma/en all/Cd/en (the/Md/en people/Cc.p/en)) (the/Md/en (right/Ma/en thing/Cc.s/en))))',
+            match_pattern('(said/Pd.sr.<f-----/en entner/Cp.s/en (did/P.so.<f-----/en (of/Br.ma/en all/Cd/en ('
+                          'the/Md/en people/Cc.p/en)) (the/Md/en (right/Ma/en thing/Cc.s/en))))',
                           '(said/Pd.{sr}.<f----- */C *)'),
             [{}])
 
     def test_match_pattern_debug_case_2(self):
         self.assertEqual(
-            match_pattern('(said/Pd.sxr.<f-----/en (+/B.ma/. providers/Cc.p/en service/Cc.s/en) (on/Tt/en (+/B.ma/. (with/Br.ma/en (a/Md/en call/Cc.s/en) (+/B.ma/. (+/B.ma/. pai/Cp.s/en ajit/Cp.s/en) chairman/Cp.s/en)) (last/Ma/en week/Cc.s/en))) (by/T/en ((up/M/en was/P.s.<f-----/en) (cellular/Ma/en usage/Cc.s/en))))',
+            match_pattern('(said/Pd.sxr.<f-----/en (+/B.ma/. providers/Cc.p/en service/Cc.s/en) (on/Tt/en (+/B.ma/. ('
+                          'with/Br.ma/en (a/Md/en call/Cc.s/en) (+/B.ma/. (+/B.ma/. pai/Cp.s/en ajit/Cp.s/en) '
+                          'chairman/Cp.s/en)) (last/Ma/en week/Cc.s/en))) (by/T/en ((up/M/en was/P.s.<f-----/en) ('
+                          'cellular/Ma/en usage/Cc.s/en))))',
                           '(said/Pd.{sr}.<f----- */C *)'),
             [{}])
 
@@ -516,96 +520,96 @@ class Testpatterns(unittest.TestCase):
         self.assertEqual(match_pattern(edge, pattern), [])
 
     def test_match_pattern_fun_var1(self):
-        s = ("((var */P PRED) */C */C)")
+        s = "((var */P PRED) */C */C)"
         pattern = hedge(s)
-        s = ("(says/Pd x/C y/C)")
+        s = "(says/Pd x/C y/C)"
         edge = hedge(s)
         self.assertEqual(
             match_pattern(edge, pattern), [{'PRED': hedge('says/Pd')}])
 
     def test_match_pattern_fun_var2(self):
-        s = ("((var (*/M VERB/P) PRED) */C */C)")
+        s = "((var (*/M VERB/P) PRED) */C */C)"
         pattern = hedge(s)
-        s = ("((will/M say/Pd) x/C y/C)")
+        s = "((will/M say/Pd) x/C y/C)"
         edge = hedge(s)
         self.assertEqual(
             match_pattern(edge, pattern), [{'PRED': hedge('(will/M say/Pd)'),
                                             'VERB': hedge('say/Pd')}])
 
     def test_match_pattern_fun_var3(self):
-        s = ("((var (*/M VERB/P) PRED) */C */C)")
+        s = "((var (*/M VERB/P) PRED) */C */C)"
         pattern = hedge(s)
-        s = ("((var (will/M say/Pd) PRED) x/C y/C)")
+        s = "((var (will/M say/Pd) PRED) x/C y/C)"
         edge = hedge(s)
         self.assertEqual(
             match_pattern(edge, pattern), [{'PRED': hedge('(will/M say/Pd)'),
                                             'VERB': hedge('say/Pd')}])
 
     def test_match_pattern_fun_atoms1(self):
-        s = ("(atoms */P)")
+        s = "(atoms */P)"
         pattern = hedge(s)
-        s = ("says/Pd.rr.|f--3s-/en")
+        s = "says/Pd.rr.|f--3s-/en"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern), [{}])
 
     def test_match_pattern_fun_atoms2(self):
-        s = ("(atoms says/P)")
+        s = "(atoms says/P)"
         pattern = hedge(s)
-        s = ("says/Pd.rr.|f--3s-/en")
+        s = "says/Pd.rr.|f--3s-/en"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern), [{}])
 
     def test_match_pattern_fun_atoms3(self):
-        s = ("(atoms say/P)")
+        s = "(atoms say/P)"
         pattern = hedge(s)
-        s = ("says/Pd.rr.|f--3s-/en")
+        s = "says/Pd.rr.|f--3s-/en"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern), [])
 
     def test_match_pattern_fun_atoms4(self):
-        s = ("(atoms VERB/P)")
+        s = "(atoms VERB/P)"
         pattern = hedge(s)
-        s = ("says/Pd.rr.|f--3s-/en")
+        s = "says/Pd.rr.|f--3s-/en"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern),
                          [{'VERB': hedge('says/Pd.rr.|f--3s-/en')}])
 
     def test_match_pattern_fun_atoms5(self):
-        s = ("(atoms VERB/P)")
+        s = "(atoms VERB/P)"
         pattern = hedge(s)
-        s = ("(will/M say/Pd)")
+        s = "(will/M say/Pd)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern),
                          [{'VERB': hedge('say/Pd')}])
 
     def test_match_pattern_fun_atoms6(self):
-        s = ("(atoms */M VERB/P)")
+        s = "(atoms */M VERB/P)"
         pattern = hedge(s)
-        s = ("(will/M say/Pd)")
+        s = "(will/M say/Pd)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern),
                          [{'VERB': hedge('say/Pd')}])
 
     def test_match_pattern_fun_atoms7(self):
-        s = ("(atoms not/M VERB/P)")
+        s = "(atoms not/M VERB/P)"
         pattern = hedge(s)
-        s = ("(will/M say/Pd)")
+        s = "(will/M say/Pd)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern),
                          [])
 
     def test_match_pattern_fun_atoms8(self):
-        s = ("(atoms will/M VERB/P)")
+        s = "(atoms will/M VERB/P)"
         pattern = hedge(s)
-        s = ("(will/M (not/M say/Pd))")
+        s = "(will/M (not/M say/Pd))"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern),
                          [{'VERB': hedge('say/Pd')}])
 
     def test_match_pattern_fun_atoms9(self):
-        s = ("(atoms MOD/M VERB/P)")
+        s = "(atoms MOD/M VERB/P)"
         pattern = hedge(s)
-        s = ("(will/M (not/M say/Pd))")
+        s = "(will/M (not/M say/Pd))"
         edge = hedge(s)
         result = match_pattern(edge, pattern)
         self.assertIn({'MOD': hedge('not/M'), 'VERB': hedge('say/Pd')}, result)
@@ -614,9 +618,9 @@ class Testpatterns(unittest.TestCase):
         self.assertEqual(len(result), 2)
 
     def test_match_pattern_fun_atoms10(self):
-        s = ("((atoms MOD/M VERB/P.so) * *)")
+        s = "((atoms MOD/M VERB/P.so) * *)"
         pattern = hedge(s)
-        s = ("((will/M (not/M say/Pd.so)) x/C y/C)")
+        s = "((will/M (not/M say/Pd.so)) x/C y/C)"
         edge = hedge(s)
         result = match_pattern(edge, pattern)
         self.assertIn(
@@ -626,9 +630,9 @@ class Testpatterns(unittest.TestCase):
         self.assertEqual(len(result), 2)
 
     def test_match_pattern_fun_atoms11(self):
-        s = ("((atoms MOD/M VERB/P.so) X Y)")
+        s = "((atoms MOD/M VERB/P.so) X Y)"
         pattern = hedge(s)
-        s = ("((will/M (not/M say/Pd.so)) x/C y/C)")
+        s = "((will/M (not/M say/Pd.so)) x/C y/C)"
         edge = hedge(s)
         result = match_pattern(edge, pattern)
         self.assertIn(
@@ -644,97 +648,99 @@ class Testpatterns(unittest.TestCase):
         self.assertEqual(len(result), 2)
 
     def test_match_pattern_fun_lemma1(self):
-        s = ("(lemma say/P)")
+        s = "(lemma say/P)"
         pattern = hedge(s)
-        s = ("say/Pd")
+        s = "say/Pd"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{}])
     
     def test_match_pattern_fun_lemma2(self):
-        s = ("(var (lemma say/P) VERB)")
+        s = "(var (lemma say/P) VERB)"
         pattern = hedge(s)
-        s = ("say/Pd")
+        s = "say/Pd"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{'VERB': hedge('say/Pd')}])
 
     def test_match_pattern_fun_lemma3(self):
-        s = ("(lemma say/P)")
+        s = "(lemma say/P)"
         pattern = hedge(s)
-        s = ("talk/Pd")
+        s = "talk/Pd"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [])
 
     def test_match_pattern_fun_lemma4(self):
         self.hg.add((const.lemma_pred, 'said/Pd', 'say/P'))
-        s = ("(lemma say/P)")
+        s = "(lemma say/P)"
         pattern = hedge(s)
-        s = ("said/Pd")
+        s = "said/Pd"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{}])
 
     def test_match_pattern_fun_argroles1(self):
         self.hg.add((const.lemma_pred, 'said/Pd.so', 'say/P'))
-        s = ("((lemma say/P.{so}) */C */C)")
+        s = "((lemma say/P.{so}) */C */C)"
         pattern = hedge(s)
-        s = ("(said/Pd.so x/C y/C)")
+        s = "(said/Pd.so x/C y/C)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{}])
 
     def test_match_pattern_fun_argroles2(self):
-        s = ("((atoms has/M said/P.{so}) */C */C)")
+        s = "((atoms has/M said/P.{so}) */C */C)"
         pattern = hedge(s)
-        s = ("((has/M said/Pd.so) x/C y/C)")
+        s = "((has/M said/Pd.so) x/C y/C)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{}])
 
     def test_match_pattern_fun_argroles3(self):
         self.hg.add((const.lemma_pred, 'said/Pd.so', 'say/P'))
-        s = ("((atoms (lemma say/P.{so})) */C */C)")
+        s = "((atoms (lemma say/P.{so})) */C */C)"
         pattern = hedge(s)
-        s = ("((has/M said/Pd.so) x/C y/C)")
+        s = "((has/M said/Pd.so) x/C y/C)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{}])
 
     def test_match_pattern_fun_argroles4(self):
         self.hg.add((const.lemma_pred, 'said/Pd.so', 'say/P'))
-        s = ("((atoms has/M (lemma say/P.{so})) */C */C)")
+        s = "((atoms has/M (lemma say/P.{so})) */C */C)"
         pattern = hedge(s)
-        s = ("((has/M said/Pd.so) x/C y/C)")
+        s = "((has/M said/Pd.so) x/C y/C)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{}])
 
     def test_match_pattern_fun_argroles5(self):
         self.hg.add((const.lemma_pred, 'said/Pd.so', 'say/P'))
-        s = ("((atoms has/M not/M (lemma say/P.{so})) */C */C)")
+        s = "((atoms has/M not/M (lemma say/P.{so})) */C */C)"
         pattern = hedge(s)
-        s = ("((has/M said/Pd.so) x/C y/C)")
+        s = "((has/M said/Pd.so) x/C y/C)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [])
 
     def test_match_pattern_fun_argroles6(self):
         self.hg.add((const.lemma_pred, 'said/Pd.so', 'say/P'))
-        s = ("((var (atoms has/M (lemma say/P.{so})) X) */C */C)")
+        s = "((var (atoms has/M (lemma say/P.{so})) X) */C */C)"
         pattern = hedge(s)
-        s = ("((has/M said/Pd.so) x/C y/C)")
+        s = "((has/M said/Pd.so) x/C y/C)"
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg),
                          [{'X': hedge('(has/M said/Pd.so)')}])
 
     def test_match_pattern_fun_argroles8(self):
         s = ("""
-        (says/Pd.{r}.|f--3s-/en (var (executes/P.{o}.|f--3s-/en (+/B.{mm}/. (15/M#/en people/Cc.p/en) (for/Br.{ma}/en 10/C#/en (+/B.{ma}/. convictions/Cc.p/en terrorism/Cc.s/en)))) CLAIM))
+        (says/Pd.{r}.|f--3s-/en (var (executes/P.{o}.|f--3s-/en (+/B.{mm}/. (15/M#/en people/Cc.p/en)
+        (for/Br.{ma}/en 10/C#/en (+/B.{ma}/. convictions/Cc.p/en terrorism/Cc.s/en)))) CLAIM))
         """)
         pattern = hedge(s)
         s = ("""
-        (says/Pd.r.|f--3s-/en (var (executes/P.o.|f--3s-/en (+/B.mm/. (15/M#/en people/Cc.p/en) (for/Br.ma/en 10/C#/en (+/B.am/. terrorism/Cc.s/en convictions/Cc.p/en)))) CLAIM))
+        (says/Pd.r.|f--3s-/en (var (executes/P.o.|f--3s-/en (+/B.mm/. (15/M#/en people/Cc.p/en) (for/Br.ma/en 10/C#/en
+        (+/B.am/. terrorism/Cc.s/en convictions/Cc.p/en)))) CLAIM))
         """)
         edge = hedge(s)
         matches = match_pattern(edge, pattern, hg=self.hg)
@@ -743,11 +749,13 @@ class Testpatterns(unittest.TestCase):
 
     def test_match_pattern_fun_argroles9(self):
         s = ("""
-        (says/Pd.{sr}.|f--3s-/en (var jordan/Cp.s/en ACTOR) (var (executes/P.{o}.|f--3s-/en (+/B.{mm}/. (15/M#/en people/Cc.p/en) (for/Br.{ma}/en 10/C#/en (+/B.{ma}/. convictions/Cc.p/en terrorism/Cc.s/en)))) CLAIM))
+        (says/Pd.{sr}.|f--3s-/en (var jordan/Cp.s/en ACTOR) (var (executes/P.{o}.|f--3s-/en (+/B.{mm}/.
+        (15/M#/en people/Cc.p/en) (for/Br.{ma}/en 10/C#/en (+/B.{ma}/. convictions/Cc.p/en terrorism/Cc.s/en)))) CLAIM))
         """)
         pattern = hedge(s)
         s = ("""
-        (says/Pd.sr.|f--3s-/en (var jordan/Cp.s/en ACTOR) (var (executes/P.o.|f--3s-/en (+/B.mm/. (15/M#/en people/Cc.p/en) (for/Br.ma/en 10/C#/en (+/B.am/. terrorism/Cc.s/en convictions/Cc.p/en)))) CLAIM))
+        (says/Pd.sr.|f--3s-/en (var jordan/Cp.s/en ACTOR) (var (executes/P.o.|f--3s-/en (+/B.mm/.
+        (15/M#/en people/Cc.p/en) (for/Br.ma/en 10/C#/en (+/B.am/. terrorism/Cc.s/en convictions/Cc.p/en)))) CLAIM))
         """)
         edge = hedge(s)
         matches = match_pattern(edge, pattern, hg=self.hg)
@@ -883,7 +891,6 @@ class Testpatterns(unittest.TestCase):
         self.assertFalse(pc.patterns[hedge('(*/M (*/M (*/M */C)))')] == 2)
         self.assertFalse(
             pc.patterns[hedge('(*/M (*/M (*/M (*/M */C)))(')] == 1)
-
 
     def test_match_pattern_real_case1(self):
         s = ("""

@@ -50,14 +50,11 @@ def colored_edge(edge, colors=True):
     elif edge.atom:
         return colored_atom(edge)
     else:
-        return '({})'.format(
-            ' '.join([colored_edge(subedge) for subedge in edge]))
+        return '({})'.format(' '.join([colored_edge(subedge) for subedge in edge]))
 
 
 def colored_diff(edge1, edge2):
-    if ((edge1.atom != edge2.atom) or
-            (len(edge1) != len(edge2)) or
-            (edge1.atom and (edge1 != edge2))):
+    if (edge1.atom != edge2.atom) or (len(edge1) != len(edge2)) or (edge1.atom and (edge1 != edge2)):
         dedge1 = colored(edge1.to_str(), 'red')
         dedge2 = colored(edge2.to_str(), 'red')
         return True, dedge1, dedge2

@@ -23,10 +23,7 @@ def is_pattern(edge):
     uppercase letter)
     """
     if edge.atom:
-        return (edge.parens or
-                edge[0][0] in {'*', '.'} or
-                edge[0][:3] == '...' or
-                edge[0][0].isupper())
+        return edge.parens or edge[0][0] in {'*', '.'} or edge[0][:3] == '...' or edge[0][0].isupper()
     elif is_fun_pattern(edge):
         return True
     else:
@@ -46,15 +43,15 @@ def is_full_pattern(edge):
         return all(is_pattern(item) for item in edge)
 
 
-def apply_vars(edge, vars):
+def apply_vars(edge, variables):
     if edge.atom:
         if is_pattern(edge):
             varname = _varname(edge)
-            if len(varname) > 0 and varname in vars:
-                return vars[varname]
+            if len(varname) > 0 and varname in variables:
+                return variables[varname]
         return edge
     else:
-        return hedge([apply_vars(subedge, vars) for subedge in edge])
+        return hedge([apply_vars(subedge, variables) for subedge in edge])
 
 
 def _matches_wildcard(edge, wildcard):
@@ -191,8 +188,9 @@ def _defun_pattern_argroles(edge):
         return hedge([_defun_pattern_argroles(subedge) for subedge in edge])
 
 
-def _match_by_argroles(edge, pattern, role_counts, min_vars, hg,
-                       matched=(), curvars={}):
+def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), curvars=None):
+    if curvars is None:
+        curvars = {}
 
     if len(role_counts) == 0:
         return [curvars]
@@ -225,28 +223,23 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg,
         for i, eitem in enumerate(perm):
             pitem = pitems[i]
             item_result = []
-            for vars in perm_result:
-                item_result += match_pattern(eitem,
-                                             pitem,
-                                            {**curvars, **vars},
-                                            hg=hg)
+            for variables in perm_result:
+                item_result += match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg)
             perm_result = item_result
             if len(item_result) == 0:
                 break
 
-        for vars in perm_result:
-            result += _match_by_argroles(edge,
-                                         pattern,
-                                         role_counts[1:],
-                                         min_vars,
-                                         hg,
-                                         matched + perm,
-                                         {**curvars, **vars})
+        for variables in perm_result:
+            result += _match_by_argroles(edge, pattern, role_counts[1:], min_vars, hg, matched + perm,
+                                         {**curvars, **variables})
     
     return result
 
 
-def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=[]):
+def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=None):
+    if matched_atoms is None:
+        matched_atoms = []
+
     if len(atom_patterns) == 0:
         return [curvars]
     
@@ -256,12 +249,8 @@ def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=[]):
     for atom in atoms:
         if atom not in matched_atoms:
             svars = match_pattern(atom, atom_pattern, curvars, hg=hg)
-            for vars in svars:
-                results += _match_atoms(atom_patterns[1:],
-                                        atoms,
-                                        {**curvars, **vars},
-                                        hg,
-                                        matched_atoms + [atom])
+            for variables in svars:
+                results += _match_atoms(atom_patterns[1:], atoms, {**curvars, **variables}, hg, matched_atoms + [atom])
 
     return results
 
@@ -296,10 +285,7 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg):
             raise RuntimeError('var pattern function must have two arguments')
         pattern = fun_pattern[1]
         var_name = fun_pattern[2].root()
-        if (edge.not_atom and
-                str(edge[0]) == 'var' and
-                len(edge) == 3 and
-                str(edge[2]) == var_name):
+        if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
             this_var = {var_name: edge[1]}
             return match_pattern(
                 edge[1], pattern, curvars={**curvars, **this_var}, hg=hg)
@@ -317,7 +303,7 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg):
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
 
-def match_pattern(edge, pattern, curvars={}, hg=None):
+def match_pattern(edge, pattern, curvars=None, hg=None):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
     pattern variable. If the pattern specifies no variables but the edge
@@ -351,6 +337,8 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
     applied to the pattern: (is/Pd . \*NAME)
     produces the result: None
     """
+    if curvars is None:
+        curvars = {}
 
     edge = hedge(edge)
     pattern = hedge(pattern)
@@ -358,14 +346,14 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
     # atomic patterns
     if pattern.atom:
         if _matches_wildcard(edge, pattern):
-            vars = {}
+            variables = {}
             if is_pattern(pattern):
                 varname = _varname(pattern)
                 if len(varname) > 0:
                     if varname in curvars and curvars[varname] != edge:
                         return []
-                    vars[varname] = edge
-            return [{**curvars, **vars}]
+                    variables[varname] = edge
+            return [{**curvars, **variables}]
         else:
             return []
 
@@ -375,7 +363,7 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
 
     min_len = len(pattern)
     max_len = min_len
-    # open ended?
+    # open-ended?
     if pattern[-1].to_str() == '...':
         pattern = hedge(pattern[:-1])
         min_len -= 1
@@ -406,25 +394,25 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
         for i, pitem in enumerate(pattern):
             eitem = edge[i]
             _result = []
-            for vars in result:
+            for variables in result:
                 if pitem.atom:
                     varname = _varname(pitem)
                     if varname in curvars:
                         if curvars[varname] != eitem:
                             continue
-                    elif varname in vars:
-                        if vars[varname] != eitem:
+                    elif varname in variables:
+                        if variables[varname] != eitem:
                             continue
                     elif _matches_wildcard(eitem, pitem):
                         if len(varname) > 0 and varname[0].isupper():
-                            vars[varname] = eitem
+                            variables[varname] = eitem
                     else:
                         continue
-                    _result.append(vars)
+                    _result.append(variables)
                 else:
                     # if not eitem.atom:
                     _result +=  match_pattern(
-                        eitem, pitem, {**curvars, **vars}, hg=hg)
+                        eitem, pitem, {**curvars, **variables}, hg=hg)
             result = _result
     # match by argroles
     else:
@@ -432,25 +420,21 @@ def match_pattern(edge, pattern, curvars={}, hg=None):
         # match connectors first
         econn = edge[0]
         pconn = pattern[0]
-        for vars in match_pattern(econn, pconn, curvars, hg=hg):
+        for variables in match_pattern(econn, pconn, curvars, hg=hg):
             role_counts = Counter(argroles_opt).most_common()
             unknown_roles = (len(pattern) - 1) - len(argroles_opt)
             if unknown_roles > 0:
                 role_counts.append(('*', unknown_roles))
             # add connector pseudo-argrole
             role_counts = [('X', 1)] + role_counts
-            sresult = _match_by_argroles(edge,
-                                         pattern,
-                                         role_counts,
-                                         len(argroles),
-                                         hg,
-                                         curvars={**curvars, **vars})
+            sresult = _match_by_argroles(edge, pattern, role_counts, len(argroles), hg,
+                                         curvars={**curvars, **variables})
             for svars in sresult:
-                result.append({**vars, **svars})
+                result.append({**variables, **svars})
 
     unique_vars = []
-    for vars in result:
-        v = {**curvars, **vars}
+    for variables in result:
+        v = {**curvars, **variables}
         if v not in unique_vars:
             unique_vars.append(v)
     return unique_vars
@@ -511,15 +495,24 @@ class PatternCounter:
     def __init__(self,
                  depth=2,
                  count_subedges=True,
-                 expansions={'*'},
-                 match_roots=set(),
-                 match_subtypes=set()):
+                 expansions=None,
+                 match_roots=None,
+                 match_subtypes=None):
         self.patterns = Counter()
         self.depth = depth
         self.count_subedges = count_subedges
-        self.expansions = expansions
-        self.match_roots = match_roots
-        self.match_subtypes = match_subtypes
+        if expansions is None:
+            self.expansions = {'*'}
+        else:
+            self.expansions = expansions
+        if match_roots is None:
+            self.match_roots = set()
+        else:
+            self.match_roots = match_roots
+        if match_subtypes is None:
+            self.match_subtypes = set()
+        else:
+            self.match_subtypes = match_subtypes
 
     def _matches_expansions(self, edge):
         for expansion in self.expansions:
@@ -545,8 +538,7 @@ class PatternCounter:
                 force_expansion = True
         return force_root, force_expansion
 
-    def _list2patterns(self, ledge, depth=1, force_expansion=False,
-                       force_root=False, force_subtypes=False):
+    def _list2patterns(self, ledge, depth=1, force_expansion=False, force_root=False, force_subtypes=False):
         if depth > self.depth:
             return []
 
@@ -566,16 +558,14 @@ class PatternCounter:
 
         if not first.atom and (self._matches_expansions(first) or
                                     f_force_expansion):
-            hpats += self._list2patterns(
-                list(first), depth + 1, force_expansion=f_force_expansion,
-                force_root=f_force_root, force_subtypes=f_force_subtypes)
+            hpats += self._list2patterns(list(first), depth + 1, force_expansion=f_force_expansion,
+                                         force_root=f_force_root, force_subtypes=f_force_subtypes)
         if len(ledge) == 1:
             patterns = [[hpat] for hpat in hpats]
         else:
             patterns = []
-            for pattern in self._list2patterns(
-                    ledge[1:], depth=depth, force_expansion=force_expansion,
-                    force_root=force_root, force_subtypes=force_subtypes):
+            for pattern in self._list2patterns(ledge[1:], depth=depth, force_expansion=force_expansion,
+                                               force_root=force_root, force_subtypes=force_subtypes):
                 for hpat in hpats:
                     patterns.append([hpat] + pattern)
         return patterns
@@ -585,10 +575,8 @@ class PatternCounter:
         force_root, _ = self._force_root_expansion(edge)
         return list(hedge(pattern)
                     for pattern
-                    in self._list2patterns(list(edge.normalized()),
-                                           force_subtypes=force_subtypes,
-                                           force_root=force_root,
-                                           force_expansion=False))
+                    in self._list2patterns(list(edge.normalized()), force_subtypes=force_subtypes,
+                                           force_root=force_root, force_expansion=False))
 
     def count(self, edge):
         if edge.not_atom:
