@@ -399,8 +399,7 @@ class Hyperedge(tuple):
         unique -- match only the exact same instance of the atom, i.e.
         UniqueAtom(self) == UniqueAtom(old) (default: False)
         """
-        return Hyperedge(tuple(item.replace_atom(old, new, unique=unique)
-                               for item in self))
+        return Hyperedge(tuple(item.replace_atom(old, new, unique=unique) for item in self))
 
     def simplify(self, subtypes=False, argroles=False, namespaces=True):
         """Returns a version of the edge with simplified atoms, for example
@@ -432,9 +431,7 @@ class Hyperedge(tuple):
         elif ptype[0] == 'J':
             return self[1].mtype()
         else:
-            raise RuntimeError(
-                'Edge is malformed, type cannot be determined: {}'.format(
-                    str(self)))
+            raise RuntimeError('Edge is malformed, type cannot be determined: {}'.format(str(self)))
 
         return '{}{}'.format(outter_type, ptype[1:])
 
@@ -609,8 +606,7 @@ class Hyperedge(tuple):
             for arg in self[1:]:
                 at = arg.mtype()
                 if at != 'C':
-                    e = 'builder argument {} has incorrect type: {}'.format(
-                        arg.to_str(), at)
+                    e = 'builder argument {} has incorrect type: {}'.format(arg.to_str(), at)
                     errors.append(e)
         # check if trigger structure is correct
         elif ct == 'T':
@@ -619,16 +615,14 @@ class Hyperedge(tuple):
             for arg in self[1:]:
                 at = arg.mtype()
                 if at not in {'C', 'R'}:
-                    e = 'trigger argument {} has incorrect type: {}'.format(
-                        arg.to_str(), at)
+                    e = 'trigger argument {} has incorrect type: {}'.format(arg.to_str(), at)
                     errors.append(e)
         # check if predicate structure is correct
         elif ct == 'P':
             for arg in self[1:]:
                 at = arg.mtype()
                 if at not in {'C', 'R', 'S'}:
-                    e = 'predicate argument {} has incorrect type: {}'.format(
-                        arg.to_str(), at)
+                    e = 'predicate argument {} has incorrect type: {}'.format(arg.to_str(), at)
                     errors.append(e)
         # check if conjunction structure is correct
         elif ct == 'J':
@@ -651,11 +645,8 @@ class Hyperedge(tuple):
             if ar[0] == '{':
                 ar = ar[1:-1]
             roles_edges = zip(ar, edge[1:])
-            roles_edges = sorted(
-                roles_edges,
-                key=lambda role_edge: argrole_order[role_edge[0]])
-            edge = hedge([conn] + list(role_edge[1]
-                                       for role_edge in roles_edges))
+            roles_edges = sorted(roles_edges, key=lambda role_edge: argrole_order[role_edge[0]])
+            edge = hedge([conn] + list(role_edge[1] for role_edge in roles_edges))
         return hedge([subedge.normalized() for subedge in edge])
 
     def __add__(self, other):
@@ -1042,8 +1033,7 @@ class Atom(Hyperedge):
                     unordered = True
                 else:
                     unordered = False
-                ar = ''.join(
-                    sorted(ar, key=lambda argrole: argrole_order[argrole]))
+                ar = ''.join(sorted(ar, key=lambda argrole: argrole_order[argrole]))
                 if unordered:
                     ar = '{{{}}}'.format(ar)
                 return self.replace_argroles(ar)
@@ -1060,13 +1050,13 @@ class Atom(Hyperedge):
 
 class UniqueAtom(Atom):
     def __init__(self, atom):
-        self._atom = atom
+        self.atom_obj = atom
 
     def __hash__(self):
-        return id(self._atom)
+        return id(self.atom_obj)
 
     def __eq__(self, other):
-        return id(self._atom) == id(other._atom)
+        return id(self.atom_obj) == id(other.atom_obj)
 
 
 def unique(edge):
@@ -1082,7 +1072,7 @@ def unique(edge):
 def non_unique(edge):
     if edge.atom:
         if type(edge) == UniqueAtom:
-            return edge._atom
+            return edge.atom_obj
         else:
             return edge
     else:

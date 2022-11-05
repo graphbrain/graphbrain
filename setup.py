@@ -32,18 +32,12 @@ if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx']),
         Extension('graphbrain.patterns', ['graphbrain/patterns.pyx']),
-        Extension('graphbrain.memory.sqlite',
-                  ['graphbrain/memory/sqlite.pyx']),
-        Extension('graphbrain.memory.leveldb',
-                  ['graphbrain/memory/leveldb.pyx']),
-        Extension('graphbrain.memory.permutations',
-                  ['graphbrain/memory/permutations.pyx']),
-        Extension('graphbrain.parsers.alpha',
-                  ['graphbrain/parsers/alpha.pyx']),
-        Extension('graphbrain.parsers.alpha_beta',
-                  ['graphbrain/parsers/alpha_beta.pyx']),
-        Extension('graphbrain.parsers.parser_en',
-                  ['graphbrain/parsers/parser_en.pyx'])
+        Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.pyx']),
+        Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.pyx']),
+        Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.pyx']),
+        Extension('graphbrain.parsers.alpha', ['graphbrain/parsers/alpha.pyx']),
+        Extension('graphbrain.parsers.alpha_beta', ['graphbrain/parsers/alpha_beta.pyx']),
+        Extension('graphbrain.parsers.parser_en', ['graphbrain/parsers/parser_en.pyx'])
     ]
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,
@@ -51,28 +45,14 @@ if USE_CYTHON:
                             compiler_directives={'language_level': '3'})
 else:
     ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'],
-                  include_dirs=['.']),
-        Extension('graphbrain.patterns', ['graphbrain/patterns.c'],
-                  include_dirs=['.']),
-        Extension('graphbrain.memory.sqlite',
-                  ['graphbrain/memory/sqlite.c'],
-                  include_dirs=['.']),
-        Extension('graphbrain.memory.leveldb',
-                      ['graphbrain/memory/leveldb.c'],
-                      include_dirs=['.']),
-        Extension('graphbrain.memory.permutations',
-                  ['graphbrain/memory/permutations.c'],
-                  include_dirs=['.']),
-        Extension('graphbrain.parsers.alpha',
-                  ['graphbrain/parsers/alpha.c'],
-                  include_dirs=['.']),
-        Extension('graphbrain.parsers.alpha_beta',
-                  ['graphbrain/parsers/alpha_beta.c'],
-                  include_dirs=['.']),
-        Extension('graphbrain.parsers.parser_en',
-                  ['graphbrain/parsers/parser_en.c'],
-                  include_dirs=['.'])
+        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], include_dirs=['.']),
+        Extension('graphbrain.patterns', ['graphbrain/patterns.c'], include_dirs=['.']),
+        Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.c'], include_dirs=['.']),
+        Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.c'], include_dirs=['.']),
+        Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.c'], include_dirs=['.']),
+        Extension('graphbrain.parsers.alpha', ['graphbrain/parsers/alpha.c'], include_dirs=['.']),
+        Extension('graphbrain.parsers.alpha_beta', ['graphbrain/parsers/alpha_beta.c'], include_dirs=['.']),
+        Extension('graphbrain.parsers.parser_en', ['graphbrain/parsers/parser_en.c'], include_dirs=['.'])
     ]
 
 
@@ -103,10 +83,10 @@ setup(
     description='Knowledge System + Natural Language Understanding',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='http://graphbrain.net',
+    url='https://graphbrain.net',
     license='MIT',
-    keywords=['NLP', 'AI', 'Knowledge Representation', 'Knowledge Systems',
-              'Natural Language Understanding', 'Text Analysis', 'Cognition'],
+    keywords=['NLP', 'AI', 'Knowledge Representation', 'Knowledge Systems', 'Natural Language Understanding',
+              'Text Analysis', 'Cognition'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python :: 3',

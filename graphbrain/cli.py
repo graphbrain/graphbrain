@@ -39,19 +39,14 @@ def cli():
 
     parser.add_argument('command', type=str, help='command to execute')
     parser.add_argument('--col', type=str, help='table column', default=None)
-    parser.add_argument('--corefs', help='perform coreference resolution',
-                        action='store_true')
-    parser.add_argument('--hg', type=str,
-                        help='hypergraph db', default='gb.db')
-    parser.add_argument('--indir', type=str,
-                        help='input directory', default=None)
+    parser.add_argument('--corefs', help='perform coreference resolution', action='store_true')
+    parser.add_argument('--hg', type=str, help='hypergraph db', default='gb.db')
+    parser.add_argument('--indir', type=str, help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--lang', type=str, help='language', default=None)
-    parser.add_argument('--outfile', type=str,
-                        help='output file', default=None)
+    parser.add_argument('--outfile', type=str, help='output file', default=None)
     parser.add_argument('--parser', type=str, help='parser', default=None)
-    parser.add_argument('--sequence', type=str, help='sequence name',
-                        default=None)
+    parser.add_argument('--sequence', type=str, help='sequence name', default=None)
     parser.add_argument('--url', type=str, help='url', default=None)
 
     args = parser.parse_args()
@@ -61,9 +56,8 @@ def cli():
         plang = parser_lang(args.parser)
         if args.lang:
             if args.lang != plang:
-                msg = 'specified language ({}) and parser language ({}) do '\
-                      'not match'.format(args.lang, plang)
-                error_msg()
+                msg = 'specified language ({}) and parser language ({}) do not match'.format(args.lang, plang)
+                error_msg(msg)
                 sys.exit(-1)
         else:
             args.lang = plang
@@ -71,7 +65,7 @@ def cli():
     elif not args.lang:
         args.lang = 'en'
 
-    print(colored('{}\n'.format( 'command: {}'.format(args.command)), 'white'))
+    print(colored('{}\n'.format('command: {}'.format(args.command)), 'white'))
 
     if args.col:
         print('column: {}'.format(args.col))
