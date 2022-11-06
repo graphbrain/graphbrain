@@ -137,8 +137,8 @@ class Hypergraph(object):
 
         Keyword argument:
         strict -- strictly match the search pattern, or allow for more general
-        atoms to match target atome (e.g. plays/P matches plays/Pd.so in
-        non-strict mode, but only exactl plays/Pd.so matches it in strict mode)
+        atoms to match target atoms (e.g. plays/P matches plays/Pd.so in
+        non-strict mode, but only exactly plays/Pd.so matches it in strict mode)
         Non-strict mode is slower. (default True)
         """
         pattern = hedge(pattern)

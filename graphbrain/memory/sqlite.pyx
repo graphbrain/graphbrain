@@ -181,7 +181,7 @@ class SQLite(Hypergraph):
         if curvars is None:
             curvars = {}
         for edge in self._match_structure(pattern, strict):
-            results = match_pattern(edge, pattern, curvars=curvars)
+            results = match_pattern(edge, pattern, curvars=curvars, hg=self)
             if len(results) > 0:
                 yield edge, results
 

@@ -1825,6 +1825,7 @@ static const char __pyx_k__2[] = ",";
 static const char __pyx_k__3[] = ":";
 static const char __pyx_k_db[] = "db";
 static const char __pyx_k_dd[] = "dd";
+static const char __pyx_k_hg[] = "hg";
 static const char __pyx_k__12[] = " ";
 static const char __pyx_k__14[] = "/";
 static const char __pyx_k_add[] = "_add";
@@ -2131,6 +2132,7 @@ static PyObject *__pyx_kp_s_graphbrain_memory_leveldb_pyx;
 static PyObject *__pyx_n_s_graphbrain_memory_permutations;
 static PyObject *__pyx_n_s_graphbrain_patterns;
 static PyObject *__pyx_n_s_hedge;
+static PyObject *__pyx_n_s_hg;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_inc_attribute;
@@ -7255,7 +7257,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
  *         if curvars is None:
  *             curvars = {}             # <<<<<<<<<<<<<<
  *         for edge in self._match_structure(pattern, strict):
- *             results = match_pattern(edge, pattern, curvars=curvars)
+ *             results = match_pattern(edge, pattern, curvars=curvars, hg=self)
  */
     __pyx_t_3 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -7277,7 +7279,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
  *         if curvars is None:
  *             curvars = {}
  *         for edge in self._match_structure(pattern, strict):             # <<<<<<<<<<<<<<
- *             results = match_pattern(edge, pattern, curvars=curvars)
+ *             results = match_pattern(edge, pattern, curvars=curvars, hg=self)
  *             if len(results) > 0:
  */
   __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_self, __pyx_n_s_match_structure); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 160, __pyx_L1_error)
@@ -7375,7 +7377,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
     /* "graphbrain/memory/leveldb.pyx":161
  *             curvars = {}
  *         for edge in self._match_structure(pattern, strict):
- *             results = match_pattern(edge, pattern, curvars=curvars)             # <<<<<<<<<<<<<<
+ *             results = match_pattern(edge, pattern, curvars=curvars, hg=self)             # <<<<<<<<<<<<<<
  *             if len(results) > 0:
  *                 yield edge, results
  */
@@ -7389,9 +7391,10 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
     __Pyx_INCREF(__pyx_cur_scope->__pyx_v_pattern);
     __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_pattern);
     PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_cur_scope->__pyx_v_pattern);
-    __pyx_t_5 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 161, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 161, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_curvars, __pyx_cur_scope->__pyx_v_curvars) < 0) __PYX_ERR(0, 161, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_hg, __pyx_cur_scope->__pyx_v_self) < 0) __PYX_ERR(0, 161, __pyx_L1_error)
     __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 161, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -7404,7 +7407,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
 
     /* "graphbrain/memory/leveldb.pyx":162
  *         for edge in self._match_structure(pattern, strict):
- *             results = match_pattern(edge, pattern, curvars=curvars)
+ *             results = match_pattern(edge, pattern, curvars=curvars, hg=self)
  *             if len(results) > 0:             # <<<<<<<<<<<<<<
  *                 yield edge, results
  * 
@@ -7414,7 +7417,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
     if (__pyx_t_2) {
 
       /* "graphbrain/memory/leveldb.pyx":163
- *             results = match_pattern(edge, pattern, curvars=curvars)
+ *             results = match_pattern(edge, pattern, curvars=curvars, hg=self)
  *             if len(results) > 0:
  *                 yield edge, results             # <<<<<<<<<<<<<<
  * 
@@ -7450,7 +7453,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
 
       /* "graphbrain/memory/leveldb.pyx":162
  *         for edge in self._match_structure(pattern, strict):
- *             results = match_pattern(edge, pattern, curvars=curvars)
+ *             results = match_pattern(edge, pattern, curvars=curvars, hg=self)
  *             if len(results) > 0:             # <<<<<<<<<<<<<<
  *                 yield edge, results
  * 
@@ -7461,7 +7464,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator4(__
  *         if curvars is None:
  *             curvars = {}
  *         for edge in self._match_structure(pattern, strict):             # <<<<<<<<<<<<<<
- *             results = match_pattern(edge, pattern, curvars=curvars)
+ *             results = match_pattern(edge, pattern, curvars=curvars, hg=self)
  *             if len(results) > 0:
  */
   }
@@ -16839,6 +16842,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_graphbrain_memory_permutations, __pyx_k_graphbrain_memory_permutations, sizeof(__pyx_k_graphbrain_memory_permutations), 0, 0, 1, 1},
   {&__pyx_n_s_graphbrain_patterns, __pyx_k_graphbrain_patterns, sizeof(__pyx_k_graphbrain_patterns), 0, 0, 1, 1},
   {&__pyx_n_s_hedge, __pyx_k_hedge, sizeof(__pyx_k_hedge), 0, 0, 1, 1},
+  {&__pyx_n_s_hg, __pyx_k_hg, sizeof(__pyx_k_hg), 0, 0, 1, 1},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_inc_attribute, __pyx_k_inc_attribute, sizeof(__pyx_k_inc_attribute), 0, 0, 1, 1},
