@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Graphbrain 0.6.1 documentation</title>
+  <title>Installation &mdash; Graphbrain 0.6.2-dev documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/favicon.png"/>
@@ -50,7 +50,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#install-with-pip-recommended">Install with pip (recommended)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-with-pip">Install with pip</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#choose-language-model">Choose language model</a></li>
 </ul>
 </li>
@@ -86,8 +86,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Installation</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
@@ -100,12 +100,11 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
-<p>Graphbrain is compatible with 64-bit CPython &gt;=3.6, &lt;=3.9 and runs on macOS, Linux and Windows.</p>
+<p>Graphbrain requires Python &gt;=3.9 and runs on macOS, Linux and Windows.</p>
 <p>We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. <a class="reference external" href="#prerequisites">For such cases or to build from the sources, check the prerequisites for your OS</a>.</p>
-<p>Make sure you are using Python 3, with version &gt;=3.6, &lt;=3.9.</p>
 <p><em>Important for macOS users:</em> You will need to install a specific version of LevelDB before installing Graphbrain. Please refer to the prerequisites section below for details.</p>
-<section id="install-with-pip-recommended">
-<h2>Install with pip (recommended)<a class="headerlink" href="#install-with-pip-recommended" title="Permalink to this heading"></a></h2>
+<section id="install-with-pip">
+<h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Permalink to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install graphbrain
 </pre></div>
 </div>
