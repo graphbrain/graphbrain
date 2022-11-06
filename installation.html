@@ -102,7 +102,10 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
 <p>Graphbrain requires Python &gt;=3.9 and runs on macOS, Linux and Windows.</p>
 <p>We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. <a class="reference external" href="#prerequisites">For such cases or to build from the sources, check the prerequisites for your OS</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p><em>Important for macOS users:</em> You will need to install a specific version of LevelDB before installing Graphbrain. Please refer to the prerequisites section below for details.</p>
+</div>
 <section id="install-with-pip">
 <h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Permalink to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install graphbrain
@@ -230,6 +233,11 @@ $ brew install leveldb@1.22
 </pre></div>
 </div>
 <p>(this formula was forked from this repository: <a class="reference external" href="https://github.com/bagonyi/homebrew-formulae">https://github.com/bagonyi/homebrew-formulae</a>, our thanks to David Bagonyi for creating it!)</p>
+<p>Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) so clang linker can find the header (see <a class="reference external" href="https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134">https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134</a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export LIBRARY_PATH=&quot;$LIBRARY_PATH:$(brew --prefix)/lib&quot;
+$ export CPATH=&quot;$CPATH:$(brew --prefix)/include&quot;
+</pre></div>
+</div>
 </section>
 </section>
 </section>
