@@ -233,7 +233,7 @@ $ brew install leveldb@1.22
 </pre></div>
 </div>
 <p>(this formula was forked from this repository: <a class="reference external" href="https://github.com/bagonyi/homebrew-formulae">https://github.com/bagonyi/homebrew-formulae</a>, our thanks to David Bagonyi for creating it!)</p>
-<p>Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) so clang linker can find the header (see <a class="reference external" href="https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134">https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134</a>):</p>
+<p>Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) (see <a class="reference external" href="https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134">https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134</a>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export LIBRARY_PATH=&quot;$LIBRARY_PATH:$(brew --prefix)/lib&quot;
 $ export CPATH=&quot;$CPATH:$(brew --prefix)/include&quot;
 </pre></div>

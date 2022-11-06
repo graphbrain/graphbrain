@@ -144,7 +144,7 @@ This version of LevelDB is no longer supported by Homebrew, but it is possible t
 
 (this formula was forked from this repository: https://github.com/bagonyi/homebrew-formulae, our thanks to David Bagonyi for creating it!)
 
-Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) so clang linker can find the header (see https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134)::
+Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) (see https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134)::
 
    $ export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
    $ export CPATH="$CPATH:$(brew --prefix)/include"
