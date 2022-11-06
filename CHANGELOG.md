@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- Python >=3.9 now required.
 - Hypergraph.search() and .match() now working with functional patterns and argument role matching.
 
 ### Removed

@@ -60,7 +60,7 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 
-python_requires = '>=3.6'
+python_requires = '>=3.9'
 
 install_requires = [
         'asciitree',
