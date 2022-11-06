@@ -6,7 +6,8 @@ Graphbrain requires Python >=3.9 and runs on macOS, Linux and Windows.
 
 We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. `For such cases or to build from the sources, check the prerequisites for your OS <#prerequisites>`_.
 
-*Important for macOS users:* You will need to install a specific version of LevelDB before installing Graphbrain. Please refer to the prerequisites section below for details.
+.. warning::
+   *Important for macOS users:* You will need to install a specific version of LevelDB before installing Graphbrain. `Please refer to the prerequisites section below for details <#macos>`_.
 
 Install with pip
 ================
@@ -142,3 +143,8 @@ This version of LevelDB is no longer supported by Homebrew, but it is possible t
    $ brew install leveldb@1.22
 
 (this formula was forked from this repository: https://github.com/bagonyi/homebrew-formulae, our thanks to David Bagonyi for creating it!)
+
+Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) (see https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134)::
+
+   $ export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
+   $ export CPATH="$CPATH:$(brew --prefix)/include"
