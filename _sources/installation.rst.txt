@@ -6,7 +6,7 @@ Graphbrain requires Python >=3.9 and runs on macOS, Linux and Windows.
 
 We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. `For such cases or to build from the sources, check the prerequisites for your OS <#prerequisites>`_.
 
-.. note::
+.. warning::
    *Important for macOS users:* You will need to install a specific version of LevelDB before installing Graphbrain. Please refer to the prerequisites section below for details.
 
 Install with pip
