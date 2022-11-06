@@ -429,7 +429,7 @@ class TestHypergraph(unittest.TestCase):
               [{'X': hedge('mary/Cp.s'),
                 'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
 
-    def test_match_argroles_non_strict(self):
+    def test_match_argroles_curly_brackets(self):
         self.hg.destroy()
         edge1 = hedge('(is/Pd.cs blue/Ca (the/M sky/C))')
         edge2 = hedge('(is/Pd.sc (the/M sky/C) blue/Ca)')
@@ -438,7 +438,54 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(edge2)
 
         self.assertEqual(
-            list(self.hg.match('(is/P.{sc} OBJ/C PROP)', strict=False)),
+            list(self.hg.match('(is/P.{sc} OBJ/C PROP)')),
+            [(edge1,
+              [{'OBJ': hedge('(the/M sky/C)'),
+                'PROP': hedge('blue/Ca')}]),
+             (edge2,
+              [{'OBJ': hedge('(the/M sky/C)'),
+                'PROP': hedge('blue/Ca')}])])
+
+    def test_match_argroles_strict(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/Pd.cs blue/Ca (the/M sky/C))')
+        edge2 = hedge('(is/Pd.sc (the/M sky/C) blue/Ca)')
+
+        self.hg.add(edge1)
+        self.hg.add(edge2)
+
+        self.assertEqual(
+            list(self.hg.match('(is/Pd.sc OBJ/C blue/Ca)', strict=True)),
+            [(edge2, [{'OBJ': hedge('(the/M sky/C)')}])])
+        self.assertEqual(
+            list(self.hg.match('(is/P.sc OBJ/C blue/C)', strict=True)),
+            [])
+
+    def test_match_argroles_not_strict(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/Pd.cs blue/Ca (the/M sky/C))')
+        edge2 = hedge('(is/Pd.sc (the/M sky/C) blue/Ca)')
+
+        self.hg.add(edge1)
+        self.hg.add(edge2)
+
+        self.assertEqual(
+            list(self.hg.match('(is/Pd.sc OBJ/C blue/Ca)', strict=False)),
+            [(edge2, [{'OBJ': hedge('(the/M sky/C)')}])])
+        self.assertEqual(
+            list(self.hg.match('(is/P.sc OBJ/C blue/C)', strict=False)),
+            [(edge2, [{'OBJ': hedge('(the/M sky/C)')}])])
+
+    def test_match_fun_patterns(self):
+        self.hg.destroy()
+        edge1 = hedge('((not/M is/Pd.cs) blue/Ca (the/M sky/C))')
+        edge2 = hedge('(is/Pd.sc (the/M sky/C) blue/Ca)')
+
+        self.hg.add(edge1)
+        self.hg.add(edge2)
+
+        self.assertEqual(
+            list(self.hg.match('((atoms is/P.{sc}) (var */C OBJ) (var * PROP))')),
             [(edge1,
               [{'OBJ': hedge('(the/M sky/C)'),
                 'PROP': hedge('blue/Ca')}]),

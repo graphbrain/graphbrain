@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- Hypergraph.search() and .match() now working with functional patterns and argument role matching.
 
 ### Removed
 - graphbrain.logic obsolete module.

@@ -23,7 +23,11 @@ def is_pattern(edge):
     uppercase letter)
     """
     if edge.atom:
-        return edge.parens or edge[0][0] in {'*', '.'} or edge[0][:3] == '...' or edge[0][0].isupper()
+        return (edge.parens or
+                edge[0][0] in {'*', '.'} or
+                edge[0][:3] == '...' or
+                edge[0][0].isupper() or
+                '{' in edge.argroles())
     elif is_fun_pattern(edge):
         return True
     else:
@@ -34,8 +38,8 @@ def is_full_pattern(edge):
     """Check if every atom is a pattern matcher.
 
     Pattern matchers are:
-    '\*', '.', '(\*)', '...' and variables (atom label starting with an
-    uppercase letter)
+    '\*', '.', '(\*)', '...', variables (atom label starting with an
+    uppercase letter) and functional patterns.
     """
     if edge.atom:
         return is_pattern(edge)
@@ -161,8 +165,10 @@ def _varname(atom):
         return label[1:]
     elif label[:3] == '...':
         return label[3:]
-    else:
+    elif label[0].isupper():
         return label
+    else:
+        return ''
 
 
 # remove pattern functions from pattern, so that .argroles() works normally

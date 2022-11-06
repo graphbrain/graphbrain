@@ -1,3 +1,5 @@
+from typing import Iterator, Union, Optional
+
 import graphbrain.constants as const
 from graphbrain.hyperedge import hedge, Hyperedge, str2atom
 
@@ -118,7 +120,7 @@ class Hypergraph(object):
         """
         self._set_primary(hedge(edge), value)
 
-    def search(self, pattern, strict=True):
+    def search(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = True) -> Iterator[Hyperedge]:
         """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
@@ -153,16 +155,19 @@ class Hypergraph(object):
 
         return self._search(pattern, strict=strict)
 
-    def match(self, pattern, strict=True, curvars=None):
+    def match(self,
+              pattern: Union[Hyperedge, str, list, tuple],
+              strict: bool = True,
+              curvars: Optional[dict[str, Hyperedge]] = None) -> Iterator[tuple[Hyperedge, dict[str, Hyperedge]]]:
         pattern = hedge(pattern)
         return self._match(pattern, strict=strict, curvars=curvars)
 
-    def count(self, pattern, strict=True):
+    def count(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = True) -> int:
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
         """
         pattern = hedge(pattern)
-        n = 0
+        n: int = 0
         for _ in self._search(pattern, strict=strict):
             n += 1
         return n
