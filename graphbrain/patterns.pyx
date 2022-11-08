@@ -8,6 +8,16 @@ from graphbrain.utils.lemmas import lemma
 FUNS = {'var', 'atoms', 'lemma'}
 
 
+def is_wildcard(atom):
+    """Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
+    (\*, ., ..., if it is surrounded by parenthesis or variable label starting with an uppercase letter)
+    """
+    if atom.atom:
+        return atom.parens or atom[0][0] in {'*', '.'} or atom[0][0].isupper()
+    else:
+        return False
+
+
 def is_fun_pattern(edge):
     if edge.atom:
         return False
@@ -19,15 +29,13 @@ def is_pattern(edge):
     one pattern matcher.
 
     Pattern matchers are:
-    '\*', '.', '(\*)', '...' and variables (atom label starting with an
-    uppercase letter)
+    - '\*', '.', '(\*)', '...'
+    - variables (atom label starting with an uppercase letter)
+    - argument role matchers (unordered argument roles surrounded by curly brackets)
+    - functional patterns (var, atoms, lemma, ...)
     """
     if edge.atom:
-        return (edge.parens or
-                edge[0][0] in {'*', '.'} or
-                edge[0][:3] == '...' or
-                edge[0][0].isupper() or
-                '{' in edge.argroles())
+        return is_wildcard(edge) or '{' in edge.argroles()
     elif is_fun_pattern(edge):
         return True
     else:

@@ -4,6 +4,7 @@ import graphbrain.constants as const
 from graphbrain import hedge, hgraph
 from graphbrain.patterns import (match_pattern,
                                  edge_matches_pattern,
+                                 is_wildcard,
                                  is_pattern,
                                  is_full_pattern,
                                  apply_vars,
@@ -20,17 +21,59 @@ class Testpatterns(unittest.TestCase):
     def test_close(self):
         self.hg.close()
 
-    def test_is_pattern(self):
-        edge = hedge("('s/Bp.am zimbabwe/M economy/Cn.s)")
-        self.assertFalse(is_pattern(edge))
-        edge = hedge("('s/Bp.am * economy/Cn.s)")
-        self.assertTrue(is_pattern(edge))
-        edge = hedge("('s/Bp.am * ...)")
-        self.assertTrue(is_pattern(edge))
-        edge = hedge('thing/C')
-        self.assertFalse(is_pattern(edge))
-        edge = hedge('(*)')
-        self.assertTrue(is_pattern(edge))
+    def test_is_wildcard1(self):
+        self.assertFalse(is_wildcard(hedge('thing/C')))
+
+    def test_is_wildcard2(self):
+        self.assertTrue(is_wildcard(hedge('*/C')))
+
+    def test_is_wildcard3(self):
+        self.assertTrue(is_wildcard(hedge('./M')))
+
+    def test_is_wildcard4(self):
+        self.assertTrue(is_wildcard(hedge('...')))
+
+    def test_is_wildcard5(self):
+        self.assertTrue(is_wildcard(hedge('VARIABLE/C')))
+
+    def test_is_wildcard6(self):
+        self.assertTrue(is_wildcard(hedge('*VARIABLE/C')))
+
+    def test_is_wildcard7(self):
+        self.assertFalse(is_wildcard(hedge('go/Pd.so')))
+
+    def test_is_wildcard8(self):
+        self.assertFalse(is_wildcard(hedge('go/Pd.{so}')))
+
+    def test_is_wildcard9(self):
+        self.assertFalse(is_wildcard(hedge('(is/P.sc */M */Cn.s)')))
+
+    def test_is_pattern1(self):
+        self.assertFalse(is_pattern(hedge("('s/Bp.am zimbabwe/M economy/Cn.s)")))
+
+    def test_is_pattern2(self):
+        self.assertTrue(is_pattern(hedge("('s/Bp.am * economy/Cn.s)")))
+
+    def test_is_pattern3(self):
+        self.assertTrue(is_pattern(hedge("('s/Bp.am * ...)")))
+
+    def test_is_pattern4(self):
+        self.assertFalse(is_pattern(hedge('thing/C')))
+
+    def test_is_pattern5(self):
+        self.assertTrue(is_pattern(hedge('(*)')))
+
+    def test_is_pattern6(self):
+        self.assertFalse(is_pattern(hedge('go/Pd.so')))
+
+    def test_is_pattern7(self):
+        self.assertTrue(is_pattern(hedge('go/Pd.{so}')))
+
+    def test_is_pattern8(self):
+        self.assertFalse(is_pattern(hedge('(is/P.sc x/C y/Cn.s)')))
+
+    def test_is_pattern9(self):
+        self.assertTrue(is_pattern(hedge('(is/P.{sc} x/C y/Cn.s)')))
 
     def test_is_full_pattern(self):
         edge = hedge("('s/Bp.am zimbabwe/M economy/Cn.s)")

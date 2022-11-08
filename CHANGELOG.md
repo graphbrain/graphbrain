@@ -2,6 +2,7 @@
 
 ## [0.6.2] - ongoing
 ### Added
+- patterns.is_wildcard().
 
 ### Changed
 - Python >=3.9 now required.
