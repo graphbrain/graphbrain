@@ -3,6 +3,8 @@
 ## [0.6.2] - ongoing
 ### Added
 - patterns.is_wildcard().
+- Base class hypergraph.memory.keyvalue.KeyValue for key-value hypergraph databases, removing redundant code between LevelDB and SQLite.
+- Tests for LevelDB (only the SQLite Hypergraph implementation was being directly tested).
 
 ### Changed
 - Python >=3.9 now required.

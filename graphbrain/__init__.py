@@ -31,3 +31,4 @@ def hopen(*args, **kwds):
     finally:
         hg.batch_mode = False
         hg.end_transaction()
+        hg.close()

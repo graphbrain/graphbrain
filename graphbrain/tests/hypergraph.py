@@ -1,22 +1,20 @@
-import unittest
-
 import graphbrain.constants as const
-from graphbrain import hedge
-from graphbrain import hgraph, hopen
+from graphbrain import hedge, hgraph
+from graphbrain import hopen
 
 
-class TestHypergraph(unittest.TestCase):
+class Hypergraph:
     def setUp(self):
-        self.hg = hgraph('test.db')
+        self.hg = hgraph(self.hg_str)
 
     def tearDown(self):
         self.hg.close()
 
+    def test_name(self):
+        self.assertEqual(self.hg.name(), self.hg_str)
+
     def test_close(self):
         self.hg.close()
-
-    def test_name(self):
-        self.assertEqual(self.hg.name(), 'test.db')
 
     def test_destroy(self):
         self.hg.destroy()
@@ -981,15 +979,13 @@ class TestHypergraph(unittest.TestCase):
 
     def test_batch_adds(self):
         self.hg.destroy()
+        self.hg.close()
         edges = []
         for i in range(10):
             edges.append(hedge('(is/P {}/C number/C)'.format(i)))
-        with hopen('test.db') as hg:
+        with hopen(self.hg_str) as hg:
             for edge in edges:
                 hg.add(edge)
+        self.hg = hgraph(self.hg_str)
         for edge in edges:
             self.assertTrue(self.hg.exists(edge))
-
-
-if __name__ == '__main__':
-    unittest.main()
