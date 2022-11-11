@@ -8,10 +8,11 @@
 
 ### Changed
 - Python >=3.9 now required.
-- Hypergraph.search() and .match() now working with functional patterns and argument role matching.
+- Hypergraph.search(), .match() and .count() now working with functional patterns and argument role matching.
 
 ### Removed
 - graphbrain.logic obsolete module.
+- strict mode from Hypergraph.search(), .match() and count(), no longer necessary.
 
 ## [0.6.1] - 31-10-2022
 ### Changed

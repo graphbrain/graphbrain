@@ -120,7 +120,7 @@ class Hypergraph(object):
         """
         self._set_primary(hedge(edge), value)
 
-    def search(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = True) -> Iterator[Hyperedge]:
+    def search(self, pattern: Union[Hyperedge, str, list, tuple]) -> Iterator[Hyperedge]:
         """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
@@ -136,12 +136,6 @@ class Hypergraph(object):
 
         Atomic patterns can also be used to match all edges in the
         hypergraph: *, all atoms: ., and all non-atoms: (*).
-
-        Keyword argument:
-        strict -- strictly match the search pattern, or allow for more general
-        atoms to match target atoms (e.g. plays/P matches plays/Pd.so in
-        non-strict mode, but only exactly plays/Pd.so matches it in strict mode)
-        Non-strict mode is slower. (default True)
         """
         pattern = hedge(pattern)
 
@@ -153,22 +147,21 @@ class Hypergraph(object):
             elif pattern[0][0] == '.':
                 return self.all_atoms()
 
-        return self._search(pattern, strict=strict)
+        return self._search(pattern)
 
     def match(self,
               pattern: Union[Hyperedge, str, list, tuple],
-              strict: bool = True,
               curvars: Optional[dict[str, Hyperedge]] = None) -> Iterator[tuple[Hyperedge, dict[str, Hyperedge]]]:
         pattern = hedge(pattern)
-        return self._match(pattern, strict=strict, curvars=curvars)
+        return self._match(pattern, curvars=curvars)
 
-    def count(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = True) -> int:
+    def count(self, pattern: Union[Hyperedge, str, list, tuple]) -> int:
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
         """
         pattern = hedge(pattern)
         n: int = 0
-        for _ in self._search(pattern, strict=strict):
+        for _ in self._search(pattern):
             n += 1
         return n
 
@@ -348,10 +341,10 @@ class Hypergraph(object):
     def _set_primary(self, edge, value):
         raise NotImplementedError()
 
-    def _search(self, pattern, strict=True):
+    def _search(self, pattern):
         raise NotImplementedError()
 
-    def _match(self, pattern, strict=True, curvars=None):
+    def _match(self, pattern, curvars=None):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):

@@ -1,9 +1,39 @@
 from abc import ABC
 
-from graphbrain.hyperedge import edges2str, split_edge_str
+from graphbrain.hyperedge import split_edge_str
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.memory.permutations import do_with_edge_permutations, first_permutation, perm2edge
 from graphbrain.patterns import match_pattern, is_full_pattern, is_pattern
+
+
+def _prefix_heuristic(atom):
+    return len(atom.root())
+
+
+def _edge2prefix(edge):
+    if edge.atom:
+        return str(edge), _prefix_heuristic(edge)
+    else:
+        prefix, heuristic = _edge2prefix(edge[0])
+        return '(' + prefix, heuristic
+
+
+def _edges2prefix(edges):
+    best_heuristic = -1
+    best_prefix = None
+    for edge in edges:
+        prefix, heuristic = _edge2prefix(edge)
+        if heuristic > best_heuristic:
+            best_heuristic = heuristic
+            best_prefix = prefix
+    return best_prefix
+
+
+def _prefix_position(prefix, edge):
+    for position, subedge in enumerate(edge):
+        if str(subedge).startswith(prefix):
+            return position
+    return -1
 
 
 class KeyValue(Hypergraph, ABC):
@@ -184,14 +214,14 @@ class KeyValue(Hypergraph, ABC):
     def _set_primary(self, edge, value):
         self._set_attribute(edge, 'p', 1 if value else 0)
 
-    def _search(self, pattern, strict=True):
-        for result in self._match(pattern, strict=strict):
+    def _search(self, pattern):
+        for result in self._match(pattern):
             yield result[0]
 
-    def _match(self, pattern, strict=True, curvars=None):
+    def _match(self, pattern, curvars=None):
         if curvars is None:
             curvars = {}
-        for edge in self._match_structure(pattern, strict):
+        for edge in self._match_structure(pattern):
             results = match_pattern(edge, pattern, curvars=curvars, hg=self)
             if len(results) > 0:
                 yield edge, results
@@ -235,24 +265,26 @@ class KeyValue(Hypergraph, ABC):
     def _deep_degree(self, edge):
         return self.get_int_attribute(edge, 'dd', 0)
 
-    def _match_structure(self, pattern, strict):
-        if not strict or is_full_pattern(pattern):
+    def _match_structure(self, pattern):
+        if is_full_pattern(pattern):
             for edge in self.all():
                 yield edge
         else:
-            nodes = []
+            edges = []
             positions = []
-            for i, node in enumerate(pattern):
-                if not is_pattern(node):
-                    nodes.append(node)
+            for i, edge in enumerate(pattern):
+                if not is_pattern(edge):
+                    edges.append(edge)
                     positions.append(i)
 
-            prefix = edges2str(nodes)
+            prefix = _edges2prefix(edges)
             for perm_str in self._permutations_with_prefix(prefix):
-                tokens = split_edge_str(perm_str)
-                nper = int(tokens[-1])
-                if nper == first_permutation(len(tokens) - 1, positions):
-                    yield perm2edge(perm_str)
+                edge = perm2edge(perm_str)
+                if edge:
+                    nper = int(split_edge_str(perm_str)[-1])
+                    position = _prefix_position(prefix, edge)
+                    if nper == first_permutation(len(edge), (position,)):
+                        yield perm2edge(perm_str)
 
     # from Hypergraph
     def _star(self, center, limit=None):
