@@ -2,21 +2,13 @@ import json
 
 import plyvel
 
-from graphbrain.hyperedge import edges2str
 from graphbrain.hyperedge import hedge
-from graphbrain.hyperedge import split_edge_str
 from graphbrain.memory.keyvalue import KeyValue
-from graphbrain.memory.permutations import first_permutation
-from graphbrain.memory.permutations import perm2edge
 from graphbrain.memory.permutations import str_plus_1
-from graphbrain.patterns import is_pattern, is_full_pattern
 
 
 def _encode_attributes(attributes):
-    return json.dumps(attributes,
-                      ensure_ascii=False,
-                      check_circular=False,
-                      separators=(',', ':')).encode('utf-8')
+    return json.dumps(attributes, ensure_ascii=False, check_circular=False, separators=(',', ':')).encode('utf-8')
 
 
 def _decode_attributes(value):
@@ -74,7 +66,6 @@ class LevelDB(KeyValue):
     # Implementation of private abstract methods
     # ==========================================
 
-    # from KeyValue
     def _edge2key(self, edge):
         return (''.join(('v', edge.to_str()))).encode('utf-8')
 
@@ -105,80 +96,17 @@ class LevelDB(KeyValue):
         """Removes an edge, given its key."""
         self.db.delete(key)
 
-    def _match_structure(self, pattern, strict):
-        if not strict or is_full_pattern(pattern):
-            for edge in self.all():
-                yield edge
-        else:
-            nodes = []
-            positions = []
-            for i, node in enumerate(pattern):
-                if not is_pattern(node):
-                    nodes.append(node)
-                    positions.append(i)
-            start_str = edges2str(nodes)
-            end_str = str_plus_1(start_str)
-            start_key = (''.join(('p', start_str))).encode('utf-8')
-            end_key = (''.join(('p', end_str))).encode('utf-8')
-
-            for key, value in self.db.iterator(start=start_key, stop=end_key):
-                perm_str = key.decode('utf-8')
-
-                tokens = split_edge_str(perm_str[1:])
-                nper = int(tokens[-1])
-
-                if nper == first_permutation(len(tokens) - 1, positions):
-                    yield perm2edge(perm_str[1:])
-
-    # from Hypergraph
-    def _star(self, center, limit=None):
-        center_str = center.to_str()
-        start_str = ''.join((center_str, ' '))
-        end_str = str_plus_1(start_str)
-        start_key = (''.join(('p', start_str))).encode('utf-8')
+    def _permutations_with_prefix(self, prefix):
+        end_str = str_plus_1(prefix)
+        start_key = (''.join(('p', prefix))).encode('utf-8')
         end_key = (''.join(('p', end_str))).encode('utf-8')
-
-        count = 0
-        for key, value in self.db.iterator(start=start_key, stop=end_key):
-            if limit and count >= limit:
-                break
+        for key, _ in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edge = perm2edge(perm_str[1:])
-            if edge:
-                position = edge.index(center)
-                nper = int(split_edge_str(perm_str[1:])[-1])
-                if nper == first_permutation(len(edge), (position,)):
-                    count += 1
-                    yield edge
+            yield perm_str[1:]
 
-    def _atoms_with_root(self, root):
-        start_str = ''.join((root, '/'))
-        end_str = str_plus_1(start_str)
-        start_key = (''.join(('v', start_str))).encode('utf-8')
+    def _edges_with_prefix(self, prefix):
+        end_str = str_plus_1(prefix)
+        start_key = (''.join(('v', prefix))).encode('utf-8')
         end_key = (''.join(('v', end_str))).encode('utf-8')
-
-        for key, value in self.db.iterator(start=start_key, stop=end_key):
-            symb = hedge(key.decode('utf-8')[1:])
-            yield symb
-
-    def _edges_with_edges(self, edges, root):
-        start_str = ' '.join([edge.to_str() for edge in edges])
-        if root:
-            start_str = ''.join((start_str, ' ', root, '/'))
-        end_str = str_plus_1(start_str)
-        start_key = (''.join(('p', start_str))).encode('utf-8')
-        end_key = (''.join(('p', end_str))).encode('utf-8')
-
-        for key, value in self.db.iterator(start=start_key, stop=end_key):
-            perm_str = key.decode('utf-8')
-            edge = perm2edge(perm_str[1:])
-            if edge:
-                if root is None:
-                    if all([item in edge for item in edges]):
-                        positions = [edge.index(item) for item in edges]
-                        nper = int(split_edge_str(perm_str[1:])[-1])
-                        if nper == first_permutation(len(edge), positions):
-                            yield edge
-                else:
-                    # TODO: remove redundant results when a root is present
-                    yield edge
+        for key, _ in self.db.iterator(start=start_key, stop=end_key):
+            yield hedge(key.decode('utf-8')[1:])

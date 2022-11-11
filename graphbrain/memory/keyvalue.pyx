@@ -1,11 +1,12 @@
 from abc import ABC
 
+from graphbrain.hyperedge import edges2str, split_edge_str
 from graphbrain.hypergraph import Hypergraph
-from graphbrain.memory.permutations import do_with_edge_permutations
-from graphbrain.patterns import match_pattern
+from graphbrain.memory.permutations import do_with_edge_permutations, first_permutation, perm2edge
+from graphbrain.patterns import match_pattern, is_full_pattern, is_pattern
 
 
-class KeyValue(Hypergraph):
+class KeyValue(Hypergraph, ABC):
     """Common class for key-value based hypergraph storage."""
 
     def __init__(self, locator_string):
@@ -57,7 +58,10 @@ class KeyValue(Hypergraph):
     def _remove_key(self, key):
         raise NotImplementedError()
 
-    def _match_structure(self, pattern, strict):
+    def _permutations_with_prefix(self, prefix):
+        raise NotImplementedError()
+
+    def _edges_with_prefix(self, prefix):
         raise NotImplementedError()
 
     # ==========================================
@@ -230,6 +234,63 @@ class KeyValue(Hypergraph):
 
     def _deep_degree(self, edge):
         return self.get_int_attribute(edge, 'dd', 0)
+
+    def _match_structure(self, pattern, strict):
+        if not strict or is_full_pattern(pattern):
+            for edge in self.all():
+                yield edge
+        else:
+            nodes = []
+            positions = []
+            for i, node in enumerate(pattern):
+                if not is_pattern(node):
+                    nodes.append(node)
+                    positions.append(i)
+
+            prefix = edges2str(nodes)
+            for perm_str in self._permutations_with_prefix(prefix):
+                tokens = split_edge_str(perm_str)
+                nper = int(tokens[-1])
+                if nper == first_permutation(len(tokens) - 1, positions):
+                    yield perm2edge(perm_str)
+
+    # from Hypergraph
+    def _star(self, center, limit=None):
+        center_str = center.to_str()
+        prefix = ''.join((center_str, ' '))
+        count = 0
+        for perm_str in self._permutations_with_prefix(prefix):
+            if limit and count >= limit:
+                break
+            edge = perm2edge(perm_str)
+            if edge:
+                position = edge.index(center)
+                nper = int(split_edge_str(perm_str)[-1])
+                if nper == first_permutation(len(edge), (position,)):
+                    count += 1
+                    yield edge
+
+    def _atoms_with_root(self, root):
+        prefix = ''.join((root, '/'))
+        for edge in self._edges_with_prefix(prefix):
+            yield edge
+
+    def _edges_with_edges(self, edges, root):
+        prefix = ' '.join([edge.to_str() for edge in edges])
+        if root:
+            prefix = ''.join((prefix, ' ', root, '/'))
+        for perm_str in self._permutations_with_prefix(prefix):
+            edge = perm2edge(perm_str)
+            if edge:
+                if root is None:
+                    if all([item in edge for item in edges]):
+                        positions = [edge.index(item) for item in edges]
+                        nper = int(split_edge_str(perm_str)[-1])
+                        if nper == first_permutation(len(edge), positions):
+                            yield edge
+                else:
+                    # TODO: remove redundant results when a root is present
+                    yield edge
 
     # =====================
     # Local private methods
