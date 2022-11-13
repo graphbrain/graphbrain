@@ -2,10 +2,11 @@ import itertools
 
 from collections import Counter
 from graphbrain import hedge
-from graphbrain.utils.lemmas import lemma
+from graphbrain.utils.lemmas import lemma, match_lemma
+from graphbrain.semsim import match_semsim
 
 
-FUNS = {'var', 'atoms', 'lemma'}
+FUNS = {'var', 'atoms', 'lemma', 'semsim'}
 
 
 def is_wildcard(atom):
@@ -312,7 +313,10 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg):
         atom_patterns = fun_pattern[1:]
         return _match_atoms(atom_patterns, atoms, curvars, hg)
     elif fun == 'lemma':
-        return _match_lemma(fun_pattern[1], edge, curvars, hg)
+        # return _match_lemma(fun_pattern[1], edge, curvars, hg)
+        return match_lemma(fun_pattern[1], edge, curvars, hg)
+    elif fun == 'semsim':
+        return match_semsim(fun_pattern, edge, curvars, hg)
     else:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
