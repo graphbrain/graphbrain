@@ -3,7 +3,7 @@ import unittest
 import graphbrain.constants as const
 from graphbrain import hedge, hgraph
 from graphbrain.patterns import (match_pattern, edge_matches_pattern, is_wildcard, is_pattern, is_full_pattern,
-                                 apply_vars, PatternCounter)
+                                 apply_vars, PatternCounter, is_unordered_pattern)
 
 
 class TestPatterns(unittest.TestCase):
@@ -93,6 +93,30 @@ class TestPatterns(unittest.TestCase):
 
     def test_is_full_pattern8(self):
         self.assertTrue(is_full_pattern(hedge('(. * (*) ...)')))
+
+    def test_is_unordered_pattern1(self):
+        self.assertFalse(is_unordered_pattern(hedge("('s/Bp.am * ...)")))
+
+    def test_is_unordered_pattern2(self):
+        self.assertFalse(is_unordered_pattern(hedge('thing/C')))
+
+    def test_is_unordered_pattern3(self):
+        self.assertFalse(is_unordered_pattern(hedge('*')))
+
+    def test_is_unordered_pattern4(self):
+        self.assertFalse(is_unordered_pattern(hedge('go/Pd.so')))
+
+    def test_is_unordered_pattern5(self):
+        self.assertTrue(is_unordered_pattern(hedge('go/Pd.{so}')))
+
+    def test_is_unordered_pattern6(self):
+        self.assertFalse(is_unordered_pattern(hedge('(is/P.sc x/C y/Cn.s)')))
+
+    def test_is_unordered_pattern7(self):
+        self.assertTrue(is_unordered_pattern(hedge('(is/P.{sc} x/C y/Cn.s)')))
+
+    def test_is_unordered_pattern8(self):
+        self.assertTrue(is_unordered_pattern(hedge('((not/M is/P.{sc}) x/C y/Cn.s)')))
 
     def test_main_apply_vars(self):
         edge = hedge('(PRED zimbabwe/C PROP)')

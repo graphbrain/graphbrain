@@ -12,7 +12,6 @@
 
 ### Removed
 - graphbrain.logic obsolete module.
-- strict mode from Hypergraph.search(), .match() and count(), no longer necessary.
 
 ## [0.6.1] - 31-10-2022
 ### Changed

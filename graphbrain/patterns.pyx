@@ -42,6 +42,15 @@ def is_pattern(edge):
         return any(is_pattern(item) for item in edge)
 
 
+def is_unordered_pattern(edge):
+    """Check if this edge defines an unordered pattern, i.e. if it includes at least
+    one instance of unordered argument roles surrounded by curly brackets.
+    """
+    if edge.atom:
+        return '{' in edge.argroles()
+    else:
+        return any(is_unordered_pattern(item) for item in edge)
+
 def is_full_pattern(edge):
     """Check if every atom is a pattern matcher.
 

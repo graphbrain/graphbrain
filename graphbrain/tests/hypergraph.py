@@ -389,6 +389,37 @@ class Hypergraph:
             [(edge1, [{'OBJ': hedge('(the/M sky/C)'), 'PROP': hedge('blue/Ca')}]),
              (edge2, [{'OBJ': hedge('(the/M sky/C)'), 'PROP': hedge('blue/Ca')}])])
 
+    def test_match_strict1(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/Pd.cs blue/Ca (the/Md sky/Cc))')
+        edge2 = hedge('(is/Pd.sc (the/Md sky/Cc) blue/Ca)')
+
+        self.hg.add(edge1)
+        self.hg.add(edge2)
+
+        self.assertEqual(list(self.hg.match('(is/P.sc (the/M sky/C) blue/C)', strict=True)), [])
+
+    def test_match_strict2(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/Pd.cs blue/Ca (the/Md sky/Cc))')
+        edge2 = hedge('(is/Pd.sc (the/Md sky/Cc) blue/Ca)')
+
+        self.hg.add(edge1)
+        self.hg.add(edge2)
+
+        self.assertEqual(list(self.hg.match('(is/Pd.sc (the/Md sky/Cc) blue/Ca)', strict=True)), [(edge2, [{}])])
+
+    def test_match_argroles_curly_brackets_strict(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/Pd.cs blue/Ca (the/Md sky/Cc))')
+        edge2 = hedge('(is/Pd.sc (the/Md sky/Cc) blue/Ca)')
+
+        self.hg.add(edge1)
+        self.hg.add(edge2)
+
+        with self.assertRaises(RuntimeError):
+            list(self.hg.match('(is/P.{sc} (the/Md sky/Cc) blue/Ca)', strict=True))
+
     def test_star(self):
         self.hg.destroy()
         edge1 = hedge('(is graphbrain/1 great/1)')
