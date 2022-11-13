@@ -10,7 +10,7 @@ def lemma(hg, atom, same_if_none=False):
     """
     if atom.atom:
         satom = atom.simplify()
-        for lemma_edge in hg.search((const.lemma_pred, satom, '*')):
+        for lemma_edge in hg.search((const.lemma_pred, satom, '*'), strict=True):
             return lemma_edge[2]
     if same_if_none:
         return atom
@@ -55,7 +55,7 @@ def lemma_degrees(hg, edge):
 
         # find lemma
         satom = edge.simplify()
-        for edge in hg.search((const.lemma_pred, satom, '*')):
+        for edge in hg.search((const.lemma_pred, satom, '*'), strict=True):
             roots.add(edge[2].root())
 
         # compute degrees

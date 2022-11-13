@@ -9,16 +9,16 @@ def _new_coref_id():
     chars = string.ascii_lowercase + string.digits
     # Note: the size of the id can be increased to reduce the probability
     # of collision.
-    return ''.join(random.choice(chars) for i in range(7))
+    return ''.join(random.choice(chars) for _ in range(7))
 
 
-def _set_coref_id(hg, edge, coref_id):
-    hg.set_attribute(edge, coref_set_id_key, coref_id)
+def _set_coref_id(hg, edge, new_coref_id):
+    hg.set_attribute(edge, coref_set_id_key, new_coref_id)
 
 
-def _change_coref_id(hg, edge, coref_id):
+def _change_coref_id(hg, edge, new_coref_id):
     for coref in coref_set(hg, edge):
-        _set_coref_id(hg, coref, coref_id)
+        _set_coref_id(hg, coref, new_coref_id)
 
 
 def _update_main_coref(hg, edge):
@@ -35,7 +35,7 @@ def _update_main_coref(hg, edge):
 
     coref_edge = hedge((main_coref_pred, cref_id, best_coref))
     if not hg.exists(coref_edge):
-        old = set(hg.search('({} {} *)'.format(main_coref_pred, cref_id)))
+        old = set(hg.search('({} {} *)'.format(main_coref_pred, cref_id), strict=True))
         for old_edge in old:
             hg.remove(old_edge)
         hg.add(coref_edge, primary=False)
@@ -77,8 +77,7 @@ def coref_id(hg, edge):
 
 def main_coref_from_id(hg, cref_id):
     """Returns main edge in the coreference set for the given identifier."""
-    for coref_edge in hg.search('({} {} *)'.format(main_coref_pred,
-                                                   cref_id)):
+    for coref_edge in hg.search('({} {} *)'.format(main_coref_pred, cref_id), strict=True):
         return coref_edge[2]
     return None
 

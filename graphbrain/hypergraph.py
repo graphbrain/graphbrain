@@ -255,10 +255,14 @@ class Hypergraph(object):
                 atom_set.add(atom)
         return atom_set
 
-    def remove_by_pattern(self, pattern):
-        """Removes all edges that match the pattern."""
-        edges = self.search(pattern)
-        for edge in edges:
+    def remove_by_pattern(self, pattern, strict=False):
+        """Removes all edges that match the pattern.
+
+        Keyword argument:
+        strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
+         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
+        """
+        for edge in self.search(pattern, strict=strict):
             self.remove(edge)
 
     def root_degrees(self, edge):
@@ -308,7 +312,7 @@ class Hypergraph(object):
         pos = 0
         stop = False
         while not stop:
-            iteration = self.search((const.sequence_pred, name, str(pos), '*'))
+            iteration = self.search((const.sequence_pred, name, str(pos), '*'), strict=True)
             next_edge = next(iteration, None)
             if next_edge:
                 yield next_edge[3]
@@ -320,7 +324,7 @@ class Hypergraph(object):
         """Returns an iterator for all the sequence names present in the
         hypergraph.
         """
-        for edge in self.search((const.sequence_pred, '*', '0', '*')):
+        for edge in self.search((const.sequence_pred, '*', '0', '*'), strict=True):
             yield edge[1].to_str()
 
     def text(self, edge):
