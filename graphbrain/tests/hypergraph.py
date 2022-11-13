@@ -19,11 +19,9 @@ class Hypergraph:
     def test_destroy(self):
         self.hg.destroy()
         self.hg.add(hedge('(src graphbrain/1 (size graphbrain/1 7))'))
-        self.assertTrue(self.hg.exists(hedge('(src graphbrain/1 '
-                                             '(size graphbrain/1 7))')))
+        self.assertTrue(self.hg.exists(hedge('(src graphbrain/1 (size graphbrain/1 7))')))
         self.hg.destroy()
-        self.assertFalse(self.hg.exists(hedge('(src graphbrain/1 '
-                                              '(size graphbrain/1 7))')))
+        self.assertFalse(self.hg.exists(hedge('(src graphbrain/1 (size graphbrain/1 7))')))
 
     def test_all(self):
         self.hg.destroy()
@@ -33,10 +31,8 @@ class Hypergraph:
 
         labels = set([edge.to_str() for edge in self.hg.all()])
         self.assertEqual(labels,
-                         {'size', 'graphbrain/1', '7', 'is', 'great/1', 'src',
-                          'mary/1', '(size graphbrain/1 7)',
-                          '(is graphbrain/1 great/1)',
-                          '(src mary/1 (is graphbrain/1 great/1))'})
+                         {'size', 'graphbrain/1', '7', 'is', 'great/1', 'src', 'mary/1', '(size graphbrain/1 7)',
+                          '(is graphbrain/1 great/1)', '(src mary/1 (is graphbrain/1 great/1))'})
         self.hg.destroy()
         labels = set(self.hg.all())
         self.assertEqual(labels, set())
@@ -49,8 +45,7 @@ class Hypergraph:
 
         labels = set([edge.to_str() for edge in self.hg.all_atoms()])
         self.assertEqual(labels,
-                         {'size', 'graphbrain/1', '7', 'is', 'great/1', 'src',
-                          'mary/1'})
+                         {'size', 'graphbrain/1', '7', 'is', 'great/1', 'src', 'mary/1'})
         self.hg.destroy()
         labels = set(self.hg.all())
         self.assertEqual(labels, set())
@@ -63,8 +58,7 @@ class Hypergraph:
 
         labels = set([edge.to_str() for edge in self.hg.all_non_atoms()])
         self.assertEqual(labels,
-                         {'(size graphbrain/1 7)', '(is graphbrain/1 great/1)',
-                          '(src mary/1 (is graphbrain/1 great/1))'})
+                         {'(size graphbrain/1 7)', '(is graphbrain/1 great/1)', '(src mary/1 (is graphbrain/1 great/1))'})
         self.hg.destroy()
         labels = set(self.hg.all())
         self.assertEqual(labels, set())
@@ -77,10 +71,8 @@ class Hypergraph:
 
         labels = set(['%s %s' % (t[0].to_str(), t[1]['d'])
                       for t in self.hg.all_attributes()])
-        self.assertEqual(labels, {'size 1', 'graphbrain/1 2', '7 1', 'is 1',
-                                  'great/1 1', 'src 1', 'mary/1 1',
-                                  '(size graphbrain/1 7) 0',
-                                  '(is graphbrain/1 great/1) 1',
+        self.assertEqual(labels, {'size 1', 'graphbrain/1 2', '7 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
+                                  '(size graphbrain/1 7) 0', '(is graphbrain/1 great/1) 1',
                                   '(src mary/1 (is graphbrain/1 great/1)) 0'})
         self.hg.destroy()
         labels = set(self.hg.all_attributes())
@@ -99,11 +91,9 @@ class Hypergraph:
     def test_ops_2(self):
         self.hg.destroy()
         self.hg.add('(src graphbrain/1 (size graphbrain/1 7))')
-        self.assertTrue(self.hg.exists(hedge('(src graphbrain/1 '
-                                             '(size graphbrain/1 7))')))
+        self.assertTrue(self.hg.exists(hedge('(src graphbrain/1 (size graphbrain/1 7))')))
         self.hg.remove(hedge('(src graphbrain/1 (size graphbrain/1 7))'))
-        self.assertFalse(self.hg.exists(hedge('(src graphbrain/1 '
-                                              '(size graphbrain/1 7))')))
+        self.assertFalse(self.hg.exists(hedge('(src graphbrain/1 (size graphbrain/1 7))')))
 
     # test add with count=True
     def test_add_count(self):
@@ -281,8 +271,7 @@ class Hypergraph:
 
     def test_count_non_atomic_pred(self):
         self.hg.destroy()
-        edge = hedge('((is/M playing/Pd ) mary/Cp.s '
-                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        edge = hedge('((is/M playing/Pd ) mary/Cp.s (a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
         self.assertEqual(self.hg.count('((is/M playing/Pd) ...)'), 1)
         self.assertEqual(self.hg.count('((is/M playing/Pd) * *)'), 1)
@@ -291,15 +280,12 @@ class Hypergraph:
         self.assertEqual(self.hg.count('((is/M playing/Pd) (*) (*))'), 0)
         self.assertEqual(self.hg.count('(* mary/Cp.s *)'), 1)
         self.assertEqual(self.hg.count('(mary/Cp.s * *)'), 0)
-        self.assertEqual(self.hg.count('(* * (a/Md ((very/M old/Ma) '
-                                       'violin/Cn.s)))'), 1)
-        self.assertEqual(self.hg.count('((a/Md ((very/M old/Ma) '
-                                       'violin/Cn.s)) * *)'), 0)
+        self.assertEqual(self.hg.count('(* * (a/Md ((very/M old/Ma) violin/Cn.s)))'), 1)
+        self.assertEqual(self.hg.count('((a/Md ((very/M old/Ma) violin/Cn.s)) * *)'), 0)
 
     def test_count_non_atomic_pred_vars(self):
         self.hg.destroy()
-        edge = hedge('((is/M playing/Pd ) mary/Cp.s '
-                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        edge = hedge('((is/M playing/Pd ) mary/Cp.s (a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
         self.assertEqual(self.hg.count('((is/M playing/Pd) *X *Y)'), 1)
         self.assertEqual(self.hg.count('((is/M playing/Pd) .X (Y))'), 1)
@@ -307,10 +293,8 @@ class Hypergraph:
         self.assertEqual(self.hg.count('((is/M playing/Pd) (X) (Y))'), 0)
         self.assertEqual(self.hg.count('(* mary/Cp.s X)'), 1)
         self.assertEqual(self.hg.count('(mary/Cp.s X Y)'), 0)
-        self.assertEqual(self.hg.count('(X Y (a/Md ((very/M old/Ma) '
-                                       'violin/Cn.s)))'), 1)
-        self.assertEqual(self.hg.count('((a/Md ((very/M old/Ma) '
-                                       'violin/Cn.s)) X Y)'), 0)
+        self.assertEqual(self.hg.count('(X Y (a/Md ((very/M old/Ma) violin/Cn.s)))'), 1)
+        self.assertEqual(self.hg.count('((a/Md ((very/M old/Ma) violin/Cn.s)) X Y)'), 0)
 
     def test_count_pred_with_roles(self):
         self.hg.destroy()
@@ -320,8 +304,7 @@ class Hypergraph:
 
     def test_count_pred_with_roles_and_ellipsis(self):
         self.hg.destroy()
-        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)',
-                      'mary/Cp.s/en',
+        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)', 'mary/Cp.s/en',
                       '(a/Md/en ((very/M/en old/Ma/en) violin/Cc.s/en))'))
         pattern = hedge('((is/Mv.|f--3s-/en playing/Pd.so.|pg----/en) ...)')
         self.hg.add(edge)
@@ -329,8 +312,7 @@ class Hypergraph:
 
     def test_count_pred_with_deep_pattern(self):
         self.hg.destroy()
-        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)',
-                      'mary/Cp.s/en',
+        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)', 'mary/Cp.s/en',
                       '(a/Md/en ((very/M/en old/Ma/en) violin/Cc.s/en))'))
         pattern = hedge('(*/Pd.so */C (*/M ((*/M */M) violin/Cc.s/en)))')
         self.hg.add(edge)
@@ -338,50 +320,28 @@ class Hypergraph:
 
     def test_match(self):
         self.hg.destroy()
-        edge = hedge('((is/M playing/Pd) mary/Cp.s '
-                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        edge = hedge('((is/M playing/Pd) mary/Cp.s (a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
-        self.assertEqual(
-            list(self.hg.match('((is/M playing/Pd) *X *Y)')),
-            [(edge,
-              [{'X': hedge('mary/Cp.s'),
-                'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
-        self.assertEqual(
-            list(self.hg.match('(PRED mary/Cp.s X)')),
-            [(edge,
-              [{'PRED': hedge('(is/M playing/Pd)'),
-                'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
-        self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) '
-                                            'violin/Cn.s)))')),
-                         [(edge,
-                           [{'X': hedge('(is/M playing/Pd)'),
-                             'Y': hedge('mary/Cp.s')}])])
+        self.assertEqual(list(self.hg.match('((is/M playing/Pd) *X *Y)')),
+                         [(edge, [{'X': hedge('mary/Cp.s'), 'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(list(self.hg.match('(PRED mary/Cp.s X)')),
+                         [(edge, [{'PRED': hedge('(is/M playing/Pd)'), 'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) violin/Cn.s)))')),
+                         [(edge, [{'X': hedge('(is/M playing/Pd)'), 'Y': hedge('mary/Cp.s')}])])
 
     def test_match_argroles1(self):
         self.hg.destroy()
-        edge = hedge('((is/M playing/Pd.so) mary/Cp.s '
-                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        edge = hedge('((is/M playing/Pd.so) mary/Cp.s (a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
-        self.assertEqual(
-            list(self.hg.match('((is/M playing/Pd.so) *X *Y)')),
-            [(edge,
-              [{'X': hedge('mary/Cp.s'),
-                'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
-        self.assertEqual(
-            list(self.hg.match('(PRED mary/Cp.s X)')),
-            [(edge,
-              [{'PRED': hedge('(is/M playing/Pd.so)'),
-                'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
-        self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) '
-                                            'violin/Cn.s)))')),
-                         [(edge,
-                           [{'X': hedge('(is/M playing/Pd.so)'),
-                             'Y': hedge('mary/Cp.s')}])])
-        self.assertEqual(
-            list(self.hg.match('(*/Pd.so X Y)')),
-            [(edge,
-              [{'X': hedge('mary/Cp.s'),
-                'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(list(self.hg.match('((is/M playing/Pd.so) *X *Y)')),
+                         [(edge, [{'X': hedge('mary/Cp.s'), 'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(list(self.hg.match('(PRED mary/Cp.s X)')),
+                         [(edge, [{'PRED': hedge('(is/M playing/Pd.so)'),
+                                   'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) violin/Cn.s)))')),
+                         [(edge, [{'X': hedge('(is/M playing/Pd.so)'), 'Y': hedge('mary/Cp.s')}])])
+        self.assertEqual(list(self.hg.match('(*/Pd.so X Y)')),
+                         [(edge, [{'X': hedge('mary/Cp.s'), 'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
 
     def test_match_argroles2(self):
         self.hg.destroy()
@@ -391,12 +351,8 @@ class Hypergraph:
         self.hg.add(edge1)
         self.hg.add(edge2)
 
-        self.assertEqual(
-            list(self.hg.match('(is/Pd.sc OBJ/C blue/Ca)')),
-            [(edge2, [{'OBJ': hedge('(the/M sky/C)')}])])
-        self.assertEqual(
-            list(self.hg.match('(is/P.sc OBJ/C blue/C)')),
-            [(edge2, [{'OBJ': hedge('(the/M sky/C)')}])])
+        self.assertEqual(list(self.hg.match('(is/Pd.sc OBJ/C blue/Ca)')), [(edge2, [{'OBJ': hedge('(the/M sky/C)')}])])
+        self.assertEqual(list(self.hg.match('(is/P.sc OBJ/C blue/C)')), [(edge2, [{'OBJ': hedge('(the/M sky/C)')}])])
 
     def test_match_argroles_curly_brackets1(self):
         self.hg.destroy()
@@ -507,8 +463,7 @@ class Hypergraph:
         self.hg.set_attribute(atom, 'bar', -.77)
         self.assertEqual(self.hg.get_float_attribute(atom, 'bar'), -.77)
         self.hg.set_attribute(atom, 'label', '{"abc": "defg", "": 23}')
-        self.assertEqual(self.hg.get_str_attribute(atom, 'label'),
-                         '{"abc": "defg", "": 23}')
+        self.assertEqual(self.hg.get_str_attribute(atom, 'label'), '{"abc": "defg", "": 23}')
 
     # set_attribute, inc_attribute, dec_attribute, get_str_attribute,
     # get_int_attribute, get_float_attribute
@@ -527,8 +482,7 @@ class Hypergraph:
         self.hg.set_attribute(edge, 'bar', -.77)
         self.assertEqual(self.hg.get_float_attribute(edge, 'bar'), -.77)
         self.hg.set_attribute(edge, 'label', '{"abc": "defg", "": 23}')
-        self.assertEqual(self.hg.get_str_attribute(edge, 'label'),
-                         '{"abc": "defg", "": 23}')
+        self.assertEqual(self.hg.get_str_attribute(edge, 'label'), '{"abc": "defg", "": 23}')
 
     # increment attribute that does not exist yet
     def test_inc_attributes_does_not_exist(self):
@@ -585,8 +539,7 @@ class Hypergraph:
         self.hg.add('(is graphbrain/1 great/1)')
         self.hg.add('(is graphbrain/1 great/2)')
         self.assertEqual(self.hg.ego(hedge('graphbrain/1')),
-                         {hedge('graphbrain/1'), hedge('is'), hedge('great/1'),
-                          hedge('great/2')})
+                         {hedge('graphbrain/1'), hedge('is'), hedge('great/1'), hedge('great/2')})
 
     def test_remove_by_pattern(self):
         self.hg.destroy()
@@ -594,14 +547,10 @@ class Hypergraph:
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
-        self.assertEqual(
-            set(self.hg.search('(says/Pd * '
-                               '(is/Pd graphbrain/Cp great/C))')),
-            {hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')})
+        self.assertEqual(set(self.hg.search('(says/Pd * (is/Pd graphbrain/Cp great/C))')),
+                         {hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')})
         self.hg.remove_by_pattern('(says/Pd * *)')
-        self.assertFalse(
-            self.hg.exists(
-                hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')))
+        self.assertFalse(self.hg.exists(hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')))
         self.assertTrue(self.hg.exists(hedge('(is/Pd graphbrain/Cp great/C)')))
 
     def test_root_degrees(self):
@@ -620,8 +569,7 @@ class Hypergraph:
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C/2))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C) extra/C)')
-        self.assertEqual(self.hg.sum_degree({hedge('graphbrain/C'),
-                                             hedge('says/Pd')}), 4)
+        self.assertEqual(self.hg.sum_degree({hedge('graphbrain/C'), hedge('says/Pd')}), 4)
 
     def test_sum_deep_degree(self):
         self.hg.destroy()
@@ -629,8 +577,7 @@ class Hypergraph:
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C/2))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C) extra/C)')
-        self.assertEqual(self.hg.sum_deep_degree({hedge('graphbrain/C'),
-                                                  hedge('says/Pd')}), 6)
+        self.assertEqual(self.hg.sum_deep_degree({hedge('graphbrain/C'), hedge('says/Pd')}), 6)
 
     def test_primary_1(self):
         self.hg.destroy()
@@ -809,8 +756,7 @@ class Hypergraph:
         self.hg.destroy()
         edge1 = hedge('(is/P this/C (first/M element/C))')
         self.hg.add_to_sequence('test_seq', edge1)
-        self.assertTrue(self.hg.exists((const.sequence_pred, 'test_seq', '0',
-                                        edge1)))
+        self.assertTrue(self.hg.exists((const.sequence_pred, 'test_seq', '0', edge1)))
 
     def test_sequence2(self):
         self.hg.destroy()
@@ -869,9 +815,7 @@ class Hypergraph:
     def test_add_with_attributes1(self):
         self.hg.destroy()
         edge = hedge('(is graphbrain/1 great/1)')
-        self.hg.add_with_attributes(
-            edge,
-            {'p': 1, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
+        self.hg.add_with_attributes(edge, {'p': 1, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
         self.assertTrue(self.hg.is_primary(edge))
         self.assertEqual(self.hg.degree(edge), 10)
         self.assertEqual(self.hg.deep_degree(edge), 20)
@@ -882,17 +826,13 @@ class Hypergraph:
     def test_add_with_attributes2(self):
         self.hg.destroy()
         edge = hedge('(is graphbrain/1 great/1)')
-        self.hg.add_with_attributes(
-            edge,
-            {'p': 0, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
+        self.hg.add_with_attributes(edge, {'p': 0, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
         self.assertFalse(self.hg.is_primary(edge))
 
     def test_add_with_attributes_search(self):
         self.hg.destroy()
         edge = hedge('(is graphbrain/1 great/1)')
-        self.hg.add_with_attributes(
-            edge,
-            {'p': 1, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
+        self.hg.add_with_attributes(edge, {'p': 1, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
         results = set(self.hg.search('(is * *)'))
         self.assertEqual(results, set([edge]))
 

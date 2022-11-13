@@ -10,13 +10,8 @@ class TestCorefs(unittest.TestCase):
         self.hg = hgraph('test.db')
         self.hg.destroy()
 
-        concepts = []
-        concepts.append(hedge('paris/C'))
-        concepts.append(hedge('(of/B city/C paris/C)'))
-        concepts.append(hedge('(of/B capital/C france/C)'))
-        concepts.append(hedge('berlin/C'))
-        concepts.append(hedge('(of/B city/C berlin/C)'))
-        concepts.append(hedge('(of/B capital/C germany/C)'))
+        concepts = [hedge('paris/C'), hedge('(of/B city/C paris/C)'), hedge('(of/B capital/C france/C)'),
+                    hedge('berlin/C'), hedge('(of/B city/C berlin/C)'), hedge('(of/B capital/C germany/C)')]
         self.concepts = concepts
 
         self.hg.add('(love/P i/C (of/B city/C paris/C))')
@@ -32,12 +27,10 @@ class TestCorefs(unittest.TestCase):
 
         self.assertTrue(are_corefs(self.hg, concepts[0], concepts[1]))
         self.assertFalse(are_corefs(self.hg, concepts[0], concepts[2]))
-        self.assertEqual(coref_id(self.hg, concepts[0]),
-                         coref_id(self.hg, concepts[1]))
+        self.assertEqual(coref_id(self.hg, concepts[0]), coref_id(self.hg, concepts[1]))
         self.assertIsNotNone(coref_id(self.hg, concepts[0]))
         self.assertIsNone(coref_id(self.hg, concepts[2]))
-        self.assertEqual(coref_set(self.hg, concepts[0]),
-                         {concepts[0], concepts[1]})
+        self.assertEqual(coref_set(self.hg, concepts[0]), {concepts[0], concepts[1]})
 
     def test_make_3_corefs(self):
         concepts = self.concepts
@@ -47,15 +40,12 @@ class TestCorefs(unittest.TestCase):
 
         self.assertTrue(are_corefs(self.hg, concepts[0], concepts[1]))
         self.assertTrue(are_corefs(self.hg, concepts[0], concepts[2]))
-        self.assertEqual(coref_id(self.hg, concepts[0]),
-                         coref_id(self.hg, concepts[1]))
-        self.assertEqual(coref_id(self.hg, concepts[0]),
-                         coref_id(self.hg, concepts[2]))
+        self.assertEqual(coref_id(self.hg, concepts[0]), coref_id(self.hg, concepts[1]))
+        self.assertEqual(coref_id(self.hg, concepts[0]), coref_id(self.hg, concepts[2]))
         self.assertIsNotNone(coref_id(self.hg, concepts[0]))
         self.assertIsNotNone(coref_id(self.hg, concepts[1]))
         self.assertIsNotNone(coref_id(self.hg, concepts[2]))
-        self.assertEqual(coref_set(self.hg, concepts[0]),
-                         {concepts[0], concepts[1], concepts[2]})
+        self.assertEqual(coref_set(self.hg, concepts[0]), {concepts[0], concepts[1], concepts[2]})
 
     def test_connect_coref_sets(self):
         concepts = self.concepts
@@ -70,44 +60,34 @@ class TestCorefs(unittest.TestCase):
 
         self.assertTrue(are_corefs(self.hg, concepts[0], concepts[1]))
         self.assertTrue(are_corefs(self.hg, concepts[0], concepts[2]))
-        self.assertEqual(coref_id(self.hg, concepts[0]),
-                         coref_id(self.hg, concepts[1]))
-        self.assertEqual(coref_id(self.hg, concepts[0]),
-                         coref_id(self.hg, concepts[2]))
+        self.assertEqual(coref_id(self.hg, concepts[0]), coref_id(self.hg, concepts[1]))
+        self.assertEqual(coref_id(self.hg, concepts[0]), coref_id(self.hg, concepts[2]))
         self.assertIsNotNone(coref_id(self.hg, concepts[0]))
         self.assertIsNotNone(coref_id(self.hg, concepts[1]))
         self.assertIsNotNone(coref_id(self.hg, concepts[2]))
-        self.assertEqual(coref_set(self.hg, concepts[0]),
-                         {concepts[0], concepts[1], concepts[2]})
+        self.assertEqual(coref_set(self.hg, concepts[0]), {concepts[0], concepts[1], concepts[2]})
 
         self.assertTrue(are_corefs(self.hg, concepts[3], concepts[4]))
         self.assertTrue(are_corefs(self.hg, concepts[3], concepts[5]))
-        self.assertEqual(coref_id(self.hg, concepts[3]),
-                         coref_id(self.hg, concepts[4]))
-        self.assertEqual(coref_id(self.hg, concepts[3]),
-                         coref_id(self.hg, concepts[5]))
+        self.assertEqual(coref_id(self.hg, concepts[3]), coref_id(self.hg, concepts[4]))
+        self.assertEqual(coref_id(self.hg, concepts[3]), coref_id(self.hg, concepts[5]))
         self.assertIsNotNone(coref_id(self.hg, concepts[3]))
         self.assertIsNotNone(coref_id(self.hg, concepts[4]))
         self.assertIsNotNone(coref_id(self.hg, concepts[5]))
-        self.assertEqual(coref_set(self.hg, concepts[3]),
-                         {concepts[3], concepts[4], concepts[5]})
+        self.assertEqual(coref_set(self.hg, concepts[3]), {concepts[3], concepts[4], concepts[5]})
 
         self.assertFalse(are_corefs(self.hg, concepts[0], concepts[4]))
         self.assertFalse(are_corefs(self.hg, concepts[1], concepts[5]))
-        self.assertNotEqual(coref_id(self.hg, concepts[0]),
-                            coref_id(self.hg, concepts[4]))
-        self.assertNotEqual(coref_id(self.hg, concepts[1]),
-                            coref_id(self.hg, concepts[5]))
+        self.assertNotEqual(coref_id(self.hg, concepts[0]), coref_id(self.hg, concepts[4]))
+        self.assertNotEqual(coref_id(self.hg, concepts[1]), coref_id(self.hg, concepts[5]))
 
         # connect both
         make_corefs(self.hg, concepts[0], concepts[5])
 
         self.assertTrue(are_corefs(self.hg, concepts[0], concepts[4]))
         self.assertTrue(are_corefs(self.hg, concepts[1], concepts[5]))
-        self.assertEqual(coref_id(self.hg, concepts[0]),
-                         coref_id(self.hg, concepts[4]))
-        self.assertEqual(coref_id(self.hg, concepts[1]),
-                         coref_id(self.hg, concepts[5]))
+        self.assertEqual(coref_id(self.hg, concepts[0]), coref_id(self.hg, concepts[4]))
+        self.assertEqual(coref_id(self.hg, concepts[1]), coref_id(self.hg, concepts[5]))
         for concept in concepts:
             self.assertEqual(coref_set(self.hg, concept), set(concepts))
 
