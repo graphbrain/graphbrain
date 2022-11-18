@@ -206,7 +206,7 @@ def _defun_pattern_argroles(edge):
             # if no atom with argroles is found, just return the first one
             return edge[1]
         else:
-            return _defun_pattern_argroles(edge[1])
+            return hedge([edge[0], _defun_pattern_argroles(edge[1])] + list(edge[2:]))
     else:
         return hedge([_defun_pattern_argroles(subedge) for subedge in edge])
 
@@ -393,8 +393,7 @@ def match_pattern(edge, pattern, curvars=None, hg=None):
         max_len = float('inf')
 
     result = [{}]
-    argroles_posopt =\
-        _defun_pattern_argroles(pattern)[0].argroles().split('-')[0]
+    argroles_posopt = _defun_pattern_argroles(pattern)[0].argroles().split('-')[0]
     if len(argroles_posopt) > 0 and argroles_posopt[0] == '{':
         match_by_order = False
         argroles_posopt = argroles_posopt[1:-1]

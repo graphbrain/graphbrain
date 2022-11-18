@@ -867,14 +867,24 @@ class TestPatterns(unittest.TestCase):
         self.assertFalse(pc.patterns[hedge('(*/M (*/M (*/M (*/M */C)))(')] == 1)
 
     def test_match_pattern_real_case1(self):
-        s = ("((var ((atoms (lemma be/M)) *) PRED) (var * ARG1) (var * ARG2))")
+        s = "((var ((atoms (lemma be/M)) *) PRED) (var * ARG1) (var * ARG2))"
         pattern = hedge(s)
-        s = ("""((var picks/Pd.sox.|f--3s-/en PRED) (var trump/Cc.s/en ARG1) (var (+/B.am/. lawyer/Cc.s/en (+/B.am/. 
+        s = """((var picks/Pd.sox.|f--3s-/en PRED) (var trump/Cc.s/en ARG1) (var (+/B.am/. lawyer/Cc.s/en (+/B.am/. 
         ty/Cp.s/en cobb/Cp.s/en)) ARG2) ((to/Mi/en handle/Pd.o.-i-----/en) (+/B.am/. russia/Cp.s/en probe/Cc.s/en)))
-        """)
+        """
         edge = hedge(s)
         matches = match_pattern(edge, pattern, hg=self.hg)
         self.assertEqual(matches, [])
+
+    def test_match_pattern_real_case2(self):
+        s = """((atoms heavily/M/en also/M/en influenced/Pd.{pa}.<pf----/en was/Mv.<f-----/en)
+                    (var * ORIG) (* (var * TARG)))"""
+        pattern = hedge(s)
+        s = """((was/Mv.<f-----/en (also/M/en (heavily/M/en influenced/Pd.{pa}.<pf----/en)))
+                    he/Ci/en (by/T/en macy/Cp.s/en))"""
+        edge = hedge(s)
+        matches = match_pattern(edge, pattern, hg=self.hg)
+        self.assertEqual(matches, [{'ORIG': hedge('he/Ci/en'), 'TARG': hedge('macy/Cp.s/en')}])
 
 
 if __name__ == '__main__':
