@@ -21,18 +21,19 @@ def text_parts(title):
 
 
 class CsvReader(Reader):
-    def __init__(self, infile, column, hg=None, sequence=None, lang=None,
-                 corefs=False, parser=None, parser_class=None):
-        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs,
-                         parser=parser, parser_class=parser_class)
+    def __init__(self, infile, column, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None):
+        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs, parser=parser, parser_class=parser_class)
         self.infile = infile
         self.column = column
         csv.field_size_limit(sys.maxsize)
 
     def _parse_row(self, row):
-        parts = text_parts(row[self.column])
-        for part in parts:
-            self.parser.parse_and_add(part, self.hg, sequence=self.sequence)
+        try:
+            parts = text_parts(row[self.column])
+            for part in parts:
+                self.parser.parse_and_add(part, self.hg, sequence=self.sequence)
+        except TypeError as e:
+            print(e)
 
     def read(self):
         lines = file_lines(self.infile) - 1

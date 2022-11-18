@@ -20,10 +20,8 @@ def title_parts(title):
 
 
 class RedditReader(Reader):
-    def __init__(self, infile, hg=None, sequence=None, lang=None,
-                 corefs=False, parser=None, parser_class=None):
-        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs,
-                         parser=parser, parser_class=parser_class)
+    def __init__(self, infile, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None):
+        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs, parser=parser, parser_class=parser_class)
         self.infile = infile
 
     def _parse_post(self, post):
@@ -31,8 +29,7 @@ class RedditReader(Reader):
 
         title_edge = ['title/J/.reddit']
         for part in parts:
-            parse_results = self.parser.parse_and_add(
-                part, self.hg, sequence=self.sequence)
+            parse_results = self.parser.parse_and_add(part, self.hg, sequence=self.sequence)
 
             for parse in parse_results['parses']:
                 main_edge = parse['resolved_corefs']
