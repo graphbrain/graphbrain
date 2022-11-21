@@ -5,7 +5,7 @@ from graphbrain import hedge
 from graphbrain.utils.lemmas import lemma
 
 
-FUNS = {'var', 'atoms', 'lemma'}
+FUNS = {'var', 'atoms', 'lemma', 'any'}
 
 
 def is_wildcard(atom):
@@ -310,18 +310,22 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg):
         var_name = fun_pattern[2].root()
         if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
             this_var = {var_name: edge[1]}
-            return match_pattern(
-                edge[1], pattern, curvars={**curvars, **this_var}, hg=hg)
+            return match_pattern(edge[1], pattern, curvars={**curvars, **this_var}, hg=hg)
         else:
             this_var = {var_name: edge}
-            return match_pattern(
-                edge, pattern, curvars={**curvars, **this_var}, hg=hg)
+            return match_pattern(edge, pattern, curvars={**curvars, **this_var}, hg=hg)
     elif fun == 'atoms':
         atoms = edge.atoms()
         atom_patterns = fun_pattern[1:]
         return _match_atoms(atom_patterns, atoms, curvars, hg)
     elif fun == 'lemma':
         return _match_lemma(fun_pattern[1], edge, curvars, hg)
+    elif fun == 'any':
+        for pattern in fun_pattern[1:]:
+            matches = match_pattern(edge, pattern, curvars=curvars, hg=hg)
+            if len(matches) > 0:
+                return matches
+        return []
     else:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 

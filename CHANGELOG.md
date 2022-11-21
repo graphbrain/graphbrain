@@ -6,6 +6,7 @@
 - Base class hypergraph.memory.keyvalue.KeyValue for key-value hypergraph databases, removing redundant code between LevelDB and SQLite.
 - Tests for LevelDB (only the SQLite Hypergraph implementation was being directly tested).
 - Hyperedge.is_unordered_pattern().
+- Functional pattern: any.
 
 ### Changed
 - Python >=3.9 now required.

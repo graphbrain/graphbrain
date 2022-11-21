@@ -671,6 +671,41 @@ class TestPatterns(unittest.TestCase):
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{}])
 
+    def test_match_pattern_fun_any1(self):
+        s = "((any says/P.sr writes/P.sr) * *)"
+        pattern = hedge(s)
+        s = "(says/P.sr mary/Cp.s (are/P.sc you/Ci nice/Ca))"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{}])
+
+    def test_match_pattern_fun_any2(self):
+        s = "((any says/P.{sr} writes/P.{sr}) * *)"
+        pattern = hedge(s)
+        s = "(writes/P.sr mary/Cp.s (are/P.sc you/Ci nice/Ca))"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{}])
+
+    def test_match_pattern_fun_any3(self):
+        s = "((any says/P.{sr} writes/P.{sr}) * *)"
+        pattern = hedge(s)
+        s = "(shouts/P.sr mary/Cp.s (are/P.sc you/Ci nice/Ca))"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [])
+
+    def test_match_pattern_fun_any4(self):
+        s = "(says/P.sr * (any (are/P.{sc} */Ci (var */Ca PROP)) (var */R X)))"
+        pattern = hedge(s)
+        s = "(says/P.sr mary/Cp.s (are/P.sc you/Ci nice/Ca))"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{'PROP': hedge('nice/Ca')}])
+
+    def test_match_pattern_fun_any5(self):
+        s = "(says/P.{sr} * (any (are/P.{sc} */Ci (var */Ca PROP)) (var */R X)))"
+        pattern = hedge(s)
+        s = "(says/P.sr mary/Cp.s (is/P.sc he/Ci nice/Ca))"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{'X': hedge('(is/P.sc he/Ci nice/Ca)')}])
+
     def test_match_pattern_fun_argroles1(self):
         self.hg.add((const.lemma_pred, 'said/Pd.so', 'say/P'))
         s = "((lemma say/P.{so}) */C */C)"
