@@ -706,6 +706,38 @@ class TestPatterns(unittest.TestCase):
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{'X': hedge('(is/P.sc he/Ci nice/Ca)')}])
 
+    def test_match_pattern_fun_lemma_any1(self):
+        self.hg.add((const.lemma_pred, 'said/Pd', 'say/P'))
+        self.hg.add((const.lemma_pred, 'claims/Pd', 'claim/P'))
+        s = "(lemma (any say/P claim/P))"
+        pattern = hedge(s)
+        s = "said/Pd"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{}])
+
+    def test_match_pattern_fun_lemma_any2(self):
+        self.hg.add((const.lemma_pred, 'said/Pd', 'say/P'))
+        self.hg.add((const.lemma_pred, 'claims/Pd', 'claim/P'))
+        s = "((lemma (any say/P.{s} claim/P.{s})) *)"
+        pattern = hedge(s)
+        s = "(claims/Pd.s mary/Cp.s)"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{}])
+
+    def test_match_pattern_fun_atoms_any1(self):
+        s = "((atoms (any say/P.{s} speak/P.{s})) *)"
+        pattern = hedge(s)
+        s = "((does/M (not/M speak/P.s)) mary/Cp.s)"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{}])
+
+    def test_match_pattern_fun_atoms_any2(self):
+        s = "((atoms (any say/P.{s} speak/P.{s}) does/M) *)"
+        pattern = hedge(s)
+        s = "((does/M (not/M speak/P.s)) mary/Cp.s)"
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern, hg=self.hg), [{}])
+
     def test_match_pattern_fun_argroles1(self):
         self.hg.add((const.lemma_pred, 'said/Pd.so', 'say/P'))
         s = "((lemma say/P.{so}) */C */C)"
