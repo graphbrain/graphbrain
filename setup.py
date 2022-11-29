@@ -72,7 +72,8 @@ install_requires = [
         'progressbar2',
         'scikit-learn',
         'spacy',
-        'termcolor'
+        'termcolor',
+        'gensim'
     ]
 
 setup(

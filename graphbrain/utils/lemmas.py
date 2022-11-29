@@ -1,11 +1,12 @@
 import graphbrain.constants as const
 
 from graphbrain import hedge
-from graphbrain.patterns import _matches_atomic_pattern
+# from graphbrain.patterns import _matches_atomic_pattern
+import graphbrain.patterns as gbp
 
 
 # TODO: deal with argroles
-def match_lemma(lemma_pattern, edge, curvars, hg):
+def match_lemma(lemma_pattern, edge, curvars, hg) -> list[dict]:
     if hg is None:
         raise RuntimeError('Lemma pattern function requires hypergraph.')
 
@@ -21,7 +22,7 @@ def match_lemma(lemma_pattern, edge, curvars, hg):
         parts[1] = '{}.{}'.format(parts[1], ar)
         _lemma = hedge('/'.join(parts))
 
-    if _matches_atomic_pattern(_lemma, lemma_pattern):
+    if gbp._matches_atomic_pattern(_lemma, lemma_pattern):
         return [curvars]
 
     return []
@@ -38,10 +39,11 @@ def lemma(hg, atom, same_if_none=False):
         satom = atom.simplify()
         for lemma_edge in hg.search((const.lemma_pred, satom, '*')):
             return lemma_edge[2]
+
     if same_if_none:
         return atom
-    else:
-        return None
+
+    return None
 
 
 def deep_lemma(hg, edge, same_if_none=False):
@@ -63,7 +65,7 @@ def deep_lemma(hg, edge, same_if_none=False):
     returns atom items when lemma does not exist. (default: False)
     """
     if edge.atom:
-        return lemma(hg, edge,same_if_none)
+        return lemma(hg, edge, same_if_none)
     else:
         return deep_lemma(hg, edge[1])
 

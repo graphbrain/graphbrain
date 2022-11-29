@@ -251,7 +251,7 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), cur
     return result
 
 
-def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=None):
+def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=None) -> list[dict]:
     if matched_atoms is None:
         matched_atoms = []
 
@@ -293,7 +293,7 @@ def _match_lemma(lemma_pattern, edge, curvars, hg):
     return []
 
 
-def _matches_fun_pat(edge, fun_pattern, curvars, hg):
+def _matches_fun_pat(edge, fun_pattern, curvars, hg) -> list[dict]:
     fun = fun_pattern[0].root()
     if fun == 'var':
         if len(fun_pattern) != 3:
@@ -321,7 +321,7 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg):
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
 
-def match_pattern(edge, pattern, curvars=None, hg=None):
+def match_pattern(edge, pattern, curvars=None, hg=None) -> list[dict]:
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
     pattern variable. If the pattern specifies no variables but the edge
@@ -345,7 +345,7 @@ def match_pattern(edge, pattern, curvars=None, hg=None):
 
     (1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
     applied to the pattern: (is/Pd (my/Mp name/Cn) \*NAME)
-    produces the result: {'NAME', mary/Cp}
+    produces the result: {'NAME': mary/Cp}
 
     (2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
     applied to the pattern: (is/Pd (my/Mp name/Cn) (NAME))

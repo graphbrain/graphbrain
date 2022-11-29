@@ -60,3 +60,6 @@ __pycache__
 # Jupyter notebooks #
 #####################
 .ipynb_checkpoints
+
+#
+gensim-data
