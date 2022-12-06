@@ -7,6 +7,7 @@
 - Tests for LevelDB (only the SQLite Hypergraph implementation was being directly tested).
 - Hyperedge.is_unordered_pattern().
 - Functional pattern: any.
+- Parser-level inference of coreferences between proper nouns.
 
 ### Changed
 - Python >=3.9 now required.

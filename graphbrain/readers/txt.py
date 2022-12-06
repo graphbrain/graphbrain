@@ -19,5 +19,9 @@ class TxtReader(Reader):
 
         with progressbar.ProgressBar(max_value=len(paragraphs)) as bar:
             for i, paragraph in enumerate(paragraphs):
-                self.parser.parse_and_add(paragraph, self.hg, sequence=self.sequence)
+                print(paragraph)
+                try:
+                    self.parser.parse_and_add(paragraph, self.hg, sequence=self.sequence)
+                except RuntimeError as e:
+                    print(e)
                 bar.update(i + 1)

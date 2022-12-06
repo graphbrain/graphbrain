@@ -13,6 +13,7 @@ gender_pred = 'gender/P/.'
 number_pred = 'number/P/.'
 animacy_pred = 'animacy/P/.'
 singular_plural_pred = 'sng_pl/P/.'
+parser_coref_connector = '_pcoref'
 
 # Pre-defined entity keys
 coref_set_id_key = 'coref'

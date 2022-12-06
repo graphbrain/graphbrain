@@ -78,6 +78,10 @@ def _apply_rule(rule, sentence, pos):
     return None
 
 
+def _is_proper_noun(edge):
+    return any(atom.t == 'Cp' for atom in edge.atoms())
+
+
 class AlphaBeta(Parser, ABC):
     def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
         super().__init__(lemmas=lemmas, corefs=corefs)
@@ -674,6 +678,14 @@ class AlphaBeta(Parser, ABC):
             animacy = animacy_top[0][0]
             animacy_edge = hedge((const.animacy_pred, main_edge, animacy))
             results.append(animacy_edge)
+
+        # proper noun corefs
+        if _is_proper_noun(main_edge):
+            for edge in edges:
+                if edge != main_edge and  _is_proper_noun(edge):
+                    coref_edge = hedge((const.parser_coref_connector, main_edge, edge))
+                    results.append(coref_edge)
+
         return results
 
     def _resolve_corefs_edge(self, edge):
@@ -724,9 +736,6 @@ class AlphaBeta(Parser, ABC):
                     i += 1
                 else:
                     break
-
-            print('coref_clusters')
-            print(coref_clusters)
 
             toks2resolved = {}
             clusters = {}
