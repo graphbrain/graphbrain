@@ -1,6 +1,6 @@
 import traceback
+from abc import ABC
 from collections import Counter
-from collections import defaultdict
 
 import graphbrain.constants as const
 from .parser import Parser
@@ -78,9 +78,8 @@ def _apply_rule(rule, sentence, pos):
     return None
 
 
-class AlphaBeta(Parser):
-    def __init__(self, nlp, lemmas=False, corefs=False, beta='repair',
-                 normalize=True, post_process=True):
+class AlphaBeta(Parser, ABC):
+    def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
         super().__init__(lemmas=lemmas, corefs=corefs)
         self.nlp = nlp
         if beta == 'strict':
@@ -160,7 +159,6 @@ class AlphaBeta(Parser):
             self._compute_depths_and_connections(sent.root)
 
             main_edge = None
-            self._branches = 0
             result, failed = self._parse_atom_sequence(atom_sequence)
             if result and len(result) == 1:
                 main_edge = non_unique(result[0])
@@ -196,8 +194,7 @@ class AlphaBeta(Parser):
                 msg = e.message
             else:
                 msg = str(e)
-            print('Caught exception: {} while parsing: "{}"'.format(
-                msg, str(sent)))
+            print('Caught exception: {} while parsing: "{}"'.format(msg, str(sent)))
             traceback.print_exc()
             return {'main_edge': None,
                     'extra_edges': [],
@@ -234,8 +231,7 @@ class AlphaBeta(Parser):
         self.cur_text = text
 
     def _head_token(self, edge):
-        atoms = [unique(atom) for atom in edge.all_atoms()
-                 if unique(atom) in self.atom2token]
+        atoms = [unique(atom) for atom in edge.all_atoms() if unique(atom) in self.atom2token]
         min_depth = 9999999
         main_atom = None
         for atom in atoms:
@@ -327,11 +323,9 @@ class AlphaBeta(Parser):
                     utrigger_atom = UniqueAtom(builder_atom)
                     unew_trigger = UniqueAtom(new_builder)
                     if utrigger_atom in self.atom2token:
-                        self.atom2token[unew_trigger] =\
-                            self.atom2token[utrigger_atom]
+                        self.atom2token[unew_trigger] = self.atom2token[utrigger_atom]
                     self.orig_atom[unew_trigger] = utrigger_atom
-                    edge = edge.replace_atom(
-                        builder_atom, new_builder, unique=True)
+                    edge = edge.replace_atom(builder_atom, new_builder, unique=True)
             elif edge.connector_mtype() == 'J':
                 if len(edge) == 2:
                     builder_atom = edge.connector_atom()
@@ -343,11 +337,9 @@ class AlphaBeta(Parser):
                     ubuilder_atom = UniqueAtom(builder_atom)
                     unew_builder = UniqueAtom(new_builder)
                     if ubuilder_atom in self.atom2token:
-                        self.atom2token[unew_builder] =\
-                            self.atom2token[ubuilder_atom]
+                        self.atom2token[unew_builder] = self.atom2token[ubuilder_atom]
                     self.orig_atom[unew_builder] = ubuilder_atom
-                    edge = edge.replace_atom(
-                        builder_atom, new_builder, unique=True)
+                    edge = edge.replace_atom(builder_atom, new_builder, unique=True)
 
         return edge
 
@@ -395,8 +387,7 @@ class AlphaBeta(Parser):
                     utrigger_atom = UniqueAtom(trigger_atom)
                     unew_trigger = UniqueAtom(new_trigger)
                     if utrigger_atom in self.atom2token:
-                        self.atom2token[unew_trigger] =\
-                            self.atom2token[utrigger_atom]
+                        self.atom2token[unew_trigger] = self.atom2token[utrigger_atom]
                         self.temp_atoms.add(utrigger_atom)
                     self.orig_atom[unew_trigger] = utrigger_atom
                     edge = edge.replace_atom(trigger_atom, new_trigger)
@@ -422,8 +413,7 @@ class AlphaBeta(Parser):
             args = [self._relation_arg_role(param) for param in edge[1:]]
             args_string = ''.join(args)
             # TODO: this is done to detect imperative, to refactor
-            pt = self._predicate_post_type_and_subtype(
-                edge, subparts, args_string)
+            pt = self._predicate_post_type_and_subtype(edge, subparts, args_string)
             if len(subparts) > 2:
                 new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
             else:
@@ -431,8 +421,7 @@ class AlphaBeta(Parser):
             new_pred = pred.replace_atom_part(1, new_part)
             unew_pred = UniqueAtom(new_pred)
             upred = UniqueAtom(pred)
-            self.atom2token[unew_pred] =\
-                self.atom2token[upred]
+            self.atom2token[unew_pred] = self.atom2token[upred]
             self.temp_atoms.add(upred)
             self.orig_atom[unew_pred] = upred
             new_entity = edge.replace_atom(pred, new_pred)
@@ -452,14 +441,12 @@ class AlphaBeta(Parser):
                 ubuilder = UniqueAtom(builder)
                 unew_builder = UniqueAtom(new_builder)
                 if ubuilder in self.atom2token:
-                    self.atom2token[unew_builder] =\
-                        self.atom2token[ubuilder]
+                    self.atom2token[unew_builder] = self.atom2token[ubuilder]
                     self.temp_atoms.add(ubuilder)
                 self.orig_atom[unew_builder] = ubuilder
                 new_entity = edge.replace_atom(builder, new_builder)
 
-        new_args = [self._apply_arg_roles(subentity)
-                    for subentity in new_entity[1:]]
+        new_args = [self._apply_arg_roles(subentity) for subentity in new_entity[1:]]
         new_entity = hedge([new_entity[0]] + new_args)
 
         return new_entity
@@ -583,8 +570,7 @@ class AlphaBeta(Parser):
                         if depth < mdepth:
                             mdepth = depth
 
-        return ((10000000 if conn else 0) + (mdepth * 100) +
-                self._adjust_score(edges))
+        return (10000000 if conn else 0) + (mdepth * 100) + self._adjust_score(edges)
 
     def _parse_atom_sequence(self, atom_sequence):
         sequence = atom_sequence
@@ -596,8 +582,7 @@ class AlphaBeta(Parser):
                 for pos in range(window_start, len(sequence)):
                     new_edge = _apply_rule(rule, sequence, pos)
                     if new_edge:
-                        score = self._score(
-                            sequence[pos - window_start:pos + 1])
+                        score = self._score(sequence[pos - window_start:pos + 1])
                         score -= rule_number
                         if score > best_score:
                             action = (rule, score, new_edge, window_start, pos)
@@ -613,9 +598,7 @@ class AlphaBeta(Parser):
                     return None, True
             else:
                 rule, s, new_edge, window_start, pos = action
-                new_sequence = (sequence[:pos - window_start] +
-                                [new_edge] +
-                                sequence[pos + 1:])
+                new_sequence = (sequence[:pos - window_start] + [new_edge] + sequence[pos + 1:])
 
                 self.debug_msg('rule: {}'.format(rule))
                 self.debug_msg('score: {}'.format(score))
@@ -648,8 +631,7 @@ class AlphaBeta(Parser):
         """
         self.reset(text)
         self.doc = self.nlp(text.strip())
-        parses = tuple(self.parse_spacy_sentence(sent)
-                       for sent in self.doc.sents)
+        parses = tuple(self.parse_spacy_sentence(sent) for sent in self.doc.sents)
         return {'parses': parses, 'inferred_edges': []}
 
     def sentences(self, text):
@@ -678,20 +660,17 @@ class AlphaBeta(Parser):
                 results.append(is_edge)
 
         gender_top = gender_cnt.most_common(2)
-        if len(gender_top) == 1 or (len(gender_top) == 2 and
-                                    gender_top[0][1] > gender_top[1][1]):
+        if len(gender_top) == 1 or (len(gender_top) == 2 and gender_top[0][1] > gender_top[1][1]):
             gender = gender_top[0][0]
             gender_edge = hedge((const.gender_pred, main_edge, gender))
             results.append(gender_edge)
         number_top = number_cnt.most_common(2)
-        if len(number_top) == 1 or (len(number_top) == 2 and
-                                    number_top[0][1] > number_top[1][1]):
+        if len(number_top) == 1 or (len(number_top) == 2 and number_top[0][1] > number_top[1][1]):
             number = number_top[0][0]
             number_edge = hedge((const.number_pred, main_edge, number))
             results.append(number_edge)
         animacy_top = animacy_cnt.most_common(2)
-        if len(animacy_top) == 1 or (len(animacy_top) == 2 and
-                                     animacy_top[0][1] > animacy_top[1][1]):
+        if len(animacy_top) == 1 or (len(animacy_top) == 2 and animacy_top[0][1] > animacy_top[1][1]):
             animacy = animacy_top[0][0]
             animacy_edge = hedge((const.animacy_pred, main_edge, animacy))
             results.append(animacy_edge)
@@ -719,14 +698,11 @@ class AlphaBeta(Parser):
         elif edge.atom:
             return edge
         else:
-            return hedge([self._resolve_corefs_edge(subedge)
-                          for subedge in edge])
+            return hedge([self._resolve_corefs_edge(subedge) for subedge in edge])
 
     def _edge2toks(self, edge):
         uatoms = [unique(atom) for atom in edge.all_atoms()]
-        toks = tuple(
-                sorted([self.atom2token[uatom] for uatom in uatoms
-                        if uatom in self.atom2token]))
+        toks = tuple(sorted([self.atom2token[uatom] for uatom in uatoms if uatom in self.atom2token]))
         self.edge2toks[edge] = toks
         self.toks2edge[toks] = edge
         if edge.not_atom:
@@ -748,6 +724,9 @@ class AlphaBeta(Parser):
                     i += 1
                 else:
                     break
+
+            print('coref_clusters')
+            print(coref_clusters)
 
             toks2resolved = {}
             clusters = {}

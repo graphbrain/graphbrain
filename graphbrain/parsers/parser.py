@@ -8,8 +8,7 @@ from graphbrain.hyperedge import UniqueAtom
 
 def _edge2text(edge, parse):
     atoms = [UniqueAtom(atom) for atom in edge.all_atoms()]
-    tokens = [parse['atom2token'][atom] for atom in atoms
-              if atom in parse['atom2token']]
+    tokens = [parse['atom2token'][atom] for atom in atoms if atom in parse['atom2token']]
     if len(tokens) == 0:
         return ''
     tokens = sorted(tokens, key=lambda x: x.i)
@@ -18,9 +17,7 @@ def _edge2text(edge, parse):
     sentence = str(parse['spacy_sentence'])
     for token in tokens[1:]: 
         txt = token.text
-        res = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
-                                            re.escape(txt)),
-                        sentence)
+        res = re.search(r'{}(.*?){}'.format(re.escape(prev_txt), re.escape(txt)), sentence)
         if res:
             sep = res.group(1)
         else:
@@ -110,8 +107,7 @@ class Parser(object):
                 if self.corefs:
                     if unresolved_edge != main_edge:
                          _set_edges_text(main_edge, hg, parse)
-                    coref_res_edge = hedge(
-                        (const.coref_res_pred, unresolved_edge, main_edge))
+                    coref_res_edge = hedge((const.coref_res_pred, unresolved_edge, main_edge))
                     hg.add(coref_res_edge)
                 # add extra edges
                 for edge in parse['extra_edges']:
@@ -138,7 +134,7 @@ class Parser(object):
     def _post_process(self, edge):
         raise NotImplementedError()
 
-    def _parse_token(self, token):
+    def _parse_token(self, token, atom_type):
         raise NotImplementedError()
 
     def _before_parse_sentence(self):

@@ -10,37 +10,28 @@ from graphbrain.parsers.alpha_beta import AlphaBeta
 LANG = 'en'
 
 
-_female = {"she/Ci/en", "her/Ci/en", "herself/Ci/en", "hers/Ci/en",
-           "her/Mp/en"}
+_female = {"she/Ci/en", "her/Ci/en", "herself/Ci/en", "hers/Ci/en", "her/Mp/en"}
 _male = {"he/Ci/en", "him/Ci/en", "himself/Ci/en", "his/Mp/en"}
 _neutral = {"it/Ci/en", "itself/Ci/en", "its/Mp/en"}
 
-_singular = {"it/Ci/en", "i/Ci/en", "she/Ci/en", "he/Ci/en", "her/Ci/en",
-             "herself/Ci/en", "me/Ci/en", "him/Ci/en", "itself/Ci/en",
-             "yourself/Ci/en", "myself/Ci/en", "himself/Ci/en", "one/Ci/en",
-             "hers/Ci/en", "mine/Ci/en", "somebody/Ci/en", "oneself/Ci/en",
-             "yours/Ci/en", "her/Mp/en", "his/Mp/en", "my/Mp/en", "its/Mp/en"}
-_plural = {"they/Ci/en", "them/Ci/en", "we/Ci/en", "us/Ci/en", "'em/Ci/en",
-           "themselves/Ci/en", "theirs/Ci/en", "ourselves/Ci/en",
-           "their/Mp/en", "our/Mp/en"}
+_singular = {"it/Ci/en", "i/Ci/en", "she/Ci/en", "he/Ci/en", "her/Ci/en", "herself/Ci/en", "me/Ci/en", "him/Ci/en",
+             "itself/Ci/en", "yourself/Ci/en", "myself/Ci/en", "himself/Ci/en", "one/Ci/en", "hers/Ci/en", "mine/Ci/en",
+             "somebody/Ci/en", "oneself/Ci/en", "yours/Ci/en", "her/Mp/en", "his/Mp/en", "my/Mp/en", "its/Mp/en"}
+_plural = {"they/Ci/en", "them/Ci/en", "we/Ci/en", "us/Ci/en", "'em/Ci/en", "themselves/Ci/en", "theirs/Ci/en",
+           "ourselves/Ci/en", "their/Mp/en", "our/Mp/en"}
 
-_animate = {"i/Ci/en", "she/Ci/en", "you/Ci/en", "he/Ci/en", "her/Ci/en",
-            "herself/Ci/en", "me/Ci/en", "him/Ci/en", "we/Ci/en", "us/Ci/en",
-            "yourself/Ci/en", "myself/Ci/en", "himself/Ci/en", "one/Ci/en",
-            "themselves/Ci/en", "hers/Ci/en", "mine/Ci/en", "somebody/Ci/en",
-            "oneself/Ci/en", "yours/Ci/en", "ourselves/Ci/en", "her/Mp/en",
-            "his/Mp/en", "your/Mp/en", "my/Mp/en", "our/Mp/en", "thy/Mp/en"}
+_animate = {"i/Ci/en", "she/Ci/en", "you/Ci/en", "he/Ci/en", "her/Ci/en", "herself/Ci/en", "me/Ci/en", "him/Ci/en",
+            "we/Ci/en", "us/Ci/en", "yourself/Ci/en", "myself/Ci/en", "himself/Ci/en", "one/Ci/en", "themselves/Ci/en",
+            "hers/Ci/en", "mine/Ci/en", "somebody/Ci/en", "oneself/Ci/en", "yours/Ci/en", "ourselves/Ci/en",
+            "her/Mp/en", "his/Mp/en", "your/Mp/en", "my/Mp/en", "our/Mp/en", "thy/Mp/en"}
 _inanimate = {"it/Ci/en", "itself/Ci/en", "its/Mp/en"}
 
-_p1 = {"i/Ci/en", "me/Ci/en", "we/Ci/en", "us/Ci/en", "myself/Ci/en",
-       "mine/Ci/en", "oneself/Ci/en", "ourselves/Ci/en", "my/Mp/en",
-       "our/Mp/en"}
+_p1 = {"i/Ci/en", "me/Ci/en", "we/Ci/en", "us/Ci/en", "myself/Ci/en", "mine/Ci/en", "oneself/Ci/en", "ourselves/Ci/en",
+       "my/Mp/en", "our/Mp/en"}
 _p2 = {"you/Ci/en", "yourself/Ci/en", "yours/Ci/en", "your/Mp/en", "thy/Mp/en"}
-_p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en",
-       "her/Ci/en", "herself/Ci/en", "him/Ci/en", "itself/Ci/en",
-       "himself/Ci/en", "one/Ci/en", "'em/Ci/en", "themselves/Ci/en",
-       "hers/Ci/en", "somebody/Ci/en", "theirs/Ci/en", "her/Mp/en",
-       "his/Mp/en", "its/Mp/en", "their/Mp/en", "whose/Mp/en"}
+_p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en", "her/Ci/en", "herself/Ci/en", "him/Ci/en",
+       "itself/Ci/en", "himself/Ci/en", "one/Ci/en", "'em/Ci/en", "themselves/Ci/en", "hers/Ci/en", "somebody/Ci/en",
+       "theirs/Ci/en", "her/Mp/en", "his/Mp/en", "its/Mp/en", "their/Mp/en", "whose/Mp/en"}
 
 
 class ParserEN(AlphaBeta):
@@ -52,28 +43,22 @@ class ParserEN(AlphaBeta):
         else:
             if corefs:
                 raise RuntimeError(
-                    'Coreference resolution requires en_core_web_trf English '
-                    'language model to be installed.')
+                    'Coreference resolution requires en_core_web_trf English language model to be installed.')
             elif spacy.util.is_package('en_core_web_lg'):
                 nlp = spacy.load('en_core_web_lg')
                 print('Using language model: {}'.format('en_core_web_lg'))
             else:
-                raise RuntimeError(
-                    'Either en_core_web_trf or en_core_web_lg English language'
-                    ' model must be installed.')
+                raise RuntimeError('Either en_core_web_trf or en_core_web_lg English language model must be installed.')
         if corefs:
             nlp_coref = spacy.load('en_coreference_web_trf')
-            nlp.add_pipe(
-                'transformer', name='coref_transformer', source=nlp_coref) 
+            nlp.add_pipe('transformer', name='coref_transformer', source=nlp_coref)
             nlp.add_pipe('coref', source=nlp_coref)
             nlp.add_pipe('span_resolver', source=nlp_coref)
             nlp.add_pipe('span_cleaner', source=nlp_coref)
              
-        super().__init__(nlp, lemmas=lemmas, corefs=corefs, beta=beta,
-                         normalize=normalize, post_process=post_process)
+        super().__init__(nlp, lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize, post_process=post_process)
         self.lang = LANG
-        cases_str = pkg_resources.resource_string(
-            'graphbrain', 'data/atoms-en.csv').decode('utf-8')
+        cases_str = pkg_resources.resource_string('graphbrain', 'data/atoms-en.csv').decode('utf-8')
         self.alpha = Alpha(cases_str)
 
     # ===========================================
@@ -255,12 +240,10 @@ class ParserEN(AlphaBeta):
 
     def _concept_arg_role(self, edge, concept):
         min_depth = min(
-            [self.depths[self.token2atom[self._head_token(subedge)]]
-             for subedge in edge[1:]])
+            [self.depths[self.token2atom[self._head_token(subedge)]] for subedge in edge[1:]])
         concept_head = self._head_token(concept)
         depth = self.depths[self.token2atom[concept_head]]
-        if (depth > min_depth and
-           (concept_head.dep_ == 'compound') or 'mod' in concept_head.dep_):
+        if depth > min_depth and (concept_head.dep_ == 'compound') or 'mod' in concept_head.dep_:
             return 'a'
         else:
             return 'm'
