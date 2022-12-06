@@ -97,18 +97,18 @@
 
 <div class="viewcode-block" id="find_actors"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.processors.actors.find_actors">[docs]</a><span class="k">def</span> <span class="nf">find_actors</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns set of all coreferences to actors found in the edge.&quot;&quot;&quot;</span>
-    <span class="n">actors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">_actors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">is_actor</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-        <span class="n">actors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">main_coref</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">))</span>
+        <span class="n">_actors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">main_coref</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">not_atom</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
-            <span class="n">actors</span> <span class="o">|=</span> <span class="n">find_actors</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">actors</span></div>
+            <span class="n">_actors</span> <span class="o">|=</span> <span class="n">find_actors</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_actors</span></div>
 
 
 <div class="viewcode-block" id="actors"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.processors.actors.actors">[docs]</a><span class="k">def</span> <span class="nf">actors</span><span class="p">(</span><span class="n">hg</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;&quot;Returns an iterator over all actors.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(actor/P/. *)&#39;</span><span class="p">)]</span></div>
+    <span class="k">return</span> <span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(actor/P/. *)&#39;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span></div>
 
 
 <span class="n">ACTOR_PRED_LEMMAS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;say&#39;</span><span class="p">,</span> <span class="s1">&#39;claim&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;kill&#39;</span><span class="p">,</span> <span class="s1">&#39;accuse&#39;</span><span class="p">,</span> <span class="s1">&#39;condemn&#39;</span><span class="p">,</span>

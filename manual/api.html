@@ -76,7 +76,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge"><code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.UniqueAtom"><code class="docutils literal notranslate"><span class="pre">UniqueAtom</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.build_atom"><code class="docutils literal notranslate"><span class="pre">build_atom()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.edges2str"><code class="docutils literal notranslate"><span class="pre">edges2str()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.hedge"><code class="docutils literal notranslate"><span class="pre">hedge()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.split_edge_str"><code class="docutils literal notranslate"><span class="pre">split_edge_str()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.hyperedge.str2atom"><code class="docutils literal notranslate"><span class="pre">str2atom()</span></code></a></li>
@@ -90,6 +89,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.edge_matches_pattern"><code class="docutils literal notranslate"><span class="pre">edge_matches_pattern()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.is_full_pattern"><code class="docutils literal notranslate"><span class="pre">is_full_pattern()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.is_pattern"><code class="docutils literal notranslate"><span class="pre">is_pattern()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.is_unordered_pattern"><code class="docutils literal notranslate"><span class="pre">is_unordered_pattern()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.is_wildcard"><code class="docutils literal notranslate"><span class="pre">is_wildcard()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphbrain.patterns.match_pattern"><code class="docutils literal notranslate"><span class="pre">match_pattern()</span></code></a></li>
 </ul>
 </li>
@@ -819,13 +820,6 @@ Type inference is performed.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="graphbrain.hyperedge.edges2str">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">edges2str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.edges2str" title="Permalink to this definition"></a></dt>
-<dd><p>Convert a collection of edges to a string representation
-(no outer parenthesis).</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.hedge">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">hedge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.hedge" title="Permalink to this definition"></a></dt>
 <dd><p>Create an hyperedge.</p>
@@ -921,9 +915,14 @@ the second is a dictionary of attribute values
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph.count">
-<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.count" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.count" title="Permalink to this definition"></a></dt>
 <dd><p>Number of edges that match a pattern.
 See search() method for an explanation of patterns.</p>
+<p>Keyword argument:
+strict – if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more</p>
+<blockquote>
+<div><p>specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -1030,8 +1029,13 @@ deep – recursively remove all subedges (default False)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph.remove_by_pattern">
-<span class="sig-name descname"><span class="pre">remove_by_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.remove_by_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.remove_by_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">remove_by_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.remove_by_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.remove_by_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Removes all edges that match the pattern.</p>
+<p>Keyword argument:
+strict – if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more</p>
+<blockquote>
+<div><p>specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -1046,7 +1050,7 @@ the degree and deep degree of that edge.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search" title="Permalink to this definition"></a></dt>
 <dd><p>Returns generator for all the edges that match a pattern.</p>
 <p>Patterns are themselves edges. They can match families of edges
 by employing special atoms:
@@ -1060,10 +1064,10 @@ Examples: ‘(is/Pd graphbrain/C .)’
 <p>Atomic patterns can also be used to match all edges in the
 hypergraph: <em>, all atoms: ., and all non-atoms: (</em>).</p>
 <p>Keyword argument:
-strict – strictly match the search pattern, or allow for more general
-atoms to match target atoms (e.g. plays/P matches plays/Pd.so in
-non-strict mode, but only exactly plays/Pd.so matches it in strict mode)
-Non-strict mode is slower. (default True)</p>
+strict – if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more</p>
+<blockquote>
+<div><p>specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -1155,8 +1159,24 @@ uppercase letter) and functional patterns.</p>
 <dd><p>Check if this edge defines a pattern, i.e. if it includes at least
 one pattern matcher.</p>
 <p>Pattern matchers are:
-‘*’, ‘.’, ‘(*)’, ‘…’ and variables (atom label starting with an
-uppercase letter)</p>
+- ‘*’, ‘.’, ‘(*)’, ‘…’
+- variables (atom label starting with an uppercase letter)
+- argument role matchers (unordered argument roles surrounded by curly brackets)
+- functional patterns (var, atoms, lemma, …)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.patterns.is_unordered_pattern">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_unordered_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_unordered_pattern" title="Permalink to this definition"></a></dt>
+<dd><p>Check if this edge defines an unordered pattern, i.e. if it includes at least
+one instance of unordered argument roles surrounded by curly brackets.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.patterns.is_wildcard">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_wildcard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_wildcard" title="Permalink to this definition"></a></dt>
+<dd><p>Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
+(*, ., …, if it is surrounded by parenthesis or variable label starting with an uppercase letter)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1200,13 +1220,6 @@ produces the result: None</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.leveldb.</span></span><span class="sig-name descname"><span class="pre">LevelDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB" title="Permalink to this definition"></a></dt>
 <dd><p>Implements LevelDB hypergraph storage.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.add_with_attributes">
-<span class="sig-name descname"><span class="pre">add_with_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.add_with_attributes" title="Permalink to this definition"></a></dt>
-<dd><p>Adds an edge along with all its attributes, represented as a
-dictionary of attribute names to values.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.all">
 <span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.all" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a generator of all the edges.</p>
@@ -1231,12 +1244,6 @@ the second is a dictionary of attribute values
 <dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.destroy">
 <span class="sig-name descname"><span class="pre">destroy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.destroy" title="Permalink to this definition"></a></dt>
 <dd><p>Erase the entire hypergraph.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.name" title="Permalink to this definition"></a></dt>
-<dd><p>Returns name of the hypergraph.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1285,13 +1292,6 @@ specified by nper.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.sqlite.</span></span><span class="sig-name descname"><span class="pre">SQLite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite" title="Permalink to this definition"></a></dt>
 <dd><p>Implements SQLite hypergraph storage.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.add_with_attributes">
-<span class="sig-name descname"><span class="pre">add_with_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.add_with_attributes" title="Permalink to this definition"></a></dt>
-<dd><p>Adds an edge along with all its attributes, represented as a
-dictionary of attribute names to values.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.all">
 <span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.all" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a generator of all the edges.</p>
@@ -1316,12 +1316,6 @@ the second is a dictionary of attribute values
 <dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.destroy">
 <span class="sig-name descname"><span class="pre">destroy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.destroy" title="Permalink to this definition"></a></dt>
 <dd><p>Erase the entire hypergraph.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.name" title="Permalink to this definition"></a></dt>
-<dd><p>Returns name of the hypergraph.</p>
 </dd></dl>
 
 </dd></dl>

@@ -52,6 +52,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#install-with-pip">Install with pip</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#choose-language-model">Choose language model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coreference-resolution">Coreference resolution</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#install-from-the-code-repository-github">Install from the code repository (github)</a><ul>
@@ -144,10 +145,14 @@ $ pip install graphbrain
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip uninstall en_core_web_trf
 </pre></div>
 </div>
+</section>
+<section id="coreference-resolution">
+<h3>Coreference resolution<a class="headerlink" href="#coreference-resolution" title="Permalink to this heading"></a></h3>
 <p>If you want to perform coreference resolution, you will need to install the transformer model and also the following model:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">explosion</span><span class="o">/</span><span class="n">spacy</span><span class="o">-</span><span class="n">experimental</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">v0</span><span class="mf">.6.0</span><span class="o">/</span><span class="n">en_coreference_web_trf</span><span class="o">-</span><span class="mf">3.4.0</span><span class="n">a0</span><span class="o">-</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
 </pre></div>
 </div>
+<p>Coreference resolution currently requires version 0.6.0 of the package <code class="docutils literal notranslate"><span class="pre">spacy-experimental</span></code> (<a class="reference external" href="https://github.com/explosion/spacy-experimental/releases/tag/v0.6.0">explained here</a>). Graphbrain requirements specify this version, but if you run into problems make sure you have the correct one installed.</p>
 </section>
 </section>
 <section id="install-from-the-code-repository-github">
