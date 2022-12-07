@@ -88,7 +88,12 @@ class Parser(object):
                 parse['resolved_corefs'] = parse['main_edge']
         return parse_results
 
-    def parse_and_add(self, text, hg, sequence=None, infsrcs=False):
+    def parse_and_add(self, text, hg, sequence=None, infsrcs=False, max_text=1500):
+        # split large blocks of text to avoid coreference resolution errors
+        if self.corefs and 0 < max_text < len(text):
+            for sentence in self.sentences(text):
+                self.parse_and_add(sentence, hg=hg, sequence=sequence, infsrcs=infsrcs, max_text=-1)
+
         parse_results = self.parse(text)
         edges = []
         for parse in parse_results['parses']:
@@ -109,7 +114,7 @@ class Parser(object):
                 _set_edges_text(main_edge, hg, parse)
                 if self.corefs:
                     if unresolved_edge != main_edge:
-                         _set_edges_text(main_edge, hg, parse)
+                        _set_edges_text(main_edge, hg, parse)
                     coref_res_edge = hedge((const.coref_res_connector, unresolved_edge, main_edge))
                     hg.add(coref_res_edge)
                 # add extra edges

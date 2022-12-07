@@ -14,6 +14,7 @@
 - Hypergraph.search(), .match() and .count() now working with functional patterns and argument role matching.
 - Fixed bug on match_pattern(), variables were not correctly matched when argument roles were specified past the first position in an atoms functional pattern.
 - Simplified default systems connectors (breaks hypergraph DB backwards compatibility).
+- max_text argument in parser.parse_and_add().
 
 ### Removed
 - graphbrain.logic obsolete module.
