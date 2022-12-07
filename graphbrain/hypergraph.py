@@ -295,11 +295,11 @@ class Hypergraph(object):
     def add_to_sequence(self, name, edge, primary=True):
         """Adds 'edge' to sequence 'name'."""
         seq_atom = str2atom(name)
-        seq_attrs_edge = hedge((const.sequence_attrs_pred, seq_atom))
+        seq_attrs_edge = hedge((const.sequence_attrs_connector, seq_atom))
         pos = self.get_int_attribute(seq_attrs_edge, 'size')
         if pos is None:
             pos = 0
-        result = self.add((const.sequence_pred, seq_atom, str(pos), edge))
+        result = self.add((const.sequence_connector, seq_atom, str(pos), edge))
         self.set_attribute(seq_attrs_edge, 'size', pos + 1)
         if primary:
             self.set_primary(edge, True)
@@ -312,7 +312,7 @@ class Hypergraph(object):
         pos = 0
         stop = False
         while not stop:
-            iteration = self.search((const.sequence_pred, name, str(pos), '*'), strict=True)
+            iteration = self.search((const.sequence_connector, name, str(pos), '*'), strict=True)
             next_edge = next(iteration, None)
             if next_edge:
                 yield next_edge[3]
@@ -324,7 +324,7 @@ class Hypergraph(object):
         """Returns an iterator for all the sequence names present in the
         hypergraph.
         """
-        for edge in self.search((const.sequence_pred, '*', '0', '*'), strict=True):
+        for edge in self.search((const.sequence_connector, '*', '0', '*'), strict=True):
             yield edge[1].to_str()
 
     def text(self, edge):

@@ -88,9 +88,12 @@ class Parser(object):
                 parse['resolved_corefs'] = parse['main_edge']
         return parse_results
 
-    def parse_and_add(self, text, hg, sequence=None, set_text=True):
+    def parse_and_add(self, text, hg, sequence=None, infsrcs=False):
         parse_results = self.parse(text)
+        edges = []
         for parse in parse_results['parses']:
+            if parse['main_edge']:
+                edges.append(parse['main_edge'])
             main_edge = parse['resolved_corefs']
             if self.corefs:
                 unresolved_edge = parse['main_edge']
@@ -107,13 +110,17 @@ class Parser(object):
                 if self.corefs:
                     if unresolved_edge != main_edge:
                          _set_edges_text(main_edge, hg, parse)
-                    coref_res_edge = hedge((const.coref_res_pred, unresolved_edge, main_edge))
+                    coref_res_edge = hedge((const.coref_res_connector, unresolved_edge, main_edge))
                     hg.add(coref_res_edge)
                 # add extra edges
                 for edge in parse['extra_edges']:
                     hg.add(edge)
         for edge in parse_results['inferred_edges']:
             hg.add(edge, count=True)
+            if infsrcs:
+                inference_srcs_edge = hedge([const.inference_srcs_connector, edge] + edges)
+                hg.add(inference_srcs_edge)
+
         return parse_results
 
     def sentences(self, text):

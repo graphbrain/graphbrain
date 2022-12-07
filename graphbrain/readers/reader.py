@@ -2,10 +2,11 @@ from graphbrain.parsers import create_parser, parser_lang
 
 
 class Reader:
-    def __init__(self, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None):
+    def __init__(self, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None, infsrcs=False):
         self.hg = hg
         self.sequence = sequence
         self.lang = lang
+        self.infsrcs = infsrcs
         
         if parser_class:
             plang = parser_lang(parser_class)

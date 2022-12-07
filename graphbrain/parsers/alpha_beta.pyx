@@ -401,7 +401,7 @@ class AlphaBeta(Parser, ABC):
     def _add_lemmas(self, token, entity, ent_type):
         text = token.lemma_.lower()
         lemma = build_atom(text, ent_type[0], self.lang)
-        lemma_edge = hedge((const.lemma_pred, entity.simplify(), lemma))
+        lemma_edge = hedge((const.lemma_connector, entity.simplify(), lemma))
         self.extra_edges.add(lemma_edge)
 
     def _apply_arg_roles(self, edge):
@@ -660,23 +660,23 @@ class AlphaBeta(Parser, ABC):
                 if animacy is not None:
                     animacy_cnt[animacy] += 1
             if edge != main_edge and has_common_or_proper_concept(edge):
-                is_edge = hedge((const.is_pred, main_edge, edge))
+                is_edge = hedge((const.is_connector, main_edge, edge))
                 results.append(is_edge)
 
         gender_top = gender_cnt.most_common(2)
         if len(gender_top) == 1 or (len(gender_top) == 2 and gender_top[0][1] > gender_top[1][1]):
             gender = gender_top[0][0]
-            gender_edge = hedge((const.gender_pred, main_edge, gender))
+            gender_edge = hedge((const.gender_connector, main_edge, gender))
             results.append(gender_edge)
         number_top = number_cnt.most_common(2)
         if len(number_top) == 1 or (len(number_top) == 2 and number_top[0][1] > number_top[1][1]):
             number = number_top[0][0]
-            number_edge = hedge((const.number_pred, main_edge, number))
+            number_edge = hedge((const.number_connector, main_edge, number))
             results.append(number_edge)
         animacy_top = animacy_cnt.most_common(2)
         if len(animacy_top) == 1 or (len(animacy_top) == 2 and animacy_top[0][1] > animacy_top[1][1]):
             animacy = animacy_top[0][0]
-            animacy_edge = hedge((const.animacy_pred, main_edge, animacy))
+            animacy_edge = hedge((const.animacy_connector, main_edge, animacy))
             results.append(animacy_edge)
 
         # proper noun corefs

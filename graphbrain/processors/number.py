@@ -41,9 +41,9 @@ class Number(Processor):
     def on_end(self):
         lemmas = defaultdict(set)
         i = 0
-        lemma_edge_count = self.hg.count((const.lemma_pred, '*', '*'))
+        lemma_edge_count = self.hg.count((const.lemma_connector, '*', '*'))
         with progressbar.ProgressBar(max_value=lemma_edge_count) as bar:
-            for edge in self.hg.search((const.lemma_pred, '*', '*'), strict=True):
+            for edge in self.hg.search((const.lemma_connector, '*', '*'), strict=True):
                 lemmas[edge[2]].add(edge[1])
             i += 1
             bar.update(i)

@@ -787,7 +787,7 @@ class Hypergraph:
         self.hg.destroy()
         edge1 = hedge('(is/P this/C (first/M element/C))')
         self.hg.add_to_sequence('test_seq', edge1)
-        self.assertTrue(self.hg.exists((const.sequence_pred, 'test_seq', '0', edge1)))
+        self.assertTrue(self.hg.exists((const.sequence_connector, 'test_seq', '0', edge1)))
 
     def test_sequence2(self):
         self.hg.destroy()
