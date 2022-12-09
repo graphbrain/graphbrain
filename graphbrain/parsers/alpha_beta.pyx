@@ -643,7 +643,7 @@ class AlphaBeta(Parser, ABC):
         return [str(sent).strip() for sent in doc.sents]
 
     def _coref_inferences(self, main_edge, edges):
-        results = []
+        results = set()
 
         gender_cnt = Counter()
         number_cnt = Counter()
@@ -661,30 +661,30 @@ class AlphaBeta(Parser, ABC):
                     animacy_cnt[animacy] += 1
             if edge != main_edge and has_common_or_proper_concept(edge):
                 is_edge = hedge((const.is_connector, main_edge, edge))
-                results.append(is_edge)
+                results.add(is_edge)
 
         gender_top = gender_cnt.most_common(2)
         if len(gender_top) == 1 or (len(gender_top) == 2 and gender_top[0][1] > gender_top[1][1]):
             gender = gender_top[0][0]
             gender_edge = hedge((const.gender_connector, main_edge, gender))
-            results.append(gender_edge)
+            results.add(gender_edge)
         number_top = number_cnt.most_common(2)
         if len(number_top) == 1 or (len(number_top) == 2 and number_top[0][1] > number_top[1][1]):
             number = number_top[0][0]
             number_edge = hedge((const.number_connector, main_edge, number))
-            results.append(number_edge)
+            results.add(number_edge)
         animacy_top = animacy_cnt.most_common(2)
         if len(animacy_top) == 1 or (len(animacy_top) == 2 and animacy_top[0][1] > animacy_top[1][1]):
             animacy = animacy_top[0][0]
             animacy_edge = hedge((const.animacy_connector, main_edge, animacy))
-            results.append(animacy_edge)
+            results.add(animacy_edge)
 
         # proper noun corefs
         if _is_proper_noun(main_edge):
             for edge in edges:
                 if edge != main_edge and  _is_proper_noun(edge):
                     coref_edge = hedge((const.parser_coref_connector, main_edge, edge))
-                    results.append(coref_edge)
+                    results.add(coref_edge)
 
         return results
 
@@ -750,10 +750,6 @@ class AlphaBeta(Parser, ABC):
                         if stoks in self.toks2edge:
                             clusters[redge].append(self.toks2edge[stoks])
 
-            inferred_edges = []
-            for main_edge, edges in clusters.items():
-                inferred_edges += self._coref_inferences(main_edge, edges)
-
             for edge, toks in self.edge2toks.items():
                 if toks in toks2resolved:
                     redge = toks2resolved[toks]
@@ -771,7 +767,10 @@ class AlphaBeta(Parser, ABC):
                         resolved_edge = new_edge
                 parse['resolved_corefs'] = resolved_edge
 
-            parse_results['inferred_edges'] = inferred_edges
+            inferred_edges = set()
+            for main_edge, edges in clusters.items():
+                inferred_edges |= self._coref_inferences(main_edge, edges)
+            parse_results['inferred_edges'] = list(inferred_edges)
         else:
             for parse in parse_results['parses']:
                 parse['resolved_corefs'] = parse['main_edge']
