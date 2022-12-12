@@ -103,14 +103,6 @@ def split_edge_str(str edge_str):
     return tuple(tokens)
 
 
-def edges2str(edges, roots_only=False):
-    """Convert a collection of edges to a string representation
-    (no outer parenthesis).
-    """
-    edges_strings = [edge.to_str(roots_only) for edge in edges]
-    return ' '.join(edges_strings)
-
-
 def _parsed_token(token):
     if _edge_str_has_outer_parens(token):
         return hedge(token)

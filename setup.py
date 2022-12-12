@@ -32,6 +32,7 @@ if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx']),
         Extension('graphbrain.patterns', ['graphbrain/patterns.pyx']),
+        Extension('graphbrain.memory.keyvalue', ['graphbrain/memory/keyvalue.pyx']),
         Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.pyx']),
         Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.pyx']),
         Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.pyx']),
@@ -47,6 +48,7 @@ else:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], include_dirs=['.']),
         Extension('graphbrain.patterns', ['graphbrain/patterns.c'], include_dirs=['.']),
+        Extension('graphbrain.memory.keyvalue', ['graphbrain/memory/keyvalue.c'], include_dirs=['.']),
         Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.c'], include_dirs=['.']),
         Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.c'], include_dirs=['.']),
         Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.c'], include_dirs=['.']),
@@ -56,7 +58,7 @@ else:
     ]
 
 
-with open('README.md', 'r') as fh:
+with open('README.md', 'r', encoding='utf8') as fh:
     long_description = fh.read()
 
 
@@ -71,6 +73,7 @@ install_requires = [
         'plyvel',
         'progressbar2',
         'scikit-learn',
+        'spacy-experimental==0.6.0',
         'spacy',
         'termcolor',
         'gensim'

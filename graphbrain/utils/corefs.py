@@ -2,23 +2,23 @@ import random
 import string
 
 from graphbrain import hedge
-from graphbrain.constants import coref_pred, coref_set_id_key, main_coref_pred
+from graphbrain.constants import coref_connector, coref_set_id_key, main_coref_connector
 
 
 def _new_coref_id():
     chars = string.ascii_lowercase + string.digits
     # Note: the size of the id can be increased to reduce the probability
     # of collision.
-    return ''.join(random.choice(chars) for i in range(7))
+    return ''.join(random.choice(chars) for _ in range(7))
 
 
-def _set_coref_id(hg, edge, coref_id):
-    hg.set_attribute(edge, coref_set_id_key, coref_id)
+def _set_coref_id(hg, edge, new_coref_id):
+    hg.set_attribute(edge, coref_set_id_key, new_coref_id)
 
 
-def _change_coref_id(hg, edge, coref_id):
+def _change_coref_id(hg, edge, new_coref_id):
     for coref in coref_set(hg, edge):
-        _set_coref_id(hg, coref, coref_id)
+        _set_coref_id(hg, coref, new_coref_id)
 
 
 def _update_main_coref(hg, edge):
@@ -33,9 +33,9 @@ def _update_main_coref(hg, edge):
             best_degree = d
             best_coref = coref
 
-    coref_edge = hedge((main_coref_pred, cref_id, best_coref))
+    coref_edge = hedge((main_coref_connector, cref_id, best_coref))
     if not hg.exists(coref_edge):
-        old = set(hg.search('({} {} *)'.format(main_coref_pred, cref_id)))
+        old = set(hg.search('({} {} *)'.format(main_coref_connector, cref_id), strict=True))
         for old_edge in old:
             hg.remove(old_edge)
         hg.add(coref_edge, primary=False)
@@ -45,8 +45,8 @@ def coref_set(hg, edge, corefs=None):
     """Returns the set of coreferences that the given edge belongs to."""
     if corefs is None:
         corefs = {edge}
-    for coref_edge in hg.edges_with_edges((hedge(coref_pred), edge)):
-        if len(coref_edge) == 3 and coref_edge[0].to_str() == coref_pred:
+    for coref_edge in hg.edges_with_edges((hedge(coref_connector), edge)):
+        if len(coref_edge) == 3 and coref_edge[0].to_str() == coref_connector:
             for item in coref_edge[1:]:
                 if item not in corefs:
                     corefs.add(item)
@@ -58,8 +58,8 @@ def are_corefs(hg, edge1, edge2, corefs=None):
     """Checks if the two given edges are coreferences."""
     if corefs is None:
         corefs = {edge1}
-    for coref_edge in hg.edges_with_edges((hedge(coref_pred), edge1)):
-        if len(coref_edge) == 3 and coref_edge[0].to_str() == coref_pred:
+    for coref_edge in hg.edges_with_edges((hedge(coref_connector), edge1)):
+        if len(coref_edge) == 3 and coref_edge[0].to_str() == coref_connector:
             for item in coref_edge[1:]:
                 if item not in corefs:
                     if item == edge2:
@@ -77,8 +77,7 @@ def coref_id(hg, edge):
 
 def main_coref_from_id(hg, cref_id):
     """Returns main edge in the coreference set for the given identifier."""
-    for coref_edge in hg.search('({} {} *)'.format(main_coref_pred,
-                                                   cref_id)):
+    for coref_edge in hg.search('({} {} *)'.format(main_coref_connector, cref_id), strict=True):
         return coref_edge[2]
     return None
 
@@ -126,7 +125,7 @@ def make_corefs(hg, edge1, edge2):
         _change_coref_id(hg, edge2, new_cref_id)
         update = True
 
-    hg.add((coref_pred, edge1, edge2), primary=False)
+    hg.add((coref_connector, edge1, edge2), primary=False)
 
     if update:
         _update_main_coref(hg, edge1)

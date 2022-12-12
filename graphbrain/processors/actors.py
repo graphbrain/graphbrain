@@ -16,18 +16,18 @@ def is_actor(hg, edge):
 
 def find_actors(hg, edge):
     """Returns set of all coreferences to actors found in the edge."""
-    actors = set()
+    _actors = set()
     if is_actor(hg, edge):
-        actors.add(main_coref(hg, edge))
+        _actors.add(main_coref(hg, edge))
     if edge.not_atom:
         for item in edge:
-            actors |= find_actors(hg, item)
-    return actors
+            _actors |= find_actors(hg, item)
+    return _actors
 
 
 def actors(hg):
     """"Returns an iterator over all actors."""
-    return [edge[1] for edge in hg.search('(actor/P/. *)')]
+    return [edge[1] for edge in hg.search('(actor/P/. *)', strict=True)]
 
 
 ACTOR_PRED_LEMMAS = {'say', 'claim', 'warn', 'kill', 'accuse', 'condemn',

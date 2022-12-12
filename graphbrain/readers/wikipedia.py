@@ -81,10 +81,10 @@ def sections2texts(sections):
 
 
 class WikipediaReader(Reader):
-    def __init__(self, url, hg=None, sequence=None, lang=None, corefs=False,
-                 parser=None, parser_class=None):
-        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs,
-                         parser=parser, parser_class=parser_class)
+    def __init__(self, url, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None,
+                 infsrcs=False):
+        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs, parser=parser, parser_class=parser_class,
+                         infsrcs=infsrcs)
         self.url = url
 
     def read(self):
@@ -115,4 +115,4 @@ class WikipediaReader(Reader):
         texts = sections2texts(sections)
 
         for text in texts:
-            self.parser.parse_and_add(text, self.hg, sequence=self.sequence)
+            self.parser.parse_and_add(text, self.hg, sequence=self.sequence, infsrcs=self.infsrcs)

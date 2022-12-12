@@ -20,7 +20,7 @@ class Taxonomy(Processor):
                 elif ct[0] == 'M' and len(edge) == 2:
                     parent = edge[1]
                 if parent:
-                    ont_edge = (const.type_of_pred, edge, parent)
+                    ont_edge = (const.type_of_connector, edge, parent)
                     self.hg.add(ont_edge, primary=False)
                     self.relations += 1
 

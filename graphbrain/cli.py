@@ -43,6 +43,7 @@ def cli():
     parser.add_argument('--hg', type=str, help='hypergraph db', default='gb.db')
     parser.add_argument('--indir', type=str, help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)
+    parser.add_argument('--infsrcs', help='add inference sources to hypergraph', action='store_true')
     parser.add_argument('--lang', type=str, help='language', default=None)
     parser.add_argument('--outfile', type=str, help='output file', default=None)
     parser.add_argument('--parser', type=str, help='parser', default=None)
@@ -77,6 +78,8 @@ def cli():
         print('input directory: {}'.format(args.indir))
     if args.infile:
         print('input file: {}'.format(args.infile))
+    if args.infsrcs:
+        print('add inference sources: {}'.format(args.infsrcs))
     if args.lang:
         print('language: {}'.format(args.lang))
     if args.parser:
@@ -118,32 +121,37 @@ def cli():
                   hg=hgraph(args.hg),
                   sequence=args.sequence,
                   lang=args.lang,
-                  corefs=args.corefs).read()
+                  corefs=args.corefs,
+                  infsrcs=args.infsrcs).read()
     elif args.command == 'dir':
         DirReader(args.indir,
                   hg=hgraph(args.hg),
                   sequence=args.sequence,
                   lang=args.lang,
-                  corefs=args.corefs).read()
+                  corefs=args.corefs,
+                  infsrcs=args.infsrcs).read()
     elif args.command == 'csv':
         CsvReader(args.infile,
                   args.col,
                   hg=hgraph(args.hg),
                   sequence=args.sequence,
                   lang=args.lang,
-                  corefs=args.corefs).read()
+                  corefs=args.corefs,
+                  infsrcs=args.infsrcs).read()
     elif args.command == 'wikipedia':
         WikipediaReader(args.url,
                         hg=hgraph(args.hg),
                         sequence=args.sequence,
                         lang=args.lang,
-                        corefs=args.corefs).read()
+                        corefs=args.corefs,
+                        infsrcs=args.infsrcs).read()
     elif args.command == 'reddit':
         RedditReader(args.infile,
                      hg=hgraph(args.hg),
                      sequence=args.sequence,
                      lang=args.lang,
-                     corefs=args.corefs).read()
+                     corefs=args.corefs,
+                    infsrcs=args.infsrcs).read()
     elif args.command == 'actors':
         Actors(hg=hgraph(args.hg), sequence=args.sequence).run()
     elif args.command == 'claims':

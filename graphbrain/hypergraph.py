@@ -120,7 +120,7 @@ class Hypergraph(object):
         """
         self._set_primary(hedge(edge), value)
 
-    def search(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = True) -> Iterator[Hyperedge]:
+    def search(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = False) -> Iterator[Hyperedge]:
         """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
@@ -138,10 +138,8 @@ class Hypergraph(object):
         hypergraph: *, all atoms: ., and all non-atoms: (*).
 
         Keyword argument:
-        strict -- strictly match the search pattern, or allow for more general
-        atoms to match target atoms (e.g. plays/P matches plays/Pd.so in
-        non-strict mode, but only exactly plays/Pd.so matches it in strict mode)
-        Non-strict mode is slower. (default True)
+        strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
+         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
         pattern = hedge(pattern)
 
@@ -153,18 +151,22 @@ class Hypergraph(object):
             elif pattern[0][0] == '.':
                 return self.all_atoms()
 
-        return self._search(pattern, strict=strict)
+        return self._search(pattern, strict)
 
     def match(self,
               pattern: Union[Hyperedge, str, list, tuple],
-              strict: bool = True,
+              strict: bool = False,
               curvars: Optional[dict[str, Hyperedge]] = None) -> Iterator[tuple[Hyperedge, dict[str, Hyperedge]]]:
         pattern = hedge(pattern)
-        return self._match(pattern, strict=strict, curvars=curvars)
+        return self._match(pattern, strict, curvars=curvars)
 
-    def count(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = True) -> int:
+    def count(self, pattern: Union[Hyperedge, str, list, tuple]) -> int:
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
+
+        Keyword argument:
+        strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
+         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
         return len(list(self.search(hedge(pattern))))
 
@@ -249,10 +251,14 @@ class Hypergraph(object):
                 atom_set.add(atom)
         return atom_set
 
-    def remove_by_pattern(self, pattern):
-        """Removes all edges that match the pattern."""
-        edges = self.search(pattern)
-        for edge in edges:
+    def remove_by_pattern(self, pattern, strict=False):
+        """Removes all edges that match the pattern.
+
+        Keyword argument:
+        strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
+         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
+        """
+        for edge in self.search(pattern, strict=strict):
             self.remove(edge)
 
     def root_degrees(self, edge):
@@ -285,11 +291,11 @@ class Hypergraph(object):
     def add_to_sequence(self, name, edge, primary=True):
         """Adds 'edge' to sequence 'name'."""
         seq_atom = str2atom(name)
-        seq_attrs_edge = hedge((const.sequence_attrs_pred, seq_atom))
+        seq_attrs_edge = hedge((const.sequence_attrs_connector, seq_atom))
         pos = self.get_int_attribute(seq_attrs_edge, 'size')
         if pos is None:
             pos = 0
-        result = self.add((const.sequence_pred, seq_atom, str(pos), edge))
+        result = self.add((const.sequence_connector, seq_atom, str(pos), edge))
         self.set_attribute(seq_attrs_edge, 'size', pos + 1)
         if primary:
             self.set_primary(edge, True)
@@ -302,7 +308,7 @@ class Hypergraph(object):
         pos = 0
         stop = False
         while not stop:
-            iteration = self.search((const.sequence_pred, name, str(pos), '*'))
+            iteration = self.search((const.sequence_connector, name, str(pos), '*'), strict=True)
             next_edge = next(iteration, None)
             if next_edge:
                 yield next_edge[3]
@@ -314,7 +320,7 @@ class Hypergraph(object):
         """Returns an iterator for all the sequence names present in the
         hypergraph.
         """
-        for edge in self.search((const.sequence_pred, '*', '0', '*')):
+        for edge in self.search((const.sequence_connector, '*', '0', '*'), strict=True):
             yield edge[1].to_str()
 
     def text(self, edge):
@@ -344,10 +350,10 @@ class Hypergraph(object):
     def _set_primary(self, edge, value):
         raise NotImplementedError()
 
-    def _search(self, pattern, strict=True):
+    def _search(self, pattern, strict):
         raise NotImplementedError()
 
-    def _match(self, pattern, strict=True, curvars=None):
+    def _match(self, pattern, strict, curvars=None):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):

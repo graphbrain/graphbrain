@@ -15,10 +15,10 @@ def build_sequence_name(path, name):
 
 
 class DirReader(Reader):
-    def __init__(self, indir, hg=None, sequence=None, lang=None,
-                 corefs=False, parser=None, parser_class=None):
-        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs,
-                         parser=parser, parser_class=parser_class)
+    def __init__(self, indir, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None,
+                 infsrcs=False):
+        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs, parser=parser, parser_class=parser_class,
+                         infsrcs=infsrcs)
         self.indir = indir
         self.sequences = []
 
@@ -32,6 +32,4 @@ class DirReader(Reader):
                         name, extension = os.path.splitext(name)
                     sequence = build_sequence_name(path, name)
                     infile = os.path.join(dirpath, filename)
-                    TxtReader(infile=infile,
-                              sequence=sequence,
-                              parser=self.parser).read()
+                    TxtReader(infile=infile, sequence=sequence, parser=self.parser, infsrcs=self.infsrcs).read()

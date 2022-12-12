@@ -1,12 +1,20 @@
 # Changelog
 
-## [0.6.2] - ongoing
+## [0.7.0] - ongoing
 ### Added
 - patterns.is_wildcard().
+- Base class hypergraph.memory.keyvalue.KeyValue for key-value hypergraph databases, removing redundant code between LevelDB and SQLite.
+- Tests for LevelDB (only the SQLite Hypergraph implementation was being directly tested).
+- Hyperedge.is_unordered_pattern().
+- Functional pattern: any.
+- Parser-level inference of coreferences between proper nouns.
 
 ### Changed
 - Python >=3.9 now required.
-- Hypergraph.search() and .match() now working with functional patterns and argument role matching.
+- Hypergraph.search(), .match() and .count() now working with functional patterns and argument role matching.
+- Fixed bug on match_pattern(), variables were not correctly matched when argument roles were specified past the first position in an atoms functional pattern.
+- Simplified default systems connectors (breaks hypergraph DB backwards compatibility).
+- max_text argument in parser.parse_and_add().
 
 ### Removed
 - graphbrain.logic obsolete module.

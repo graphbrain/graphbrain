@@ -17,8 +17,6 @@ class Number(Processor):
         self.corefs = 0
 
     def _make_singular_plural_relation(self, singular, plural):
-        self.logger.debug('singular: {}; plural: {}'.format(singular, plural))
-
         make_singular_plural(self.hg, singular, plural)
         self.sng_pl += 1
 
@@ -41,20 +39,16 @@ class Number(Processor):
             self._make_singular_plural_relation(singular, plural)
 
     def on_end(self):
-        hg = self.system.get_hg(self)
-
         lemmas = defaultdict(set)
         i = 0
-        self.logger.info('reading lemma structure')
-        lemma_edge_count = hg.count((const.lemma_pred, '*', '*'))
+        lemma_edge_count = self.hg.count((const.lemma_connector, '*', '*'))
         with progressbar.ProgressBar(max_value=lemma_edge_count) as bar:
-            for edge in hg.search((const.lemma_pred, '*', '*')):
+            for edge in self.hg.search((const.lemma_connector, '*', '*'), strict=True):
                 lemmas[edge[2]].add(edge[1])
             i += 1
             bar.update(i)
 
         i = 0
-        self.logger.info('processing lemmas')
         with progressbar.ProgressBar(max_value=len(lemmas)) as bar:
             for lemma in lemmas:
                 type_atoms = defaultdict(set)

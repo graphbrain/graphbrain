@@ -1,4 +1,4 @@
-from graphbrain.constants import singular_plural_pred
+from graphbrain.constants import singular_plural_connector
 
 
 def number(atom):
@@ -16,4 +16,4 @@ def number(atom):
 
 
 def make_singular_plural(hg, single, plural):
-    hg.add((singular_plural_pred, single, plural), primary=False)
+    hg.add((singular_plural_connector, single, plural), primary=False)

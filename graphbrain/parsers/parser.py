@@ -8,8 +8,7 @@ from graphbrain.hyperedge import UniqueAtom
 
 def _edge2text(edge, parse):
     atoms = [UniqueAtom(atom) for atom in edge.all_atoms()]
-    tokens = [parse['atom2token'][atom] for atom in atoms
-              if atom in parse['atom2token']]
+    tokens = [parse['atom2token'][atom] for atom in atoms if atom in parse['atom2token']]
     if len(tokens) == 0:
         return ''
     tokens = sorted(tokens, key=lambda x: x.i)
@@ -18,9 +17,7 @@ def _edge2text(edge, parse):
     sentence = str(parse['spacy_sentence'])
     for token in tokens[1:]: 
         txt = token.text
-        res = re.search(r'{}(.*?){}'.format(re.escape(prev_txt),
-                                            re.escape(txt)),
-                        sentence)
+        res = re.search(r'{}(.*?){}'.format(re.escape(prev_txt), re.escape(txt)), sentence)
         if res:
             sep = res.group(1)
         else:
@@ -91,9 +88,17 @@ class Parser(object):
                 parse['resolved_corefs'] = parse['main_edge']
         return parse_results
 
-    def parse_and_add(self, text, hg, sequence=None, set_text=True):
+    def parse_and_add(self, text, hg, sequence=None, infsrcs=False, max_text=1500):
+        # split large blocks of text to avoid coreference resolution errors
+        if self.corefs and 0 < max_text < len(text):
+            for sentence in self.sentences(text):
+                self.parse_and_add(sentence, hg=hg, sequence=sequence, infsrcs=infsrcs, max_text=-1)
+
         parse_results = self.parse(text)
+        edges = []
         for parse in parse_results['parses']:
+            if parse['main_edge']:
+                edges.append(parse['main_edge'])
             main_edge = parse['resolved_corefs']
             if self.corefs:
                 unresolved_edge = parse['main_edge']
@@ -109,15 +114,18 @@ class Parser(object):
                 _set_edges_text(main_edge, hg, parse)
                 if self.corefs:
                     if unresolved_edge != main_edge:
-                         _set_edges_text(main_edge, hg, parse)
-                    coref_res_edge = hedge(
-                        (const.coref_res_pred, unresolved_edge, main_edge))
+                        _set_edges_text(main_edge, hg, parse)
+                    coref_res_edge = hedge((const.coref_res_connector, unresolved_edge, main_edge))
                     hg.add(coref_res_edge)
                 # add extra edges
                 for edge in parse['extra_edges']:
                     hg.add(edge)
         for edge in parse_results['inferred_edges']:
             hg.add(edge, count=True)
+            if infsrcs:
+                inference_srcs_edge = hedge([const.inference_srcs_connector, edge] + edges)
+                hg.add(inference_srcs_edge)
+
         return parse_results
 
     def sentences(self, text):
@@ -138,7 +146,7 @@ class Parser(object):
     def _post_process(self, edge):
         raise NotImplementedError()
 
-    def _parse_token(self, token):
+    def _parse_token(self, token, atom_type):
         raise NotImplementedError()
 
     def _before_parse_sentence(self):
