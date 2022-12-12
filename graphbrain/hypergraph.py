@@ -160,7 +160,7 @@ class Hypergraph(object):
         pattern = hedge(pattern)
         return self._match(pattern, strict, curvars=curvars)
 
-    def count(self, pattern: Union[Hyperedge, str, list, tuple], strict: bool = False) -> int:
+    def count(self, pattern: Union[Hyperedge, str, list, tuple]) -> int:
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
 
@@ -168,11 +168,7 @@ class Hypergraph(object):
         strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
          specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
-        pattern = hedge(pattern)
-        n: int = 0
-        for _ in self._search(pattern, strict):
-            n += 1
-        return n
+        return len(list(self.search(hedge(pattern))))
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the center.

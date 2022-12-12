@@ -3,9 +3,10 @@ import itertools
 from collections import Counter
 from graphbrain import hedge
 from graphbrain.utils.lemmas import lemma
+from graphbrain.semsim import match_semsim
 
 
-FUNS = {'var', 'atoms', 'lemma', 'any'}
+FUNS = {'var', 'atoms', 'lemma', 'any', 'semsim'}
 
 
 def is_wildcard(atom):
@@ -75,74 +76,74 @@ def apply_vars(edge, variables):
         return hedge([apply_vars(subedge, variables) for subedge in edge])
 
 
-def _matches_wildcard(edge, wildcard):
-    wparts = wildcard.parts()
+def _matches_atomic_pattern(edge, atomic_pattern):
+    ap_parts = atomic_pattern.parts()
 
-    if len(wparts) == 0 or len(wparts[0]) == 0:
+    if len(ap_parts) == 0 or len(ap_parts[0]) == 0:
         return False
 
     # structural match
-    struct_code = wparts[0][0]
+    struct_code = ap_parts[0][0]
     if struct_code == '.':
         if edge.not_atom:
             return False
-    elif wildcard.parens:
+    elif atomic_pattern.parens:
         if edge.atom:
             return False
     elif struct_code != '*' and not struct_code.isupper():
         if edge.not_atom:
             return False
-        if edge.root() != wildcard.root():
+        if edge.root() != atomic_pattern.root():
             return False
 
     # role match
-    if len(wparts) > 1:
+    if len(ap_parts) > 1:
         pos = 1
 
         # type match
-        wrole = wildcard.role()
-        wtype = wrole[0]
-        etype = edge.type()
-        n = len(wtype)
-        if len(etype) < n or etype[:n] != wtype:
+        ap_role = atomic_pattern.role()
+        ap_type = ap_role[0]
+        e_type = edge.type()
+        n = len(ap_type)
+        if len(e_type) < n or e_type[:n] != ap_type:
             return False
 
-        eatom = edge.inner_atom()
+        e_atom = edge.inner_atom()
 
-        if len(wrole) > 1:
-            erole = eatom.role()
+        if len(ap_role) > 1:
+            e_role = e_atom.role()
             # check if edge role has enough parts to satisfy the wildcard
             # specification
-            if len(erole) < len(wrole):
+            if len(e_role) < len(ap_role):
                 return False
 
             # argroles match
-            if wtype[0] in {'B', 'P'}:
-                wargroles_parts = wrole[1].split('-')
-                if len(wargroles_parts) == 1:
-                    wargroles_parts.append('')
-                wnegroles = wargroles_parts[1]
+            if ap_type[0] in {'B', 'P'}:
+                ap_argroles_parts = ap_role[1].split('-')
+                if len(ap_argroles_parts) == 1:
+                    ap_argroles_parts.append('')
+                ap_negroles = ap_argroles_parts[1]
 
                 # fixed order?
-                wargroles_posopt = wargroles_parts[0]
-                eargroles = erole[1]
-                if len(wargroles_posopt) > 0 and wargroles_posopt[0] == '{':
-                    wargroles_posopt = wargroles_posopt[1:-1]
+                ap_argroles_posopt = ap_argroles_parts[0]
+                e_argroles = e_role[1]
+                if len(ap_argroles_posopt) > 0 and ap_argroles_posopt[0] == '{':
+                    ap_argroles_posopt = ap_argroles_posopt[1:-1]
                 else:
-                    wargroles_posopt = wargroles_posopt.replace(',', '')
-                    if len(eargroles) > len(wargroles_posopt):
+                    ap_argroles_posopt = ap_argroles_posopt.replace(',', '')
+                    if len(e_argroles) > len(ap_argroles_posopt):
                         return False
                     else:
-                        return wargroles_posopt.startswith(eargroles)
+                        return ap_argroles_posopt.startswith(e_argroles)
 
-                wargroles_parts = wargroles_posopt.split(',')
-                wposroles = wargroles_parts[0]
-                wargroles = set(wposroles) | set(wnegroles)
-                for argrole in wargroles:
-                    min_count = wposroles.count(argrole)
+                ap_argroles_parts = ap_argroles_posopt.split(',')
+                ap_posroles = ap_argroles_parts[0]
+                ap_argroles = set(ap_posroles) | set(ap_negroles)
+                for argrole in ap_argroles:
+                    min_count = ap_posroles.count(argrole)
                     # if there are argrole exclusions
-                    fixed = wnegroles.count(argrole) > 0
-                    count = eargroles.count(argrole)
+                    fixed = ap_negroles.count(argrole) > 0
+                    count = e_argroles.count(argrole)
                     if count < min_count:
                         return False
                     # deal with exclusions
@@ -151,21 +152,21 @@ def _matches_wildcard(edge, wildcard):
                 pos = 2
 
             # match rest of role
-            while pos < len(wrole):
-                if erole[pos] != wrole[pos]:
+            while pos < len(ap_role):
+                if e_role[pos] != ap_role[pos]:
                     return False
                 pos += 1
 
     # match rest of atom
-    if len(wparts) > 2:
-        eparts = eatom.parts()
+    if len(ap_parts) > 2:
+        e_parts = e_atom.parts()
         # check if edge role has enough parts to satisfy the wildcard
         # specification
-        if len(eparts) < len(wparts):
+        if len(e_parts) < len(ap_parts):
             return False
 
-        while pos < len(wparts):
-            if eparts[pos] != wparts[pos]:
+        while pos < len(ap_parts):
+            if e_parts[pos] != ap_parts[pos]:
                 return False
             pos += 1
 
@@ -259,7 +260,7 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), cur
     return result
 
 
-def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=None):
+def _match_atoms(atom_patterns, atoms, curvars, hg, matched_atoms=None) -> list[dict]:
     if matched_atoms is None:
         matched_atoms = []
 
@@ -295,13 +296,13 @@ def _match_lemma(lemma_pattern, edge, curvars, hg):
         parts[1] = '{}.{}'.format(parts[1], ar)
         _lemma = hedge('/'.join(parts))
 
-    if _matches_wildcard(_lemma, lemma_pattern):
+    if _matches_atomic_pattern(_lemma, lemma_pattern):
         return [curvars]
 
     return []
 
 
-def _matches_fun_pat(edge, fun_pattern, curvars, hg):
+def _matches_fun_pat(edge, fun_pattern, curvars, hg) -> list[dict]:
     fun = fun_pattern[0].root()
     if fun == 'var':
         if len(fun_pattern) != 3:
@@ -320,6 +321,8 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg):
         return _match_atoms(atom_patterns, atoms, curvars, hg)
     elif fun == 'lemma':
         return _match_lemma(fun_pattern[1], edge, curvars, hg)
+    elif fun == 'semsim':
+        return match_semsim(fun_pattern[1], edge, curvars, hg)
     elif fun == 'any':
         for pattern in fun_pattern[1:]:
             matches = _match_pattern(edge, pattern, curvars=curvars, hg=hg)
@@ -330,13 +333,47 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg):
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
 
+def match_pattern(edge, pattern, curvars=None, hg=None) -> list[dict]:
+    """Matches an edge to a pattern. This means that, if the edge fits the
+    pattern, then a dictionary will be returned with the values for each
+    pattern variable. If the pattern specifies no variables but the edge
+    matches it, then an empty dictionary is returned. If the edge does
+    not match the pattern, None is returned.
+
+    Patterns are themselves edges. They can match families of edges
+    by employing special atoms:
+
+    -> '\*' represents a general wildcard (matches any entity)
+
+    -> '.' represents an atomic wildcard (matches any atom)
+
+    -> '(\*)' represents an edge wildcard (matches any edge)
+
+    -> '...' at the end indicates an open-ended pattern.
+
+    The wildcards ('\*', '.' and '(\*)') can be used to specify variables,
+    for example '\*x', '(CLAIM)' or '.ACTOR'. In case of a match, these
+    variables are assigned the hyperedge they correspond to. For example,
+
+    (1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+    applied to the pattern: (is/Pd (my/Mp name/Cn) \*NAME)
+    produces the result: {'NAME': mary/Cp}
+
+    (2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+    applied to the pattern: (is/Pd (my/Mp name/Cn) (NAME))
+    produces the result: {}
+
+    (3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+    applied to the pattern: (is/Pd . \*NAME)
+    produces the result: None
+    """
 def _match_pattern(edge, pattern, curvars=None, hg=None):
     if curvars is None:
         curvars = {}
 
     # atomic patterns
     if pattern.atom:
-        if _matches_wildcard(edge, pattern):
+        if _matches_atomic_pattern(edge, pattern):
             variables = {}
             if is_pattern(pattern):
                 varname = _varname(pattern)
@@ -393,7 +430,7 @@ def _match_pattern(edge, pattern, curvars=None, hg=None):
                     elif varname in variables:
                         if variables[varname] != eitem:
                             continue
-                    elif _matches_wildcard(eitem, pitem):
+                    elif _matches_atomic_pattern(eitem, pitem):
                         if len(varname) > 0 and varname[0].isupper():
                             variables[varname] = eitem
                     else:
