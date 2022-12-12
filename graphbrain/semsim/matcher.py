@@ -21,7 +21,7 @@ class SemSimMatcher:
                 oov_words.append(w)
 
         if oov_words:
-            logger.warning(f"Queried word(s) out of vocabulary: {oov_words}")
+            logger.debug(f"Queried word(s) out of vocabulary: {oov_words}")
             return False
 
         return True
@@ -32,7 +32,7 @@ class SemSimMatcher:
 
         word_distance = self._w2v_model.distance(w1, w2)
         if word_distance < self._similarity_threshold:
-            logger.debug(f"Word distance for ('{w1}, '{w2}') = {word_distance} is smaller than threshold!")
+            logger.debug(f"Word distance for ('{w1}, '{w2}') = {word_distance:.2f} is smaller than threshold!")
             return True
 
         return False

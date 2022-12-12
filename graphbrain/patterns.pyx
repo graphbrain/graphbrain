@@ -316,7 +316,7 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg) -> list[dict]:
         # return _match_lemma(fun_pattern[1], edge, curvars, hg)
         return match_lemma(fun_pattern[1], edge, curvars, hg)
     elif fun == 'semsim':
-        return match_semsim(fun_pattern, edge, curvars, hg)
+        return match_semsim(fun_pattern[1], edge, curvars, hg)
     else:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 

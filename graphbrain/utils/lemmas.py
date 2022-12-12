@@ -1,7 +1,6 @@
 import graphbrain.constants as const
 
 from graphbrain import hedge
-# from graphbrain.patterns import _matches_atomic_pattern
 import graphbrain.patterns as gbp
 
 

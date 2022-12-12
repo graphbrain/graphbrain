@@ -25,15 +25,15 @@ def match_semsim(pattern, edge, curvars=None, hg=None) -> list[dict]:
         return []
 
     edge_word_part = edge.parts()[0]
-    pattern_word_part = pattern[1].parts()[0]
+    pattern_word_part = pattern.parts()[0]
 
     logger.debug(f"edge: {str(edge)} | word part: {edge_word_part} | pattern: {str(pattern)}")
 
     if not semsim(edge_word_part, pattern_word_part):
         return []
 
-    edge_parts_modified = edge.parts()
-    edge_parts_modified[0] = pattern_word_part
+    # replace first edge part with pattern word part
+    edge_parts_modified = [edge_part if idx != 0 else pattern_word_part for idx, edge_part in enumerate(edge.parts())]
     edge_modified = hedge('/'.join(edge_parts_modified))
 
     if graphbrain.patterns._matches_atomic_pattern(edge_modified, pattern):
