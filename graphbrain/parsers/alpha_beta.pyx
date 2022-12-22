@@ -634,8 +634,12 @@ class AlphaBeta(Parser, ABC):
         enriched with NLP annotations.
         """
         self.reset(text)
-        self.doc = self.nlp(text.strip())
-        parses = tuple(self.parse_spacy_sentence(sent) for sent in self.doc.sents)
+        try:
+            self.doc = self.nlp(text.strip())
+            parses = tuple(self.parse_spacy_sentence(sent) for sent in self.doc.sents)
+        except RuntimeError as error:
+            print(error)
+            parses = []
         return {'parses': parses, 'inferred_edges': []}
 
     def sentences(self, text):
