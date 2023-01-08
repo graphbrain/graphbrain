@@ -12,12 +12,12 @@ SIMILARITY_THRESHOLD: float = 0.6
 matcher: SemSimMatcher | None = None
 
 
-def semsim(string1: str, string2: str) -> bool:
+def semsim(candidate: str, references: list[str]) -> bool:
     global matcher
     if not matcher:
         matcher = SemSimMatcher(W2V_MODEL_NAME, SIMILARITY_THRESHOLD)
 
-    return matcher.similar(string1, string2)
+    return matcher.similar(candidate, references)
 
 
 def match_semsim(pattern, edge, curvars=None, hg=None) -> list[dict]:
@@ -25,11 +25,13 @@ def match_semsim(pattern, edge, curvars=None, hg=None) -> list[dict]:
         return []
 
     edge_word_part = edge.parts()[0]
-    pattern_word_part = pattern.parts()[0]
+
+    # possibly multi-word semsim
+    pattern_word_parts = [sub_pattern.parts()[0] for sub_pattern in pattern]
 
     logger.debug(f"edge: {str(edge)} | word part: {edge_word_part} | pattern: {str(pattern)}")
 
-    if not semsim(edge_word_part, pattern_word_part):
+    if not semsim(edge_word_part, pattern_word_parts):
         return []
 
     # replace first edge part with pattern word part
@@ -40,6 +42,7 @@ def match_semsim(pattern, edge, curvars=None, hg=None) -> list[dict]:
         return [curvars]
 
     return []
+
 
 # def _match_lemma(lemma_pattern, edge, curvars, hg):
     # if hg is None:
