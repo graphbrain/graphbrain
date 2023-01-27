@@ -1,5 +1,8 @@
+import dataclasses
 import logging
+from dataclasses import dataclass
 from pathlib import Path
+from statistics import mean
 
 import gensim.downloader
 from gensim.models import KeyedVectors
@@ -9,30 +12,55 @@ from graphbrain.semsim import gensim_data_path
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class SemSimConfig:
+    model_name: str
+    similarity_threshold: float
+
+
 class SemSimMatcher:
-    def __init__(self, model_name: str, similarity_threshold: float):
-        self._similarity_threshold: float = similarity_threshold
-        self._w2v_model: KeyedVectors = _load_model(model_name)
+    def __init__(self, config: SemSimConfig):
+        self._similarity_threshold: float = config.similarity_threshold
+        self._w2v_model: KeyedVectors = _load_model(config.model_name)
 
-    def _in_vocab(self, words: list[str]):
-        oov_words = []
-        for w in words:
-            if w not in self._w2v_model:
-                oov_words.append(w)
-
+    def _in_vocab(self, words: list[str], return_filtered: bool = False) -> bool | list[str]:
+        oov_words = [w for w in words if w not in self._w2v_model]
         if oov_words:
             logger.debug(f"Queried word(s) out of vocabulary: {oov_words}")
-            return False
+        if return_filtered:
+            return [w for w in words if w not in oov_words]
+        if not oov_words:
+            return True
+        return False
 
-        return True
+    def filter_oov(self, words: list[str]):
+        filtered_words = self._in_vocab(words, return_filtered=True)
+        logger.info(f"Words left after filtering OOV words: {filtered_words}")
+        return filtered_words
 
-    def similar(self, w1: str, w2: str) -> bool | None:
-        if not self._in_vocab([w1, w2]):
+    def similar(self, candidate: str, references: list[str], threshold: float = None) -> bool | None:
+        if not references:
+            logger.error("No reference word(s) given for semantic similarity matching!")
             return None
 
-        word_distance = self._w2v_model.distance(w1, w2)
-        if word_distance < self._similarity_threshold:
-            logger.debug(f"Word distance for ('{w1}, '{w2}') = {word_distance:.2f} is smaller than threshold!")
+        if not (filtered_references := self._in_vocab(references, return_filtered=True)):
+            logger.warning(f"All reference word(s) out of vocabulary: {references}")
+            return None
+
+        if len(filtered_references) < len(references):
+            logger.info(f"Some reference words out of vocabulary: "
+                        f"{[r for r in references if r not in filtered_references]}")
+
+        if not self._in_vocab([candidate]):
+            return None
+
+        # reference_vectors = [self._w2v_model[reference_word] for reference_word in references]
+        word_distance = mean(self._w2v_model.distances(word_or_vector=candidate, other_words=filtered_references))
+
+        similarity_threshold: float = threshold if threshold is not None else self._similarity_threshold
+        if word_distance < similarity_threshold:
+            logger.debug(f"Word distance for ('{candidate}, {filtered_references}) = {word_distance:.2f} "
+                         f"is smaller than threshold!")
             return True
 
         return False
@@ -54,7 +82,8 @@ def _load_model(model_name: str) -> KeyedVectors:
     # load the binary model memory mapped (mmap = 'r')
     # this speeds up loading times massively but slows down computations
     # this trade-off is good in this case, since we only compare two vectors at once
-    return KeyedVectors.load(str(model_path_bin), mmap='r')  # noqa
+    # return KeyedVectors.load(str(model_path_bin), mmap='r')  # noqa
+    return KeyedVectors.load(str(model_path_bin))  # noqa
 
 
 def _model_to_bin(model_path: Path, model_path_bin: Path):
