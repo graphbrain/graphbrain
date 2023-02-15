@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 W2V_MODEL_NAME: str = 'word2vec-google-news-300'
 SIMILARITY_THRESHOLD: float = 0.6
 
-matcher: SemSimMatcher | None = None
+# matcher: SemSimMatcher | None = None
+matcher = None
 
 
 def semsim(string1: str, string2: str) -> bool:
