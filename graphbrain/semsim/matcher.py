@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 from pathlib import Path
 
@@ -28,7 +26,7 @@ class SemSimMatcher:
 
         return True
 
-    def similar(self, w1: str, w2: str) -> bool | None:
+    def similar(self, w1: str, w2: str):  # -> bool | None:
         if not self._in_vocab([w1, w2]):
             return None
 
