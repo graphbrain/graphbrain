@@ -1,3 +1,4 @@
+import json
 import traceback
 from abc import ABC
 from collections import Counter
@@ -81,6 +82,11 @@ def _apply_rule(rule, sentence, pos):
 def _is_proper_noun(edge):
     return any(atom.t == 'Cp' for atom in edge.atoms())
 
+def _generate_tok_pos(parse, edge):
+    if edge.atom:
+        return str(parse['atom2word'][unique(edge)][1])
+    else:
+        return '({})'.format(' '.join([_generate_tok_pos(parse, subedge) for subedge in edge]))
 
 class AlphaBeta(Parser, ABC):
     def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
@@ -724,6 +730,10 @@ class AlphaBeta(Parser, ABC):
         if edge.not_atom:
             for subedge in edge:
                 self._edge2toks(subedge)
+
+    def _set_edge_tokens(self, edge, hg, parse):
+        hg.set_attribute(edge, 'tokens', json.dumps([str(token) for token in parse['spacy_sentence']]))
+        hg.set_attribute(edge, 'tok_pos', _generate_tok_pos(parse, edge))
 
     def _resolve_corefs(self, parse_results):
         if self.corefs:

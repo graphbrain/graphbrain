@@ -112,6 +112,8 @@ class Parser(object):
                     hg.add(main_edge)
                 # attach text to edge and subedges
                 _set_edge_text(main_edge, hg, parse)
+                # attach token list and token position structure to edge
+                self._set_edge_tokens(main_edge, hg, parse)
                 if self.corefs:
                     if unresolved_edge != main_edge:
                         _set_edge_text(main_edge, hg, parse)
@@ -156,6 +158,9 @@ class Parser(object):
         raise NotImplementedError()
 
     def _parse(self, text):
+        raise NotImplementedError()
+
+    def _set_edge_tokens(self, edge, hg, parse):
         raise NotImplementedError()
 
     def _resolve_corefs(self, parse_results):
