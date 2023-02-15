@@ -151,7 +151,7 @@ def cli():
                      sequence=args.sequence,
                      lang=args.lang,
                      corefs=args.corefs,
-                    infsrcs=args.infsrcs).read()
+                     infsrcs=args.infsrcs).read()
     elif args.command == 'actors':
         Actors(hg=hgraph(args.hg), sequence=args.sequence).run()
     elif args.command == 'claims':
