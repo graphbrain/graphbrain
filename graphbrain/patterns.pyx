@@ -333,40 +333,6 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg) -> list[dict]:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
 
-def match_pattern(edge, pattern, curvars=None, hg=None) -> list[dict]:
-    """Matches an edge to a pattern. This means that, if the edge fits the
-    pattern, then a dictionary will be returned with the values for each
-    pattern variable. If the pattern specifies no variables but the edge
-    matches it, then an empty dictionary is returned. If the edge does
-    not match the pattern, None is returned.
-
-    Patterns are themselves edges. They can match families of edges
-    by employing special atoms:
-
-    -> '\*' represents a general wildcard (matches any entity)
-
-    -> '.' represents an atomic wildcard (matches any atom)
-
-    -> '(\*)' represents an edge wildcard (matches any edge)
-
-    -> '...' at the end indicates an open-ended pattern.
-
-    The wildcards ('\*', '.' and '(\*)') can be used to specify variables,
-    for example '\*x', '(CLAIM)' or '.ACTOR'. In case of a match, these
-    variables are assigned the hyperedge they correspond to. For example,
-
-    (1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd (my/Mp name/Cn) \*NAME)
-    produces the result: {'NAME': mary/Cp}
-
-    (2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd (my/Mp name/Cn) (NAME))
-    produces the result: {}
-
-    (3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd . \*NAME)
-    produces the result: None
-    """
 def _match_pattern(edge, pattern, curvars=None, hg=None):
     if curvars is None:
         curvars = {}
