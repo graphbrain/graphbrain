@@ -80,7 +80,11 @@ def _is_proper_noun(edge):
 
 def _generate_tok_pos(parse, edge):
     if edge.atom:
-        return str(parse['atom2word'][unique(edge)][1])
+        atom = unique(edge)
+        if atom in parse['atom2word']:
+            return str(parse['atom2word'][atom][1])
+        else:
+            return '-1'
     else:
         return '({})'.format(' '.join([_generate_tok_pos(parse, subedge) for subedge in edge]))
 
