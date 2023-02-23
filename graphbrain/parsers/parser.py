@@ -30,12 +30,12 @@ def _edge2text(edge, parse):
     return ''.join(txt_parts)
 
 
-def _set_edges_text(edge, hg, parse):
+def _set_edge_text(edge, hg, parse):
     text = _edge2text(edge, parse)
     hg.set_attribute(edge, 'text', text)
     if edge.not_atom:
         for subedge in edge:
-            _set_edges_text(subedge, hg, parse)
+            _set_edge_text(subedge, hg, parse)
 
 
 class Parser(object):
@@ -111,10 +111,12 @@ class Parser(object):
                 else:
                     hg.add(main_edge)
                 # attach text to edge and subedges
-                _set_edges_text(main_edge, hg, parse)
+                _set_edge_text(main_edge, hg, parse)
+                # attach token list and token position structure to edge
+                self._set_edge_tokens(main_edge, hg, parse)
                 if self.corefs:
                     if unresolved_edge != main_edge:
-                        _set_edges_text(main_edge, hg, parse)
+                        _set_edge_text(main_edge, hg, parse)
                     coref_res_edge = hedge((const.coref_res_connector, unresolved_edge, main_edge))
                     hg.add(coref_res_edge)
                 # add extra edges
@@ -156,6 +158,9 @@ class Parser(object):
         raise NotImplementedError()
 
     def _parse(self, text):
+        raise NotImplementedError()
+
+    def _set_edge_tokens(self, edge, hg, parse):
         raise NotImplementedError()
 
     def _resolve_corefs(self, parse_results):

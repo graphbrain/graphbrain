@@ -15,7 +15,8 @@ DEFAULT_CONFIG: SemSimConfig = SemSimConfig(
     similarity_threshold=0.5
 )
 
-matcher: SemSimMatcher | None = None
+# matcher: SemSimMatcher | None = None
+matcher = None
 
 
 def init_matcher(config: SemSimConfig = None):
