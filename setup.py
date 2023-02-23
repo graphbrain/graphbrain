@@ -76,7 +76,8 @@ install_requires = [
         'spacy-experimental==0.6.0',
         'spacy',
         'termcolor',
-        'gensim'
+        'gensim',
+        'strenum'
     ]
 
 setup(

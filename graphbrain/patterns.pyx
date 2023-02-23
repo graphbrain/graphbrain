@@ -10,7 +10,7 @@ FUNS = {'var', 'atoms', 'lemma', 'any', 'semsim'}
 
 
 def is_wildcard(atom):
-    """Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
+    """Check if this atom defines a wildcard, i.e. if its root is a pattern matchers.
     (\*, ., ..., if it is surrounded by parenthesis or variable label starting with an uppercase letter)
     """
     if atom.atom:
@@ -27,7 +27,7 @@ def is_fun_pattern(edge):
 
 def is_pattern(edge):
     """Check if this edge defines a pattern, i.e. if it includes at least
-    one pattern matcher.
+    one pattern matchers.
 
     Pattern matchers are:
     - '\*', '.', '(\*)', '...'
@@ -53,7 +53,7 @@ def is_unordered_pattern(edge):
         return any(is_unordered_pattern(item) for item in edge)
 
 def is_full_pattern(edge):
-    """Check if every atom is a pattern matcher.
+    """Check if every atom is a pattern matchers.
 
     Pattern matchers are:
     '\*', '.', '(\*)', '...', variables (atom label starting with an

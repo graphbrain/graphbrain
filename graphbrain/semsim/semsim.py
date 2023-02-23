@@ -2,21 +2,35 @@ import logging
 
 import graphbrain.patterns
 from graphbrain import hedge
-from graphbrain.semsim.matcher import SemSimMatcher, SemSimConfig
+from graphbrain.semsim.matchers.matcher import SemSimConfig, SemSimModelType, SemSimMatcher
+from graphbrain.semsim.matchers.fv_matcher import FixedVectorMatcher
+from graphbrain.semsim.matchers.st_matcher import ContextVectorMatcher
+
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_CONFIG: SemSimConfig(
+DEFAULT_CONFIG: SemSimConfig = SemSimConfig(
+    model_type=SemSimModelType.FIXED_VECTOR,
     model_name='word2vec-google-news-300',
-    similarity_threshold=0.0
+    similarity_threshold=0.5
 )
 
 matcher: SemSimMatcher | None = None
 
 
-def init_matcher(config: SemSimConfig | None = None):
+def init_matcher(config: SemSimConfig = None):
     global matcher
-    matcher = SemSimMatcher(config) if config else SemSimMatcher(DEFAULT_CONFIG)
+
+    if not config:
+        logger.info(f"No SemSim config given, using default: {DEFAULT_CONFIG}")
+        config = DEFAULT_CONFIG
+
+    match config.model_type:
+        case SemSimModelType.FIXED_VECTOR:
+            matcher = FixedVectorMatcher(config)
+        case SemSimModelType.SENTENCE_TRANSFORMER:
+            matcher = ContextVectorMatcher(config)
+
     return matcher
 
 
