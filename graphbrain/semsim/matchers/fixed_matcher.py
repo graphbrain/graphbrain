@@ -10,7 +10,7 @@ from graphbrain.semsim.matchers.matcher import SemSimMatcher, SemSimConfig
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-class FixedVectorMatcher(SemSimMatcher):
+class FixedEmbeddingMatcher(SemSimMatcher):
     def __init__(self, config: SemSimConfig):
         super().__init__(config)
         self._model_path: Path = self._base_model_path / 'gensim-data'
@@ -31,7 +31,13 @@ class FixedVectorMatcher(SemSimMatcher):
         logger.info(f"Words left after filtering OOV words: {filtered_words}")
         return filtered_words
 
-    def _similar(self, candidate: str, references: list[str], threshold: float = None) -> bool | None:
+    def _similar(
+            self,
+            candidate: str,
+            references: list[str],
+            threshold: float = None,
+            **kwargs
+    ) -> bool | None:
         if not (filtered_references := self._in_vocab(references, return_filtered=True)):
             logger.warning(f"All reference word(s) out of vocabulary: {references}")
             return None

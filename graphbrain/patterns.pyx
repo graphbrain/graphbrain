@@ -323,7 +323,7 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge) -> list[dict]:
     elif fun == 'lemma':
         return _match_lemma(fun_pattern[1], edge, curvars, hg)
     elif fun == 'semsim':
-        return match_semsim(fun_pattern[1:], edge, curvars, hg)
+        return match_semsim(fun_pattern[1:], edge, curvars, hg=hg, root_edge=root_edge)
     elif fun == 'any':
         for pattern in fun_pattern[1:]:
             matches = _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge)

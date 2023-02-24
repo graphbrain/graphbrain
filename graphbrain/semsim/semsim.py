@@ -2,21 +2,22 @@ import logging
 
 import graphbrain.patterns
 from graphbrain import hedge
+from graphbrain.hyperedge import Hyperedge
+from graphbrain.hypergraph import Hypergraph
 from graphbrain.semsim.matchers.matcher import SemSimConfig, SemSimModelType, SemSimMatcher
-from graphbrain.semsim.matchers.fv_matcher import FixedVectorMatcher
-from graphbrain.semsim.matchers.st_matcher import ContextVectorMatcher
+from graphbrain.semsim.matchers.fixed_matcher import FixedEmbeddingMatcher
+from graphbrain.semsim.matchers.context_matcher import ContextEmbeddingMatcher
 
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG: SemSimConfig = SemSimConfig(
-    model_type=SemSimModelType.FIXED_VECTOR,
+    model_type=SemSimModelType.FIXED_EMBEDDING,
     model_name='word2vec-google-news-300',
     similarity_threshold=0.5
 )
 
-# matcher: SemSimMatcher | None = None
-matcher = None
+matcher: SemSimMatcher | None = None
 
 
 def init_matcher(config: SemSimConfig = None):
@@ -27,22 +28,29 @@ def init_matcher(config: SemSimConfig = None):
         config = DEFAULT_CONFIG
 
     match config.model_type:
-        case SemSimModelType.FIXED_VECTOR:
-            matcher = FixedVectorMatcher(config)
-        case SemSimModelType.SENTENCE_TRANSFORMER:
-            matcher = ContextVectorMatcher(config)
+        case SemSimModelType.FIXED_EMBEDDING:
+            matcher = FixedEmbeddingMatcher(config)
+        case SemSimModelType.CONTEXT_EMBEDDING:
+            matcher = ContextEmbeddingMatcher(config)
 
     return matcher
 
 
-def semsim(candidate: str, references: list[str], threshold: float = None) -> bool:
+def semsim(
+        candidate: str,
+        references: list[str],
+        threshold: float = None,
+        root_edge: Hyperedge = None,
+        hg: Hypergraph = None
+) -> bool:
     global matcher
     if not matcher:
         init_matcher()
-    return matcher.similar(candidate, references, threshold)
+    return matcher.similar(candidate, references, threshold=threshold, root_edge=root_edge, hg=hg)
 
 
-def match_semsim(pattern, edge, curvars=None, hg=None) -> list[dict]:
+# --- funcs below will be moved --- #
+def match_semsim(pattern, edge, curvars=None, root_edge=None, hg=None) -> list[dict]:
     if edge.not_atom:
         return []
 
@@ -62,7 +70,7 @@ def match_semsim(pattern, edge, curvars=None, hg=None) -> list[dict]:
     logger.debug(f"edge: {str(edge)} | word part: {edge_word_part} | "
                  f"pattern: {str(pattern)} | threshold: {similarity_threshold}")
 
-    if not semsim(edge_word_part, pattern_words, similarity_threshold):
+    if not semsim(edge_word_part, pattern_words, similarity_threshold, root_edge):
         return []
 
     # replace first edge part with pattern word part

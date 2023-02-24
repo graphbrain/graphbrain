@@ -77,7 +77,6 @@ install_requires = [
         'spacy',
         'termcolor',
         'gensim',
-        'strenum'
     ]
 
 setup(

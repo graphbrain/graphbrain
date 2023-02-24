@@ -6,12 +6,14 @@ from spacy_transformers.pipeline_component import Transformer
 from thinc.types import Ragged
 from torch import Tensor
 
+from graphbrain.hyperedge import Hyperedge
+from graphbrain.hypergraph import Hypergraph
 from graphbrain.semsim.matchers.matcher import SemSimMatcher, SemSimConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-class ContextVectorMatcher(SemSimMatcher):
+class ContextEmbeddingMatcher(SemSimMatcher):
     def __init__(self, config: SemSimConfig):
         super().__init__(config)
         self._spacy_trf_pipe: Language = create_spacy_pipeline(config.model_name)
@@ -19,8 +21,18 @@ class ContextVectorMatcher(SemSimMatcher):
     def filter_oov(self, words: list[str]) -> list[str]:
         pass
 
-    def _similar(self, candidate: str, references: list[str], threshold: float = None) -> bool | None:
-        pass
+    def _similar(
+            self,
+            candidate: str,
+            references: list[str],
+            threshold: float = None,
+            root_edge: Hyperedge = None,
+            hg: Hypergraph = None
+    ) -> bool | None:
+        root_edge_text: str = hg.text(root_edge)
+        spacy_doc = self._spacy_trf_pipe(root_edge_text)
+
+        trf_data = spacy_doc._.trf_data
 
 
 def create_spacy_pipeline(model_name: str) -> Language:

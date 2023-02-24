@@ -1,18 +1,20 @@
 import logging
 from abc import ABC
 from dataclasses import dataclass
+from enum import Enum, auto
 from pathlib import Path
+from typing import Union
 
-from strenum import StrEnum
-
+from graphbrain.hyperedge import Hyperedge
+from graphbrain.hypergraph import Hypergraph
 import graphbrain.semsim.matchers
 
 logger = logging.getLogger(__name__)
 
 
-class SemSimModelType(StrEnum):
-    FIXED_VECTOR = "FIXED_VECTOR"
-    SENTENCE_TRANSFORMER = "SENTENCE_TRANSFORMER"
+class SemSimModelType(Enum):
+    FIXED_EMBEDDING = auto()
+    CONTEXT_EMBEDDING = auto()
 
 
 @dataclass
@@ -34,14 +36,27 @@ class SemSimMatcher(ABC):
         model_dir_path.mkdir(exist_ok=True)
         return model_dir_path
 
-    def similar(self, candidate: str, references: list[str], threshold: float = None) -> bool | None:
+    def similar(
+            self,
+            candidate: str,
+            references: list[str],
+            threshold: float = None,
+            root_edge: Hyperedge = None,
+            hg: Hypergraph = None
+    ) -> Union[bool, None]:
         if not references:
             logger.error("No reference word(s) given for semantic similarity matching!")
             return None
 
-        return self._similar(candidate, references, threshold)
+        return self._similar(candidate, references, threshold, root_edge)
 
-    def _similar(self, candidate: str, references: list[str], threshold: float = None) -> bool | None:
+    def _similar(
+            self,
+            candidate: str,
+            references: list[str],
+            threshold: float = None,
+            root_edge: Hyperedge = None
+    ) -> Union[bool, None]:
         raise NotImplementedError
 
     def filter_oov(self, words: list[str]) -> list[str]:
