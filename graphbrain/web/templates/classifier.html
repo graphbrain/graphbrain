@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %} {{ cls_name }} {% endblock %}
+{% block content %}
+    <h3>Classifier: {{ cls_name }}</h3>
+    <h5>Estimated total matches: {{ est_total_matches }} ({{ '{:.2f}'.format(percentage) }}%)</h5>
+
+    {% include "patterns.html" %}
+
+    <br />
+
+    <form action="/relearn" method="post">
+      <input type="hidden" name="classifier" value="{{ cls_name }}">
+      <button type="submit" class="btn btn-primary">Relearn</button>
+    </form>
+    
+    <br />
+
+    <h4>Sample matches</h4>
+
+    {% for match in matches %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">
+            {% for rule in match['rules_triggered'] %}
+              <span class="badge rounded-pill bg-success">
+                {{ rule }}
+              </span>
+            {% endfor %}
+            {{ match['text'] }}
+          </h5>
+          <p class="card-text">
+            {% for variable in match['variables'] %}
+              <span class="badge rounded-pill bg-dark">
+                {{ variable[0] }}: "{{ variable[1] }}"
+              </span>
+            {% endfor %}
+          </p>
+          <a href="/case/edge?edge={{ match['edge'] }}" class="btn btn-primary">Change</a>
+        </div>
+      </div>
+      <br />      
+    {% endfor %}
+{% endblock %}

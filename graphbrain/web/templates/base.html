@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Graphbrain Learner - {% block title %}{% endblock %}</title>
+    
+
+    <!-- Bootstrap core CSS -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Favicons -->
+<!-- <link rel="apple-touch-icon" href="/docs/5.1/assets/img/favicons/apple-touch-icon.png" sizes="180x180"> -->
+<!-- <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png"> -->
+<!-- <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png"> -->
+<!-- <link rel="manifest" href="/docs/5.1/assets/img/favicons/manifest.json"> -->
+<!-- <link rel="mask-icon" href="/docs/5.1/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3"> -->
+<!-- <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon.ico">
+<meta name="theme-color" content="#7952b3"> -->
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+
+<script src="/static/js/d3.min.js"></script>
+
+<header class="navbar sticky-top flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
+      <img src="/static/img/graphbrain-logo.png" width="30px"/>
+      <strong>Graphbrain Learner</strong>
+  </a>
+  <div class="px-md-4 me-auto">
+    <strong>Classifier:</strong> <a href="/classifier/{{ cls_name }}">{{ cls_name }}</a>
+  </div>
+  <div class="px-md-4">
+    <span class="ms-auto"><strong>Hypergraph DB:</strong> {{ hg }}</span>
+  </div>
+</header>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link {{ 'text-info' if nav == 'dashboard' else '' }}" aria-current="page" href="/">
+              <span data-feather="home"></span>
+              Classifiers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ 'text-info' if nav == 'learn' else '' }}" href="/case">
+              <span data-feather="box"></span>
+              Learn
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ 'text-info' if nav == 'cases' else '' }}" href="/cases">
+              <span data-feather="box"></span>
+              Cases
+            </a>
+          </li>
+        </ul>
+
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+          <span>Explore</span>
+          <a class="link-secondary" href="#" aria-label="Add a new report">
+            <span data-feather="plus-circle"></span>
+          </a>
+        </h6>
+        <ul class="nav flex-column mb-2">
+          <li class="nav-item">
+            <a class="nav-link {{ 'text-info' if nav == 'verbs' else '' }}" href="/verbs">
+              <span data-feather="file-text"></span>
+              Top verbs
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <br /><br />
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+  </body>
+</html>

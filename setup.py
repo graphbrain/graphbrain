@@ -66,6 +66,9 @@ python_requires = '>=3.9'
 
 install_requires = [
         'asciitree',
+        'editdistance',
+        'flask',
+        'gensim',
         'ipython',
         'mwparserfromhell',
         'networkx',
@@ -75,8 +78,7 @@ install_requires = [
         'scikit-learn',
         'spacy-experimental==0.6.0',
         'spacy',
-        'termcolor',
-        'gensim'
+        'termcolor'
     ]
 
 setup(

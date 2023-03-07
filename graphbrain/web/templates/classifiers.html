@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Classifiers{% endblock %}
+{% block content %}
+    <h4>New classifier</h4>
+
+    <form action="/new_classifier" method="post">
+        <div class="input-group mb-3">
+        <input name="new_class_name" type="text" class="form-control">
+        <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </form>
+
+    <br />
+
+    <h4>Existing classifiers</h4>
+
+    <br />
+
+    <div class="list-group">
+    {% for cls in classifiers %}
+    <a href="/classifier/{{ cls['name'] }}" class="list-group-item list-group-item-action">
+        <h5>{{ cls['name'] }}</h5>
+        {{ cls['npatterns'] }} patterns,
+        {{ cls['ncases'] }} cases
+    </a>
+    {% endfor %}
+    </div>
+{% endblock %}

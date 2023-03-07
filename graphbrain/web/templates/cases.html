@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Cases{% endblock %}
+{% block content %}
+
+<h3>Cases</h3>
+
+<div class="list-group">
+    {% for case in cases %}
+    <a href="/case/edge?edge={{ case['edge'] }}" class="list-group-item list-group-item-action">
+        {% if case['positive'] %}
+            <span class="badge bg-success">positive</span>
+        {% else %}
+            <span class="badge bg-danger">negative</span>
+        {% endif %}
+        {% for rule in case['rules_triggered'] %}
+            <span class="badge rounded-pill bg-success">
+                {{ rule }}
+            </span>
+        {% endfor %}
+        {{ case['sentence'] }}
+        <p>
+        {% for variable in case['variables'] %}
+            <span class="badge rounded-pill bg-dark">
+                {{ variable[0] }}: "{{ variable[1] }}"
+            </span>
+        {% endfor %}
+        </p>
+    </a>
+    {% endfor %}
+</div>
+
+{% endblock %}
