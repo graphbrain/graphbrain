@@ -70,7 +70,7 @@ def match_semsim(pattern, edge, curvars=None, root_edge=None, hg=None) -> list[d
     logger.debug(f"edge: {str(edge)} | word part: {edge_word_part} | "
                  f"pattern: {str(pattern)} | threshold: {similarity_threshold}")
 
-    if not semsim(edge_word_part, pattern_words, similarity_threshold, root_edge):
+    if not semsim(edge_word_part, pattern_words, similarity_threshold, root_edge, hg):
         return []
 
     # replace first edge part with pattern word part

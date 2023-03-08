@@ -29,6 +29,13 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             root_edge: Hyperedge = None,
             hg: Hypergraph = None
     ) -> bool | None:
+        # Embedding for reference(s) is missing, needs example sentences
+
+        # Find out to which token in the root edge the candidate refers to
+
+
+
+
         root_edge_text: str = hg.text(root_edge)
         spacy_doc = self._spacy_trf_pipe(root_edge_text)
 
@@ -56,10 +63,24 @@ def average_pool(last_hidden_states: Tensor, attention_mask: Tensor) -> Tensor:
 
 
 def get_lex2trf_idx(lexical_tokens: list[str], alignment_data: Ragged) -> dict[int, list[int]]:
-    return {lex_idx: get_trf_token_idxes(lex_idx, alignment_data) for lex_idx in range(len(lexical_tokens))}
+    """
+    Make alignment between lexical tokens and transformer (sentencepiece, wordpiece, ...) tokens.
+    :param lexical_tokens:
+    :param alignment_data:
+    :return:
+    """
+    lex2trf_idx: dict[int, list[int]] = {}
+    trf_idx: int = 0
+    for lex_idx in range(len(lexical_tokens)):
+        trf_token_length: int = alignment_data.lengths[lex_idx]
+        lex2trf_idx[lex_idx] = list(alignment_data.dataXd[trf_idx:trf_idx + trf_token_length])
+        trf_idx += trf_token_length
+    return lex2trf_idx
 
+# def get_lex2trf_idx(lexical_tokens: list[str], alignment_data: Ragged) -> dict[int, list[int]]:
+#     return {lex_idx: get_trf_token_idxes(lex_idx, alignment_data) for lex_idx in range(len(lexical_tokens))}
 
-def get_trf_token_idxes(lex_idx_: int, alignment_data: Ragged):
-    start_idx: int = int(np.sum(alignment_data.lengths[:lex_idx_]))
-    end_idx: int = start_idx + alignment_data.lengths[lex_idx_]
-    return alignment_data.dataXd[start_idx:end_idx]
+# def get_trf_token_idxes(lex_idx_: int, alignment_data: Ragged):
+#     start_idx: int = int(np.sum(alignment_data.lengths[:lex_idx_]))
+#     end_idx: int = start_idx + alignment_data.lengths[lex_idx_]
+#     return alignment_data.dataXd[start_idx:end_idx]

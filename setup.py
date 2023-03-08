@@ -77,6 +77,8 @@ install_requires = [
         'spacy',
         'termcolor',
         'gensim',
+        'thinc',
+        'torch'
     ]
 
 setup(
