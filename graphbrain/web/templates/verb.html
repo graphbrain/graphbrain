@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Verb: {{ verb }}{% endblock %}
+{% block content %}
+
+<h3>Verb: {{ verb }}</h3>
+
+<div class="list-group">
+    {% for case in cases %}
+    <a href="/case/edge?edge={{ case[0] }}" class="list-group-item list-group-item-action">{{ case[1] }}</a>
+    {% endfor %}
+</div>
+
+{% endblock %}

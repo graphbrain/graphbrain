@@ -1,0 +1,15 @@
+{% for rule in classifier.rules %}
+    <div class="row align-items-center">
+      <div class="col-md-auto">
+        <h5>
+          <span class="badge rounded-pill bg-success">
+            {{ rule.index }}
+          </span>
+        </h5>
+      </div>
+      <div class="col-md-auto" style="margin-bottom:15px">
+        {{ rule.pattern_html()|safe }}
+        <button type="button" class="btn btn-primary" style="margin-top:5px" onClick="location.href='/expand?edge={{ rule.pattern_url() }}'">Expand</button>
+      </div>
+    </div>
+{% endfor %}

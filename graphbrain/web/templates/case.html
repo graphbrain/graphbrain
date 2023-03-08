@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Learn{% endblock %}
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script>
+  $(function () {
+  
+    // Start counting from the third row
+    var counter = {{ case['nvariables'] }};
+  
+    $("#insertRow").on("click", function (event) {
+        event.preventDefault();
+  
+        var newRow = $("<tr>");
+        var cols = '';
+  
+        // Table columns
+        cols += '<td style="width: 15%"><input class="form-control rounded-0" type="text" name="variable' + counter + '" placeholder="Variable"></td>';
+        cols += '<td><input class="form-control rounded-0" type="text" name="content' + counter + '" placeholder="Content"></td>';
+        cols += '<td><button class="btn btn-danger rounded-0" id ="deleteRow"><i class="fa fa-trash"></i></button></td>';
+  
+        // Insert the columns inside a row
+        newRow.append(cols);
+  
+        // Insert the row inside a table
+        $("table").append(newRow);
+  
+        // Increase counter after each row insertion
+        counter++;
+    });
+  
+    // Remove row when delete btn is clicked
+    $("table").on("click", "#deleteRow", function (event) {
+        $(this).closest("tr").remove();
+        counter -= 1
+    });
+  });
+  </script>
+
+  <h4> {{ case['text'] }} </h4>
+
+  <p>
+    <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+      Show hyperedge
+    </button>
+  </p>
+  <div class="collapse" id="collapseExample">
+    {{ case['edge_html']|safe }}
+  </div>
+
+  <br />
+
+  <form action="/case" method="post">
+    <input type="hidden" name="edge" value=" {{ case['edge'] }} ">
+  
+    <div class="input-group mb-3">
+      <div class="input-group-text">
+        <input name="positive" class="form-check-input mt-0" type="checkbox" value=""
+          {{ 'checked' if case['positive'] else '' }}>
+      </div>
+      &nbsp;
+      {{ cls_name }}
+    </div>
+    
+                  
+
+    <div class="table-responsive">
+      <table class="table table-borderless table-striped w-100 d-block d-md-table">
+        <tbody>
+          {% for variable in case['variables'] %}
+          <tr>
+            <td style="width: 15%"><input class="form-control rounded-0" type="text" name="variable{{ variable[0] }}" placeholder="Variable" value="{{ variable[1][0] }}"></td>
+            <td><input class="form-control rounded-0" type="text" name="content{{ variable[0] }}" placeholder="Content" value="{{ variable[1][1] }}"></td>
+            <td><button class="btn btn-danger rounded-0" id ="deleteRow"><i class="fa fa-trash"></i></button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <button type="button" class="btn btn-primary" onClick="location.href='/case'">New case</button>
+    &nbsp;
+    <button type="submit" class="btn btn-primary" id="insertRow" href="#">New variable</button>
+    &nbsp;
+    <button type="submit" class="btn btn-success">Accept</button>
+  </form>
+  
+  <br /><br />
+
+  <h3>Classifier patterns</h3>
+  {% include "patterns.html" %}
+
+{% endblock %}

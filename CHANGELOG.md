@@ -2,6 +2,8 @@
 
 ## [0.7.0] - ongoing
 ### Added
+- Web app / UI.
+- Symbolic pattern learner.
 - patterns.is_wildcard().
 - Base class hypergraph.memory.keyvalue.KeyValue for key-value hypergraph databases, removing redundant code between LevelDB and SQLite.
 - Tests for LevelDB (only the SQLite Hypergraph implementation was being directly tested).

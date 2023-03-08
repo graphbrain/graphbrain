@@ -66,6 +66,9 @@ python_requires = '>=3.9'
 
 install_requires = [
         'asciitree',
+        'editdistance',
+        'flask',
+        'gensim',
         'ipython',
         'mwparserfromhell',
         'networkx',

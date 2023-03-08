@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Top verbs{% endblock %}
+{% block content %}
+
+<h3>Top verbs</h3>
+
+<div class="list-group">
+    {% for verb in verbs %}
+    <a href="/verb/{{ verb['verb'] }}" class="list-group-item list-group-item-action">
+        <strong>{{ verb['verb'] }}</strong>
+        <span class="badge bg-secondary">{{ verb['count'] }}</span>
+        <small class="text-muted">{{ verb['sentence'] }}</small>
+    </a>
+    {% endfor %}
+</div>
+
+{% endblock %}
