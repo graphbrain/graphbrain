@@ -37,16 +37,20 @@ def init_matcher(config: SemSimConfig = None):
 
 
 def semsim(
+        # *args,
+        # **kwargs
         candidate: str,
         references: list[str],
         threshold: float = None,
+        edge: Hyperedge = None,
         root_edge: Hyperedge = None,
         hg: Hypergraph = None
 ) -> bool:
     global matcher
     if not matcher:
         init_matcher()
-    return matcher.similar(candidate, references, threshold=threshold, root_edge=root_edge, hg=hg)
+    # return matcher.similar(*args, **kwargs)
+    return matcher.similar(candidate, references, threshold=threshold, edge=edge, root_edge=root_edge, hg=hg)
 
 
 # --- funcs below will be moved --- #
@@ -56,9 +60,13 @@ def match_semsim(pattern, edge, curvars=None, root_edge=None, hg=None) -> list[d
 
     edge_word_part: str = edge.parts()[0]
 
-    # possibly multi-word semsim
+    # special edges ('_lemma')
+    if edge_word_part.startswith('_'):
+        return []
+
     pattern_word_part: str = pattern[0].parts()[0]
 
+    # extract patterns words (possibly multi-word semsim)
     if pattern_word_part.startswith('[') and pattern_word_part.endswith(']'):
         pattern_words = [w.strip() for w in pattern_word_part[1:-1].split(',')]
     else:
@@ -70,7 +78,7 @@ def match_semsim(pattern, edge, curvars=None, root_edge=None, hg=None) -> list[d
     logger.debug(f"edge: {str(edge)} | word part: {edge_word_part} | "
                  f"pattern: {str(pattern)} | threshold: {similarity_threshold}")
 
-    if not semsim(edge_word_part, pattern_words, similarity_threshold, root_edge, hg):
+    if not semsim(edge_word_part, pattern_words, threshold=similarity_threshold, edge=edge, root_edge=root_edge, hg=hg):
         return []
 
     # replace first edge part with pattern word part

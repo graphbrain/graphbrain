@@ -26,20 +26,53 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             candidate: str,
             references: list[str],
             threshold: float = None,
+            edge: Hyperedge = None,
             root_edge: Hyperedge = None,
             hg: Hypergraph = None
     ) -> bool | None:
-        # Embedding for reference(s) is missing, needs example sentences
+        # embedding for reference(s) is missing, needs example sentences
 
-        # Find out to which token in the root edge the candidate refers to
-
-
-
-
+        root_edge_tokens: list[str] = hg.get_str_attribute(root_edge, 'tokens')
+        root_edge_tok_pos: str = hg.get_str_attribute(root_edge, 'tok_pos')
         root_edge_text: str = hg.text(root_edge)
+
+        # root edge is not a full sentence (sequence)
+        if not root_edge_tokens or not root_edge_tok_pos:
+            return False
+
+        # find out to which token in the root edge the candidate refers to
+        if len(root_edge_tokens) == 1:
+            pass
+
+        # check alignment correctness
+
         spacy_doc = self._spacy_trf_pipe(root_edge_text)
 
         trf_data = spacy_doc._.trf_data
+
+
+def recursive_edge_search(
+        current_edge: Hyperedge,
+        candidate_edge: Hyperedge,
+        edge_location: list[int] = None
+) -> list[int] | None:
+    if not edge_location:
+        edge_location = []
+
+    if current_edge.atom:
+        if current_edge == candidate_edge:
+            return edge_location
+        return None
+
+    for sub_edge_idx, sub_edge in enumerate(current_edge):
+        if sub_edge_location := recursive_edge_search(sub_edge, candidate_edge, [sub_edge_idx]):
+            return edge_location + sub_edge_location
+
+
+def get_candidate_tok_idx(root_edge: Hyperedge, candidate_edge: Hyperedge) -> int | None:
+    candidate_edge_location: list[int] = recursive_edge_search(root_edge, candidate_edge)
+
+    # get candidate token idx by edge location
 
 
 def create_spacy_pipeline(model_name: str) -> Language:

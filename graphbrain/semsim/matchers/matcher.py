@@ -40,23 +40,18 @@ class SemSimMatcher(ABC):
             self,
             candidate: str,
             references: list[str],
-            threshold: float = None,
-            root_edge: Hyperedge = None,
-            hg: Hypergraph = None
+            **kwargs
     ) -> Union[bool, None]:
         if not references:
             logger.error("No reference word(s) given for semantic similarity matching!")
             return None
 
-        return self._similar(candidate, references, threshold, root_edge, hg)
+        return self._similar(candidate, references, **kwargs)
 
     def _similar(
             self,
-            candidate: str,
-            references: list[str],
-            threshold: float = None,
-            root_edge: Hyperedge = None,
-            hg: Hypergraph = None
+            *args,
+            **kwargs
     ) -> Union[bool, None]:
         raise NotImplementedError
 
