@@ -58,15 +58,14 @@ def recursive_edge_search(
 ) -> list[int] | None:
     if not edge_location:
         edge_location = []
-
     if current_edge.atom:
         if current_edge == candidate_edge:
             return edge_location
         return None
-
     for sub_edge_idx, sub_edge in enumerate(current_edge):
         if sub_edge_location := recursive_edge_search(sub_edge, candidate_edge, [sub_edge_idx]):
             return edge_location + sub_edge_location
+    return None
 
 
 def get_candidate_tok_idx(root_edge: Hyperedge, candidate_edge: Hyperedge) -> int | None:
