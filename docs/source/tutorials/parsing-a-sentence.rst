@@ -22,7 +22,7 @@ Finally, let us parse the text and print the result:
 
 ::
 
-    parses = parser.parse(text)
+    parses = parser.parse(text)['parses']
     for parse in parses:
         edge = parse['main_edge']
         print(edge.to_str())
