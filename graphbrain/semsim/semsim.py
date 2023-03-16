@@ -2,7 +2,7 @@ import logging
 
 import graphbrain.patterns
 from graphbrain import hedge
-from graphbrain.hyperedge import Hyperedge
+from graphbrain.hyperedge import Hyperedge, Atom
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.semsim.matchers.matcher import SemSimConfig, SemSimModelType, SemSimMatcher
 from graphbrain.semsim.matchers.fixed_matcher import FixedEmbeddingMatcher
@@ -42,7 +42,7 @@ def semsim(
         candidate: str,
         references: list[str],
         threshold: float = None,
-        edge: Hyperedge = None,
+        candidate_edge: Hyperedge = None,
         root_edge: Hyperedge = None,
         hg: Hypergraph = None
 ) -> bool:
@@ -50,48 +50,70 @@ def semsim(
     if not matcher:
         init_matcher()
     # return matcher.similar(*args, **kwargs)
-    return matcher.similar(candidate, references, threshold=threshold, edge=edge, root_edge=root_edge, hg=hg)
+    return matcher.similar(candidate, references, threshold=threshold, candidate_edge=edge, root_edge=root_edge, hg=hg)
 
 
 # --- funcs below will be moved --- #
-def match_semsim(pattern, edge, curvars=None, root_edge=None, hg=None) -> list[dict]:
-    if edge.not_atom:
-        return []
-
-    edge_word_part: str = edge.parts()[0]
-
-    # special edges ('_lemma')
-    if edge_word_part.startswith('_'):
+def match_semsim(
+        pattern: Hyperedge,
+        edge: Hyperedge | Atom,
+        curvars: dict = None,
+        root_edge: Hyperedge = None,
+        hg: Hypergraph = None
+) -> list[dict]:
+    edge_word_part: str = _get_edge_word_part(edge)
+    if not edge_word_part:
         return []
 
     pattern_word_part: str = pattern[0].parts()[0]
+    pattern_words: list[str] = _extract_pattern_words(pattern_word_part)
 
-    # extract patterns words (possibly multi-word semsim)
-    if pattern_word_part.startswith('[') and pattern_word_part.endswith(']'):
-        pattern_words = [w.strip() for w in pattern_word_part[1:-1].split(',')]
-    else:
-        pattern_words = [pattern_word_part]
-
-    # extract similarity threshold if given
     similarity_threshold: float | None = _extract_similarity_threshold(pattern)
 
     logger.debug(f"edge: {str(edge)} | word part: {edge_word_part} | "
                  f"pattern: {str(pattern)} | threshold: {similarity_threshold}")
 
-    if not semsim(edge_word_part, pattern_words, threshold=similarity_threshold, edge=edge, root_edge=root_edge, hg=hg):
+    if not semsim(
+            edge_word_part,
+            pattern_words,
+            threshold=similarity_threshold,
+            candidate_edge=edge,
+            root_edge=root_edge,
+            hg=hg
+    ):
         return []
 
-    # replace first edge part with pattern word part
-    edge_parts_modified = [edge_part if idx != 0 else pattern_word_part for idx, edge_part in enumerate(edge.parts())]
-    edge_modified = hedge('/'.join(edge_parts_modified))
-
-    if graphbrain.patterns._matches_atomic_pattern(edge_modified, pattern[0]):
+    if graphbrain.patterns._matches_atomic_pattern(_modify_edge(edge, pattern_word_part), pattern[0]):
         return [curvars]
 
     return []
 
 
-def _extract_similarity_threshold(pattern: str) -> float | None:
+# replace first edge part with pattern word part
+def _modify_edge(edge: Atom, pattern_word_part: str):
+    return hedge('/'.join([pattern_word_part] + edge.parts()))
+
+
+def _get_edge_word_part(edge: Hyperedge | Atom) -> str | None:
+    if edge.not_atom:
+        return None
+    edge_word_part: str = edge.parts()[0]
+
+    # special atoms ('_lemma')
+    if edge_word_part.startswith('_'):
+        return None
+
+    return edge_word_part
+
+
+def _extract_pattern_words(pattern_word_part: str):
+    if pattern_word_part.startswith('[') and pattern_word_part.endswith(']'):
+        return [w.strip() for w in pattern_word_part[1:-1].split(',')]
+    return [pattern_word_part]
+
+
+# extract similarity threshold if given
+def _extract_similarity_threshold(pattern: Hyperedge) -> float | None:
     if not len(pattern) > 1:
         return None
 

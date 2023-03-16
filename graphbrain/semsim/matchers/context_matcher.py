@@ -20,8 +20,8 @@ from graphbrain.semsim.matchers.matcher import SemSimMatcher, SemSimConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
-# TODO: Caching! (only for references?)
 
+# TODO: Caching! (only for references?)
 
 class ContextEmbeddingMatcher(SemSimMatcher):
     def __init__(self, config: SemSimConfig):
@@ -133,8 +133,8 @@ def recursive_edge_search(
 
 
 def get_candidate_tok_idx(candidate_edge: Hyperedge, root_edge: Hyperedge, root_edge_tok_pos: str) -> int | None:
-    candidate_edge = graphbrain.hyperedge.unique(candidate_edge)
-    root_edge = graphbrain.hyperedge.unique(root_edge)
+    # candidate_edge = graphbrain.hyperedge.unique(candidate_edge)
+    # root_edge = graphbrain.hyperedge.unique(root_edge)
 
     candidate_edge_location: list[int] | None = recursive_edge_search(root_edge, candidate_edge)
     if not candidate_edge_location:
@@ -162,9 +162,6 @@ def create_spacy_pipeline(model_name: str) -> Language:
     trf: Transformer = nlp.add_pipe("transformer", config=config)  # noqa
     trf.model.initialize()
     return nlp
-
-
-# def tok_embedding_similarity()
 
 
 # Adapted from: https://huggingface.co/intfloat/e5-base
