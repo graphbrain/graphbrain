@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 from statistics import mean
+from typing import Union
 
 import gensim.downloader
 from gensim.models import KeyedVectors
@@ -31,13 +32,12 @@ class FixedEmbeddingMatcher(SemSimMatcher):
         logger.info(f"Words left after filtering OOV words: {filtered_words}")
         return filtered_words
 
-    def _similar(
+    def _similarities(
             self,
             candidate: str,
             references: list[str],
-            threshold: float = None,
             **kwargs
-    ) -> bool | None:
+    ) -> Union[dict[str, int], None]:
         if not (filtered_references := self._in_vocab(references, return_filtered=True)):
             logger.warning(f"All reference word(s) out of vocabulary: {references}")
             return None
@@ -49,16 +49,7 @@ class FixedEmbeddingMatcher(SemSimMatcher):
         if not self._in_vocab([candidate]):
             return None
 
-        # reference_vectors = [self._w2v_model[reference_word] for reference_word in references]
-        word_distance = mean(self._model.distances(word_or_vector=candidate, other_words=filtered_references))
-
-        similarity_threshold: float = threshold if threshold is not None else self._similarity_threshold
-        if word_distance < similarity_threshold:
-            logger.debug(f"Word distance for ('{candidate}, {filtered_references}) = {word_distance:.2f} "
-                         f"is smaller than threshold!")
-            return True
-
-        return False
+        return {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
 
     def _load_model(self, model_name: str) -> KeyedVectors:
         model_path: Path = self._model_path / model_name / f"{model_name}.gz"

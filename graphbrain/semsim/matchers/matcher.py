@@ -3,11 +3,10 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
+from statistics import mean
 from typing import Union
 
-from graphbrain.hyperedge import Hyperedge
-from graphbrain.hypergraph import Hypergraph
-import graphbrain.semsim.matchers
+import graphbrain.semsim
 
 logger = logging.getLogger(__name__)
 
@@ -40,19 +39,33 @@ class SemSimMatcher(ABC):
             self,
             candidate: str,
             references: list[str],
+            threshold: float = None,
             **kwargs
-    ) -> Union[bool, None]:
+    ) -> bool:
+        logger.debug(f"Candidate string: {candidate} | References: {references} | Threshold: {threshold}")
+
         if not references:
             logger.error("No reference word(s) given for semantic similarity matching!")
-            return None
+            return False
 
-        return self._similar(candidate, references, **kwargs)
+        similarities: dict[str, float] = self._similarities(candidate, references, **kwargs)
+        logger.debug(f"Similarities ('{candidate}'): {similarities}")
+        if not similarities:
+            return False
 
-    def _similar(
+        similarity_threshold: float = threshold if threshold is not None else self._similarity_threshold
+        if similarity := mean(similarities.values()) < similarity_threshold:
+            return False
+
+        logger.debug(f"Similarity is greater than threshold: "
+                     f"semsim('{candidate}, {similarities.keys()}) = {similarity:.2f} > {similarity_threshold}")
+        return True
+
+    def _similarities(
             self,
             *args,
             **kwargs
-    ) -> Union[bool, None]:
+    ) -> Union[dict[str, int], None]:
         raise NotImplementedError
 
     def filter_oov(self, words: list[str]) -> list[str]:
