@@ -50,7 +50,9 @@ def semsim(
     if not matcher:
         init_matcher()
     # return matcher.similar(*args, **kwargs)
-    return matcher.similar(candidate, references, threshold=threshold, candidate_edge=edge, root_edge=root_edge, hg=hg)
+    return matcher.similar(
+        candidate, references, threshold=threshold, candidate_edge=candidate_edge, root_edge=root_edge, hg=hg
+    )
 
 
 # --- funcs below will be moved --- #
