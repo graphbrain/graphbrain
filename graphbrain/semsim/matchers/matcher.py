@@ -54,18 +54,20 @@ class SemSimMatcher(ABC):
             return False
 
         similarity_threshold: float = threshold if threshold is not None else self._similarity_threshold
-        if similarity := mean(similarities.values()) < similarity_threshold:
+        if (similarity := mean(similarities.values())) < similarity_threshold:
+            logger.debug(f"Similarity is smaller than threshold: "
+                         f"semsim('{candidate}, {similarities.keys()}) = {similarity:.2f} < {similarity_threshold}")
             return False
 
-        logger.debug(f"Similarity is greater than threshold: "
-                     f"semsim('{candidate}, {similarities.keys()}) = {similarity:.2f} > {similarity_threshold}")
+        logger.debug(f"Similarity is greater or equal threshold: "
+                     f"semsim('{candidate}, {similarities.keys()}) = {similarity:.2f} >= {similarity_threshold}")
         return True
 
     def _similarities(
             self,
             *args,
             **kwargs
-    ) -> Union[dict[str, int], None]:
+    ) -> Union[dict[str, float], None]:
         raise NotImplementedError
 
     def filter_oov(self, words: list[str]) -> list[str]:

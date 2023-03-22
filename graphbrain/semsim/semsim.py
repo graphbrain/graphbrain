@@ -93,7 +93,7 @@ def match_semsim(
 
 # replace first edge part with pattern word part
 def _modify_edge(edge: Atom, pattern_word_part: str):
-    return hedge('/'.join([pattern_word_part] + edge.parts()))
+    return hedge('/'.join([pattern_word_part] + edge.parts()[1:]))
 
 
 def _get_edge_word_part(edge: Hyperedge | Atom) -> str | None:

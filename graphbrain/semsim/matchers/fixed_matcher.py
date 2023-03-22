@@ -37,7 +37,7 @@ class FixedEmbeddingMatcher(SemSimMatcher):
             candidate: str,
             references: list[str],
             **kwargs
-    ) -> Union[dict[str, int], None]:
+    ) -> Union[dict[str, float], None]:
         if not (filtered_references := self._in_vocab(references, return_filtered=True)):
             logger.warning(f"All reference word(s) out of vocabulary: {references}")
             return None
