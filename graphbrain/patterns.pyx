@@ -1,10 +1,15 @@
+import logging
 import itertools
-
 from collections import Counter
+from typing import Union
+
 from graphbrain import hedge
+from graphbrain.hyperedge import Hyperedge
+from graphbrain.hypergraph import Hypergraph
 from graphbrain.utils.lemmas import lemma
 from graphbrain.semsim import match_semsim
 
+logger = logging.getLogger(__name__)
 
 FUNS = {'var', 'atoms', 'lemma', 'any', 'semsim'}
 
@@ -334,7 +339,7 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge) -> list[dict]:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
 
-def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None):
+def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, tok_pos=None):
     if curvars is None:
         curvars = {}
 
@@ -408,7 +413,11 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None):
                         continue
                     _result.append(variables)
                 else:
-                    _result +=  _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge)
+                    if tok_pos is not None:
+                        tok_pos = tok_pos[i] # TODO: add validation for tok_pos indexing
+                    _result += _match_pattern(
+                        eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge, tok_pos=tok_pos
+                    )
             result = _result
     # match by argroles
     else:
@@ -416,7 +425,7 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None):
         # match connectors first
         econn = edge[0]
         pconn = pattern[0]
-        for variables in _match_pattern(econn, pconn, curvars, hg=hg, root_edge=root_edge):
+        for variables in _match_pattern(econn, pconn, curvars, hg=hg, root_edge=root_edge, tok_pos=tok_pos):
             role_counts = Counter(argroles_opt).most_common()
             unknown_roles = (len(pattern) - 1) - len(argroles_opt)
             if unknown_roles > 0:
@@ -451,6 +460,25 @@ def _normalize_fun_patterns(pattern):
                 return hedge(new_pattern)
 
     return pattern
+
+
+def _edge_tok_pos(edge: Hyperedge, hg: Hypergraph = None) -> Union[Hyperedge, None]:
+    if hg is None:
+        logger.warning(f"No hypergraph given to retrieve 'tok_pos' attribute for edges.")
+        return None
+
+    tok_pos_str: str = hg.get_str_attribute(edge, "tok_pos")
+    if not tok_pos_str:
+        logger.warning(f"Edge has not 'tok_pos' string attribute: {edge}")
+        return None
+
+    try:
+        tok_pos_hedge: Hyperedge = hedge(tok_pos_str)
+    except ValueError:
+        logger.warning(f"Edge has invalid 'tok_pos' attribute: {edge}")
+        return None
+
+    return tok_pos_hedge
 
 
 def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None):
@@ -491,7 +519,8 @@ def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None):
     pattern = hedge(pattern)
     pattern = _normalize_fun_patterns(pattern)
     root_edge = hedge(root_edge)
-    return _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge)
+    tok_pos = _edge_tok_pos(edge)
+    return _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge, tok_pos=tok_pos)
 
 
 def edge_matches_pattern(edge, pattern, hg=None, root_edge=None):
