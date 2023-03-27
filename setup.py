@@ -78,7 +78,10 @@ install_requires = [
         'scikit-learn',
         'spacy-experimental==0.6.0',
         'spacy',
-        'termcolor'
+        'termcolor',
+        'gensim',
+        'thinc',
+        'torch'
     ]
 
 setup(
