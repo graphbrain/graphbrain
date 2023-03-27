@@ -2,8 +2,10 @@ import ast
 import dataclasses
 import logging
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Union, Any, Callable, Optional
 
+from diskcache import Cache
 from spacy.language import Language
 from spacy.lang.en import English
 from spacy.tokens import Doc
@@ -49,11 +51,18 @@ def contex_references_util(reference_sentences: list[str], config: SemSimConfig)
     matcher.contex_references_util(reference_sentences)
 
 
+def _create_cache_dir() -> Path:
+    cache_dir: Path = Path(graphbrain.semsim.semsim.__file__).parent / ".cache"
+    cache_dir.mkdir(exist_ok=True)
+    return cache_dir
+
+
 class ContextEmbeddingMatcher(SemSimMatcher):
     def __init__(self, config: SemSimConfig):
         super().__init__(config)
         self._spacy_trf_pipe: Language = _create_spacy_pipeline(config.model_name)
         self._cos_sim: CosineSimilarity = CosineSimilarity(dim=1)
+        self._cache: Cache = Cache(str(_create_cache_dir()))
 
     # utility function
     def contex_references_util(self, reference_sentences: list[str]):
