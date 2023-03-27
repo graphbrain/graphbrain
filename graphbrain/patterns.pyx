@@ -217,7 +217,8 @@ def _defun_pattern_argroles(edge):
         return hedge([_defun_pattern_argroles(subedge) for subedge in edge])
 
 
-def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), curvars=None, root_edge=None):
+def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), curvars=None, root_edge=None,
+                       ref_sentence=None, tok_pos=None):
     if curvars is None:
         curvars = {}
 
@@ -253,19 +254,22 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), cur
             pitem = pitems[i]
             item_result = []
             for variables in perm_result:
-                item_result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge)
+                item_result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge,
+                                              ref_sentence=ref_sentence, tok_pos=tok_pos)
             perm_result = item_result
             if len(item_result) == 0:
                 break
 
         for variables in perm_result:
             result += _match_by_argroles(edge, pattern, role_counts[1:], min_vars, hg, matched + perm,
-                                         {**curvars, **variables}, root_edge=root_edge)
+                                         {**curvars, **variables}, root_edge=root_edge, ref_sentence=ref_sentence,
+                                         tok_pos=tok_pos)
     
     return result
 
 
-def _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=None, matched_atoms=None) -> list[dict]:
+def _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=None, ref_sentence=None, tok_pos=None,
+                 matched_atoms=None) -> list[dict]:
     if matched_atoms is None:
         matched_atoms = []
 
@@ -277,10 +281,12 @@ def _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=None, matched_atom
 
     for atom in atoms:
         if atom not in matched_atoms:
-            svars = _match_pattern(atom, atom_pattern, curvars, hg=hg, root_edge=root_edge)
+            svars = _match_pattern(atom, atom_pattern, curvars, hg=hg, root_edge=root_edge, ref_sentence=ref_sentence,
+                                   tok_pos=tok_pos)
             for variables in svars:
-                results += _match_atoms(
-                    atom_patterns[1:], atoms, {**curvars, **variables}, hg, root_edge, matched_atoms + [atom])
+                results += _match_atoms(atom_patterns[1:], atoms, {**curvars, **variables}, hg, root_edge=root_edge,
+                                        ref_sentence=ref_sentence, tok_pos=tok_pos,
+                                        matched_atoms=matched_atoms + [atom])
 
     return results
 
@@ -308,7 +314,7 @@ def _match_lemma(lemma_pattern, edge, curvars, hg):
     return []
 
 
-def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge) -> list[dict]:
+def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_sentence=None, tok_pos=None) -> list[dict]:
     fun = fun_pattern[0].root()
     if fun == 'var':
         if len(fun_pattern) != 3:
@@ -317,21 +323,26 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge) -> list[dict]:
         var_name = fun_pattern[2].root()
         if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
             this_var = {var_name: edge[1]}
-            return _match_pattern(edge[1], pattern, curvars={**curvars, **this_var}, hg=hg, root_edge=root_edge)
+            return _match_pattern(edge[1], pattern, curvars={**curvars, **this_var}, hg=hg, root_edge=root_edge,
+                                  ref_sentence=ref_sentence, tok_pos=tok_pos)
         else:
             this_var = {var_name: edge}
-            return _match_pattern(edge, pattern, curvars={**curvars, **this_var}, hg=hg, root_edge=root_edge)
+            return _match_pattern(edge, pattern, curvars={**curvars, **this_var}, hg=hg, root_edge=root_edge,
+                                  ref_sentence=ref_sentence, tok_pos=tok_pos)
     elif fun == 'atoms':
         atoms = edge.atoms()
         atom_patterns = fun_pattern[1:]
-        return _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=root_edge)
+        return _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=root_edge, ref_sentence=ref_sentence,
+                            tok_pos=tok_pos)
     elif fun == 'lemma':
         return _match_lemma(fun_pattern[1], edge, curvars, hg)
     elif fun == 'semsim':
-        return match_semsim(fun_pattern[1:], edge, curvars, hg=hg, root_edge=root_edge)
+        return match_semsim(fun_pattern[1:], edge, curvars, hg=hg, root_edge=root_edge, ref_sentence=ref_sentence,
+                            tok_pos=tok_pos)
     elif fun == 'any':
         for pattern in fun_pattern[1:]:
-            matches = _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge)
+            matches = _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge,
+                                     ref_sentence=ref_sentence, tok_pos=tok_pos)
             if len(matches) > 0:
                 return matches
         return []
@@ -339,7 +350,7 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge) -> list[dict]:
         raise RuntimeError('Unknown pattern function: {}'.format(fun))
 
 
-def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, tok_pos=None):
+def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_sentence=None, tok_pos=None):
     if curvars is None:
         curvars = {}
 
@@ -363,7 +374,8 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, tok_pos
 
     # functional patterns
     if is_fun_pattern(pattern):
-        return _matches_fun_pat(edge, pattern, curvars, hg, root_edge)
+        return _matches_fun_pat(edge, pattern, curvars, hg, root_edge=root_edge, ref_sentence=ref_sentence,
+                                tok_pos=tok_pos)
 
     min_len = len(pattern)
     max_len = min_len
@@ -415,9 +427,8 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, tok_pos
                 else:
                     if tok_pos is not None:
                         tok_pos = tok_pos[i] # TODO: add validation for tok_pos indexing
-                    _result += _match_pattern(
-                        eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge, tok_pos=tok_pos
-                    )
+                    _result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge,
+                                              ref_sentence=ref_sentence, tok_pos=tok_pos)
             result = _result
     # match by argroles
     else:
@@ -425,15 +436,17 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, tok_pos
         # match connectors first
         econn = edge[0]
         pconn = pattern[0]
-        for variables in _match_pattern(econn, pconn, curvars, hg=hg, root_edge=root_edge, tok_pos=tok_pos):
+        for variables in _match_pattern(econn, pconn, curvars, hg=hg, root_edge=root_edge, ref_sentence=ref_sentence,
+                                        tok_pos=tok_pos):
             role_counts = Counter(argroles_opt).most_common()
             unknown_roles = (len(pattern) - 1) - len(argroles_opt)
             if unknown_roles > 0:
                 role_counts.append(('*', unknown_roles))
             # add connector pseudo-argrole
             role_counts = [('X', 1)] + role_counts
-            sresult = _match_by_argroles(
-                edge, pattern, role_counts, len(argroles), hg, curvars={**curvars, **variables}, root_edge=root_edge)
+            sresult = _match_by_argroles(edge, pattern, role_counts, len(argroles), hg,
+                                         curvars={**curvars, **variables}, root_edge=root_edge,
+                                         ref_sentence=ref_sentence, tok_pos=tok_pos)
             for svars in sresult:
                 result.append({**variables, **svars})
 
@@ -481,7 +494,7 @@ def _edge_tok_pos(edge: Hyperedge, hg: Hypergraph = None) -> Union[Hyperedge, No
     return tok_pos_hedge
 
 
-def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None):
+def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_sentence=None, tok_pos=None):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
     pattern variable. If the pattern specifies no variables but the edge
@@ -520,10 +533,11 @@ def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None):
     pattern = _normalize_fun_patterns(pattern)
     root_edge = hedge(root_edge)
     tok_pos = _edge_tok_pos(edge)
-    return _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge, tok_pos=tok_pos)
+    return _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge, ref_sentence=ref_sentence,
+                          tok_pos=tok_pos)
 
 
-def edge_matches_pattern(edge, pattern, hg=None, root_edge=None):
+def edge_matches_pattern(edge, pattern, hg=None, root_edge=None, ref_sentence=None, tok_pos=None):
     """Check if an edge matches a pattern.
 
     Patterns are themselves edges. They can match families of edges
@@ -541,7 +555,7 @@ def edge_matches_pattern(edge, pattern, hg=None, root_edge=None):
     Examples: (is/Pd graphbrain/C .)
     (says/Pd * ...)
     """
-    result = match_pattern(edge, pattern, hg=hg, root_edge=root_edge)
+    result = match_pattern(edge, pattern, hg=hg, root_edge=root_edge, ref_sentence=ref_sentence, tok_pos=tok_pos)
     return len(result) > 0
 
 
