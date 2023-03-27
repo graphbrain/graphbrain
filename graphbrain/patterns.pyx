@@ -248,14 +248,23 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), cur
 
     result = []
 
-    for perm in tuple(itertools.permutations(eitems, r=n)):
+    if tok_pos:
+        tok_pos_perms = tuple(itertools.permutations(tok_pos, r=n))
+
+    for perm_n, perm in enumerate(tuple(itertools.permutations(eitems, r=n))):
+        if tok_pos:
+            tok_pos_perm = tok_pos_perms[perm_n]
         perm_result = [{}]
         for i, eitem in enumerate(perm):
             pitem = pitems[i]
+            if tok_pos:
+                tok_pos_item = tok_pos_perm[i]
+            else:
+                tok_pos_item = None
             item_result = []
             for variables in perm_result:
                 item_result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge,
-                                              ref_sentence=ref_sentence, tok_pos=tok_pos)
+                                              ref_sentence=ref_sentence, tok_pos=tok_pos_item)
             perm_result = item_result
             if len(item_result) == 0:
                 break
@@ -268,7 +277,7 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), cur
     return result
 
 
-def _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=None, ref_sentence=None, tok_pos=None,
+def _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=None, ref_sentence=None, atoms_tok_pos=None,
                  matched_atoms=None) -> list[dict]:
     if matched_atoms is None:
         matched_atoms = []
@@ -279,13 +288,17 @@ def _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=None, ref_sentence
     results = []
     atom_pattern = atom_patterns[0]
 
-    for atom in atoms:
+    for atom_pos, atom in enumerate(atoms):
         if atom not in matched_atoms:
+            if atoms_tok_pos:
+                tok_pos = atoms_tok_pos[atom_pos]
+            else:
+                tok_pos = None
             svars = _match_pattern(atom, atom_pattern, curvars, hg=hg, root_edge=root_edge, ref_sentence=ref_sentence,
                                    tok_pos=tok_pos)
             for variables in svars:
                 results += _match_atoms(atom_patterns[1:], atoms, {**curvars, **variables}, hg, root_edge=root_edge,
-                                        ref_sentence=ref_sentence, tok_pos=tok_pos,
+                                        ref_sentence=ref_sentence, atoms_tok_pos=atoms_tok_pos,
                                         matched_atoms=matched_atoms + [atom])
 
     return results
@@ -314,6 +327,20 @@ def _match_lemma(lemma_pattern, edge, curvars, hg):
     return []
 
 
+def _atoms_and_tok_pos(edge, tok_pos):
+    if edge.atom:
+        return [edge], [tok_pos]
+    atoms = []
+    atoms_tok_pos = []
+    for edge_item, tok_pos_item in zip(edge, tok_pos):
+        _atoms, _atoms_tok_pos = _atoms_and_tok_pos(edge_item, tok_pos_item)
+        for _atom, _atom_tok_pos in zip(_atoms, _atoms_tok_pos):
+            if _atom not in atoms:
+                atoms.append(_atom)
+                atoms_tok_pos.append(_atom_tok_pos)
+    return atoms, atoms_tok_pos
+
+
 def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_sentence=None, tok_pos=None) -> list[dict]:
     fun = fun_pattern[0].root()
     if fun == 'var':
@@ -330,10 +357,14 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_sentence=Non
             return _match_pattern(edge, pattern, curvars={**curvars, **this_var}, hg=hg, root_edge=root_edge,
                                   ref_sentence=ref_sentence, tok_pos=tok_pos)
     elif fun == 'atoms':
-        atoms = edge.atoms()
+        if tok_pos:
+            atoms, atoms_tok_pos = _atoms_and_tok_pos(edge, tok_pos)
+        else:
+            atoms = edge.atoms()
+            atoms_tok_pos = None
         atom_patterns = fun_pattern[1:]
         return _match_atoms(atom_patterns, atoms, curvars, hg, root_edge=root_edge, ref_sentence=ref_sentence,
-                            tok_pos=tok_pos)
+                            atoms_tok_pos=atoms_tok_pos)
     elif fun == 'lemma':
         return _match_lemma(fun_pattern[1], edge, curvars, hg)
     elif fun == 'semsim':
