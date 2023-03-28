@@ -16,7 +16,6 @@ from torch import Tensor
 from torch.nn import CosineSimilarity
 import torch.nn.functional as F
 
-import graphbrain.semsim.semsim
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge
 from graphbrain.hypergraph import Hypergraph
@@ -44,35 +43,29 @@ class TokenContext:
     tok_pos: Optional[Hyperedge] = None
 
 
-def contex_references_util(reference_sentences: list[str], config: SemSimConfig):
-    matcher = graphbrain.semsim.semsim.matcher
-    if not matcher:
-        matcher = ContextEmbeddingMatcher(config)
-    matcher.contex_references_util(reference_sentences)
-
-
-def _create_cache_dir() -> Path:
-    cache_dir: Path = Path(graphbrain.semsim.semsim.__file__).parent / ".cache"
-    cache_dir.mkdir(exist_ok=True)
-    return cache_dir
+# def contex_references_util(reference_sentences: list[str], config: SemSimConfig):
+#     matcher = graphbrain.semsim.semsim.matcher
+#     if not matcher:
+#         matcher = ContextEmbeddingMatcher(config)
+#     matcher.contex_references_util(reference_sentences)
 
 
 class ContextEmbeddingMatcher(SemSimMatcher):
     def __init__(self, config: SemSimConfig):
         super().__init__(config)
-        self._spacy_trf_pipe: Language = _create_spacy_pipeline(config.model_name)
+        self._spacy_pipe: Language = _create_spacy_pipeline(config.model_name)
+        self._spacy_cache: Cache = Cache(str(self._base_cache_dir / 'spacy'))
         self._cos_sim: CosineSimilarity = CosineSimilarity(dim=1)
-        self._cache: Cache = Cache(str(_create_cache_dir()))
 
     # utility function
-    def contex_references_util(self, reference_sentences: list[str]):
-        context_refs: list[dict] = []
-        for sent in reference_sentences:
-            tokens: list[str] = _spacy_doc2str_list(self._spacy_trf_pipe(sent))
-            print(f"Sentence: {sent}, Tokens: {[(idx, tok) for idx, tok in enumerate(tokens)]}")
-            context_refs.append(dataclasses.asdict(TokenContext(text=sent, tokens=tokens, tok_idx=None)))
-        for ref in context_refs:
-            print(ref)
+    # def contex_references_util(self, reference_sentences: list[str]):
+    #     context_refs: list[dict] = []
+    #     for sent in reference_sentences:
+    #         tokens: list[str] = _spacy_doc2str_list(self._spacy_trf_pipe(sent))
+    #         print(f"Sentence: {sent}, Tokens: {[(idx, tok) for idx, tok in enumerate(tokens)]}")
+    #         context_refs.append(dataclasses.asdict(TokenContext(text=sent, tokens=tokens, tok_idx=None)))
+    #     for ref in context_refs:
+    #         print(ref)
 
     def filter_oov(self, words: list[str]) -> list[str]:
         pass
@@ -83,6 +76,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             references: list[str],
             candidate_edge: Hyperedge = None,
             root_edge: Hyperedge = None,
+            tok_pos: Hyperedge = None,
             hg: Hypergraph = None,
             **kwargs
     ) -> Union[dict[str, float], None]:
@@ -132,7 +126,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         return [self._get_trf_embedding(token_context) for token_context in reference_token_contexts]
 
     def _get_trf_embedding(self, token_context: TokenContext) -> Tensor | None:
-        spacy_doc: Doc = self._spacy_trf_pipe(token_context.text)
+        spacy_doc: Doc = self._spacy_pipe(token_context.text)
         lexical_tokens: list[str] = _spacy_doc2str_list(spacy_doc)
 
         # TODO: Hotfix, remove! (trailing punctuation chars)

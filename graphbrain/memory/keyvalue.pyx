@@ -217,15 +217,15 @@ class KeyValue(Hypergraph, ABC):
     def _set_primary(self, edge, value):
         self._set_attribute(edge, 'p', 1 if value else 0)
 
-    def _search(self, pattern, strict):
-        for result in self._match(pattern, strict):
+    def _search(self, pattern, strict, ref_sentences=None):
+        for result in self._match(pattern, strict, ref_sentences=ref_sentences):
             yield result[0]
 
-    def _match(self, pattern, strict, curvars=None):
+    def _match(self, pattern, strict, curvars=None, ref_sentences=None):
         if curvars is None:
             curvars = {}
         for edge in self._match_structure(pattern, strict):
-            results = match_pattern(edge, pattern, curvars=curvars, hg=self)
+            results = match_pattern(edge, pattern, curvars=curvars, hg=self, ref_sentences=ref_sentences)
             if len(results) > 0:
                 yield edge, results
 

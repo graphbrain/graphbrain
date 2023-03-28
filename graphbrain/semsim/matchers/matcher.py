@@ -26,14 +26,9 @@ class SemSimConfig:
 class SemSimMatcher(ABC):
     def __init__(self, config: SemSimConfig):
         self.type: SemSimModelType = config.model_type
-        self._base_model_path: Path = self._create_model_dir()
+        self._base_model_dir: Path = _create_sub_dir('models')
+        self._base_cache_dir: Path = _create_sub_dir('.cache')
         self._similarity_threshold: float = config.similarity_threshold
-
-    @staticmethod
-    def _create_model_dir() -> Path:
-        model_dir_path: Path = Path(graphbrain.semsim.semsim.__file__).parent / "models"
-        model_dir_path.mkdir(exist_ok=True)
-        return model_dir_path
 
     def similar(
             self,
@@ -45,7 +40,7 @@ class SemSimMatcher(ABC):
         logger.debug(f"Candidate string: {candidate} | References: {references} | Threshold: {threshold}")
 
         if not references:
-            logger.error("No reference word(s) given for semantic similarity matching!")
+            logger.error("No reference word(s) or sentence(s) given for semantic similarity matching!")
             return False
 
         similarities: dict[str, float] = self._similarities(candidate, references, **kwargs)
@@ -74,5 +69,7 @@ class SemSimMatcher(ABC):
         raise NotImplementedError
 
 
-
-
+def _create_sub_dir(dir_name: str) -> Path:
+    sub_dir: Path = Path(graphbrain.semsim.__file__).parent / dir_name
+    sub_dir.mkdir(exist_ok=True)
+    return sub_dir
