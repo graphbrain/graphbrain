@@ -8,7 +8,7 @@ Team
       <tr>
          <td><img src="_static/authors/telmo.jpg" width="200px" height="200px" /></td>
          <td>
-            <strong>Dr. Telmo Menezes</strong> (Founder / Maintainer) <br />
+            <strong>Dr. Telmo Menezes</strong> (main architect) <br />
             Researcher at Centre Marc Bloch Berlin / CNRS / Humboldt University and member of its Computational Social Sciences research group<br />
             <br />
             <a href="http://www.telmomenezes.net">http://www.telmomenezes.net</a>
@@ -31,6 +31,15 @@ Team
             University of Cambridge<br />
             <br />
             <a href="http://abmcet.net">http://abmcet.net</a>
+         </td>
+      </tr>
+      <tr>
+         <td><img src="_static/authors/max.jpg" width="200px" height="200px" /></td>
+         <td>
+            <strong>Max Reinhard</strong> <br />
+            Research Intern at Centre Marc Bloch / Technische Universität Berlin<br />
+            <br />
+            <a href="https://www.linkedin.com/in/max-reinhard-2048b0200">https://www.linkedin.com/in/max-reinhard-2048b0200</a>
          </td>
       </tr>
       <tr>
