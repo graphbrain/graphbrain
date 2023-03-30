@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graphbrain.utils.lemmas &mdash; Graphbrain 0.6.2-dev documentation</title>
+  <title>graphbrain.utils.lemmas &mdash; Graphbrain 0.7.0-dev documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
@@ -81,6 +81,32 @@
   <h1>Source code for graphbrain.utils.lemmas</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">graphbrain.constants</span> <span class="k">as</span> <span class="nn">const</span>
 
+<span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="kn">import</span> <span class="nn">graphbrain.patterns</span> <span class="k">as</span> <span class="nn">gbp</span>
+
+
+<span class="c1"># TODO: deal with argroles</span>
+<span class="k">def</span> <span class="nf">match_lemma</span><span class="p">(</span><span class="n">lemma_pattern</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">curvars</span><span class="p">,</span> <span class="n">hg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">hg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Lemma pattern function requires hypergraph.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">not_atom</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">_lemma</span> <span class="o">=</span> <span class="n">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">same_if_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># add argroles to _lemma if needed</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ar</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">_lemma</span><span class="o">.</span><span class="n">parts</span><span class="p">()</span>
+        <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ar</span><span class="p">)</span>
+        <span class="n">_lemma</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">gbp</span><span class="o">.</span><span class="n">_matches_atomic_pattern</span><span class="p">(</span><span class="n">_lemma</span><span class="p">,</span> <span class="n">lemma_pattern</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">curvars</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">[]</span>
+
 
 <div class="viewcode-block" id="lemma"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.lemmas.lemma">[docs]</a><span class="k">def</span> <span class="nf">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">same_if_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the lemma of the given atom if it exists, None otherwise.</span>
@@ -91,12 +117,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
         <span class="n">satom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">lemma_edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lemma_pred</span><span class="p">,</span> <span class="n">satom</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">lemma_edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lemma_connector</span><span class="p">,</span> <span class="n">satom</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">lemma_edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
     <span class="k">if</span> <span class="n">same_if_none</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">atom</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="deep_lemma"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.lemmas.deep_lemma">[docs]</a><span class="k">def</span> <span class="nf">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">same_if_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -118,7 +145,7 @@
 <span class="sd">    returns atom items when lemma does not exist. (default: False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span><span class="n">same_if_none</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">same_if_none</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
@@ -136,7 +163,7 @@
 
         <span class="c1"># find lemma</span>
         <span class="n">satom</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lemma_pred</span><span class="p">,</span> <span class="n">satom</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lemma_connector</span><span class="p">,</span> <span class="n">satom</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="n">roots</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">root</span><span class="p">())</span>
 
         <span class="c1"># compute degrees</span>

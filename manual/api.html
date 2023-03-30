@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API reference &mdash; Graphbrain 0.6.2-dev documentation</title>
+  <title>API reference &mdash; Graphbrain 0.7.0-dev documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
@@ -822,7 +822,7 @@ Type inference is performed.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.hedge">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">hedge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.hedge" title="Permalink to this definition"></a></dt>
-<dd><p>Create an hyperedge.</p>
+<dd><p>Create a hyperedge.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -915,7 +915,7 @@ the second is a dictionary of attribute values
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph.count">
-<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.count" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.count" title="Permalink to this definition"></a></dt>
 <dd><p>Number of edges that match a pattern.
 See search() method for an explanation of patterns.</p>
 <p>Keyword argument:
@@ -1147,7 +1147,7 @@ Examples: (is/Pd graphbrain/C .)
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.is_full_pattern">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_full_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_full_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Check if every atom is a pattern matcher.</p>
+<dd><p>Check if every atom is a pattern matchers.</p>
 <p>Pattern matchers are:
 ‘*’, ‘.’, ‘(*)’, ‘…’, variables (atom label starting with an
 uppercase letter) and functional patterns.</p>
@@ -1157,7 +1157,7 @@ uppercase letter) and functional patterns.</p>
 <dt class="sig sig-object py" id="graphbrain.patterns.is_pattern">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Check if this edge defines a pattern, i.e. if it includes at least
-one pattern matcher.</p>
+one pattern matchers.</p>
 <p>Pattern matchers are:
 - ‘*’, ‘.’, ‘(*)’, ‘…’
 - variables (atom label starting with an uppercase letter)
@@ -1175,7 +1175,7 @@ one instance of unordered argument roles surrounded by curly brackets.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.is_wildcard">
 <span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_wildcard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_wildcard" title="Permalink to this definition"></a></dt>
-<dd><p>Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
+<dd><p>Check if this atom defines a wildcard, i.e. if its root is a pattern matchers.
 (*, ., …, if it is surrounded by parenthesis or variable label starting with an uppercase letter)</p>
 </dd></dl>
 

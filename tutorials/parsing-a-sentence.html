@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Parsing a sentence &mdash; Graphbrain 0.6.2-dev documentation</title>
+  <title>Parsing a sentence &mdash; Graphbrain 0.7.0-dev documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
@@ -106,7 +106,7 @@
 </pre></div>
 </div>
 <p>Finally, let us parse the text and print the result:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parses</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parses</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="s1">&#39;parses&#39;</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parses</span><span class="p">:</span>
     <span class="n">edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">to_str</span><span class="p">())</span>
