@@ -1,7 +1,7 @@
 import unittest
 
 from graphbrain.hyperedge import hedge
-from hyperlearner.classifier import Classifier
+from graphbrain.learner.classifier import Classifier
 
 
 class TestClassifier(unittest.TestCase):
