@@ -1,7 +1,7 @@
 import unittest
 
 from graphbrain.hyperedge import hedge
-from hyperlearner.pattern_ops import common_pattern, more_general, is_variable, contains_variable, merge_patterns
+from graphbrain.learner.pattern_ops import common_pattern, more_general, is_variable, contains_variable, merge_patterns
 
 
 class TestPatternOps(unittest.TestCase):

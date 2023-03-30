@@ -567,7 +567,7 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_sentences=None):
     """
     edge_hedged: Hyperedge = hedge(edge)
     pattern_hedged: Hyperedge = hedge(pattern)
-    pattern_hedged_normalized: Hyperedge =_normalize_fun_patterns(pattern)
+    pattern_hedged_normalized: Hyperedge =_normalize_fun_patterns(pattern_hedged)
     return _match_pattern(edge_hedged, pattern_hedged_normalized, curvars=curvars, hg=hg, root_edge=edge_hedged,
                           tok_pos=_edge_tok_pos(edge, hg), ref_sentences=ref_sentences)
 
