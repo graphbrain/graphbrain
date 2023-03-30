@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-from statistics import mean
 from typing import Union
 
 import gensim.downloader

@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import ast
 import logging
-from typing import Union, Any
 
 from diskcache import Cache
 from spacy.language import Language
@@ -41,7 +42,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             tok_pos: Hyperedge = None,
             hg: Hypergraph = None,
             **kwargs
-    ) -> Union[dict[str, float], None]:
+    ) -> dict[str, float] | None:
         assert root_edge and hg, f"Missing root_edge and or hg: {root_edge=}, {hg=}"
 
         tok_idx: int | None = _get_and_validate_tok_idx(tok_pos)
@@ -123,7 +124,7 @@ def _validate_spacy_tokenization(tokens: list[str], spacy_tokens: list[str], tex
     return True
 
 
-def _get_and_validate_root_edge_tokens(root_edge: Hyperedge, hg: Hypergraph) -> Any:
+def _get_and_validate_root_edge_tokens(root_edge: Hyperedge, hg: Hypergraph) -> list[str] | None:
     root_edge_tokens_str: str = hg.get_str_attribute(root_edge, 'tokens')
     if not root_edge_tokens_str:
         return None

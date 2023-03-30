@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 import graphbrain.patterns
@@ -39,11 +41,10 @@ def init_matcher(config: SemSimConfig = None, model_type: SemSimModelType = None
     if not model_type:
         model_type = config.model_type
 
-    match model_type:
-        case SemSimModelType.FIXED_EMBEDDING:
-            matcher = FixedEmbeddingMatcher(config)
-        case SemSimModelType.CONTEXT_EMBEDDING:
-            matcher = ContextEmbeddingMatcher(config)
+    if model_type == SemSimModelType.FIXED_EMBEDDING:
+        matcher = FixedEmbeddingMatcher(config)
+    if model_type == SemSimModelType.CONTEXT_EMBEDDING:
+        matcher = ContextEmbeddingMatcher(config)
 
     return matcher
 
@@ -102,11 +103,10 @@ def match_semsim(
     pattern_word_part: str = pattern[0].parts()[0]
     references: list[str] | None = None
 
-    match model_type:
-        case SemSimModelType.FIXED_EMBEDDING:
-            references = _extract_pattern_words(pattern_word_part)
-        case SemSimModelType.CONTEXT_EMBEDDING:
-            references = ref_sentences
+    if model_type == SemSimModelType.FIXED_EMBEDDING:
+        references = _extract_pattern_words(pattern_word_part)
+    if model_type == SemSimModelType.CONTEXT_EMBEDDING:
+        references = ref_sentences
 
     if not semsim(
             candidate=edge_word_part,
