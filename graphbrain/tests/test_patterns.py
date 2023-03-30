@@ -260,7 +260,7 @@ class TestPatterns(unittest.TestCase):
 
     def test_match_pattern_argroles_vars4(self):
         self.assertEqual(match_pattern('(is/Pd.xcs today/C great/C graphbrain/Cp.s)', '(is/Pd.{sc} graphbrain/Cp.s X)'),
-            [{'X': hedge('great/C')}])
+                         [{'X': hedge('great/C')}])
 
     def test_match_pattern_argroles_vars5(self):
         self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)', '(is/Pd.{sc} graphbrain/Cp.s XYZ)'),
@@ -307,9 +307,9 @@ class TestPatterns(unittest.TestCase):
                          [])
 
     def test_match_pattern_repeated_vars2(self):
-        self.assertEqual(match_pattern('(is/P graphbrain/Cp.s great/C today/C today/C)',
-                                       '(is/P graphbrain/Cp.s PROP EXTRA EXTRA)'),
-                         [{'PROP': hedge('great/C'), 'EXTRA': hedge('today/C')}])
+        self.assertEqual(
+            match_pattern('(is/P graphbrain/Cp.s great/C today/C today/C)', '(is/P graphbrain/Cp.s PROP EXTRA EXTRA)'),
+            [{'PROP': hedge('great/C'), 'EXTRA': hedge('today/C')}])
 
     def test_match_pattern_argroles_repeated_vars1(self):
         self.assertEqual(match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/C (after/J x/C))',
@@ -332,21 +332,21 @@ class TestPatterns(unittest.TestCase):
                          [])
 
     def test_match_pattern_argroles_repeated_vars_external1(self):
-        self.assertEqual(match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/C)',
-                                       '(is/Pd.{sc} graphbrain/Cp.s PROP EXTRA)',
-                                       curvars={'PROP': hedge('great/C')}),
-                         [{'PROP': hedge('great/C'), 'EXTRA': hedge('today/C')}])
+        self.assertEqual(
+            match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/C)', '(is/Pd.{sc} graphbrain/Cp.s PROP EXTRA)',
+                          curvars={'PROP': hedge('great/C')}),
+            [{'PROP': hedge('great/C'), 'EXTRA': hedge('today/C')}])
 
     def test_match_pattern_argroles_repeated_vars_external2(self):
-        self.assertEqual(match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/C)',
-                                       '(is/P.{sc} graphbrain/Cp.s PROP EXTRA)',
-                                       curvars={'PROP': hedge('error/C')}),
-                         [])
+        self.assertEqual(
+            match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/C)', '(is/P.{sc} graphbrain/Cp.s PROP EXTRA)',
+                          curvars={'PROP': hedge('error/C')}),
+            [])
 
     def test_match_pattern_deep1(self):
         self.assertEqual(match_pattern('(is/P graphbrain/Cp.s great/C today/C (after/J x/C))',
                                        '(is/P graphbrain/Cp.s PROP EXTRA (after/J X))'),
-            [{'PROP': hedge('great/C'), 'EXTRA': hedge('today/C'), 'X': hedge('x/C')}])
+                         [{'PROP': hedge('great/C'), 'EXTRA': hedge('today/C'), 'X': hedge('x/C')}])
 
     def test_match_pattern_deep2(self):
         self.assertEqual(match_pattern('(is/P graphbrain/Cp.s great/C today/C (after/J x/C))',
@@ -365,14 +365,12 @@ class TestPatterns(unittest.TestCase):
 
     def test_match_pattern_deep5(self):
         self.assertEqual(match_pattern('(is/P graphbrain/Cp.s great/C x/C (after/J x/C))',
-                                       '(is/P graphbrain/Cp.s PROP X (after/J X))',
-                                       curvars={'X': hedge('x/C')}),
+                                       '(is/P graphbrain/Cp.s PROP X (after/J X))', curvars={'X': hedge('x/C')}),
                          [{'PROP': hedge('great/C'), 'X': hedge('x/C')}])
 
     def test_match_pattern_deep6(self):
         self.assertEqual(match_pattern('(is/P graphbrain/Cp.s great/C x/C (after/J x/C))',
-                                       '(is/P graphbrain/Cp.s PROP X (after/J X))',
-                                       curvars={'X': hedge('y/C')}),
+                                       '(is/P graphbrain/Cp.s PROP X (after/J X))', curvars={'X': hedge('y/C')}),
                          [])
 
     def test_match_pattern_argroles_deep1(self):
@@ -397,14 +395,12 @@ class TestPatterns(unittest.TestCase):
 
     def test_match_pattern_argroles_deep5(self):
         self.assertEqual(match_pattern('(is/Pd.scx graphbrain/Cp.s great/C x/C (after/J x/C))',
-                                       '(is/Pd.{sc} graphbrain/Cp.s PROP X (after/J X))',
-                                       curvars={'X': hedge('x/C')}),
+                                       '(is/Pd.{sc} graphbrain/Cp.s PROP X (after/J X))', curvars={'X': hedge('x/C')}),
                          [{'PROP': hedge('great/C'), 'X': hedge('x/C')}])
 
     def test_match_pattern_argroles_deep6(self):
         self.assertEqual(match_pattern('(is/Pd.scx graphbrain/Cp.s great/C x/C (after/J x/C))',
-                                       '(is/Pd.{sc} graphbrain/Cp.s PROP X (after/J X))',
-                                       curvars={'X': hedge('y/C')}),
+                                       '(is/Pd.{sc} graphbrain/Cp.s PROP X (after/J X))', curvars={'X': hedge('y/C')}),
                          [])
 
     def test_match_pattern_argroles_multiple_results1(self):
@@ -425,18 +421,18 @@ class TestPatterns(unittest.TestCase):
                          [{'X': hedge('great/C')}])
 
     def test_match_pattern_argroles_exclusions2(self):
-        self.assertEqual(match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/J)',
-                                       '(is/Pd.sc-x graphbrain/Cp.s X ...)'),
-                         [])
+        self.assertEqual(
+            match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/J)', '(is/Pd.sc-x graphbrain/Cp.s X ...)'),
+            [])
 
     def test_match_pattern_argroles_exclusions3(self):
         self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)', '(is/Pd.sc-s graphbrain/Cp.s X ...)'),
                          [{'X': hedge('great/C')}])
 
     def test_match_pattern_argroles_exclusions4(self):
-        self.assertEqual(match_pattern('(is/Pd.sc i/Cp.s graphbrain/Cp.s great/C)',
-                                       '(is/Pd.sc-s graphbrain/Cp.s X ...)'),
-                         [])
+        self.assertEqual(
+            match_pattern('(is/Pd.sc i/Cp.s graphbrain/Cp.s great/C)', '(is/Pd.sc-s graphbrain/Cp.s X ...)'),
+            [])
 
     def test_match_pattern_argroles_optionals1(self):
         self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)', '(is/Pd.{sc,x} X Y Z)'),
@@ -475,8 +471,7 @@ class TestPatterns(unittest.TestCase):
             match_pattern('(said/Pd.sxr.<f-----/en (+/B.ma/. providers/Cc.p/en service/Cc.s/en) (on/Tt/en (+/B.ma/. ('
                           'with/Br.ma/en (a/Md/en call/Cc.s/en) (+/B.ma/. (+/B.ma/. pai/Cp.s/en ajit/Cp.s/en) '
                           'chairman/Cp.s/en)) (last/Ma/en week/Cc.s/en))) (by/T/en ((up/M/en was/P.s.<f-----/en) ('
-                          'cellular/Ma/en usage/Cc.s/en))))',
-                          '(said/Pd.{sr}.<f----- */C *)'),
+                          'cellular/Ma/en usage/Cc.s/en))))', '(said/Pd.{sr}.<f----- */C *)'),
             [{}])
 
     def test_edge_matches_pattern_simple1(self):

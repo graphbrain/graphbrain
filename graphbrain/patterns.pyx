@@ -512,12 +512,13 @@ def _normalize_fun_patterns(pattern):
 
 def _edge_tok_pos(edge: Hyperedge, hg: Hypergraph = None) -> Union[Hyperedge, None]:
     if hg is None:
-        logger.warning(f"No hypergraph given to retrieve 'tok_pos' attribute for edge")
+        logger.debug(f"No hypergraph given to retrieve 'tok_pos' attribute for edge")
         return None
 
     tok_pos_str: str = hg.get_str_attribute(edge, "tok_pos")
+    # edge is not a root edge
     if not tok_pos_str:
-        logger.warning(f"Edge has no 'tok_pos' string attribute: {edge}")
+        logger.debug(f"Edge has no 'tok_pos' string attribute: {edge}")
         return None
 
     try:
@@ -529,7 +530,8 @@ def _edge_tok_pos(edge: Hyperedge, hg: Hypergraph = None) -> Union[Hyperedge, No
     return tok_pos_hedge
 
 
-def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_sentences=None, tok_pos=None):
+# def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_sentences=None, tok_pos=None):
+def match_pattern(edge, pattern, curvars=None, hg=None, ref_sentences=None):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
     pattern variable. If the pattern specifies no variables but the edge
@@ -563,13 +565,11 @@ def match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_sent
     applied to the pattern: (is/Pd . \*NAME)
     produces the result: None
     """
-    edge = hedge(edge)
-    pattern = hedge(pattern)
-    pattern = _normalize_fun_patterns(pattern)
-    root_edge = hedge(root_edge)
-    tok_pos = _edge_tok_pos(edge, hg)
-    return _match_pattern(edge, pattern, curvars=curvars, hg=hg, root_edge=root_edge, ref_sentences=ref_sentences,
-                          tok_pos=tok_pos)
+    edge_hedged: Hyperedge = hedge(edge)
+    pattern_hedged: Hyperedge = hedge(pattern)
+    pattern_hedged_normalized: Hyperedge =_normalize_fun_patterns(pattern)
+    return _match_pattern(edge_hedged, pattern_hedged_normalized, curvars=curvars, hg=hg, root_edge=edge_hedged,
+                          tok_pos=_edge_tok_pos(edge, hg), ref_sentences=ref_sentences)
 
 
 def edge_matches_pattern(edge, pattern, hg=None, root_edge=None, ref_sentences=None, tok_pos=None):
@@ -590,7 +590,7 @@ def edge_matches_pattern(edge, pattern, hg=None, root_edge=None, ref_sentences=N
     Examples: (is/Pd graphbrain/C .)
     (says/Pd * ...)
     """
-    result = match_pattern(edge, pattern, hg=hg, root_edge=root_edge, ref_sentences=ref_sentences, tok_pos=tok_pos)
+    result = match_pattern(edge, pattern, hg=hg, ref_sentences=ref_sentences)
     return len(result) > 0
 
 
