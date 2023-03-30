@@ -139,7 +139,7 @@ class Hypergraph(object):
 
         Keyword argument:
         strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
-         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
+        specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
         pattern = hedge(pattern)
 
@@ -166,7 +166,7 @@ class Hypergraph(object):
 
         Keyword argument:
         strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
-         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
+        specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
         return len(list(self.search(hedge(pattern))))
 
@@ -256,7 +256,7 @@ class Hypergraph(object):
 
         Keyword argument:
         strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
-         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
+        specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
         for edge in self.search(pattern, strict=strict):
             self.remove(edge)
