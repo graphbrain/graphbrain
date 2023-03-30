@@ -1,37 +1,50 @@
+from __future__ import annotations
+
 import logging
 
 import graphbrain.patterns
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge, Atom
 from graphbrain.hypergraph import Hypergraph
-from graphbrain.semsim.matchers.matcher import SemSimConfig, SemSimModelType, SemSimMatcher
+from graphbrain.semsim.matchers.matcher import SemSimConfig, SemSimMatcher, SemSimModelType
 from graphbrain.semsim.matchers.fixed_matcher import FixedEmbeddingMatcher
 from graphbrain.semsim.matchers.context_matcher import ContextEmbeddingMatcher
 
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_CONFIG: SemSimConfig = SemSimConfig(
-    model_type=SemSimModelType.FIXED_EMBEDDING,
-    model_name='word2vec-google-news-300',
-    similarity_threshold=0.5
-)
+
+DEFAULT_CONFIGS: dict[SemSimModelType, SemSimConfig] = {
+    SemSimModelType.FIXED_EMBEDDING: SemSimConfig(
+        model_type=SemSimModelType.FIXED_EMBEDDING,
+        model_name='word2vec-google-news-300',
+        similarity_threshold=0.8
+    ),
+    SemSimModelType.CONTEXT_EMBEDDING: SemSimConfig(
+        model_type=SemSimModelType.CONTEXT_EMBEDDING,
+        model_name='infloat/e5-base',
+        similarity_threshold=0.65
+    )
+}
+
 
 matcher: SemSimMatcher | None = None
 
 
-def init_matcher(config: SemSimConfig = None):
+def init_matcher(config: SemSimConfig = None, model_type: SemSimModelType = None):
     global matcher
 
     if not config:
-        logger.info(f"No SemSim config given, using default: {DEFAULT_CONFIG}")
-        config = DEFAULT_CONFIG
+        config = DEFAULT_CONFIGS[model_type]
+        logger.info(f"No SemSim config given, using default for model_type '{model_type}': {config}")
 
-    match config.model_type:
-        case SemSimModelType.FIXED_EMBEDDING:
-            matcher = FixedEmbeddingMatcher(config)
-        case SemSimModelType.CONTEXT_EMBEDDING:
-            matcher = ContextEmbeddingMatcher(config)
+    if not model_type:
+        model_type = config.model_type
+
+    if model_type == SemSimModelType.FIXED_EMBEDDING:
+        matcher = FixedEmbeddingMatcher(config)
+    if model_type == SemSimModelType.CONTEXT_EMBEDDING:
+        matcher = ContextEmbeddingMatcher(config)
 
     return matcher
 
@@ -41,17 +54,25 @@ def semsim(
         # **kwargs
         candidate: str,
         references: list[str],
+        model_type: SemSimModelType,
         threshold: float = None,
         candidate_edge: Hyperedge = None,
+        tok_pos: Hyperedge = None,
         root_edge: Hyperedge = None,
         hg: Hypergraph = None
 ) -> bool:
     global matcher
     if not matcher:
-        init_matcher()
+        init_matcher(model_type=model_type)
     # return matcher.similar(*args, **kwargs)
     return matcher.similar(
-        candidate, references, threshold=threshold, candidate_edge=candidate_edge, root_edge=root_edge, hg=hg
+        candidate,
+        references,
+        threshold=threshold,
+        candidate_edge=candidate_edge,
+        root_edge=root_edge,
+        tok_pos=tok_pos,
+        hg=hg,
     )
 
 
@@ -59,28 +80,42 @@ def semsim(
 def match_semsim(
         pattern: Hyperedge,
         edge: Hyperedge | Atom,
-        curvars: dict = None,
+        curvars: dict,
+        model_type: SemSimModelType = None,
+        ref_sentences: list[str] = None,
         root_edge: Hyperedge = None,
+        tok_pos: Hyperedge = None,
         hg: Hypergraph = None
 ) -> list[dict]:
+    try:
+        model_type = SemSimModelType(model_type)
+    except ValueError:
+        logger.error(f"Invalid SemSim model type given: '{model_type}")
+
     edge_word_part: str = _get_edge_word_part(edge)
     if not edge_word_part:
         return []
 
-    pattern_word_part: str = pattern[0].parts()[0]
-    pattern_words: list[str] = _extract_pattern_words(pattern_word_part)
-
-    similarity_threshold: float | None = _extract_similarity_threshold(pattern)
-
+    threshold: float | None = _extract_similarity_threshold(pattern)
     logger.debug(f"edge: {str(edge)} | word part: {edge_word_part} | "
-                 f"pattern: {str(pattern)} | threshold: {similarity_threshold}")
+                 f"pattern: {str(pattern)} | threshold: {threshold}")
+
+    pattern_word_part: str = pattern[0].parts()[0]
+    references: list[str] | None = None
+
+    if model_type == SemSimModelType.FIXED_EMBEDDING:
+        references = _extract_pattern_words(pattern_word_part)
+    if model_type == SemSimModelType.CONTEXT_EMBEDDING:
+        references = ref_sentences
 
     if not semsim(
-            edge_word_part,
-            pattern_words,
-            threshold=similarity_threshold,
+            candidate=edge_word_part,
+            references=references,
+            model_type=model_type,
+            threshold=threshold,
             candidate_edge=edge,
             root_edge=root_edge,
+            tok_pos=tok_pos,
             hg=hg
     ):
         return []

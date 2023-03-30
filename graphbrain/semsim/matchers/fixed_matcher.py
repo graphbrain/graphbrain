@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-from statistics import mean
 from typing import Union
 
 import gensim.downloader
@@ -14,7 +15,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 class FixedEmbeddingMatcher(SemSimMatcher):
     def __init__(self, config: SemSimConfig):
         super().__init__(config)
-        self._model_path: Path = self._base_model_path / 'gensim-data'
+        self._model_dir: Path = self._base_model_dir / 'gensim-data'
         self._model: KeyedVectors = self._load_model(config.model_name)
 
     def _in_vocab(self, words: list[str], return_filtered: bool = False) -> bool | list[str]:
@@ -52,8 +53,8 @@ class FixedEmbeddingMatcher(SemSimMatcher):
         return {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
 
     def _load_model(self, model_name: str) -> KeyedVectors:
-        model_path: Path = self._model_path / model_name / f"{model_name}.gz"
-        model_path_bin: Path = self._model_path / f"{model_name}_bin" / model_name
+        model_path: Path = self._model_dir / model_name / f"{model_name}.gz"
+        model_path_bin: Path = self._model_dir / f"{model_name}_bin" / model_name
 
         # download specified model if it does not exist
         if not model_path_bin.exists() and not model_path.exists():

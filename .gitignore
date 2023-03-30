@@ -61,5 +61,7 @@ __pycache__
 #####################
 .ipynb_checkpoints
 
-#
-gensim-data
+# Semsim data #
+#####################
+graphbrain/semsim/.cache
+graphbrain/semsim/models

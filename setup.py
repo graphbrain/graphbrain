@@ -81,7 +81,8 @@ install_requires = [
         'termcolor',
         'gensim',
         'thinc',
-        'torch'
+        'torch',
+        'diskcache'
     ]
 
 setup(

@@ -1,2 +1,4 @@
 # TODO: move match_semsim to graphbrain.patterns
-from .semsim import match_semsim
+from .interface import match_semsim
+
+from .interface import semsim, SemSimModelType

@@ -4,29 +4,6 @@ from graphbrain import hedge
 import graphbrain.patterns as gbp
 
 
-# TODO: deal with argroles
-def match_lemma(lemma_pattern, edge, curvars, hg) -> list[dict]:
-    if hg is None:
-        raise RuntimeError('Lemma pattern function requires hypergraph.')
-
-    if edge.not_atom:
-        return []
-
-    _lemma = lemma(hg, edge, same_if_none=True)
-
-    # add argroles to _lemma if needed
-    ar = edge.argroles()
-    if ar != '':
-        parts = _lemma.parts()
-        parts[1] = '{}.{}'.format(parts[1], ar)
-        _lemma = hedge('/'.join(parts))
-
-    if gbp._matches_atomic_pattern(_lemma, lemma_pattern):
-        return [curvars]
-
-    return []
-
-
 def lemma(hg, atom, same_if_none=False):
     """Returns the lemma of the given atom if it exists, None otherwise.
 
