@@ -124,7 +124,7 @@ class Hypergraph(object):
             self,
             pattern: Union[Hyperedge, str, list, tuple],
             strict: bool = False,
-            ref_sentences: list[str] = None
+            ref_edges: list[Union[Hyperedge, str, list, tuple]] = None
     ) -> Iterator[Hyperedge]:
         """Returns generator for all the edges that match a pattern.
 
@@ -147,6 +147,8 @@ class Hypergraph(object):
         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
         pattern = hedge(pattern)
+        if ref_edges:
+            ref_edges = [hedge(e) for e in ref_edges]
 
         if pattern.atom and len(pattern.parts()) == 1:
             if pattern.parens:
@@ -156,17 +158,19 @@ class Hypergraph(object):
             elif pattern[0][0] == '.':
                 return self.all_atoms()
 
-        return self._search(pattern, strict, ref_sentences=ref_sentences)
+        return self._search(pattern, strict, ref_edges=ref_edges)
 
     def match(
         self,
         pattern: Union[Hyperedge, str, list, tuple],
         strict: bool = False,
         curvars: Optional[dict[str, Hyperedge]] = None,
-        ref_sentences: list[str] = None
+        ref_edges: list[Union[Hyperedge, str, list, tuple]] = None
     ) -> Iterator[tuple[Hyperedge, dict[str, Hyperedge]]]:
         pattern = hedge(pattern)
-        return self._match(pattern, strict, curvars=curvars, ref_sentences=ref_sentences)
+        if ref_edges:
+            ref_edges = [hedge(e) for e in ref_edges]
+        return self._match(pattern, strict, curvars=curvars, ref_edges=ref_edges)
 
     def count(self, pattern: Union[Hyperedge, str, list, tuple]) -> int:
         """Number of edges that match a pattern.
@@ -358,10 +362,10 @@ class Hypergraph(object):
     def _set_primary(self, edge, value):
         raise NotImplementedError()
 
-    def _search(self, pattern, strict, ref_sentences=None):
+    def _search(self, pattern, strict, ref_edges=None):
         raise NotImplementedError()
 
-    def _match(self, pattern, strict, curvars=None, ref_sentences=None):
+    def _match(self, pattern, strict, curvars=None, ref_edges=None):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):

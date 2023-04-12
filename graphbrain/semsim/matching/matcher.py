@@ -1,47 +1,53 @@
 import logging
 from abc import ABC
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 from pathlib import Path
 from statistics import mean
 from typing import Union
 
 import graphbrain.semsim
+from graphbrain.hyperedge import Hyperedge
 
 logger = logging.getLogger(__name__)
 
 
-class SemSimModelType(Enum):
-    FIXED_EMBEDDING = auto()
-    CONTEXT_EMBEDDING = auto()
+class SemSimMatcherType(str, Enum):
+    FIXED_EMBEDDING = "FIXED"
+    CONTEXT_EMBEDDING = "CONTEXT"
 
 
 @dataclass
 class SemSimConfig:
-    model_type: SemSimModelType
     model_name: str
     similarity_threshold: float
 
 
 class SemSimMatcher(ABC):
+    _TYPE: SemSimMatcherType
+
     def __init__(self, config: SemSimConfig):
-        self.type: SemSimModelType = config.model_type
+        self._type: SemSimMatcherType = self._TYPE
         self._base_model_dir: Path = _create_sub_dir('models')
         self._base_cache_dir: Path = _create_sub_dir('.cache')
         self._similarity_threshold: float = config.similarity_threshold
 
     def similar(
             self,
-            candidate: str,
-            references: list[str],
+            candidate: str = None,
             threshold: float = None,
+            ref_words: list[str] = None,
+            ref_edges: list[Hyperedge] = None,
             **kwargs
     ) -> bool:
-        logger.debug(f"Candidate string: {candidate} | References: {references} | Threshold: {threshold}")
+        references = None
+        if self._type == SemSimMatcherType.FIXED_EMBEDDING:
+            references = ref_words
+        if self._type == SemSimMatcherType.CONTEXT_EMBEDDING:
+            references = ref_edges
+        assert references is not None, f"Neither ref_words nor ref_edges given for model type '{self._type}'!"
 
-        if not references:
-            logger.error("No reference word(s) or sentence(s) given for semantic similarity matching!")
-            return False
+        logger.debug(f"Candidate string: {candidate} | References: {references} | Threshold: {threshold}")
 
         similarities: dict[str, float] = self._similarities(candidate, references, **kwargs)
         logger.debug(f"Similarities ('{candidate}'): {similarities}")

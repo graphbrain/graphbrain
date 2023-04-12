@@ -7,14 +7,16 @@ from typing import Union
 import gensim.downloader
 from gensim.models import KeyedVectors
 
-from graphbrain.semsim.matchers.matcher import SemSimMatcher, SemSimConfig
+from graphbrain.semsim.matching.matcher import SemSimMatcher, SemSimMatcherType, SemSimConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
 class FixedEmbeddingMatcher(SemSimMatcher):
+    _TYPE: SemSimMatcherType = SemSimMatcherType.CONTEXT_EMBEDDING
+
     def __init__(self, config: SemSimConfig):
-        super().__init__(config)
+        super().__init__(config=config)
         self._model_dir: Path = self._base_model_dir / 'gensim-data'
         self._model: KeyedVectors = self._load_model(config.model_name)
 
