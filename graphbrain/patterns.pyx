@@ -259,7 +259,7 @@ def _match_by_argroles(edge, pattern, role_counts, min_vars, hg, matched=(), cur
         for i, eitem in enumerate(perm):
             pitem = pitems[i]
             if tok_pos:
-                tok_pos_item = tok_pos_perm[i]
+                tok_pos_item = tok_pos_perm[i]  # TODO: validate indexing?
             else:
                 tok_pos_item = None
             item_result = []
@@ -461,7 +461,8 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                     _result.append(variables)
                 else:
                     if tok_pos is not None:
-                        tok_pos = tok_pos[i] # TODO: add validation for tok_pos indexing
+                        tok_pos = tok_pos[i] if len(tok_pos) > i else None
+                        # TODO: is this correct? doesnt it mean that the pattern is not matched?
                     _result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge,
                                               ref_edges=ref_edges, tok_pos=tok_pos)
             result = _result
@@ -567,8 +568,15 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     edge_hedged: Hyperedge = hedge(edge)
     pattern_hedged: Hyperedge = hedge(pattern)
     pattern_hedged_normalized: Hyperedge =_normalize_fun_patterns(pattern_hedged)
-    return _match_pattern(edge_hedged, pattern_hedged_normalized, curvars=curvars, hg=hg, root_edge=edge_hedged,
-                          tok_pos=_edge_tok_pos(edge, hg), ref_edges=ref_edges)
+    return _match_pattern(
+        edge_hedged,
+        pattern_hedged_normalized,
+        curvars=curvars,
+        hg=hg,
+        root_edge=edge_hedged,
+        tok_pos=_edge_tok_pos(edge, hg),
+        ref_edges=ref_edges
+    )
 
 
 def edge_matches_pattern(edge, pattern, hg=None, root_edge=None, ref_edges=None, tok_pos=None):

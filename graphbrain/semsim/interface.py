@@ -7,7 +7,7 @@ import graphbrain.patterns
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge, Atom
 from graphbrain.hypergraph import Hypergraph
-from graphbrain.semsim.matching.matcher import SemSimConfig, SemSimMatcher, SemSimMatcherType
+from graphbrain.semsim.matching.matcher import SemSimConfig, SemSimMatcher, SemSimType
 from graphbrain.semsim.matching.fixed_matcher import FixedEmbeddingMatcher
 from graphbrain.semsim.matching.context_matcher import ContextEmbeddingMatcher
 
@@ -15,41 +15,47 @@ from graphbrain.semsim.matching.context_matcher import ContextEmbeddingMatcher
 logger = logging.getLogger(__name__)
 
 
-DEFAULT_CONFIGS: dict[SemSimMatcherType, SemSimConfig] = {
-    SemSimMatcherType.FIXED_EMBEDDING: SemSimConfig(
+DEFAULT_CONFIGS: dict[SemSimType, SemSimConfig] = {
+    SemSimType.FIXED: SemSimConfig(
         model_name='word2vec-google-news-300',
         similarity_threshold=0.2
     ),
-    SemSimMatcherType.CONTEXT_EMBEDDING: SemSimConfig(
+    SemSimType.CONTEXT: SemSimConfig(
         model_name='intfloat/e5-base',
         similarity_threshold=0.65
     )
 }
 
-_matcher_type_mapping: dict[SemSimMatcherType, Type[SemSimMatcher]] = {
-    SemSimMatcherType.FIXED_EMBEDDING: FixedEmbeddingMatcher,
-    SemSimMatcherType.CONTEXT_EMBEDDING: ContextEmbeddingMatcher
+_matcher_type_mapping: dict[SemSimType, Type[SemSimMatcher]] = {
+    SemSimType.FIXED: FixedEmbeddingMatcher,
+    SemSimType.CONTEXT: ContextEmbeddingMatcher
 }
 
-_matchers: dict[SemSimMatcherType, SemSimMatcher] = {}
+_matchers: dict[SemSimType, SemSimMatcher] = {}
 
 
-def get_matcher(matcher_type: SemSimMatcherType, config: SemSimConfig = None):
+def init_matcher(matcher_type: SemSimType, config: SemSimConfig = None):
     global _matchers
 
-    if not _matchers or matcher_type not in _matchers:
-        if not config:
-            config = DEFAULT_CONFIGS[matcher_type]
-            logger.info(f"No SemSim config given, using default for matcher type '{matcher_type}'")
+    if not config:
+        config = DEFAULT_CONFIGS[matcher_type]
+        logger.info(f"No SemSim config given, using default for matcher type '{matcher_type}'")
 
-        _matchers[matcher_type] = _matcher_type_mapping[matcher_type](config=config)
-        logger.info(f"Initialized SemSim matcher for type '{matcher_type}': {config=}")
+    _matchers[matcher_type] = _matcher_type_mapping[matcher_type](config=config)
+    logger.info(f"Initialized SemSim matcher for type '{matcher_type}': {config=}")
+
+
+def get_matcher(matcher_type: SemSimType, config: SemSimConfig = None):
+    global _matchers
+
+    if config or matcher_type not in _matchers:
+        init_matcher(matcher_type=matcher_type, config=config)
 
     return _matchers[matcher_type]
 
 
 def semsim(
-        matcher_type: SemSimMatcherType,
+        matcher_type: str,
         threshold: float = None,
         candidate: str = None,
         ref_words: list[str] = None,
@@ -58,7 +64,14 @@ def semsim(
         tok_pos: Hyperedge = None,
         hg: Hypergraph = None
 ) -> bool:
+    try:
+        matcher_type: SemSimType = SemSimType(matcher_type)
+    except ValueError:
+        logger.error(f"Invalid SemSim model type given: '{matcher_type}")
+        return False
+
     matcher = get_matcher(matcher_type=matcher_type)
+
     return matcher.similar(
         threshold=threshold,
         candidate=candidate,
@@ -84,11 +97,6 @@ def match_semsim(
         tok_pos: Hyperedge = None,
         hg: Hypergraph = None
 ) -> list[dict]:
-    try:
-        matcher_type: SemSimMatcherType = SemSimMatcherType(matcher_type)
-    except ValueError:
-        logger.error(f"Invalid SemSim model type given: '{matcher_type}")
-
     edge_word_part: str = _get_edge_word_part(edge)
     if not edge_word_part:
         return []
@@ -102,7 +110,7 @@ def match_semsim(
     reference_words: list[str] = _extract_pattern_words(pattern_words_part)
 
     if not semsim(
-            matcher_type=matcher_type,
+            matcher_type,
             threshold=threshold,
             candidate=edge_word_part,
             ref_words=reference_words,

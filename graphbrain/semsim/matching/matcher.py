@@ -12,9 +12,9 @@ from graphbrain.hyperedge import Hyperedge
 logger = logging.getLogger(__name__)
 
 
-class SemSimMatcherType(str, Enum):
-    FIXED_EMBEDDING = "FIXED"
-    CONTEXT_EMBEDDING = "CONTEXT"
+class SemSimType(str, Enum):
+    FIXED = "FIXED"
+    CONTEXT = "CONTEXT"
 
 
 @dataclass
@@ -24,10 +24,10 @@ class SemSimConfig:
 
 
 class SemSimMatcher(ABC):
-    _TYPE: SemSimMatcherType
+    _TYPE: SemSimType
 
     def __init__(self, config: SemSimConfig):
-        self._type: SemSimMatcherType = self._TYPE
+        self._type: SemSimType = self._TYPE
         self._base_model_dir: Path = _create_sub_dir('models')
         self._base_cache_dir: Path = _create_sub_dir('.cache')
         self._similarity_threshold: float = config.similarity_threshold
@@ -41,9 +41,9 @@ class SemSimMatcher(ABC):
             **kwargs
     ) -> bool:
         references = None
-        if self._type == SemSimMatcherType.FIXED_EMBEDDING:
+        if self._type == SemSimType.FIXED:
             references = ref_words
-        if self._type == SemSimMatcherType.CONTEXT_EMBEDDING:
+        if self._type == SemSimType.CONTEXT:
             references = ref_edges
         assert references is not None, f"Neither ref_words nor ref_edges given for model type '{self._type}'!"
 

@@ -229,6 +229,15 @@ class KeyValue(Hypergraph, ABC):
             if len(results) > 0:
                 yield edge, results
 
+    def _match_edges(self, edges, pattern, strict, curvars=None, ref_edges=None):
+        if curvars is None:
+            curvars = {}
+        for edge in edges:
+            results = match_pattern(edge, pattern, curvars=curvars, hg=self, ref_edges=ref_edges)
+            if len(results) > 0:
+                yield edge, results
+
+
     def _set_attribute(self, edge, attribute, value):
         self.begin_transaction()
         key = self._edge2key(edge)

@@ -17,7 +17,7 @@ import torch.nn.functional as F
 
 from graphbrain.hyperedge import Hyperedge, hedge, Atom
 from graphbrain.hypergraph import Hypergraph
-from graphbrain.semsim.matching.matcher import SemSimMatcher, SemSimMatcherType, SemSimConfig
+from graphbrain.semsim.matching.matcher import SemSimMatcher, SemSimType, SemSimConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class ContextEmbeddingMatcher(SemSimMatcher):
-    _TYPE: SemSimMatcherType = SemSimMatcherType.CONTEXT_EMBEDDING
+    _TYPE: SemSimType = SemSimType.CONTEXT
     _SPACY_PIPE_TRF_COMPONENT_NAME: str = 'transformer'
 
     def __init__(self, config: SemSimConfig):
@@ -94,11 +94,12 @@ class ContextEmbeddingMatcher(SemSimMatcher):
     def _get_reference_embeddings(
             self, ref_edges: list[Hyperedge], tok_idx: int, root_edge: Hyperedge, hg: Hypergraph
     ) -> list[Tensor] | None:
+        root_edge_tok_pos: Hyperedge = _get_and_validate_edge_tok_pos(root_edge, hg)
+
         reference_trf_embeddings: list[Tensor] = []
         for ref_edge in ref_edges:
-            ref_edge_tokens: list[str] = _get_and_validate_edge_tokens(ref_edge, hg)
             ref_edge_tok_pos: Hyperedge = _get_and_validate_edge_tok_pos(ref_edge, hg)
-            root_edge_tok_pos: Hyperedge = _get_and_validate_edge_tok_pos(root_edge, hg)
+            ref_edge_tokens: list[str] = _get_and_validate_edge_tokens(ref_edge, hg)
 
             tok_idx_trail: list[int] = _recursive_tok_idx_search(tok_idx, root_edge_tok_pos)
             if not tok_idx_trail:

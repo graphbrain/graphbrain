@@ -4,6 +4,16 @@ import graphbrain.constants as const
 from graphbrain.hyperedge import hedge, Hyperedge, str2atom
 
 
+def _hedge_params(pattern, ref_edges=None):
+    """Returns a tuple of the pattern and ref_edges parameters
+    after they have been converted to hyperedges.
+    """
+    pattern = hedge(pattern)
+    if ref_edges:
+        ref_edges = [hedge(e) for e in ref_edges]
+    return pattern, ref_edges
+
+
 class Hypergraph(object):
     """Hypergraph interface."""
 
@@ -146,9 +156,7 @@ class Hypergraph(object):
         strict -- if True atoms are matched exactly and search is faster. If False, atoms in the pattern can match more
         specific versions, e.g.: apple/C in the pattern will match apple/Cc.s/en (default: False)
         """
-        pattern = hedge(pattern)
-        if ref_edges:
-            ref_edges = [hedge(e) for e in ref_edges]
+        pattern, ref_edges = _hedge_params(pattern, ref_edges)
 
         if pattern.atom and len(pattern.parts()) == 1:
             if pattern.parens:
@@ -161,16 +169,25 @@ class Hypergraph(object):
         return self._search(pattern, strict, ref_edges=ref_edges)
 
     def match(
-        self,
-        pattern: Union[Hyperedge, str, list, tuple],
-        strict: bool = False,
-        curvars: Optional[dict[str, Hyperedge]] = None,
-        ref_edges: list[Union[Hyperedge, str, list, tuple]] = None
-    ) -> Iterator[tuple[Hyperedge, dict[str, Hyperedge]]]:
-        pattern = hedge(pattern)
-        if ref_edges:
-            ref_edges = [hedge(e) for e in ref_edges]
+            self,
+            pattern: Union[Hyperedge, str, list, tuple],
+            strict: bool = False,
+            curvars: Optional[dict[str, Hyperedge]] = None,
+            ref_edges: list[Union[Hyperedge, str, list, tuple]] = None
+    ) -> Iterator[tuple[Hyperedge, list[dict[str, Hyperedge]]]]:
+        pattern, ref_edges = _hedge_params(pattern, ref_edges)
         return self._match(pattern, strict, curvars=curvars, ref_edges=ref_edges)
+
+    def match_sequence(
+            self,
+            name: str,
+            pattern: Union[Hyperedge, str, list, tuple],
+            strict: bool = False,
+            curvars: Optional[dict[str, Hyperedge]] = None,
+            ref_edges: list[Union[Hyperedge, str, list, tuple]] = None
+    ):
+        pattern, ref_edges = _hedge_params(pattern, ref_edges)
+        return self._match_edges(self.sequence(name), pattern, strict, curvars=curvars, ref_edges=ref_edges)
 
     def count(self, pattern: Union[Hyperedge, str, list, tuple]) -> int:
         """Number of edges that match a pattern.
@@ -366,6 +383,9 @@ class Hypergraph(object):
         raise NotImplementedError()
 
     def _match(self, pattern, strict, curvars=None, ref_edges=None):
+        raise NotImplementedError()
+
+    def _match_edges(self, edges, pattern, strict, curvars=None, ref_edges=None):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):
