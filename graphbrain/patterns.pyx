@@ -108,10 +108,10 @@ def _matches_atomic_pattern(edge, atomic_pattern):
 
         # type match
         ap_role = atomic_pattern.role()
-        apmtype = ap_role[0]
-        emtype = edge.mtype()
-        n = len(apmtype)
-        if len(emtype) < n or emtype[:n] != apmtype:
+        ap_type = ap_role[0]
+        e_type = edge.mtype()
+        n = len(ap_type)
+        if len(e_type) < n or e_type[:n] != ap_type:
             return False
 
         e_atom = edge.inner_atom()
@@ -124,7 +124,7 @@ def _matches_atomic_pattern(edge, atomic_pattern):
                 return False
 
             # argroles match
-            if apmtype[0] in {'B', 'P'}:
+            if ap_type[0] in {'B', 'P'}:
                 ap_argroles_parts = ap_role[1].split('-')
                 if len(ap_argroles_parts) == 1:
                     ap_argroles_parts.append('')
