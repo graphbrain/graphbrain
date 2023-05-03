@@ -461,8 +461,10 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                     _result.append(variables)
                 else:
                     if tok_pos is not None:
-                        tok_pos = tok_pos[i] if len(tok_pos) > i else None
-                        # TODO: is this correct? doesnt it mean that the pattern is not matched?
+                        if len(tok_pos) > i:
+                            tok_pos = tok_pos[i]
+                        else:
+                            raise RuntimeError('index {} in tok_pos {} is out of range'.format(i, str(tok_pos)))
                     _result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge,
                                               ref_edges=ref_edges, tok_pos=tok_pos)
             result = _result
