@@ -109,7 +109,7 @@ def _matches_atomic_pattern(edge, atomic_pattern):
         # type match
         ap_role = atomic_pattern.role()
         ap_type = ap_role[0]
-        e_type = edge.mtype()
+        e_type = edge.type()
         n = len(ap_type)
         if len(e_type) < n or e_type[:n] != ap_type:
             return False
