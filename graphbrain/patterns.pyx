@@ -607,7 +607,7 @@ def edge2pattern(edge, root=False, subtype=False):
     else:
         root_str = '*'
     if subtype:
-        et = edge.mtype()
+        et = edge.type()
     else:
         et = edge.mtype()
     pattern = '{}/{}'.format(root_str, et)
