@@ -29,7 +29,6 @@ class SemSimMatcher(ABC):
     def __init__(self, config: SemSimConfig):
         self._type: SemSimType = self._TYPE
         self._base_model_dir: Path = _create_sub_dir('models')
-        self._base_cache_dir: Path = _create_sub_dir('.cache')
         self._similarity_threshold: float = config.similarity_threshold
 
     def similar(

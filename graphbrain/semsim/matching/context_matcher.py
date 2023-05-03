@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import ast
 import logging
+from functools import lru_cache
 from typing import Callable, Any
 
-from diskcache import Cache
 from spacy.language import Language
 from spacy.lang.en import English
 from spacy.tokens import Doc
@@ -22,17 +22,14 @@ from graphbrain.semsim.matching.matcher import SemSimMatcher, SemSimType, SemSim
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-# TODO: Caching!
-
-
 class ContextEmbeddingMatcher(SemSimMatcher):
     _TYPE: SemSimType = SemSimType.CONTEXT
     _SPACY_PIPE_TRF_COMPONENT_NAME: str = 'transformer'
+    _EMBEDDING_CACHE_SIZE: int = 64
 
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
         self._spacy_pipe: Language = self._create_spacy_pipeline(config.model_name)
-        self._spacy_cache: Cache = Cache(str(self._base_cache_dir / 'spacy'))
         self._cos_sim: CosineSimilarity = CosineSimilarity(dim=1)
 
     def _create_spacy_pipeline(self, model_name: str) -> Language:
@@ -47,7 +44,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         }
         trf: Transformer = nlp.add_pipe(self._SPACY_PIPE_TRF_COMPONENT_NAME, config=config)  # noqa
         trf.model.initialize()
-        logger.info("Done Creating SpaCy transformer pipeline!")
+        logger.info("Done creating SpaCy transformer pipeline!")
         return nlp
 
     def filter_oov(self, words: list[str]) -> list[str]:
@@ -118,6 +115,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             reference_trf_embeddings.append(self._get_embedding(ref_edge_tokens, ref_edge_tok_idx))
         return reference_trf_embeddings
 
+    @lru_cache(maxsize=_EMBEDDING_CACHE_SIZE)
     def _get_embedding(self, tokens: list[str], tok_idx: int) -> Tensor | None:
         spacy_doc, spacy_tokens = self._get_spacy_doc_and_tokens(tokens)
         if not _validate_spacy_tokenization(tokens, spacy_tokens):
@@ -279,12 +277,3 @@ def _average_pool(last_hidden_states: Tensor, attention_mask: Tensor, normalize:
     if normalize:
         embeddings = F.normalize(embeddings, p=2, dim=1)
     return embeddings
-
-
-# def get_lex2trf_idx(lexical_tokens: list[str], alignment_data: Ragged) -> dict[int, list[int]]:
-#     return {lex_idx: get_trf_token_idxes(lex_idx, alignment_data) for lex_idx in range(len(lexical_tokens))}
-
-# def get_trf_token_idxes(lex_idx_: int, alignment_data: Ragged):
-#     start_idx: int = int(np.sum(alignment_data.lengths[:lex_idx_]))
-#     end_idx: int = start_idx + alignment_data.lengths[lex_idx_]
-#     return alignment_data.dataXd[start_idx:end_idx]
