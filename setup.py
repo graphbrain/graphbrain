@@ -82,7 +82,7 @@ install_requires = [
         'gensim',
         'thinc',
         'torch',
-        'diskcache'
+        'spacy-transformers',
     ]
 
 setup(
