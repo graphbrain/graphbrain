@@ -32,7 +32,7 @@ class FixedEmbeddingMatcher(SemSimMatcher):
 
     def filter_oov(self, words: list[str]) -> list[str]:
         filtered_words = self._in_vocab(words, return_filtered=True)
-        logger.info(f"Words left after filtering OOV words: {filtered_words}")
+        logger.debug(f"Words left after filtering OOV words: {filtered_words}")
         return filtered_words
 
     def _similarities(

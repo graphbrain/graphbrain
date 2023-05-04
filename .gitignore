@@ -61,7 +61,14 @@ __pycache__
 #####################
 .ipynb_checkpoints
 
+# hg and db files #
+#####################
+*.hg
+*.db
+
 # Semsim data #
 #####################
-graphbrain/semsim/.cache
 graphbrain/semsim/models
+
+
+
