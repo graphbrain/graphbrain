@@ -21,7 +21,7 @@ DEFAULT_CONFIGS: dict[SemSimType, SemSimConfig] = {
         similarity_threshold=0.2
     ),
     SemSimType.CONTEXT: SemSimConfig(
-        model_name='intfloat/e5-base',
+        model_name='intfloat/e5-large',
         similarity_threshold=0.65
     )
 }

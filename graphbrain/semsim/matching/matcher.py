@@ -28,7 +28,7 @@ class SemSimMatcher(ABC):
 
     def __init__(self, config: SemSimConfig):
         self._type: SemSimType = self._TYPE
-        self._base_model_dir: Path = _create_sub_dir('models')
+        self._base_model_dir: Path = self._create_sub_dir('models')
         self._similarity_threshold: float = config.similarity_threshold
 
     def similar(
@@ -73,8 +73,9 @@ class SemSimMatcher(ABC):
     def filter_oov(self, words: list[str]) -> list[str]:
         raise NotImplementedError
 
-
-def _create_sub_dir(dir_name: str) -> Path:
-    sub_dir: Path = Path(graphbrain.semsim.__file__).parent / dir_name
-    sub_dir.mkdir(exist_ok=True)
-    return sub_dir
+    @staticmethod
+    def _create_sub_dir(dir_name: str, base_dir: Path = Path.home() / ".graphbrain-data") -> Path:
+        base_dir.mkdir(exist_ok=True)
+        sub_dir: Path = base_dir / dir_name
+        sub_dir.mkdir(exist_ok=True)
+        return sub_dir
