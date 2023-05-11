@@ -121,7 +121,8 @@ def match_semsim(
     ):
         return []
 
-    if graphbrain.patterns._matches_atomic_pattern(_replace_edge_word_part(edge, pattern_words_part), pattern[0]):
+    edge_with_pattern_word_part = _replace_edge_word_part(edge, pattern_words_part)
+    if graphbrain.patterns._matches_atomic_pattern(edge_with_pattern_word_part, pattern[0]):
         return [curvars]
 
     return []

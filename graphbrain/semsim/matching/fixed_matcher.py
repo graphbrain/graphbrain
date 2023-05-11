@@ -53,6 +53,7 @@ class FixedEmbeddingMatcher(SemSimMatcher):
         if not self._in_vocab([candidate]):
             return None
 
+        # similarities: dict[str, float] = {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
         return {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
 
     def _load_model(self, model_name: str) -> KeyedVectors:
