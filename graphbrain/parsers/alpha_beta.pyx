@@ -1,4 +1,5 @@
 import json
+import sys
 import traceback
 from abc import ABC
 from collections import Counter
@@ -88,6 +89,7 @@ def _generate_tok_pos(parse, edge):
     else:
         return '({})'.format(' '.join([_generate_tok_pos(parse, subedge) for subedge in edge]))
 
+
 class AlphaBeta(Parser, ABC):
     def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
         super().__init__(lemmas=lemmas, corefs=corefs)
@@ -159,7 +161,7 @@ class AlphaBeta(Parser, ABC):
     # Language-agnostic methods
     # =========================
 
-    def parse_spacy_sentence(self, sent, atom_sequence=None):
+    def parse_spacy_sentence(self, sent, atom_sequence=None, offset=0):
         try:
             self.extra_edges = set()
 
@@ -182,7 +184,7 @@ class AlphaBeta(Parser, ABC):
                     main_edge = self._normalize(main_edge)
                 if self.post_process:
                     main_edge = self._post_process(main_edge)
-                atom2word = self._generate_atom2word(main_edge)
+                atom2word = self._generate_atom2word(main_edge, offset=offset)
             else:
                 atom2word = {}
 
@@ -461,14 +463,14 @@ class AlphaBeta(Parser, ABC):
 
         return new_entity
 
-    def _generate_atom2word(self, edge):
+    def _generate_atom2word(self, edge, offset=0):
         atom2word = {}
         atoms = edge.all_atoms()
         for atom in atoms:
             uatom = UniqueAtom(atom)
             if uatom in self.atom2token:
                 token = self.atom2token[uatom]
-                word = (token.text, token.i)
+                word = (token.text, token.i - offset)
                 atom2word[uatom] = word
         return atom2word
 
@@ -640,12 +642,15 @@ class AlphaBeta(Parser, ABC):
         enriched with NLP annotations.
         """
         self.reset(text)
+        parses = []
         try:
             self.doc = self.nlp(text.strip())
-            parses = tuple(self.parse_spacy_sentence(sent) for sent in self.doc.sents)
+            offset = 0
+            for sent in self.doc.sents:
+                parses.append(self.parse_spacy_sentence(sent, offset=offset))
+                offset += len(sent)
         except RuntimeError as error:
             print(error)
-            parses = []
         return {'parses': parses, 'inferred_edges': []}
 
     def sentences(self, text):

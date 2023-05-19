@@ -108,10 +108,10 @@ def _matches_atomic_pattern(edge, atomic_pattern):
 
         # type match
         ap_role = atomic_pattern.role()
-        apmtype = ap_role[0]
-        emtype = edge.mtype()
-        n = len(apmtype)
-        if len(emtype) < n or emtype[:n] != apmtype:
+        ap_type = ap_role[0]
+        e_type = edge.type()
+        n = len(ap_type)
+        if len(e_type) < n or e_type[:n] != ap_type:
             return False
 
         e_atom = edge.inner_atom()
@@ -124,7 +124,7 @@ def _matches_atomic_pattern(edge, atomic_pattern):
                 return False
 
             # argroles match
-            if apmtype[0] in {'B', 'P'}:
+            if ap_type[0] in {'B', 'P'}:
                 ap_argroles_parts = ap_role[1].split('-')
                 if len(ap_argroles_parts) == 1:
                     ap_argroles_parts.append('')
@@ -461,8 +461,10 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                     _result.append(variables)
                 else:
                     if tok_pos is not None:
-                        tok_pos = tok_pos[i] if len(tok_pos) > i else None
-                        # TODO: is this correct? doesnt it mean that the pattern is not matched?
+                        if len(tok_pos) > i:
+                            tok_pos = tok_pos[i]
+                        else:
+                            raise RuntimeError('index {} in tok_pos {} is out of range'.format(i, str(tok_pos)))
                     _result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge,
                                               ref_edges=ref_edges, tok_pos=tok_pos)
             result = _result
@@ -607,7 +609,7 @@ def edge2pattern(edge, root=False, subtype=False):
     else:
         root_str = '*'
     if subtype:
-        et = edge.mtype()
+        et = edge.type()
     else:
         et = edge.mtype()
     pattern = '{}/{}'.format(root_str, et)
