@@ -145,8 +145,13 @@ def common_pattern_relation(edge1, edge2):
         subedges = [common_pattern(se1, se2) for se1, se2 in zip(edge1_, edge2_)]
         if any(subedge is None for subedge in subedges):
             break
-        pattern = hedge(subedges)
-        pattern = pattern.replace_argroles('{{{}}}'.format(edge1_[0].argroles()))
+        argroles = edge1_[0].argroles()
+        if argroles == '':
+                # deal with (*/P.{})
+            pattern = hedge('*/R')
+        else:
+            pattern = hedge(subedges)
+            pattern = pattern.replace_argroles('{{{}}}'.format(edge1_[0].argroles()))
 
         if best_pattern is None or more_general(best_pattern, pattern):
             best_pattern = pattern
