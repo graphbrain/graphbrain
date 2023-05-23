@@ -70,9 +70,6 @@ class SemSimMatcher(ABC):
     ) -> Union[dict[str, float], None]:
         raise NotImplementedError
 
-    def filter_oov(self, words: list[str]) -> list[str]:
-        raise NotImplementedError
-
     @staticmethod
     def _create_sub_dir(dir_name: str, base_dir: Path = Path.home() / ".graphbrain-data") -> Path:
         base_dir.mkdir(exist_ok=True)

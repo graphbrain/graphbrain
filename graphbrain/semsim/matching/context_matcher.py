@@ -47,10 +47,6 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         logger.info("Done creating SpaCy transformer pipeline!")
         return nlp
 
-    def filter_oov(self, words: list[str]) -> list[str]:
-        # TODO: Does this make sense for context embeddings?
-        return words
-
     def _similarities(
             self,
             candidate: str,
@@ -246,8 +242,9 @@ def _follow_tok_idx_trail(tok_pos: Hyperedge, tok_idx_trail: list[int]) -> int |
     try:
         assert sub_tok_pos.atom
     except AssertionError:
-        logger.error(f"Sub tok_pos at end of tok_idx_trail is not an atom: "
-                     f"{sub_tok_pos=}, {tok_idx_trail=}, {tok_pos=}")
+        logger.error(
+            f"Sub tok_pos at end of tok_idx_trail is not an atom: {sub_tok_pos=}, {tok_idx_trail=}, {tok_pos=}"
+        )
         return None
 
     try:
