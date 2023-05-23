@@ -60,7 +60,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             hg: Hypergraph = None,
             **kwargs
     ) -> dict[str, float] | None:
-        assert root_edge and hg, f"Missing one of these: {root_edge=}, {hg=}"
+        assert root_edge, f"Missing root edge!"
 
         tok_idx: int | None = _get_and_validate_tok_idx(tok_pos)
         if tok_idx is None:
@@ -86,7 +86,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         if not root_edge_tokens or not _validate_candidate_tok_idx(candidate, tok_idx, root_edge_tokens):
             return None
 
-        return self._get_embedding(root_edge_tokens, tok_idx)
+        return self._get_embedding(tuple(root_edge_tokens), tok_idx)
 
     def _get_reference_embeddings(
             self, ref_edges: list[Hyperedge], tok_idx: int, root_edge: Hyperedge, hg: Hypergraph
@@ -112,25 +112,25 @@ class ContextEmbeddingMatcher(SemSimMatcher):
                 logger.error(f"Reference sentence does not match tok_idx")
                 return None
 
-            reference_trf_embeddings.append(self._get_embedding(ref_edge_tokens, ref_edge_tok_idx))
+            reference_trf_embeddings.append(self._get_embedding(tuple(ref_edge_tokens), ref_edge_tok_idx))
         return reference_trf_embeddings
 
     @lru_cache(maxsize=_EMBEDDING_CACHE_SIZE)
-    def _get_embedding(self, tokens: list[str], tok_idx: int) -> Tensor | None:
+    def _get_embedding(self, tokens: tuple[str], tok_idx: int) -> Tensor | None:
         spacy_doc, spacy_tokens = self._get_spacy_doc_and_tokens(tokens)
         if not _validate_spacy_tokenization(tokens, spacy_tokens):
             return None
 
-        return _get_trf_embedding_of_lex_token(spacy_tokens, tok_idx, spacy_doc._.trf_data)  # noqa
+        return _get_trf_embedding_of_lex_token(spacy_tokens, tok_idx, spacy_doc._.trf_data)
 
-    def _get_spacy_doc_and_tokens(self, tokens: list[str] = None) -> tuple[Doc, list[str]]:
+    def _get_spacy_doc_and_tokens(self, tokens: tuple[str] = None) -> tuple[Doc, tuple[str]]:
         spacy_doc: Doc = Doc(self._spacy_pipe.vocab, words=tokens)
         self._spacy_pipe.get_pipe(self._SPACY_PIPE_TRF_COMPONENT_NAME)(spacy_doc)
         assert spacy_doc._.trf_data is not None, f"Missing trf_data"  # noqa
-        return spacy_doc, [tok.text for tok in spacy_doc]
+        return spacy_doc, tuple(tok.text for tok in spacy_doc)
 
 
-def _get_trf_embedding_of_lex_token(lexical_tokens: list[str], lex_tok_idx: int, trf_data: TransformerData):
+def _get_trf_embedding_of_lex_token(lexical_tokens: tuple[str], lex_tok_idx: int, trf_data: TransformerData):
     tok_trf_idxes: list[int] = _get_lex2trf_idx(lexical_tokens, trf_data.align)[lex_tok_idx]
     trf_tokens: list[str] = [trf_data.wordpieces.strings[0][tok_idx] for tok_idx in tok_trf_idxes]
 
@@ -140,7 +140,7 @@ def _get_trf_embedding_of_lex_token(lexical_tokens: list[str], lex_tok_idx: int,
     return _average_pool(trf_embeddings, Tensor(trf_data.wordpieces.attention_mask[:, tok_trf_idxes]))
 
 
-def _validate_spacy_tokenization(tokens: list[str], spacy_tokens: list[str]) -> bool:
+def _validate_spacy_tokenization(tokens: tuple[str], spacy_tokens: tuple[str]) -> bool:
     try:
         assert spacy_tokens == tokens
     except AssertionError:
@@ -206,7 +206,7 @@ def _get_and_validate_tok_idx(tok_pos: Hyperedge) -> int | None:
 
     try:
         tok_idx: int = int(tok_idx_str)
-    except ValueError:
+    except (TypeError, ValueError):
         logger.warning(f"Cannot convert tok_pos to int value: {tok_pos}")
         return None
 
@@ -260,7 +260,7 @@ def _follow_tok_idx_trail(tok_pos: Hyperedge, tok_idx_trail: list[int]) -> int |
 
 
 # Make alignment between lexical tokens and transformer (sentencepiece, wordpiece, ...) tokens
-def _get_lex2trf_idx(lexical_tokens: list[str], alignment_data: Ragged) -> dict[int, list[int]]:
+def _get_lex2trf_idx(lexical_tokens: tuple[str], alignment_data: Ragged) -> dict[int, list[int]]:
     lex2trf_idx: dict[int, list[int]] = {}
     trf_idx: int = 0
     for lex_idx in range(len(lexical_tokens)):

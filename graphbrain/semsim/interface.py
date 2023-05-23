@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from typing import Type
+from urllib.parse import unquote
 
 import graphbrain.patterns
 from graphbrain import hedge
@@ -97,6 +98,9 @@ def match_semsim(
         tok_pos: Hyperedge = None,
         hg: Hypergraph = None
 ) -> list[dict]:
+    if not hg:
+        raise RuntimeError("SemSim function requires hypergraph")
+
     edge_word_part: str = _get_edge_word_part(edge)
     if not edge_word_part:
         return []
@@ -142,6 +146,9 @@ def _get_edge_word_part(edge: Hyperedge | Atom) -> str | None:
     # special atoms ('_lemma')
     if edge_word_part.startswith('_'):
         return None
+
+    # decode specially encoded characters
+    edge_word_part = unquote(edge_word_part)
 
     return edge_word_part
 
