@@ -474,8 +474,9 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
         # match connectors first
         econn = edge[0]
         pconn = pattern[0]
+        ctok_pos = tok_pos[0] if tok_pos else None
         for variables in _match_pattern(econn, pconn, curvars, hg=hg, root_edge=root_edge, ref_edges=ref_edges,
-                                        tok_pos=tok_pos):
+                                        tok_pos=ctok_pos):
             role_counts = Counter(argroles_opt).most_common()
             unknown_roles = (len(pattern) - 1) - len(argroles_opt)
             if unknown_roles > 0:
