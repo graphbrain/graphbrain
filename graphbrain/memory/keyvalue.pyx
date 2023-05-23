@@ -233,12 +233,9 @@ class KeyValue(Hypergraph, ABC):
         if curvars is None:
             curvars = {}
         for edge in edges:
-            print(f"edge.atom={edge.atom} (KV l. 369)")  # todo: remove
             results = match_pattern(edge, pattern, curvars=curvars, hg=self, ref_edges=ref_edges)
             if len(results) > 0:
                 yield edge, results
-            input()  # todo: remove
-
 
     def _set_attribute(self, edge, attribute, value):
         self.begin_transaction()

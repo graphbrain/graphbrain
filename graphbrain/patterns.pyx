@@ -387,8 +387,6 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, 
         var_name = fun_pattern[2].root()
         if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
             this_var = {var_name: edge[1]}
-            print(f"edge={edge[1]} (P l. 394)")  # todo: remove
-            print(f"tok_pos={tok_pos} (P l. 394)")  # todo: remove
             return _match_pattern(
                 edge[1],
                 pattern,
@@ -400,8 +398,6 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, 
             )
         else:
             this_var = {var_name: edge}
-            print(f"edge={edge} (P l. 407)")  # todo: remove
-            print(f"tok_pos={tok_pos} (P l. 407)")  # todo: remove
             return _match_pattern(
                 edge,
                 pattern,
@@ -418,7 +414,6 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, 
             atoms = edge.atoms()
             atoms_tok_pos = None
         atom_patterns = fun_pattern[1:]
-        print(f"atoms_tok_pos={atoms_tok_pos} (l. 417)")  # todo: remove
         return _match_atoms(
             atom_patterns,
             atoms,
@@ -442,7 +437,6 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, 
             matcher_type="FIXED"
         )
     elif fun == 'semsim-ctx':
-        print(f"{tok_pos} (l. 440)")  # todo: remove
         return match_semsim(
             fun_pattern[1:],
             edge,
@@ -495,7 +489,6 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
 
     # functional patterns
     if is_fun_pattern(pattern):
-        print(f"{tok_pos} (l. 501)")  # todo: remove
         return _matches_fun_pat(
             edge,
             pattern,
@@ -561,7 +554,6 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                             raise RuntimeError(f"Index '{i}' in tok_pos '{tok_pos}' is out of range")
                         tok_pos = tok_pos[i]
 
-                    print(f"{tok_pos} (l. 557)")  # todo: remove
                     _result += _match_pattern(
                         eitem,
                         pitem,
@@ -586,7 +578,7 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                 hg=hg,
                 root_edge=root_edge,
                 ref_edges=ref_edges,
-                tok_pos=tok_pos
+                tok_pos=ctok_pos
         ):
             role_counts = Counter(argroles_opt).most_common()
             unknown_roles = (len(pattern) - 1) - len(argroles_opt)
