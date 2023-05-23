@@ -366,15 +366,11 @@ def _match_lemma(lemma_pattern, edge, curvars, hg):
 
 def _atoms_and_tok_pos(edge, tok_pos):
     if edge.atom:
-        print(f"edge.atom={edge.atom} (P l. 369)")
-        print(f"edge={edge} (P l. 370)")
         return [edge], [tok_pos]
     atoms = []
     atoms_tok_pos = []
-    print(f"zip(edge, tok_pos)={zip(edge, tok_pos)} (l. 372")
     for edge_item, tok_pos_item in zip(edge, tok_pos):
         _atoms, _atoms_tok_pos = _atoms_and_tok_pos(edge_item, tok_pos_item)
-        print(f"zip(_atoms, _atoms_tok_pos)={zip(_atoms, _atoms_tok_pos)} (l. 375")
         for _atom, _atom_tok_pos in zip(_atoms, _atoms_tok_pos):
             if _atom not in atoms:
                 atoms.append(_atom)
@@ -383,7 +379,6 @@ def _atoms_and_tok_pos(edge, tok_pos):
 
 
 def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, tok_pos=None) -> list[dict]:
-    print(f"edge={edge} (P l. 386)")  # todo: remove
     fun = fun_pattern[0].root()
     if fun == 'var':
         if len(fun_pattern) != 3:
@@ -477,9 +472,6 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, 
 
 
 def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edges=None, tok_pos=None):
-    print(f"edge={edge} (l. 480)")  # todo: remove
-    print(f"edge.atom={edge.atom} (l. 480)")  # todo: remove
-    print(f"tok_pos={tok_pos} (l. 480)")  # todo: remove
     if curvars is None:
         curvars = {}
 
@@ -586,7 +578,7 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
         # match connectors first
         econn = edge[0]
         pconn = pattern[0]
-        print(f"edge={edge} (l. 589)")  # todo: remove
+        ctok_pos = tok_pos[0] if tok_pos else None
         for variables in _match_pattern(
                 econn,
                 pconn,
@@ -698,8 +690,6 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     edge_hedged: Hyperedge = hedge(edge)
     pattern_hedged: Hyperedge = hedge(pattern)
     pattern_hedged_normalized: Hyperedge =_normalize_fun_patterns(pattern_hedged)
-    print(f"edge={edge_hedged}, pattern={pattern_hedged_normalized}, tok_pos={_edge_tok_pos(edge, hg)} (P l. 691)")  # todo: remove
-    print(f"edge.atom={edge_hedged.atom} (P l. 693)")  # todo: remove
     return _match_pattern(
         edge_hedged,
         pattern_hedged_normalized,

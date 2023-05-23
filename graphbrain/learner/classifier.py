@@ -109,6 +109,7 @@ class Classifier:
         self.hg = hg
         self.rules = []
         self.cases = []
+        self.false_positive_penalty = -1
 
     def classify(self, edge):
         for rule in [rule for rule in self.rules if not rule.positive]:
@@ -167,7 +168,10 @@ class Classifier:
                 if positive:
                     s += 1
                 else:
-                    return -1
+                    if self.false_positive_penalty < 0:
+                        return -1
+                    else:
+                        s -= self.false_positive_penalty
         return s
 
     def test(self, rule):
@@ -184,6 +188,10 @@ class Classifier:
 
         cases = [edge for edge, positive in self.cases if positive]
         while len(cases) > 0:
+            print('-> cases: {}; rules: {}'.format(len(cases), len(self.rules)))
+            for rule in self.rules:
+                print(rule)
+            print()
             logging.debug('{} remaining cases'.format(len(cases)))
 
             edge = cases[0]
