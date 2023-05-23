@@ -1,3 +1,4 @@
+from collections import Counter
 from itertools import combinations, permutations, product
 
 from graphbrain import hedge
@@ -110,6 +111,23 @@ def all_variables(edge):
     return _vars
 
 
+def is_valid(edge, _vars=None):
+    if _vars is None:
+        _vars = set()
+    if edge is None:
+        return False
+    if edge.atom:
+        return True
+    if is_variable(edge):
+        if edge[2].not_atom:
+            return False
+        if edge[2] in _vars:
+            return False
+        _vars.add(edge[2])
+        return is_valid(edge[1], _vars=_vars)
+    return all(is_valid(subedge, _vars=_vars) for subedge in edge)
+
+
 def extract_vars_map(edge, _vars=None):
     if _vars is None:
         _vars = {}
@@ -142,12 +160,12 @@ def common_pattern_relation(edge1, edge2):
         edge1_ = rolemap2edge(edge1[0], rm1_)
         edge2_ = rolemap2edge(edge2[0], rm2_)
 
-        subedges = [common_pattern(se1, se2) for se1, se2 in zip(edge1_, edge2_)]
+        subedges = [_common_pattern(se1, se2) for se1, se2 in zip(edge1_, edge2_)]
         if any(subedge is None for subedge in subedges):
             break
         argroles = edge1_[0].argroles()
         if argroles == '':
-                # deal with (*/P.{})
+            # deal with (*/P.{})
             pattern = hedge('*/R')
         else:
             pattern = hedge(subedges)
@@ -213,7 +231,7 @@ def common_pattern_atoms(atoms):
     return hedge(atom_str)
 
 
-def common_pattern(edge1, edge2):
+def _common_pattern(edge1, edge2):
     nedge1 = edge1
     nedge2 = edge2
 
@@ -241,7 +259,7 @@ def common_pattern(edge1, edge2):
             var = var2
         else:
             vedge2 = nedge2
-        vedge = common_pattern(vedge1, vedge2)
+        vedge = _common_pattern(vedge1, vedge2)
         if vedge is None or contains_variable(vedge):
             return None
         else:
@@ -257,7 +275,7 @@ def common_pattern(edge1, edge2):
             return common_pattern_relation(nedge1, nedge2)
         # same length
         elif nedge1.not_atom and nedge2.not_atom and len(nedge1) == len(nedge2):
-            subedges = [common_pattern(subedge1, subedge2) for subedge1, subedge2 in zip(nedge1, nedge2)]
+            subedges = [_common_pattern(subedge1, subedge2) for subedge1, subedge2 in zip(nedge1, nedge2)]
             if any(subedge is None for subedge in subedges):
                 return None
             return hedge(subedges)
@@ -272,6 +290,14 @@ def common_pattern(edge1, edge2):
                 return hedge('*')
 
 
+def common_pattern(edge1, edge2):
+    edge = _common_pattern(edge1, edge2)
+    if is_valid(edge):
+        return edge
+    else:
+        return None
+
+
 def _extract_any_edges(edge):
     if edge.not_atom and str(edge[0]) == 'any':
         return list(edge[1:])
@@ -279,7 +305,7 @@ def _extract_any_edges(edge):
         return [edge]
 
 
-def merge_patterns(edge1, edge2):
+def _merge_patterns(edge1, edge2):
     # edges with different sizes cannot be merged
     if len(edge1) != len(edge2):
         return None
@@ -307,3 +333,11 @@ def merge_patterns(edge1, edge2):
                 merged_edge.append(['any'] + alternatives)
 
     return hedge(merged_edge)
+
+
+def merge_patterns(edge1, edge2):
+    edge = _merge_patterns(edge1, edge2)
+    if is_valid(edge):
+        return edge
+    else:
+        return None
