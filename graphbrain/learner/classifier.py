@@ -152,14 +152,18 @@ class Classifier:
         cases.append((vedge, positive))
         self.cases = cases
 
-    def assign_rule_case_matches(self):
+    def assign_rule_case_matches(self, oneshot=True):
         for rule in self.rules:
             rule.case_matches = []
-            for edge, positive in self.cases:
-                nedge = edge
+
+        for edge, positive in self.cases:
+            nedge = edge
+            for rule in self.rules:
                 if rule.positive == positive:
                     if rule.matches(nedge):
                         rule.case_matches.append(nedge)
+                        if oneshot:
+                            break
 
     def score(self):
         s = 0
