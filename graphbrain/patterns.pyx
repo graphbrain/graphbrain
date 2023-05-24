@@ -460,13 +460,15 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                         continue
                     _result.append(variables)
                 else:
+                    new_tok_pos = None
                     if tok_pos is not None:
-                        if len(tok_pos) > i:
-                            tok_pos = tok_pos[i]
-                        else:
+                        try:
+                            assert i >= len(tok_pos)
+                        except AssertionError:
                             raise RuntimeError('index {} in tok_pos {} is out of range'.format(i, str(tok_pos)))
+                        new_tok_pos = tok_pos[i]
                     _result += _match_pattern(eitem, pitem, {**curvars, **variables}, hg=hg, root_edge=root_edge,
-                                              ref_edges=ref_edges, tok_pos=tok_pos)
+                                              ref_edges=ref_edges, tok_pos=new_tok_pos)
             result = _result
     # match by argroles
     else:
