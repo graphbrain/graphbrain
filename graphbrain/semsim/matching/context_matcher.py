@@ -58,12 +58,12 @@ class ContextEmbeddingMatcher(SemSimMatcher):
     ) -> dict[str, float] | None:
         assert root_edge, f"Missing root edge!"
 
-        tok_idx: int | None = _get_and_validate_tok_idx(tok_pos)
-        if tok_idx is None:
+        can_tok_idx: int | None = _get_and_validate_tok_idx(tok_pos)
+        if can_tok_idx is None:
             return None
 
-        candidate_embedding: Tensor = self._get_candidate_embedding(candidate, tok_idx, root_edge, hg)
-        reference_embeddings: list[Tensor] = self._get_reference_embeddings(references, tok_idx, root_edge, hg)
+        candidate_embedding: Tensor = self._get_candidate_embedding(candidate, can_tok_idx, root_edge, hg)
+        reference_embeddings: list[Tensor] = self._get_reference_embeddings(references, can_tok_idx, root_edge, hg)
 
         if candidate_embedding is not None and reference_embeddings is not None:
             return {ref: float(self._cos_sim(candidate_embedding, reference_trf_embedding))
@@ -74,15 +74,27 @@ class ContextEmbeddingMatcher(SemSimMatcher):
     def _get_candidate_embedding(
             self,
             candidate: str,
-            tok_idx: int,
+            can_tok_idx: int,
             root_edge: Hyperedge,
             hg: Hypergraph,
     ) -> Tensor | None:
         root_edge_tokens: list[str] | None = _get_and_validate_edge_tokens(root_edge, hg)
-        if not root_edge_tokens or not _validate_candidate_tok_idx(candidate, tok_idx, root_edge_tokens):
+        if not root_edge_tokens or not _validate_candidate_token(candidate, can_tok_idx, root_edge_tokens):
             return None
 
-        return self._get_embedding(tuple(root_edge_tokens), tok_idx)
+        return self._get_embedding(tuple(root_edge_tokens), can_tok_idx)
+
+    """
+    Questions:
+    * Is it possible to follow the tok_idx_trail for every ref edge?
+        * Do we get root edges (candidate edges) that do not match the pattern? probably yes
+    * Can we store/cache the tok_idx for a given ref_edge?
+        * Is it always the same? should be --> refactor into new get_ref_edge_tok_idx method and add caching
+            --> bullshit  
+        * we need the tok_idx_trail
+            * can cache follow trail method if tok_pos (Hyperedge) is hashable
+    
+    """
 
     def _get_reference_embeddings(
             self, ref_edges: list[Hyperedge], tok_idx: int, root_edge: Hyperedge, hg: Hypergraph
@@ -165,7 +177,7 @@ def _get_and_validate_edge_str_attr(edge: Hyperedge, hg: Hypergraph, attribute_n
     return attribute_val
 
 
-def _validate_candidate_tok_idx(candidate: str, tok_idx: int, root_edge_tokens: list[str]) -> bool:
+def _validate_candidate_token(candidate: str, tok_idx: int, root_edge_tokens: list[str]) -> bool:
     if not _validate_tok_idx_for_tokens(tok_idx, root_edge_tokens):
         return False
 
@@ -174,8 +186,10 @@ def _validate_candidate_tok_idx(candidate: str, tok_idx: int, root_edge_tokens: 
     try:
         assert candidate.lower() == candidate_token.lower()
     except AssertionError:
-        logger.warning(f"Token in root edge does not equal candidate: "
-                       f"'{candidate_token}' (idx: {tok_idx}) != '{candidate}'. Root edge tokens: {root_edge_tokens}")
+        logger.warning(
+            f"Token in root edge does not equal candidate: '{candidate_token}' (idx: {tok_idx}) != '{candidate}."
+            f"Root edge tokens: {root_edge_tokens}"
+        )
         return False
 
     return True
@@ -195,19 +209,25 @@ def _get_and_validate_tok_idx(tok_pos: Hyperedge) -> int | None:
         return None
 
     try:
+        assert tok_pos.is_atom()
+    except AssertionError:
+        logger.error(f"Passed tok_pos is not an atom: {tok_pos=}")
+        return None
+
+    try:
         tok_idx_str: str = tok_pos[0]
     except IndexError:
-        logger.warning(f"Cannot access tok_pos string value: {tok_pos}")
+        logger.warning(f"Cannot access tok_pos string value: {tok_pos=}")
         return None
 
     try:
         tok_idx: int = int(tok_idx_str)
     except (TypeError, ValueError):
-        logger.warning(f"Cannot convert tok_pos to int value: {tok_pos}")
+        logger.warning(f"Cannot convert tok_pos to int value: {tok_pos=}")
         return None
 
     if tok_idx < 0:
-        logger.debug(f"Candidate has no corresponding token")
+        logger.debug(f"No corresponding token for tok_pos: {tok_pos=}")
         return None
 
     return tok_idx
@@ -233,27 +253,13 @@ def _recursive_tok_idx_search(
 def _follow_tok_idx_trail(tok_pos: Hyperedge, tok_idx_trail: list[int]) -> int | None:
     sub_tok_pos: Hyperedge | Atom = tok_pos
     for sub_tok_idx in tok_idx_trail:
-        try:
-            sub_tok_pos: int = tok_pos[sub_tok_idx]
-        except IndexError:
-            logger.error(f"Tok idx trail does not match tok_pos: {tok_idx_trail=}, {tok_pos=}")
+        if len(sub_tok_pos) < sub_tok_idx or sub_tok_pos.is_atom():
+            logger.error(f"tok_idx_trail does not match tok_pos: {tok_idx_trail=}, {tok_pos=}")
             return None
 
-    try:
-        assert sub_tok_pos.atom
-    except AssertionError:
-        logger.error(
-            f"Sub tok_pos at end of tok_idx_trail is not an atom: {sub_tok_pos=}, {tok_idx_trail=}, {tok_pos=}"
-        )
-        return None
+        sub_tok_pos: Hyperedge = sub_tok_pos[sub_tok_idx]
 
-    try:
-        tok_idx: int = int(sub_tok_pos[0])
-    except ValueError:
-        logger.error(f"Cannot convert sub tok_pos to int value: {sub_tok_pos}")
-        return None
-
-    return tok_idx
+    return _get_and_validate_tok_idx(sub_tok_pos)
 
 
 # Make alignment between lexical tokens and transformer (sentencepiece, wordpiece, ...) tokens
