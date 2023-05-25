@@ -260,7 +260,8 @@ def _match_by_argroles(
     result = []
 
     if tok_pos:
-        tok_pos_perms = tuple(itertools.permutations(tok_pos, r=n))
+        tok_pos_items = [tok_pos[i] for i, subedge in enumerate(edge) if subedge in eitems]
+        tok_pos_perms = tuple(itertools.permutations(tok_pos_items, r=n))
         print(f"tok_pos={tok_pos}, tok_pos_perms={tok_pos_perms} (match_by_argroles before loop over permutations)")
 
     for perm_n, perm in enumerate(tuple(itertools.permutations(eitems, r=n))):
