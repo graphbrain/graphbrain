@@ -237,7 +237,6 @@ class KeyValue(Hypergraph, ABC):
             if len(results) > 0:
                 yield edge, results
 
-
     def _set_attribute(self, edge, attribute, value):
         self.begin_transaction()
         key = self._edge2key(edge)

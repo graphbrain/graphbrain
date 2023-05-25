@@ -6,6 +6,7 @@
 *.exe
 *.o
 *.so
+build/
 
 # Packages #
 ############
@@ -61,7 +62,14 @@ __pycache__
 #####################
 .ipynb_checkpoints
 
+# hg and db files #
+#####################
+*.hg
+*.db
+
 # Semsim data #
 #####################
-graphbrain/semsim/.cache
 graphbrain/semsim/models
+
+
+

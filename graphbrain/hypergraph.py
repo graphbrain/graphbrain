@@ -187,6 +187,12 @@ class Hypergraph(object):
             ref_edges: list[Union[Hyperedge, str, list, tuple]] = None
     ):
         pattern, ref_edges = _hedge_params(pattern, ref_edges)
+
+        # res = []
+        # for edge in self.sequence(name):
+        #     res.append(self._match_edges([edge], pattern, strict, curvars=curvars, ref_edges=ref_edges))
+        # return res
+
         return self._match_edges(self.sequence(name), pattern, strict, curvars=curvars, ref_edges=ref_edges)
 
     def count(self, pattern: Union[Hyperedge, str, list, tuple]) -> int:

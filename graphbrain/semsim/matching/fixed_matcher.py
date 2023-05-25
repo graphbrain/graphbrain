@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import logging
 from pathlib import Path
 from typing import Union
@@ -17,7 +18,7 @@ class FixedEmbeddingMatcher(SemSimMatcher):
 
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
-        self._model_dir: Path = self._base_model_dir / 'gensim-data'
+        self._model_dir: Path = self._create_sub_dir("gensim-data", base_dir=self._base_model_dir)
         self._model: KeyedVectors = self._load_model(config.model_name)
 
     def _in_vocab(self, words: list[str], return_filtered: bool = False) -> bool | list[str]:
@@ -32,7 +33,7 @@ class FixedEmbeddingMatcher(SemSimMatcher):
 
     def filter_oov(self, words: list[str]) -> list[str]:
         filtered_words = self._in_vocab(words, return_filtered=True)
-        logger.info(f"Words left after filtering OOV words: {filtered_words}")
+        logger.debug(f"Words left after filtering OOV words: {filtered_words}")
         return filtered_words
 
     def _similarities(
@@ -52,16 +53,18 @@ class FixedEmbeddingMatcher(SemSimMatcher):
         if not self._in_vocab([candidate]):
             return None
 
+        # similarities: dict[str, float] = {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
         return {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
 
     def _load_model(self, model_name: str) -> KeyedVectors:
-        model_path: Path = self._model_dir / model_name / f"{model_name}.gz"
+        # model_path: Path = self._model_dir / model_name / f"{model_name}.gz"
+        model_path: Path = Path(gensim.downloader.BASE_DIR) / model_name / f"{model_name}.gz"
         model_path_bin: Path = self._model_dir / f"{model_name}_bin" / model_name
 
         # download specified model if it does not exist
         if not model_path_bin.exists() and not model_path.exists():
             download_path: Path = Path(gensim.downloader.load(model_name, return_path=True))
-            assert download_path == model_path, f"Model was downloaded incorrectly!"
+            assert download_path == model_path, f"Model was downloaded incorrectly! {download_path=} != {model_path=}"
 
         # convert the model in binary format if necessary
         # this allows for faster loading, since the model does not have be decompressed at load time
