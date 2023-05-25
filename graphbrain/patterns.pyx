@@ -262,7 +262,6 @@ def _match_by_argroles(
     if tok_pos:
         tok_pos_items = [tok_pos[i] for i, subedge in enumerate(edge) if subedge in eitems]
         tok_pos_perms = tuple(itertools.permutations(tok_pos_items, r=n))
-        print(f"tok_pos={tok_pos}, tok_pos_perms={tok_pos_perms} (match_by_argroles before loop over permutations)")
 
     for perm_n, perm in enumerate(tuple(itertools.permutations(eitems, r=n))):
         if tok_pos:
@@ -272,8 +271,6 @@ def _match_by_argroles(
             pitem = pitems[i]
             tok_pos_item = tok_pos_perm[i] if tok_pos else None
             item_result = []
-            if tok_pos:
-                print(f"tok_pos_perm={tok_pos_perm}, i={i}, tok_pos_item: {tok_pos_item}, eitem: {eitem}, pitem: {pitem} (_match_by_argroles before _match_pattern)")
             for variables in perm_result:
                 item_result += _match_pattern(
                     eitem,
@@ -470,7 +467,6 @@ def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, 
 
 
 def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edges=None, tok_pos=None):
-    print(f"tok_pos={tok_pos}, edge={edge}, pattern={pattern} (match_pattern start)")  # todo: remove debug
     if curvars is None:
         curvars = {}
 
@@ -536,7 +532,6 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
         for i, pitem in enumerate(pattern):
             eitem = edge[i]
             _result = []
-            print(f"i={i}, eitem={eitem}, pitem={pitem} (match_pattern begin pattern loop)")  # todo: remove debug
 
             for variables in result:
                 if pitem.atom:
@@ -556,18 +551,11 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                 else:
                     tok_pos_item = None
                     if tok_pos is not None:
-                        print(f"tok_pos={tok_pos}, tok_pos_type={type(tok_pos)} (match_pattern before assertion)")  # todo: remove debug
-
                         try:
                             assert len(tok_pos) > i
                         except AssertionError:
                             raise RuntimeError(f"Index '{i}' in tok_pos '{tok_pos}' is out of range")
                         tok_pos_item = tok_pos[i]
-
-                        if isinstance(tok_pos_item, str):
-                            print(f"tok_pos_item is a string: {tok_pos_item}")
-                            exit("exit")
-
                     _result += _match_pattern(
                         eitem,
                         pitem,
@@ -600,7 +588,6 @@ def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edg
                 role_counts.append(('*', unknown_roles))
             # add connector pseudo-argrole
             role_counts = [('X', 1)] + role_counts
-            print(f"tok_pos={tok_pos}, edge={edge}, pattern={pattern} (match_pattern before _match_by_argroles)")  # todo: remove debug
             sresult = _match_by_argroles(
                 edge,
                 pattern,
