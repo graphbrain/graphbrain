@@ -315,9 +315,9 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     # check for semsim_ctx matches if necessary
     if matcher.semsim_ctx:
         ref_matchers = [Matcher(ref_edge,
-                               pattern_hedged_normalized,
-                               tok_pos=_edge_tok_pos(ref_edge, hg),
-                               hg=hg)
+                                pattern_hedged_normalized,
+                                tok_pos=_edge_tok_pos(ref_edge, hg),
+                                hg=hg)
                        for ref_edge in ref_edges]
         # TODO: perform semsim_ctx match here
         # tok_pos corresponding to each semsim-ctx are stored in matcher / ref_matcher special_vars
