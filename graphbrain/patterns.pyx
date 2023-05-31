@@ -306,19 +306,25 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     edge_hedged: Hyperedge = hedge(edge)
     pattern_hedged: Hyperedge = hedge(pattern)
     pattern_hedged_normalized: Hyperedge =_normalize_fun_patterns(pattern_hedged)
-    matcher = Matcher(edge_hedged,
-                      pattern_hedged_normalized,
-                      curvars=curvars,
-                      tok_pos=_edge_tok_pos(edge, hg),
-                      hg=hg)
+    matcher = Matcher(
+        edge_hedged,
+        pattern_hedged_normalized,
+        curvars=curvars,
+        tok_pos=_edge_tok_pos(edge, hg),
+        hg=hg
+    )
 
     # check for semsim_ctx matches if necessary
     if matcher.semsim_ctx:
-        ref_matchers = [Matcher(ref_edge,
-                                pattern_hedged_normalized,
-                                tok_pos=_edge_tok_pos(ref_edge, hg),
-                                hg=hg)
-                       for ref_edge in ref_edges]
+        ref_matchers = [
+            Matcher(
+                ref_edge,
+                pattern_hedged_normalized,
+                tok_pos=_edge_tok_pos(ref_edge, hg),
+                hg=hg
+            )
+            for ref_edge in ref_edges
+        ]
         # TODO: perform semsim_ctx match here
         # tok_pos corresponding to each semsim-ctx are stored in matcher / ref_matcher special_vars
         # e.g. matcher.matches_with_special_vars['__semsim-ctx_0'] = (3 (1 2))
@@ -685,12 +691,11 @@ class Matcher:
             #     matcher_type="CONTEXT"
             # )
             self.semsim_ctx = True
-            var_name = _generate_special_var_name('semsim-ctx', curvars)
-            this_var = {var_name: tok_pos}
+            var_name: str = _generate_special_var_name('semsim-ctx', curvars)
             return self._match(
                 edge,
                 fun_pattern[1],
-                curvars={**curvars, **this_var},
+                curvars={**curvars, **{var_name: tok_pos}},
                 tok_pos=tok_pos
             )
 
@@ -813,8 +818,13 @@ class PatternCounter:
             patterns = [[hpat] for hpat in hpats]
         else:
             patterns = []
-            for pattern in self._list2patterns(ledge[1:], depth=depth, force_expansion=force_expansion,
-                                               force_root=force_root, force_subtypes=force_subtypes):
+            for pattern in self._list2patterns(
+                    ledge[1:],
+                    depth=depth,
+                    force_expansion=force_expansion,
+                    force_root=force_root,
+                    force_subtypes=force_subtypes
+            ):
                 for hpat in hpats:
                     patterns.append([hpat] + pattern)
         return patterns
@@ -822,10 +832,10 @@ class PatternCounter:
     def _edge2patterns(self, edge):
         force_subtypes = self._force_subtypes(edge)
         force_root, _ = self._force_root_expansion(edge)
-        return list(hedge(pattern)
-                    for pattern
-                    in self._list2patterns(list(edge.normalized()), force_subtypes=force_subtypes,
-                                           force_root=force_root, force_expansion=False))
+        return [
+            hedge(pattern) for pattern in self._list2patterns(
+                list(edge.normalized()), force_subtypes=force_subtypes, force_root=force_root
+            )]
 
     def count(self, edge):
         edge = hedge(edge)
