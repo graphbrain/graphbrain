@@ -268,7 +268,6 @@ def _edge_tok_pos(edge: Hyperedge, hg: Hypergraph = None) -> Union[Hyperedge, No
 
     return tok_pos_hedge
 
-
 def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
@@ -334,23 +333,6 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
 
 
 def edge_matches_pattern(edge, pattern, hg=None, ref_edges=None):
-    """Check if an edge matches a pattern.
-
-    Patterns are themselves edges. They can match families of edges
-    by employing special atoms:
-
-    -> '\*' represents a general wildcard (matches any entity)
-
-    -> '.' represents an atomic wildcard (matches any atom)
-
-    -> '(\*)' represents an edge wildcard (matches any edge)
-
-    -> '...' at the end indicates an open-ended pattern.
-
-    The pattern can be any valid hyperedge, including the above special atoms.
-    Examples: (is/Pd graphbrain/C .)
-    (says/Pd * ...)
-    """
     result = match_pattern(edge, pattern, hg=hg, ref_edges=ref_edges)
     return len(result) > 0
 
@@ -714,7 +696,7 @@ class Matcher:
             raise RuntimeError(f"Unknown pattern function: {fun}")
 
 
-def edge2pattern(edge, root=False, subtype=False):
+def _edge2pattern(edge, root=False, subtype=False):
     if root and edge.atom:
         root_str = edge.root()
     else:
@@ -731,14 +713,14 @@ def edge2pattern(edge, root=False, subtype=False):
         return hedge('{}.{}'.format(pattern, ar))
 
 
-def inner_edge_matches_pattern(edge, pattern, hg=None):
+def _inner_edge_matches_pattern(edge, pattern, hg=None):
     if edge.atom:
         return False
     for subedge in edge:
         if edge_matches_pattern(subedge, pattern, hg=hg):
             return True
     for subedge in edge:
-        if inner_edge_matches_pattern(subedge, pattern, hg=hg):
+        if _inner_edge_matches_pattern(subedge, pattern, hg=hg):
             return True
     return False
 
@@ -788,7 +770,7 @@ class PatternCounter:
             if edge_matches_pattern(edge, root_pattern):
                 force_root = True
                 force_expansion = True
-            elif inner_edge_matches_pattern(edge, root_pattern):
+            elif _inner_edge_matches_pattern(edge, root_pattern):
                 force_expansion = True
         return force_root, force_expansion
 
@@ -808,7 +790,7 @@ class PatternCounter:
         if f_force_expansion and not first.atom:
             hpats = []
         else:
-            hpats = [edge2pattern(first, root=root, subtype=f_force_subtypes)]
+            hpats = [_edge2pattern(first, root=root, subtype=f_force_subtypes)]
 
         if not first.atom and (self._matches_expansions(first) or
                                     f_force_expansion):
