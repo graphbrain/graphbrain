@@ -253,9 +253,13 @@ def _recursive_tok_idx_search(
 def _follow_tok_idx_trail(tok_pos: Hyperedge, tok_idx_trail: list[int]) -> int | None:
     sub_tok_pos: Hyperedge | Atom = tok_pos
     for sub_tok_idx in tok_idx_trail:
-        if len(sub_tok_pos) < sub_tok_idx or sub_tok_pos.is_atom():
+        if len(sub_tok_pos) < sub_tok_idx:
             logger.error(f"tok_idx_trail does not match tok_pos: {tok_idx_trail=}, {tok_pos=}")
             return None
+
+        if sub_tok_pos.is_atom():
+            logger.debug(f"Reached atom in tok_pos: {tok_pos=}, {tok_idx_trail=}, {sub_tok_pos=}")
+            break
 
         sub_tok_pos: Hyperedge = sub_tok_pos[sub_tok_idx]
 
