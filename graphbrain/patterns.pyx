@@ -218,153 +218,6 @@ def _defun_pattern_argroles(edge):
         return hedge([_defun_pattern_argroles(subedge) for subedge in edge])
 
 
-def _match_by_argroles(
-        edge,
-        pattern,
-        role_counts,
-        min_vars,
-        hg,
-        matched=(),
-        curvars=None,
-        root_edge=None,
-        ref_edges=None,
-        tok_pos=None
-):
-    if curvars is None:
-        curvars = {}
-
-    if len(role_counts) == 0:
-        return [curvars]
-
-    argrole, n = role_counts[0]
-
-    # match connector
-    if argrole == 'X':
-        eitems = [edge[0]]
-        pitems = [pattern[0]]
-    # match any argrole
-    elif argrole == '*':
-        eitems = [e for e in edge if e not in matched]
-        pitems = pattern[-n:]
-    # match specific argrole
-    else:
-        eitems = edge.edges_with_argrole(argrole)
-        pitems = _defun_pattern_argroles(pattern).edges_with_argrole(argrole)
-
-    if len(eitems) < n:
-        if len(curvars) >= min_vars:
-            return [curvars]
-        else:
-            return []
-
-    result = []
-
-    if tok_pos:
-        tok_pos_items = [tok_pos[i] for i, subedge in enumerate(edge) if subedge in eitems]
-        tok_pos_perms = tuple(itertools.permutations(tok_pos_items, r=n))
-
-    for perm_n, perm in enumerate(tuple(itertools.permutations(eitems, r=n))):
-        if tok_pos:
-            tok_pos_perm = tok_pos_perms[perm_n]
-        perm_result = [{}]
-        for i, eitem in enumerate(perm):
-            pitem = pitems[i]
-            tok_pos_item = tok_pos_perm[i] if tok_pos else None
-            item_result = []
-            for variables in perm_result:
-                item_result += _match_pattern(
-                    eitem,
-                    pitem,
-                    {**curvars, **variables},
-                    hg=hg,
-                    root_edge=root_edge,
-                    ref_edges=ref_edges,
-                    tok_pos=tok_pos_item
-                )
-            perm_result = item_result
-            if len(item_result) == 0:
-                break
-
-        for variables in perm_result:
-            result += _match_by_argroles(
-                edge,
-                pattern,
-                role_counts[1:],
-                min_vars,
-                hg,
-                matched + perm,
-                {**curvars, **variables},
-                root_edge=root_edge,
-                ref_edges=ref_edges,
-                tok_pos=tok_pos
-            )
-    
-    return result
-
-
-def _match_atoms(
-        atom_patterns,
-        atoms,
-        curvars,
-        hg,
-        root_edge=None,
-        ref_edges=None,
-        atoms_tok_pos=None,
-        matched_atoms=None
-) -> list[dict]:
-    if matched_atoms is None:
-        matched_atoms = []
-
-    if len(atom_patterns) == 0:
-        return [curvars]
-    
-    results = []
-    atom_pattern = atom_patterns[0]
-
-    for atom_pos, atom in enumerate(atoms):
-        if atom not in matched_atoms:
-            tok_pos = atoms_tok_pos[atom_pos] if atoms_tok_pos else None
-            svars = _match_pattern(
-                atom, atom_pattern, curvars, hg=hg, root_edge=root_edge, ref_edges=ref_edges, tok_pos=tok_pos
-            )
-            for variables in svars:
-                results += _match_atoms(
-                    atom_patterns[1:],
-                    atoms,
-                    {**curvars, **variables},
-                    hg,
-                    root_edge=root_edge,
-                    ref_edges=ref_edges,
-                    atoms_tok_pos=atoms_tok_pos,
-                    matched_atoms=matched_atoms + [atom]
-                )
-
-    return results
-
-
-# TODO: deal with argroles
-def _match_lemma(lemma_pattern, edge, curvars, hg):
-    if hg is None:
-        raise RuntimeError('Lemma pattern function requires hypergraph.')
-
-    if edge.not_atom:
-        return []
-
-    _lemma = lemma(hg, edge, same_if_none=True)
-
-    # add argroles to _lemma if needed
-    ar = edge.argroles()
-    if ar != '':
-        parts = _lemma.parts()
-        parts[1] = '{}.{}'.format(parts[1], ar)
-        _lemma = hedge('/'.join(parts))
-
-    if _matches_atomic_pattern(_lemma, lemma_pattern):
-        return [curvars]
-
-    return []
-
-
 def _atoms_and_tok_pos(edge, tok_pos):
     if edge.atom:
         return [edge], [tok_pos]
@@ -377,237 +230,6 @@ def _atoms_and_tok_pos(edge, tok_pos):
                 atoms.append(_atom)
                 atoms_tok_pos.append(_atom_tok_pos)
     return atoms, atoms_tok_pos
-
-
-def _matches_fun_pat(edge, fun_pattern, curvars, hg, root_edge, ref_edges=None, tok_pos=None) -> list[dict]:
-    fun = fun_pattern[0].root()
-    if fun == 'var':
-        if len(fun_pattern) != 3:
-            raise RuntimeError('var pattern function must have two arguments')
-        pattern = fun_pattern[1]
-        var_name = fun_pattern[2].root()
-        if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
-            this_var = {var_name: edge[1]}
-            return _match_pattern(
-                edge[1],
-                pattern,
-                curvars={**curvars, **this_var},
-                hg=hg,
-                root_edge=root_edge,
-                ref_edges=ref_edges,
-                tok_pos=tok_pos
-            )
-        else:
-            this_var = {var_name: edge}
-            return _match_pattern(
-                edge,
-                pattern,
-                curvars={**curvars, **this_var},
-                hg=hg,
-                root_edge=root_edge,
-                ref_edges=ref_edges,
-                tok_pos=tok_pos
-            )
-    elif fun == 'atoms':
-        if tok_pos:
-            atoms, atoms_tok_pos = _atoms_and_tok_pos(edge, tok_pos)
-        else:
-            atoms = edge.atoms()
-            atoms_tok_pos = None
-        atom_patterns = fun_pattern[1:]
-        return _match_atoms(
-            atom_patterns,
-            atoms,
-            curvars,
-            hg,
-            root_edge=root_edge,
-            ref_edges=ref_edges,
-            atoms_tok_pos=atoms_tok_pos
-        )
-    elif fun == 'lemma':
-        return _match_lemma(fun_pattern[1], edge, curvars, hg)
-    elif fun == 'semsim' or fun == 'semsim-fix':  # TODO: remove legacy 'semsim'
-        return match_semsim(
-            fun_pattern[1:],
-            edge,
-            curvars,
-            hg=hg,
-            root_edge=root_edge,
-            ref_edges=ref_edges,
-            tok_pos=tok_pos,
-            matcher_type="FIXED"
-        )
-    elif fun == 'semsim-ctx':
-        return match_semsim(
-            fun_pattern[1:],
-            edge,
-            curvars,
-            hg=hg,
-            root_edge=root_edge,
-            ref_edges=ref_edges,
-            tok_pos=tok_pos,
-            matcher_type="CONTEXT"
-        )
-    elif fun == 'any':
-        for pattern in fun_pattern[1:]:
-            matches = _match_pattern(
-                edge,
-                pattern,
-                curvars=curvars,
-                hg=hg,
-                root_edge=root_edge,
-                ref_edges=ref_edges,
-                tok_pos=tok_pos
-            )
-            if len(matches) > 0:
-                return matches
-        return []
-    else:
-        raise RuntimeError(f"Unknown pattern function: {fun}")
-
-
-def _match_pattern(edge, pattern, curvars=None, hg=None, root_edge=None, ref_edges=None, tok_pos=None):
-    if curvars is None:
-        curvars = {}
-
-    # if root_edge is not specified, it is assumed that edge is its own root
-    if root_edge is None:
-        root_edge = edge
-
-    # atomic patterns
-    if pattern.atom:
-        if _matches_atomic_pattern(edge, pattern):
-            variables = {}
-            if is_pattern(pattern):
-                varname = _varname(pattern)
-                if len(varname) > 0:
-                    if varname in curvars and curvars[varname] != edge:
-                        return []
-                    variables[varname] = edge
-            return [{**curvars, **variables}]
-        else:
-            return []
-
-    # functional patterns
-    if is_fun_pattern(pattern):
-        return _matches_fun_pat(
-            edge,
-            pattern,
-            curvars,
-            hg,
-            root_edge=root_edge,
-            ref_edges=ref_edges,
-            tok_pos=tok_pos
-        )
-
-    min_len = len(pattern)
-    max_len = min_len
-    # open-ended?
-    if pattern[-1].to_str() == '...':
-        pattern = hedge(pattern[:-1])
-        min_len -= 1
-        max_len = float('inf')
-
-    result = [{}]
-    argroles_posopt = _defun_pattern_argroles(pattern)[0].argroles().split('-')[0]
-    if len(argroles_posopt) > 0 and argroles_posopt[0] == '{':
-        match_by_order = False
-        argroles_posopt = argroles_posopt[1:-1]
-    else:
-        match_by_order = True
-    argroles = argroles_posopt.split(',')[0]
-    argroles_opt = argroles_posopt.replace(',', '')
-
-    if len(argroles) > 0:
-        min_len = 1 + len(argroles)
-        max_len = float('inf')
-    else:
-        match_by_order = True
-
-    if len(edge) < min_len or len(edge) > max_len:
-        return []
-
-    # match by order
-    if match_by_order:
-        for i, pitem in enumerate(pattern):
-            eitem = edge[i]
-            _result = []
-
-            for variables in result:
-                if pitem.atom:
-                    varname = _varname(pitem)
-                    if varname in curvars:
-                        if curvars[varname] != eitem:
-                            continue
-                    elif varname in variables:
-                        if variables[varname] != eitem:
-                            continue
-                    elif _matches_atomic_pattern(eitem, pitem):
-                        if len(varname) > 0 and varname[0].isupper():
-                            variables[varname] = eitem
-                    else:
-                        continue
-                    _result.append(variables)
-                else:
-                    tok_pos_item = None
-                    if tok_pos is not None:
-                        try:
-                            assert len(tok_pos) > i
-                        except AssertionError:
-                            raise RuntimeError(f"Index '{i}' in tok_pos '{tok_pos}' is out of range")
-                        tok_pos_item = tok_pos[i]
-                    _result += _match_pattern(
-                        eitem,
-                        pitem,
-                        {**curvars, **variables},
-                        hg=hg,
-                        root_edge=root_edge,
-                        ref_edges=ref_edges,
-                        tok_pos=tok_pos_item
-                    )
-            result = _result
-    # match by argroles
-    else:
-        result = []
-        # match connectors first
-        econn = edge[0]
-        pconn = pattern[0]
-        ctok_pos = tok_pos[0] if tok_pos else None
-        for variables in _match_pattern(
-                econn,
-                pconn,
-                curvars,
-                hg=hg,
-                root_edge=root_edge,
-                ref_edges=ref_edges,
-                tok_pos=ctok_pos
-        ):
-            role_counts = Counter(argroles_opt).most_common()
-            unknown_roles = (len(pattern) - 1) - len(argroles_opt)
-            if unknown_roles > 0:
-                role_counts.append(('*', unknown_roles))
-            # add connector pseudo-argrole
-            role_counts = [('X', 1)] + role_counts
-            sresult = _match_by_argroles(
-                edge,
-                pattern,
-                role_counts,
-                len(argroles),
-                hg,
-                curvars={**curvars, **variables},
-                root_edge=root_edge,
-                ref_edges=ref_edges,
-                tok_pos=tok_pos
-            )
-            for svars in sresult:
-                result.append({**variables, **svars})
-
-    unique_vars = []
-    for variables in result:
-        v = {**curvars, **variables}
-        if v not in unique_vars:
-            unique_vars.append(v)
-    return unique_vars
 
 
 def _normalize_fun_patterns(pattern):
@@ -684,18 +306,34 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     edge_hedged: Hyperedge = hedge(edge)
     pattern_hedged: Hyperedge = hedge(pattern)
     pattern_hedged_normalized: Hyperedge =_normalize_fun_patterns(pattern_hedged)
-    return _match_pattern(
+    matcher = Matcher(
         edge_hedged,
         pattern_hedged_normalized,
         curvars=curvars,
-        hg=hg,
-        root_edge=edge_hedged,
         tok_pos=_edge_tok_pos(edge, hg),
-        ref_edges=ref_edges
+        hg=hg
     )
 
+    # check for semsim_ctx matches if necessary
+    if matcher.semsim_ctx:
+        ref_matchers = [
+            Matcher(
+                ref_edge,
+                pattern_hedged_normalized,
+                tok_pos=_edge_tok_pos(ref_edge, hg),
+                hg=hg
+            )
+            for ref_edge in ref_edges
+        ]
+        # TODO: perform semsim_ctx match here
+        # tok_pos corresponding to each semsim-ctx are stored in matcher / ref_matcher special_vars
+        # e.g. matcher.matches_with_special_vars['__semsim-ctx_0'] = (3 (1 2))
+        # these can then be used to identify the correct tokens, convert them to embeddings and compare
 
-def edge_matches_pattern(edge, pattern, hg=None, root_edge=None, ref_edges=None, tok_pos=None):
+    return matcher.matches
+
+
+def edge_matches_pattern(edge, pattern, hg=None, ref_edges=None):
     """Check if an edge matches a pattern.
 
     Patterns are themselves edges. They can match families of edges
@@ -715,6 +353,365 @@ def edge_matches_pattern(edge, pattern, hg=None, root_edge=None, ref_edges=None,
     """
     result = match_pattern(edge, pattern, hg=hg, ref_edges=ref_edges)
     return len(result) > 0
+
+
+def _generate_special_var_name(var_code, vars):
+    prefix = f'__{var_code}'
+    var_count = len([var_name for var_name in vars if var_name.startswith(prefix)])
+    return f'__{var_code}_{var_count}'
+
+
+def _regular_var_count(vars):
+    return len([var_name for var_name in vars if not var_name.startswith('__')])
+
+
+def _remove_special_vars(vars):
+    return {key: value for key, value in vars.items() if not key.startswith('__')}
+
+
+class Matcher:
+    def __init__(self, edge, pattern, curvars=None, tok_pos=None, hg=None):
+        self.hg = hg
+        self.semsim_ctx = False
+        self.matches_with_special_vars = self._match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
+        self.matches = [_remove_special_vars(match) for match in self.matches_with_special_vars]
+
+    def _match(self, edge, pattern, curvars=None, tok_pos=None):
+        if curvars is None:
+            curvars = {}
+
+        # atomic patterns
+        if pattern.atom:
+            if _matches_atomic_pattern(edge, pattern):
+                variables = {}
+                if is_pattern(pattern):
+                    varname = _varname(pattern)
+                    if len(varname) > 0:
+                        if varname in curvars and curvars[varname] != edge:
+                            return []
+                        variables[varname] = edge
+                return [{**curvars, **variables}]
+            else:
+                return []
+
+        # functional patterns
+        if is_fun_pattern(pattern):
+            return self._matches_fun_pat(
+                edge,
+                pattern,
+                curvars,
+                tok_pos=tok_pos
+            )
+
+        min_len = len(pattern)
+        max_len = min_len
+        # open-ended?
+        if pattern[-1].to_str() == '...':
+            pattern = hedge(pattern[:-1])
+            min_len -= 1
+            max_len = float('inf')
+
+        result = [{}]
+        argroles_posopt = _defun_pattern_argroles(pattern)[0].argroles().split('-')[0]
+        if len(argroles_posopt) > 0 and argroles_posopt[0] == '{':
+            match_by_order = False
+            argroles_posopt = argroles_posopt[1:-1]
+        else:
+            match_by_order = True
+        argroles = argroles_posopt.split(',')[0]
+        argroles_opt = argroles_posopt.replace(',', '')
+
+        if len(argroles) > 0:
+            min_len = 1 + len(argroles)
+            max_len = float('inf')
+        else:
+            match_by_order = True
+
+        if len(edge) < min_len or len(edge) > max_len:
+            return []
+
+        # match by order
+        if match_by_order:
+            for i, pitem in enumerate(pattern):
+                eitem = edge[i]
+                _result = []
+
+                for variables in result:
+                    if pitem.atom:
+                        varname = _varname(pitem)
+                        if varname in curvars:
+                            if curvars[varname] != eitem:
+                                continue
+                        elif varname in variables:
+                            if variables[varname] != eitem:
+                                continue
+                        elif _matches_atomic_pattern(eitem, pitem):
+                            if len(varname) > 0 and varname[0].isupper():
+                                variables[varname] = eitem
+                        else:
+                            continue
+                        _result.append(variables)
+                    else:
+                        tok_pos_item = None
+                        if tok_pos is not None:
+                            try:
+                                assert len(tok_pos) > i
+                            except AssertionError:
+                                raise RuntimeError(f"Index '{i}' in tok_pos '{tok_pos}' is out of range")
+                            tok_pos_item = tok_pos[i]
+                        _result += self._match(
+                            eitem,
+                            pitem,
+                            {**curvars, **variables},
+                            tok_pos=tok_pos_item
+                        )
+                result = _result
+        # match by argroles
+        else:
+            result = []
+            # match connectors first
+            econn = edge[0]
+            pconn = pattern[0]
+            ctok_pos = tok_pos[0] if tok_pos else None
+            for variables in self._match(
+                    econn,
+                    pconn,
+                    curvars,
+                    tok_pos=ctok_pos
+            ):
+                role_counts = Counter(argroles_opt).most_common()
+                unknown_roles = (len(pattern) - 1) - len(argroles_opt)
+                if unknown_roles > 0:
+                    role_counts.append(('*', unknown_roles))
+                # add connector pseudo-argrole
+                role_counts = [('X', 1)] + role_counts
+                sresult = self._match_by_argroles(
+                    edge,
+                    pattern,
+                    role_counts,
+                    len(argroles),
+                    curvars={**curvars, **variables},
+                    tok_pos=tok_pos
+                )
+                for svars in sresult:
+                    result.append({**variables, **svars})
+
+        unique_vars = []
+        for variables in result:
+            v = {**curvars, **variables}
+            if v not in unique_vars:
+                unique_vars.append(v)
+        return unique_vars
+
+    def _match_by_argroles(
+            self,
+            edge,
+            pattern,
+            role_counts,
+            min_vars,
+            matched=(),
+            curvars=None,
+            tok_pos=None
+    ):
+        if curvars is None:
+            curvars = {}
+
+        if len(role_counts) == 0:
+            return [curvars]
+
+        argrole, n = role_counts[0]
+
+        # match connector
+        if argrole == 'X':
+            eitems = [edge[0]]
+            pitems = [pattern[0]]
+        # match any argrole
+        elif argrole == '*':
+            eitems = [e for e in edge if e not in matched]
+            pitems = pattern[-n:]
+        # match specific argrole
+        else:
+            eitems = edge.edges_with_argrole(argrole)
+            pitems = _defun_pattern_argroles(pattern).edges_with_argrole(argrole)
+
+        if len(eitems) < n:
+            if _regular_var_count(curvars) >= min_vars:
+                return [curvars]
+            else:
+                return []
+
+        result = []
+
+        if tok_pos:
+            tok_pos_items = [tok_pos[i] for i, subedge in enumerate(edge) if subedge in eitems]
+            tok_pos_perms = tuple(itertools.permutations(tok_pos_items, r=n))
+
+        for perm_n, perm in enumerate(tuple(itertools.permutations(eitems, r=n))):
+            if tok_pos:
+                tok_pos_perm = tok_pos_perms[perm_n]
+            perm_result = [{}]
+            for i, eitem in enumerate(perm):
+                pitem = pitems[i]
+                tok_pos_item = tok_pos_perm[i] if tok_pos else None
+                item_result = []
+                for variables in perm_result:
+                    item_result += self._match(
+                        eitem,
+                        pitem,
+                        {**curvars, **variables},
+                        tok_pos=tok_pos_item
+                    )
+                perm_result = item_result
+                if len(item_result) == 0:
+                    break
+
+            for variables in perm_result:
+                result += self._match_by_argroles(
+                    edge,
+                    pattern,
+                    role_counts[1:],
+                    min_vars,
+                    matched + perm,
+                    {**curvars, **variables},
+                    tok_pos=tok_pos
+                )
+
+        return result
+
+    def _match_atoms(
+            self,
+            atom_patterns,
+            atoms,
+            curvars,
+            atoms_tok_pos=None,
+            matched_atoms=None
+    ) -> list:
+        if matched_atoms is None:
+            matched_atoms = []
+
+        if len(atom_patterns) == 0:
+            return [curvars]
+
+        results = []
+        atom_pattern = atom_patterns[0]
+
+        for atom_pos, atom in enumerate(atoms):
+            if atom not in matched_atoms:
+                tok_pos = atoms_tok_pos[atom_pos] if atoms_tok_pos else None
+                svars = self._match(atom, atom_pattern, curvars, tok_pos=tok_pos)
+                for variables in svars:
+                    results += self._match_atoms(
+                        atom_patterns[1:],
+                        atoms,
+                        {**curvars, **variables},
+                        atoms_tok_pos=atoms_tok_pos,
+                        matched_atoms=matched_atoms + [atom]
+                    )
+
+        return results
+
+    # TODO: deal with argroles
+    def _match_lemma(self, lemma_pattern, edge, curvars):
+        if self.hg is None:
+            raise RuntimeError('Lemma pattern function requires hypergraph.')
+
+        if edge.not_atom:
+            return []
+
+        _lemma = lemma(self.hg, edge, same_if_none=True)
+
+        # add argroles to _lemma if needed
+        ar = edge.argroles()
+        if ar != '':
+            parts = _lemma.parts()
+            parts[1] = '{}.{}'.format(parts[1], ar)
+            _lemma = hedge('/'.join(parts))
+
+        if _matches_atomic_pattern(_lemma, lemma_pattern):
+            return [curvars]
+
+        return []
+
+    def _matches_fun_pat(self, edge, fun_pattern, curvars, tok_pos=None) -> list:
+        fun = fun_pattern[0].root()
+        if fun == 'var':
+            if len(fun_pattern) != 3:
+                raise RuntimeError('var pattern function must have two arguments')
+            pattern = fun_pattern[1]
+            var_name = fun_pattern[2].root()
+            if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
+                this_var = {var_name: edge[1]}
+                return self._match(
+                    edge[1],
+                    pattern,
+                    curvars={**curvars, **this_var},
+                    tok_pos=tok_pos
+                )
+            else:
+                this_var = {var_name: edge}
+                return self._match(
+                    edge,
+                    pattern,
+                    curvars={**curvars, **this_var},
+                    tok_pos=tok_pos
+                )
+        elif fun == 'atoms':
+            if tok_pos:
+                atoms, atoms_tok_pos = _atoms_and_tok_pos(edge, tok_pos)
+            else:
+                atoms = edge.atoms()
+                atoms_tok_pos = None
+            atom_patterns = fun_pattern[1:]
+            return self._match_atoms(
+                atom_patterns,
+                atoms,
+                curvars,
+                atoms_tok_pos=atoms_tok_pos
+            )
+        elif fun == 'lemma':
+            return self._match_lemma(fun_pattern[1], edge, curvars)
+        elif fun == 'semsim' or fun == 'semsim-fix':  # TODO: remove legacy 'semsim'
+            return match_semsim(
+                fun_pattern[1:],
+                edge,
+                curvars,
+                hg=self.hg,
+                tok_pos=tok_pos,
+                matcher_type="FIXED"
+            )
+        elif fun == 'semsim-ctx':
+            # return match_semsim(
+            #     fun_pattern[1:],
+            #     edge,
+            #     curvars,
+            #     hg=self.hg,
+            #     root_edge=self.root_edge,
+            #     ref_edges=self.ref_edges,
+            #     tok_pos=tok_pos,
+            #     matcher_type="CONTEXT"
+            # )
+            self.semsim_ctx = True
+            var_name: str = _generate_special_var_name('semsim-ctx', curvars)
+            return self._match(
+                edge,
+                fun_pattern[1],
+                curvars={**curvars, **{var_name: tok_pos}},
+                tok_pos=tok_pos
+            )
+
+        elif fun == 'any':
+            for pattern in fun_pattern[1:]:
+                matches = self._match(
+                    edge,
+                    pattern,
+                    curvars=curvars,
+                    tok_pos=tok_pos
+                )
+                if len(matches) > 0:
+                    return matches
+            return []
+        else:
+            raise RuntimeError(f"Unknown pattern function: {fun}")
 
 
 def edge2pattern(edge, root=False, subtype=False):
@@ -821,8 +818,13 @@ class PatternCounter:
             patterns = [[hpat] for hpat in hpats]
         else:
             patterns = []
-            for pattern in self._list2patterns(ledge[1:], depth=depth, force_expansion=force_expansion,
-                                               force_root=force_root, force_subtypes=force_subtypes):
+            for pattern in self._list2patterns(
+                    ledge[1:],
+                    depth=depth,
+                    force_expansion=force_expansion,
+                    force_root=force_root,
+                    force_subtypes=force_subtypes
+            ):
                 for hpat in hpats:
                     patterns.append([hpat] + pattern)
         return patterns
@@ -830,10 +832,10 @@ class PatternCounter:
     def _edge2patterns(self, edge):
         force_subtypes = self._force_subtypes(edge)
         force_root, _ = self._force_root_expansion(edge)
-        return list(hedge(pattern)
-                    for pattern
-                    in self._list2patterns(list(edge.normalized()), force_subtypes=force_subtypes,
-                                           force_root=force_root, force_expansion=False))
+        return [
+            hedge(pattern) for pattern in self._list2patterns(
+                list(edge.normalized()), force_subtypes=force_subtypes, force_root=force_root
+            )]
 
     def count(self, edge):
         edge = hedge(edge)
