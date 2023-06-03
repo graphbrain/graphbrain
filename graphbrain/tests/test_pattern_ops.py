@@ -177,7 +177,7 @@ class TestPatternOps(unittest.TestCase):
             (4/M#/en (+/B.am/. k/Cc.s/en fare/Cc.s/en)))))))))))
             """)
         edge2 = hedge("""(said/Pd.sr.<f-----/en he/Ci/en ((again/M/en (would/Mm/en
-                      speak/P.sx.-i-----/en)) he/Ci/en (with/T/en hastings/Cp.s/en)))""")
+                      speak/P.sx.-i-----/en)) (var he/Ci/en SUBJ) (with/T/en hastings/Cp.s/en)))""")
         self.assertEqual(common_pattern(edge1, edge2).to_str(),
                          '(said/Pd.{sr}.<f----- he/Ci (*/P.{s} (var */Ci SUBJ)))')
 

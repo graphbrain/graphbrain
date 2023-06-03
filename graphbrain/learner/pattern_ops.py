@@ -242,8 +242,12 @@ def _common_pattern(edge1, edge2):
         var1 = None
     if is_variable(nedge2):
         var2 = nedge2[2]
+        if var1 is None:
+            return None
     else:
         var2 = None
+        if var1:
+            return None
     if var1 or var2:
         # different variables on same position?
         if var1 and var2 and var1 != var2:
