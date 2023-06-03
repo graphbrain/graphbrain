@@ -199,7 +199,10 @@ def common_pattern_atoms(atoms):
     else:
         root = roots[0]
 
-    atype = common_type(atoms)
+    if any(len(str(atom).split('/')) == 1 for atom in atoms):
+        atype = None
+    else:
+        atype = common_type(atoms)
 
     roles1 = []
     roles2 = []
