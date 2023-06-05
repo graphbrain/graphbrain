@@ -1,6 +1,7 @@
 import logging
 import itertools
 from collections import Counter
+from functools import lru_cache
 from typing import Union, List
 
 from graphbrain import hedge
@@ -361,15 +362,16 @@ def _match_semsim_ctx(
         hg: Hypergraph
 
 ):
+    if not _edge_tok_pos(edge, hg):
+        logger.error(f"Candidate edge has no 'tok_pos' attribute: {edge}")
+        return []
+
     cand_edge_tok_poses: dict[int, Hyperedge] = get_semsim_ctx_tok_poses(matcher.results_with_special_vars)
     thresholds: dict[int, Union[float, None]] = get_semsim_ctx_thresholds(matcher.results_with_special_vars)
 
-    ref_edges_tok_poses: list[dict[int, Hyperedge]] = [
-        get_semsim_ctx_tok_poses(ref_matcher.results_with_special_vars) for ref_matcher in [
-            Matcher(ref_edge, pattern, tok_pos=_edge_tok_pos(ref_edge, hg), hg=hg)
-            for ref_edge in ref_edges
-        ]
-    ]
+    ref_edges_tok_poses: list[dict[int, Hyperedge]] = _get_ref_edges_tok_poses(
+        pattern, ref_edges, [_edge_tok_pos(ref_edge, hg) for ref_edge in ref_edges], hg
+    )
 
     try:
         assert (
@@ -392,6 +394,42 @@ def _match_semsim_ctx(
             return []
 
     return matcher.results
+
+# these methods need to be in this module to avoid circular imports
+# store hypergraphs to avoid passing them as arguments and enable caching
+# TODO: better caching, this is insensitive to changes in the hypergraph
+_HG_STORE: dict[int, Hypergraph] = {}
+#
+def _get_ref_edges_tok_poses(
+    pattern: Hyperedge,
+    ref_edges: list[Hyperedge],
+    root_tok_poses: list[Hyperedge],
+    hg: Hypergraph,
+) -> list[dict[int, Hyperedge]]:
+    hg_id: int = id(hg)
+    _HG_STORE[hg_id] = hg
+
+    return _get_ref_edges_tok_poses_cached(pattern, tuple(ref_edges), tuple(root_tok_poses), hg_id)
+
+
+@lru_cache(maxsize=None)
+def _get_ref_edges_tok_poses_cached(
+        pattern: Hyperedge,
+        ref_edges: tuple[Hyperedge],
+        root_tok_poses: tuple[Hyperedge],
+        hg_id: int,
+) -> list[dict[int, Hyperedge]]:
+    try:
+        hg: Hypergraph = _HG_STORE[hg_id]
+    except KeyError:
+        raise ValueError(f"Hypergraph with id '{hg_id}' not found")
+
+    return [
+        get_semsim_ctx_tok_poses(ref_matcher.results_with_special_vars) for ref_matcher in [
+            Matcher(ref_edge, pattern, tok_pos=tok_pos, hg=hg)
+            for ref_edge, tok_pos in zip(ref_edges, root_tok_poses)
+        ]
+    ]
 
 def _generate_special_var_name(var_code, vars_):
     prefix = f'__{var_code}'
