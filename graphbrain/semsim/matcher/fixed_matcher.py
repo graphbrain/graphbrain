@@ -8,14 +8,12 @@ from typing import Union
 import gensim.downloader
 from gensim.models import KeyedVectors
 
-from graphbrain.semsim.matching.matcher import SemSimMatcher, SemSimType, SemSimConfig
+from graphbrain.semsim.matcher.matcher import SemSimMatcher, SemSimType, SemSimConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
 class FixedEmbeddingMatcher(SemSimMatcher):
-    _TYPE: SemSimType = SemSimType.FIXED
-
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
         self._model_dir: Path = self._create_sub_dir("gensim-data", base_dir=self._base_model_dir)
@@ -38,23 +36,26 @@ class FixedEmbeddingMatcher(SemSimMatcher):
 
     def _similarities(
             self,
-            candidate: str,
-            references: list[str],
+            cand_word: str = None,
+            ref_word: list[str] = None,
             **kwargs
     ) -> Union[dict[str, float], None]:
-        if not (filtered_references := self._in_vocab(references, return_filtered=True)):
-            logger.warning(f"All reference word(s) out of vocabulary: {references}")
+        assert cand_word is not None and ref_word is not None, "Candidate and references must be specified!"
+        logger.debug(f"Candidate string: {cand_word} | References: {ref_word}")
+
+        if not (filtered_references := self._in_vocab(ref_word, return_filtered=True)):
+            logger.warning(f"All reference word(s) out of vocabulary: {ref_word}")
             return None
 
-        if len(filtered_references) < len(references):
+        if len(filtered_references) < len(ref_word):
             logger.info(f"Some reference words out of vocabulary: "
-                        f"{[r for r in references if r not in filtered_references]}")
+                        f"{[r for r in ref_word if r not in filtered_references]}")
 
-        if not self._in_vocab([candidate]):
+        if not self._in_vocab([cand_word]):
             return None
 
         # similarities: dict[str, float] = {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
-        return {ref: self._model.similarity(candidate, ref) for ref in filtered_references}
+        return {ref: self._model.similarity(cand_word, ref) for ref in filtered_references}
 
     def _load_model(self, model_name: str) -> KeyedVectors:
         # model_path: Path = self._model_dir / model_name / f"{model_name}.gz"

@@ -1,13 +1,23 @@
 import logging
 import itertools
 from collections import Counter
-from typing import Union
+from typing import Union, List
 
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.utils.lemmas import lemma
-from graphbrain.semsim import match_semsim
+from graphbrain.utils.semsim import (
+    extract_similarity_threshold,
+    extract_pattern_words,
+    get_edge_word_part,
+    replace_edge_word_part,
+    get_semsim_ctx_tok_poses,
+    get_semsim_ctx_thresholds,
+    SEMSIM_CTX_TOK_POS_PREFIX,
+    SEMSIM_CTX_THRESHOLD_PREFIX
+)
+from graphbrain.semsim import semsim
 
 
 logger = logging.getLogger(__name__)
@@ -16,7 +26,7 @@ FUNS = {'var', 'atoms', 'lemma', 'any', 'semsim', 'semsim-fix', 'semsim-ctx'}
 
 
 def is_wildcard(atom):
-    """Check if this atom defines a wildcard, i.e. if its root is a pattern matching.
+    """Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
     (\*, ., ..., if it is surrounded by parenthesis or variable label starting with an uppercase letter)
     """
     if atom.atom:
@@ -33,12 +43,12 @@ def is_fun_pattern(edge):
 
 def is_pattern(edge):
     """Check if this edge defines a pattern, i.e. if it includes at least
-    one pattern matching.
+    one pattern matcher.
 
-    Pattern matching are:
+    Pattern matcher are:
     - '\*', '.', '(\*)', '...'
     - variables (atom label starting with an uppercase letter)
-    - argument role matching (unordered argument roles surrounded by curly brackets)
+    - argument role matcher (unordered argument roles surrounded by curly brackets)
     - functional patterns (var, atoms, lemma, ...)
     """
     if edge.atom:
@@ -59,9 +69,9 @@ def is_unordered_pattern(edge):
         return any(is_unordered_pattern(item) for item in edge)
 
 def is_full_pattern(edge):
-    """Check if every atom is a pattern matching.
+    """Check if every atom is a pattern matcher.
 
-    Pattern matching are:
+    Pattern matcher are:
     '\*', '.', '(\*)', '...', variables (atom label starting with an
     uppercase letter) and functional patterns.
     """
@@ -268,6 +278,7 @@ def _edge_tok_pos(edge: Hyperedge, hg: Hypergraph = None) -> Union[Hyperedge, No
 
     return tok_pos_hedge
 
+
 def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
@@ -314,49 +325,94 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
     )
 
     # check for semsim_ctx matches if necessary
-    if matcher.semsim_ctx:
-        ref_matchers = [
-            Matcher(
-                ref_edge,
-                pattern_hedged_normalized,
-                tok_pos=_edge_tok_pos(ref_edge, hg),
-                hg=hg
-            )
-            for ref_edge in ref_edges
-        ]
-        # TODO: perform semsim_ctx match here
-        # tok_pos corresponding to each semsim-ctx are stored in matcher / ref_matcher special_vars
-        # e.g. matcher.matches_with_special_vars['__semsim-ctx_0'] = (3 (1 2))
-        # these can then be used to identify the correct tokens, convert them to embeddings and compare
+    if matcher.semsim_ctx and matcher.results:
+        return _match_semsim_ctx(matcher, edge_hedged, pattern_hedged_normalized, ref_edges, hg)
 
-    return matcher.matches
+    return matcher.results
 
 
 def edge_matches_pattern(edge, pattern, hg=None, ref_edges=None):
+    """Check if an edge matches a pattern.
+
+    Patterns are themselves edges. They can match families of edges
+    by employing special atoms:
+
+    -> '\*' represents a general wildcard (matches any entity)
+
+    -> '.' represents an atomic wildcard (matches any atom)
+
+    -> '(\*)' represents an edge wildcard (matches any edge)
+
+    -> '...' at the end indicates an open-ended pattern.
+
+    The pattern can be any valid hyperedge, including the above special atoms.
+    Examples: (is/Pd graphbrain/C .)
+    (says/Pd * ...)
+    """
     result = match_pattern(edge, pattern, hg=hg, ref_edges=ref_edges)
     return len(result) > 0
 
 
-def _generate_special_var_name(var_code, vars):
+def _match_semsim_ctx(
+        matcher: "Matcher",
+        edge: Hyperedge,
+        pattern: Hyperedge,
+        ref_edges: list[Hyperedge],
+        hg: Hypergraph
+
+):
+    cand_edge_tok_poses: dict[int, Hyperedge] = get_semsim_ctx_tok_poses(matcher.results_with_special_vars)
+    thresholds: dict[int, Union[float, None]] = get_semsim_ctx_thresholds(matcher.results_with_special_vars)
+
+    ref_edges_tok_poses: list[dict[int, Hyperedge]] = [
+        get_semsim_ctx_tok_poses(ref_matcher.results_with_special_vars) for ref_matcher in [
+            Matcher(ref_edge, pattern, tok_pos=_edge_tok_pos(ref_edge, hg), hg=hg)
+            for ref_edge in ref_edges
+        ]
+    ]
+
+    try:
+        assert (
+            cand_edge_tok_poses.keys() == thresholds.keys() and
+            all(cand_edge_tok_poses.keys() == ref_edge_tok_poses.keys() for ref_edge_tok_poses in ref_edges_tok_poses)
+        )
+    except AssertionError:
+        raise ValueError(f"Number of semsim-ctx for candidate edge and reference edges do not match")
+
+    for semsim_ctx_idx in cand_edge_tok_poses.keys():
+        if not semsim(
+                semsim_type="CTX",
+                threshold=thresholds[semsim_ctx_idx],
+                cand_edge=edge,
+                ref_edges=ref_edges,
+                cand_tok_pos=cand_edge_tok_poses[semsim_ctx_idx],
+                ref_tok_poses=[ref_edge_tok_poses[semsim_ctx_idx] for ref_edge_tok_poses in ref_edges_tok_poses],
+                hg=hg
+        ):
+            return []
+
+    return matcher.results
+
+def _generate_special_var_name(var_code, vars_):
     prefix = f'__{var_code}'
-    var_count = len([var_name for var_name in vars if var_name.startswith(prefix)])
+    var_count = len([var_name for var_name in vars_ if var_name.startswith(prefix)])
     return f'__{var_code}_{var_count}'
 
 
-def _regular_var_count(vars):
-    return len([var_name for var_name in vars if not var_name.startswith('__')])
+def _regular_var_count(vars_):
+    return len([var_name for var_name in vars_ if not var_name.startswith('__')])
 
 
-def _remove_special_vars(vars):
-    return {key: value for key, value in vars.items() if not key.startswith('__')}
+def _remove_special_vars(vars_):
+    return {key: value for key, value in vars_.items() if not key.startswith('__')}
 
 
 class Matcher:
     def __init__(self, edge, pattern, curvars=None, tok_pos=None, hg=None):
         self.hg = hg
         self.semsim_ctx = False
-        self.matches_with_special_vars = self._match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
-        self.matches = [_remove_special_vars(match) for match in self.matches_with_special_vars]
+        self.results_with_special_vars = self._match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
+        self.results = [_remove_special_vars(result) for result in self.results_with_special_vars]
 
     def _match(self, edge, pattern, curvars=None, tok_pos=None):
         if curvars is None:
@@ -378,7 +434,7 @@ class Matcher:
 
         # functional patterns
         if is_fun_pattern(pattern):
-            return self._matches_fun_pat(
+            return self._match_fun_pat(
                 edge,
                 pattern,
                 curvars,
@@ -614,7 +670,37 @@ class Matcher:
 
         return []
 
-    def _matches_fun_pat(self, edge, fun_pattern, curvars, tok_pos=None) -> list:
+    def _match_semsim(
+            self,
+            pattern: Hyperedge,
+            edge: Hyperedge,
+            curvars: dict,
+    # ) -> list[dict]:
+    ) -> List[dict]:
+        edge_word_part: str = get_edge_word_part(edge)
+        if not edge_word_part:
+            return []
+
+        # can be one word (e.g. "say") or a list of words (e.g. ["say, tell, speak"])
+        pattern_words_part: str = pattern[0].parts()[0]
+        reference_words: list[str] = extract_pattern_words(pattern_words_part)
+
+        threshold: float | None = extract_similarity_threshold(pattern)
+        if not semsim(
+                semsim_type="FIX",
+                threshold=threshold,
+                cand_word=edge_word_part,
+                ref_words=reference_words,
+        ):
+            return []
+
+        edge_with_pattern_word_part = replace_edge_word_part(edge, pattern_words_part)
+        if _matches_atomic_pattern(edge_with_pattern_word_part, pattern[0]):
+            return [curvars]
+
+        return []
+
+    def _match_fun_pat(self, edge, fun_pattern, curvars, tok_pos=None) -> list:
         fun = fun_pattern[0].root()
         if fun == 'var':
             if len(fun_pattern) != 3:
@@ -652,35 +738,26 @@ class Matcher:
             )
         elif fun == 'lemma':
             return self._match_lemma(fun_pattern[1], edge, curvars)
-        elif fun == 'semsim' or fun == 'semsim-fix':  # TODO: remove legacy 'semsim'
-            return match_semsim(
+        elif fun == 'semsim' or fun == 'semsim-fix':
+            return self._match_semsim(
                 fun_pattern[1:],
                 edge,
                 curvars,
                 hg=self.hg,
-                tok_pos=tok_pos,
-                matcher_type="FIXED"
             )
         elif fun == 'semsim-ctx':
-            # return match_semsim(
-            #     fun_pattern[1:],
-            #     edge,
-            #     curvars,
-            #     hg=self.hg,
-            #     root_edge=self.root_edge,
-            #     ref_edges=self.ref_edges,
-            #     tok_pos=tok_pos,
-            #     matcher_type="CONTEXT"
-            # )
             self.semsim_ctx = True
-            var_name: str = _generate_special_var_name('semsim-ctx', curvars)
+            threshold = extract_similarity_threshold(fun_pattern[1:])
+            special_vars = {
+                _generate_special_var_name(SEMSIM_CTX_TOK_POS_PREFIX, curvars): tok_pos,
+                _generate_special_var_name(SEMSIM_CTX_THRESHOLD_PREFIX, curvars): threshold
+            }
             return self._match(
                 edge,
                 fun_pattern[1],
-                curvars={**curvars, **{var_name: tok_pos}},
+                curvars={**curvars, **special_vars},
                 tok_pos=tok_pos
             )
-
         elif fun == 'any':
             for pattern in fun_pattern[1:]:
                 matches = self._match(
