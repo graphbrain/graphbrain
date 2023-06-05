@@ -1,16 +1,14 @@
 import logging
+from functools import lru_cache
 from typing import Any
 from urllib.parse import unquote
 
 from graphbrain import hedge
-from graphbrain.hyperedge import Hyperedge, Atom
+from graphbrain.hyperedge import Hyperedge
+from graphbrain.hypergraph import Hypergraph
 
 
 logger: logging.Logger = logging.getLogger(__name__)
-
-
-# TODO: caching for ref edges tok poses
-
 
 # ----- SemSim CTX ----- #
 
@@ -33,11 +31,13 @@ def get_semsim_ctx_var_vals(prefix: str, results: list[dict[str, Any]]) -> dict[
         for key, value in results_.items():
             if key.startswith(prefix):
                 semsim_ctx_idx: int = int(key[len(prefix):])
-                try:
-                    assert semsim_ctx_idx not in var_vals
-                except AssertionError:
-                    raise ValueError(f"Duplicate semsim-ctx index: {semsim_ctx_idx}")
-                var_vals[semsim_ctx_idx] = value
+                if var_vals.get(semsim_ctx_idx) is not None:
+                    try:
+                        assert var_vals[semsim_ctx_idx] == value
+                    except AssertionError:
+                        raise ValueError(f"Duplicate semsim-ctx index: {semsim_ctx_idx}")
+                else:
+                    var_vals[semsim_ctx_idx] = value
     return var_vals
 
 
