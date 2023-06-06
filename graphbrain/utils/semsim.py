@@ -1,11 +1,9 @@
 import logging
-from functools import lru_cache
 from typing import Any
 from urllib.parse import unquote
 
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge
-from graphbrain.hypergraph import Hypergraph
 
 
 logger: logging.Logger = logging.getLogger(__name__)
