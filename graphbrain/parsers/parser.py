@@ -80,7 +80,11 @@ class Parser(object):
 
         -> corefs: resolve coreferences.
         """
-        parse_results = self._parse(text)
+        # replace newlines with spaces
+        clean_text = text.replace('\n', ' ').replace('\r', ' ')
+        # remove repeated spaces
+        clean_text = ' '.join(clean_text.split(' '))
+        parse_results = self._parse(clean_text)
         if self.corefs:
             self._resolve_corefs(parse_results)
         else:
