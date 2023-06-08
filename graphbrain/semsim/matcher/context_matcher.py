@@ -26,9 +26,14 @@ class ContextEmbeddingMatcher(SemSimMatcher):
     _SPACY_DOC_CACHE_SIZE: int = 64
     _EMBEDDING_CACHE_SIZE: int = 64
 
+    # # this is specific to the 'intfloat/e5-large-v2' model
+    # # should be generalized to other models if needed
+    # _EMBEDDING_MODEL_PREFIX: str = "query:"
+
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
         self._spacy_pipe: Language = self._create_spacy_pipeline(config.model_name)
+        self._embedding_prefix_tokens: list[str] = _get_embedding_prefix_tokens(config.embedding_prefix)
         self._cos_sim: CosineSimilarity = CosineSimilarity()
 
     def _create_spacy_pipeline(self, model_name: str) -> Language:
@@ -88,11 +93,14 @@ class ContextEmbeddingMatcher(SemSimMatcher):
 
     @lru_cache(maxsize=_EMBEDDING_CACHE_SIZE)
     def _get_embedding(self, tokens: tuple[str], tok_idxes: tuple[int]) -> Tensor | None:
-        spacy_doc, spacy_tokens = self._get_spacy_doc_and_tokens(tokens)
-        if not _validate_spacy_tokenization(tokens, spacy_tokens):
+        prefixed_tokens: tuple[str] = tuple(self._embedding_prefix_tokens + list(tokens))
+
+        spacy_doc, spacy_tokens = self._get_spacy_doc_and_tokens(prefixed_tokens)
+        if not _validate_spacy_tokenization(prefixed_tokens, spacy_tokens):
             return None
 
-        return _get_trf_embedding_of_lex_tokens(spacy_tokens, tok_idxes, spacy_doc._.trf_data)
+        prefixed_tok_idxes: tuple[int] = tuple(tok_idx + len(self._embedding_prefix_tokens) for tok_idx in tok_idxes)
+        return _get_trf_embedding_of_lex_tokens(spacy_tokens, prefixed_tok_idxes, spacy_doc._.trf_data)
 
     @lru_cache(maxsize=_SPACY_DOC_CACHE_SIZE)
     def _get_spacy_doc_and_tokens(self, tokens: tuple[str] = None) -> tuple[Doc, tuple[str]]:
@@ -142,6 +150,16 @@ def _average_pool(last_hidden_states: Tensor, attention_mask: Tensor, normalize:
     if normalize:
         embeddings = F.normalize(embeddings, p=2)
     return embeddings
+
+
+def _get_embedding_prefix_tokens(prefix: str) -> list[str]:
+    # Create a Tokenizer with the default settings for English
+    # including punctuation rules and exceptions
+    nlp = English()
+    tokenizer = nlp.tokenizer
+    prefix_tokens: list[str] = [str(tok) for tok in tokenizer(prefix)]
+    logger.debug(f"Prefix: {prefix}, Prefix tokens: {prefix_tokens}")
+    return prefix_tokens
 
 
 def _validate_spacy_tokenization(tokens: tuple[str], spacy_tokens: tuple[str]) -> bool:

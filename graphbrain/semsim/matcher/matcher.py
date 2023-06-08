@@ -19,6 +19,7 @@ class SemSimType(str, Enum):
 class SemSimConfig:
     model_name: str
     similarity_threshold: float
+    embedding_prefix: str = None
 
 
 class SemSimMatcher(ABC):

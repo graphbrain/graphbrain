@@ -19,8 +19,9 @@ DEFAULT_CONFIGS: dict[SemSimType, SemSimConfig] = {
         similarity_threshold=0.2
     ),
     SemSimType.CTX: SemSimConfig(
-        model_name='intfloat/e5-large',
-        similarity_threshold=0.65
+        model_name='intfloat/e5-large-v2',
+        similarity_threshold=0.65,
+        embedding_prefix="query:"
     )
 }
 
