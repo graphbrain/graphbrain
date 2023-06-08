@@ -27,6 +27,8 @@ def str2atom(s):
     atom = atom.replace('*', '%2a')
     atom = atom.replace('&', '%26')
     atom = atom.replace('@', '%40')
+    atom = atom.replace('\n', '%0a')
+    atom = atom.replace('\r', '%0d')
 
     return atom
 

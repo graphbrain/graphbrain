@@ -102,12 +102,12 @@ class TestPatternOps(unittest.TestCase):
     def test_common_pattern11(self):
         edge1 = hedge('(likes/P.so mary/C (of/B.ma games/C chess/C))')
         edge2 = hedge('(likes/P.sox john/C (of/B.ma games/C go/C) x/C)')
-        self.assertEqual(common_pattern(edge1, edge2).to_str(), '(likes/P.{so} */C (of/B.ma games/C */C))')
+        self.assertEqual(common_pattern(edge1, edge2).to_str(), '(likes/P.{so} */C (of/B.{ma} games/C */C))')
 
     def test_common_pattern12(self):
         edge1 = hedge('(likes/P.so/en mary/C/en (of/B.ma/en games/C/en chess/C/en))')
         edge2 = hedge('(likes/P.sox/en joe/C/en (of/B.ma/en games/C/en go/C/en) x/C/en)')
-        self.assertEqual(common_pattern(edge1, edge2).to_str(), '(likes/P.{so} */C (of/B.ma games/C */C))')
+        self.assertEqual(common_pattern(edge1, edge2).to_str(), '(likes/P.{so} */C (of/B.{ma} games/C */C))')
 
     def test_common_pattern13(self):
         edge1 = hedge(
@@ -177,7 +177,7 @@ class TestPatternOps(unittest.TestCase):
             (4/M#/en (+/B.am/. k/Cc.s/en fare/Cc.s/en)))))))))))
             """)
         edge2 = hedge("""(said/Pd.sr.<f-----/en he/Ci/en ((again/M/en (would/Mm/en
-                      speak/P.sx.-i-----/en)) he/Ci/en (with/T/en hastings/Cp.s/en)))""")
+                      speak/P.sx.-i-----/en)) (var he/Ci/en SUBJ) (with/T/en hastings/Cp.s/en)))""")
         self.assertEqual(common_pattern(edge1, edge2).to_str(),
                          '(said/Pd.{sr}.<f----- he/Ci (*/P.{s} (var */Ci SUBJ)))')
 
@@ -196,6 +196,11 @@ class TestPatternOps(unittest.TestCase):
         edge1 = hedge('(likes/P.{sox} (var mary/C PERSON) (of/B.ma games/C (var chess/C GAME)) (var sometimes/C WHEN))')
         edge2 = hedge('(likes/P.so john/C (of/B.ma games/C go/C))')
         self.assertEqual(common_pattern(edge1, edge2), None)
+
+    def test_common_pattern_misc1(self):
+        edge1 = hedge('(*/P.{sx} (var */C EFFECT) (*/T (var * CAUSE)))')
+        edge2 = hedge('(*/P.{sxx} (var */C EFFECT) * (*/T (var * CAUSE)))')
+        self.assertEqual(common_pattern(edge1, edge2), edge1)
 
     def test_merge_edges1(self):
         edge1 = hedge('(likes/P.{sox} */C (of/B.ma games/C */C) sometimes/C)')
@@ -224,6 +229,7 @@ class TestPatternOps(unittest.TestCase):
         edge2 = hedge('(loves/P.{so} */C */C)')
         self.assertEqual(merge_patterns(edge1, edge2),
                          hedge('((any likes/P.{so} prefers/P.{so} loves/P.{so}) */C */C)'))
+
 
 
 if __name__ == '__main__':

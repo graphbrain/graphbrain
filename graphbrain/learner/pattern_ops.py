@@ -1,4 +1,3 @@
-from collections import Counter
 from itertools import combinations, permutations, product
 
 from graphbrain import hedge
@@ -151,10 +150,11 @@ def remove_variables(edge):
         return hedge([remove_variables(subedge) for subedge in edge])
 
 
-def common_pattern_relation(edge1, edge2):
+def common_pattern_argroles(edge1, edge2):
     rm1 = edge2rolemap(edge1)
     rm2 = edge2rolemap(edge2)
 
+    _vars = all_variables(edge1) | all_variables(edge2)
     best_pattern = None
     for rm1_, rm2_ in rolemap_pairings(rm1, rm2):
         edge1_ = rolemap2edge(edge1[0], rm1_)
@@ -162,20 +162,20 @@ def common_pattern_relation(edge1, edge2):
 
         subedges = [_common_pattern(se1, se2) for se1, se2 in zip(edge1_, edge2_)]
         if any(subedge is None for subedge in subedges):
-            break
+            continue
         argroles = edge1_[0].argroles()
         if argroles == '':
-            # deal with (*/P.{})
-            pattern = hedge('*/R')
+            # deal with (*/P.{} or */B.{})
+            pattern = hedge('*/{}'.format(edge1_.mtype()))
         else:
             pattern = hedge(subedges)
             pattern = pattern.replace_argroles('{{{}}}'.format(edge1_[0].argroles()))
 
-        if best_pattern is None or more_general(best_pattern, pattern):
-            best_pattern = pattern
+        if _vars == all_variables(pattern):
+            if best_pattern is None or more_general(best_pattern, pattern):
+                best_pattern = pattern
 
-    _vars = all_variables(edge1) | all_variables(edge2)
-    if _vars != all_variables(best_pattern):
+    if best_pattern is None:
         return None
 
     return best_pattern.normalized()
@@ -199,7 +199,10 @@ def common_pattern_atoms(atoms):
     else:
         root = roots[0]
 
-    atype = common_type(atoms)
+    if any(len(str(atom).split('/')) == 1 for atom in atoms):
+        atype = None
+    else:
+        atype = common_type(atoms)
 
     roles1 = []
     roles2 = []
@@ -231,6 +234,10 @@ def common_pattern_atoms(atoms):
     return hedge(atom_str)
 
 
+def contains_argroles(edge):
+    return edge.not_atom and edge[0].argroles() != ''
+
+
 def _common_pattern(edge1, edge2):
     nedge1 = edge1
     nedge2 = edge2
@@ -242,8 +249,12 @@ def _common_pattern(edge1, edge2):
         var1 = None
     if is_variable(nedge2):
         var2 = nedge2[2]
+        if var1 is None:
+            return None
     else:
         var2 = None
+        if var1:
+            return None
     if var1 or var2:
         # different variables on same position?
         if var1 and var2 and var1 != var2:
@@ -270,11 +281,16 @@ def _common_pattern(edge1, edge2):
         return common_pattern_atoms((nedge1, nedge2))
     # at least one non-atom
     else:
-        if (nedge1.not_atom and nedge1[0].mtype() == 'P' and nedge2.not_atom and nedge2[0].mtype() == 'P' and
-                nedge1[0].argroles() != '' and nedge2[0].argroles() != ''):
-            return common_pattern_relation(nedge1, nedge2)
+        if contains_argroles(nedge1) and contains_argroles(nedge2):
+            if nedge1.mt == nedge2.mt:
+                common_pattern = common_pattern_argroles(nedge1, nedge2)
+                if common_pattern:
+                    return common_pattern
+
+        # do not combine edges with argroles and edges without them
+        perform_ordered_match = not (contains_argroles(nedge1) or contains_argroles(nedge2))
         # same length
-        elif nedge1.not_atom and nedge2.not_atom and len(nedge1) == len(nedge2):
+        if perform_ordered_match and nedge1.not_atom and nedge2.not_atom and len(nedge1) == len(nedge2):
             subedges = [_common_pattern(subedge1, subedge2) for subedge1, subedge2 in zip(nedge1, nedge2)]
             if any(subedge is None for subedge in subedges):
                 return None
