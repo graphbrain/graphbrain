@@ -15,8 +15,8 @@ from graphbrain.utils.semsim import (
     replace_edge_word_part,
     get_semsim_ctx_tok_poses,
     get_semsim_ctx_thresholds,
-    SEMSIM_CTX_TOK_POS_PREFIX,
-    SEMSIM_CTX_THRESHOLD_PREFIX
+    SEMSIM_CTX_TOK_POS_VAR_CODE,
+    SEMSIM_CTX_THRESHOLD_VAR_CODE
 )
 from graphbrain.semsim import semsim
 
@@ -321,7 +321,7 @@ def match_pattern(edge, pattern, curvars=None, hg=None, ref_edges=None):
         edge_hedged,
         pattern_hedged_normalized,
         curvars=curvars,
-        tok_pos=_edge_tok_pos(edge, hg),
+        tok_pos=_edge_tok_pos(edge, hg),  # TODO: improve efficiency (do not call for every edge)
         hg=hg
     )
 
@@ -372,24 +372,26 @@ def _match_semsim_ctx(
     ref_edges_tok_poses: list[dict[int, Hyperedge]] = _get_ref_edges_tok_poses(
         pattern, ref_edges, [_edge_tok_pos(ref_edge, hg) for ref_edge in ref_edges], hg
     )
-
     try:
         assert (
             cand_edge_tok_poses.keys() == thresholds.keys() and
             all(cand_edge_tok_poses.keys() == ref_edge_tok_poses.keys() for ref_edge_tok_poses in ref_edges_tok_poses)
         )
     except AssertionError:
-        raise ValueError(f"Number of semsim-ctx for candidate edge and reference edges do not match")
+        raise ValueError(
+            "Number of semsim-ctx for candidate edge and reference edges are not equal."
+            "Do the references edges match the pattern?"
+        )
 
     for semsim_ctx_idx in cand_edge_tok_poses.keys():
         if not semsim(
-                semsim_type="CTX",
-                threshold=thresholds[semsim_ctx_idx],
-                cand_edge=edge,
-                ref_edges=ref_edges,
-                cand_tok_pos=cand_edge_tok_poses[semsim_ctx_idx],
-                ref_tok_poses=[ref_edge_tok_poses[semsim_ctx_idx] for ref_edge_tok_poses in ref_edges_tok_poses],
-                hg=hg
+            semsim_type="CTX",
+            threshold=thresholds[semsim_ctx_idx],
+            cand_edge=edge,
+            ref_edges=ref_edges,
+            cand_tok_pos=cand_edge_tok_poses[semsim_ctx_idx],
+            ref_tok_poses=[ref_edge_tok_poses[semsim_ctx_idx] for ref_edge_tok_poses in ref_edges_tok_poses],
+            hg=hg
         ):
             return []
 
@@ -424,12 +426,20 @@ def _get_ref_edges_tok_poses_cached(
     except KeyError:
         raise ValueError(f"Hypergraph with id '{hg_id}' not found")
 
-    return [
-        get_semsim_ctx_tok_poses(ref_matcher.results_with_special_vars) for ref_matcher in [
-            Matcher(ref_edge, pattern, tok_pos=tok_pos, hg=hg)
-            for ref_edge, tok_pos in zip(ref_edges, root_tok_poses)
-        ]
+    ref_matchers: list[Matcher] = [
+        Matcher(ref_edge, pattern, tok_pos=tok_pos, hg=hg)
+        for ref_edge, tok_pos in zip(ref_edges, root_tok_poses)
     ]
+
+    non_matching_ref_edges: list[Hyperedge] = [
+        ref_edge for ref_edge, ref_matcher in zip(ref_edges, ref_matchers) if not ref_matcher.results
+    ]
+    try:
+        assert not non_matching_ref_edges
+    except:
+        raise ValueError(f"Reference edge(s) do not match pattern: {non_matching_ref_edges}")
+
+    return [get_semsim_ctx_tok_poses(ref_matcher.results_with_special_vars) for ref_matcher in ref_matchers]
 
 def _generate_special_var_name(var_code, vars_):
     prefix = f'__{var_code}'
@@ -787,8 +797,8 @@ class Matcher:
             self.semsim_ctx = True
             threshold = extract_similarity_threshold(fun_pattern[1:])
             special_vars = {
-                _generate_special_var_name(SEMSIM_CTX_TOK_POS_PREFIX, curvars): tok_pos,
-                _generate_special_var_name(SEMSIM_CTX_THRESHOLD_PREFIX, curvars): threshold
+                _generate_special_var_name(SEMSIM_CTX_TOK_POS_VAR_CODE, curvars): tok_pos,
+                _generate_special_var_name(SEMSIM_CTX_THRESHOLD_VAR_CODE, curvars): threshold
             }
             return self._match(
                 edge,

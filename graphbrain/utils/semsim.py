@@ -10,32 +10,32 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 # ----- SemSim CTX ----- #
 
-SEMSIM_CTX_TOK_POS_PREFIX = "semsim-ctx_tok_pos"
-SEMSIM_CTX_THRESHOLD_PREFIX = "semsim-ctx_threshold"
+SEMSIM_CTX_TOK_POS_VAR_CODE = "semsim-ctx_tok_pos"
+SEMSIM_CTX_THRESHOLD_VAR_CODE = "semsim-ctx_threshold"
 
 
 def get_semsim_ctx_tok_poses(results: list[dict[str, Any]]) -> dict[int, Hyperedge]:
-    return get_semsim_ctx_var_vals(SEMSIM_CTX_TOK_POS_PREFIX, results)
+    return get_semsim_ctx_var_vals(SEMSIM_CTX_TOK_POS_VAR_CODE, results)
 
 
 def get_semsim_ctx_thresholds(results: list[dict[str, Any]]) -> dict[int, float]:
-    return get_semsim_ctx_var_vals(SEMSIM_CTX_THRESHOLD_PREFIX, results)
+    return get_semsim_ctx_var_vals(SEMSIM_CTX_THRESHOLD_VAR_CODE, results)
 
 
-def get_semsim_ctx_var_vals(prefix: str, results: list[dict[str, Any]]) -> dict[int, Any]:
+def get_semsim_ctx_var_vals(var_code: str, results: list[dict[str, Any]]) -> dict[int, Any]:
     var_vals: dict[int, Any] = {}
-    prefix: str = f"__{prefix}_"
+    prefix: str = f"__{var_code}_"
     for results_ in results:
         for key, value in results_.items():
             if key.startswith(prefix):
                 semsim_ctx_idx: int = int(key[len(prefix):])
-                if var_vals.get(semsim_ctx_idx) is not None:
+                if var_vals.get(semsim_ctx_idx) is None:
+                    var_vals[semsim_ctx_idx] = value
+                else:
                     try:
                         assert var_vals[semsim_ctx_idx] == value
                     except AssertionError:
                         raise ValueError(f"Duplicate semsim-ctx index: {semsim_ctx_idx}")
-                else:
-                    var_vals[semsim_ctx_idx] = value
     return var_vals
 
 
@@ -68,6 +68,8 @@ def extract_pattern_words(pattern_word_part: str):
         return [w.strip() for w in pattern_word_part[1:-1].split(',')]
     return [pattern_word_part]
 
+
+# ----- SemSim general ----- #
 
 # extract similarity threshold if given
 def extract_similarity_threshold(pattern: Hyperedge) -> float | None:
