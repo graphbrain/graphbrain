@@ -456,6 +456,19 @@ class Matcher:
         if curvars is None:
             curvars = {}
 
+        # functional patterns
+        if is_fun_pattern(pattern):
+            return self._match_fun_pat(
+                edge,
+                pattern,
+                curvars,
+                tok_pos=tok_pos
+            )
+
+        # function pattern on edge can never match non-functional pattern
+        if is_fun_pattern(edge):
+            return []
+
         # atomic patterns
         if pattern.atom:
             if _matches_atomic_pattern(edge, pattern):
@@ -469,15 +482,6 @@ class Matcher:
                 return [{**curvars, **variables}]
             else:
                 return []
-
-        # functional patterns
-        if is_fun_pattern(pattern):
-            return self._match_fun_pat(
-                edge,
-                pattern,
-                curvars,
-                tok_pos=tok_pos
-            )
 
         min_len = len(pattern)
         max_len = min_len
@@ -546,6 +550,7 @@ class Matcher:
         else:
             result = []
             # match connectors first
+            # TODO: avoid matching connector twice!
             econn = edge[0]
             pconn = pattern[0]
             ctok_pos = tok_pos[0] if tok_pos else None

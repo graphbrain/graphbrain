@@ -948,6 +948,15 @@ class TestPatterns(unittest.TestCase):
         matches = match_pattern(edge, pattern, hg=self.hg)
         self.assertEqual(matches, [{'ORIG': hedge('he/Ci/en'), 'TARG': hedge('macy/Cp.s/en')}])
 
+    def test_match_pattern_real_case3(self):
+        s = """(*/J (*/J (var */R CAUSE) *) (var * EFFECT))"""
+        pattern = hedge(s)
+        s = """(and/J/en (var ((to/Mi/en (have/Mv.-i-----/en been/P.c.<pf----/en)) (extremely/M/en busy/Ca/en)) CAUSE)
+                   (var (could/Mm/en (not/Mn/en (be/Mv.-i-----/en blamed/Pd..<pf----/en))) EFFECT))"""
+        edge = hedge(s)
+        matches = match_pattern(edge, pattern, hg=self.hg)
+        self.assertEqual(matches, [])
+
 
 if __name__ == '__main__':
     unittest.main()
