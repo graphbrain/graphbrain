@@ -153,6 +153,9 @@ def _average_pool(last_hidden_states: Tensor, attention_mask: Tensor, normalize:
 
 
 def _get_embedding_prefix_tokens(prefix: str) -> list[str]:
+    if prefix is None:
+        return []
+
     # Create a Tokenizer with the default settings for English
     # including punctuation rules and exceptions
     nlp = English()
