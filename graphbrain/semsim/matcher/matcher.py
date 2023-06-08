@@ -39,10 +39,10 @@ class SemSimMatcher(ABC):
 
         similarity_threshold: float = threshold if threshold is not None else self._similarity_threshold
         if (similarity := mean(similarities.values())) < similarity_threshold:
-            logger.debug(f"Mean similarity is smaller than threshold: {similarity:.2f} < {similarity_threshold}")
+            logger.debug(f"Mean similarity is lower than threshold: {similarity:.2f} < {similarity_threshold}")
             return False
 
-        logger.debug(f"Mean similarity is greater or equal threshold: {similarity:.2f} >= {similarity_threshold}")
+        logger.debug(f"Mean similarity is higher or equal threshold: {similarity:.2f} >= {similarity_threshold}")
         return True
 
     def _similarities(self, **kwargs) -> dict[str, float] | None:
