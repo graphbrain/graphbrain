@@ -120,8 +120,8 @@ def is_valid(edge, _vars=None):
     if is_variable(edge):
         if edge[2].not_atom:
             return False
-        if edge[2] in _vars:
-            return False
+        # if edge[2] in _vars:
+        #     return False
         _vars.add(edge[2])
         return is_valid(edge[1], _vars=_vars)
     return all(is_valid(subedge, _vars=_vars) for subedge in edge)
