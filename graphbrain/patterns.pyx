@@ -4,6 +4,7 @@ from collections import Counter
 from functools import lru_cache
 from typing import Union, List
 
+import graphbrain.constants as const
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge
 from graphbrain.hypergraph import Hypergraph
@@ -445,6 +446,17 @@ def _remove_special_vars(vars_):
     return {key: value for key, value in vars_.items() if not key.startswith('__')}
 
 
+def _assign_edge_to_var(curvars, var_name, edge):
+    new_edge = edge
+    if var_name in curvars:
+        cur_edge = curvars[var_name]
+        if cur_edge.not_atom and str(cur_edge[0]) == const.list_or_matches_builder:
+            new_edge = cur_edge + (edge,)
+        else:
+            new_edge = hedge((hedge(const.list_or_matches_builder), cur_edge, edge))
+    return {var_name: new_edge}
+
+
 class Matcher:
     def __init__(self, edge, pattern, curvars=None, tok_pos=None, hg=None):
         self.hg = hg
@@ -476,9 +488,9 @@ class Matcher:
                 if is_pattern(pattern):
                     varname = _varname(pattern)
                     if len(varname) > 0:
-                        if varname in curvars and curvars[varname] != edge:
-                            return []
-                        variables[varname] = edge
+                        # if varname in curvars and curvars[varname] != edge:
+                        #     return []
+                        variables[varname] = _assign_edge_to_var({**curvars, **variables}, varname, edge)[varname]
                 return [{**curvars, **variables}]
             else:
                 return []
@@ -519,15 +531,10 @@ class Matcher:
                 for variables in result:
                     if pitem.atom:
                         varname = _varname(pitem)
-                        if varname in curvars:
-                            if curvars[varname] != eitem:
-                                continue
-                        elif varname in variables:
-                            if variables[varname] != eitem:
-                                continue
-                        elif _matches_atomic_pattern(eitem, pitem):
+                        if _matches_atomic_pattern(eitem, pitem):  # elif
                             if len(varname) > 0 and varname[0].isupper():
-                                variables[varname] = eitem
+                                variables[varname] = _assign_edge_to_var(
+                                    {**curvars, **variables}, varname, eitem)[varname]
                         else:
                             continue
                         _result.append(variables)
@@ -549,33 +556,24 @@ class Matcher:
         # match by argroles
         else:
             result = []
-            # match connectors first
+            # match connector first
             # TODO: avoid matching connector twice!
-            econn = edge[0]
-            pconn = pattern[0]
             ctok_pos = tok_pos[0] if tok_pos else None
-            for variables in self._match(
-                    econn,
-                    pconn,
-                    curvars,
-                    tok_pos=ctok_pos
-            ):
+            if self._match(edge[0], pattern[0], curvars, tok_pos=ctok_pos):
                 role_counts = Counter(argroles_opt).most_common()
                 unknown_roles = (len(pattern) - 1) - len(argroles_opt)
                 if unknown_roles > 0:
                     role_counts.append(('*', unknown_roles))
                 # add connector pseudo-argrole
                 role_counts = [('X', 1)] + role_counts
-                sresult = self._match_by_argroles(
+                result = self._match_by_argroles(
                     edge,
                     pattern,
                     role_counts,
                     len(argroles),
-                    curvars={**curvars, **variables},
+                    curvars=curvars,
                     tok_pos=tok_pos
                 )
-                for svars in sresult:
-                    result.append({**variables, **svars})
 
         unique_vars = []
         for variables in result:
@@ -751,7 +749,7 @@ class Matcher:
             pattern = fun_pattern[1]
             var_name = fun_pattern[2].root()
             if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
-                this_var = {var_name: edge[1]}
+                this_var = _assign_edge_to_var(curvars, var_name, edge[1])
                 return self._match(
                     edge[1],
                     pattern,
@@ -759,7 +757,7 @@ class Matcher:
                     tok_pos=tok_pos
                 )
             else:
-                this_var = {var_name: edge}
+                this_var = _assign_edge_to_var(curvars, var_name, edge)
                 return self._match(
                     edge,
                     pattern,
