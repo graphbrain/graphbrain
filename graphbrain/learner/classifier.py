@@ -67,20 +67,17 @@ def apply_curly_brackets(edge):
 
 
 def apply_variable(edge, var_name, var_edge):
-    if edge == var_edge:
+    if edge == var_edge or (type(var_edge) == list and edge in var_edge):
         return hedge(('var', edge, var_name)), True
 
     subedges = []
     found = False
     if edge.not_atom:
         for subedge in edge:
-            if found:
-                subedges.append(subedge)
-            else:
-                vedge, result = apply_variable(subedge, var_name, var_edge)
-                subedges.append(vedge)
-                if result:
-                    found = True
+            vedge, result = apply_variable(subedge, var_name, var_edge)
+            subedges.append(vedge)
+            if result:
+                found = True
         return hedge(subedges), found
 
     return edge, False
