@@ -1,5 +1,6 @@
 from itertools import combinations, permutations, product
 
+import graphbrain.constants as const
 from graphbrain import hedge
 
 
@@ -135,7 +136,15 @@ def extract_vars_map(edge, _vars=None):
         return _vars
     if edge.not_atom:
         if is_variable(edge):
-            _vars[str(edge[2])] = edge[1]
+            new_edge = edge[1]
+            var_name = str(edge[2])
+            if var_name in _vars:
+                cur_edge = _vars[var_name]
+                if cur_edge.not_atom and str(cur_edge[0]) == const.list_or_matches_builder:
+                    new_edge = cur_edge + (new_edge,)
+                else:
+                    new_edge = hedge((hedge(const.list_or_matches_builder), cur_edge, new_edge))
+            _vars[var_name] = new_edge
         for subedge in edge:
             extract_vars_map(subedge, _vars=_vars)
     return _vars
