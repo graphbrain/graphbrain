@@ -217,6 +217,16 @@ class TestPatternOps(unittest.TestCase):
         edge2 = hedge('((var is/P.sc X) (var (her/M name/C) X) (var maria/C Z))')
         self.assertEqual(common_pattern(edge1, edge2), None)
 
+    def test_common_pattern_repeated_vars_5(self):
+        edge1 = hedge('((var is/J X) (my/M name/C) (var telmo/C Z))')
+        edge2 = hedge('((var is/J X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), None)
+
+    def test_common_pattern_repeated_vars_6(self):
+        edge1 = hedge('((var is/P.c X) (var telmo/C Z))')
+        edge2 = hedge('((var is/P.sc X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), None)
+
     def test_common_pattern_misc1(self):
         edge1 = hedge('(*/P.{sx} (var */C EFFECT) (*/T (var * CAUSE)))')
         edge2 = hedge('(*/P.{sxx} (var */C EFFECT) * (*/T (var * CAUSE)))')

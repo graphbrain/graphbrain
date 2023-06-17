@@ -1,3 +1,4 @@
+from collections import Counter
 from itertools import combinations, permutations, product
 
 import graphbrain.constants as const
@@ -97,17 +98,18 @@ def contains_variable(edge):
         return any(contains_variable(subedge) for subedge in edge)
 
 
-def all_variables(edge):
-    _vars = set()
+def all_variables(edge, _vars=None):
+    if _vars is None:
+        _vars = Counter()
     if edge is None:
         return _vars
     if edge.atom:
         return _vars
     else:
         if is_variable(edge):
-            return {edge[2]} | all_variables(edge[1])
+            _vars[edge[2]] += 1
         for subedge in edge:
-            _vars |= all_variables(subedge)
+            all_variables(subedge, _vars=_vars)
     return _vars
 
 
