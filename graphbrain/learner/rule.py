@@ -1,9 +1,21 @@
 from urllib.parse import quote
 
+import graphbrain.constants as const
 from graphbrain.hyperedge import hedge
 from graphbrain.learner.pattern_ops import extract_vars_map
 from graphbrain.notebook import _edge2html_blocks
 from graphbrain.patterns import match_pattern
+
+
+def _is_list(edge):
+    return edge.not_atom and str(edge[0]) == const.list_or_matches_builder
+
+
+def _val_values_equal(val1, val2):
+    if _is_list(val1) and _is_list(val2):
+        return set(val1[1:]) == set(val2[1:])
+    else:
+        return val1 == val2
 
 
 class Rule:
@@ -31,7 +43,7 @@ class Rule:
                     match_found = False
                 else:
                     for var in _vars:
-                        if var not in match or match[var] != _vars[var]:
+                        if var not in match or not _val_values_equal(match[var], _vars[var]):
                             match_found = False
                             break
                 if match_found:
