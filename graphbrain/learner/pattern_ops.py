@@ -368,3 +368,29 @@ def merge_patterns(edge1, edge2):
         return edge
     else:
         return None
+
+
+def apply_variable(edge, var_name, var_edge):
+    if edge == var_edge or (type(var_edge) == list and edge in var_edge):
+        return hedge(('var', edge, var_name)), True
+
+    subedges = []
+    found = False
+    if edge.not_atom:
+        for subedge in edge:
+            vedge, result = apply_variable(subedge, var_name, var_edge)
+            subedges.append(vedge)
+            if result:
+                found = True
+        return hedge(subedges), found
+
+    return edge, False
+
+
+def apply_variables(edge, variables):
+    new_edge = edge
+    for var_name, var_edge in variables.items():
+        new_edge, found = apply_variable(new_edge, var_name, var_edge)
+        if not found:
+            return None
+    return new_edge
