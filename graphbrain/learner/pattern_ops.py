@@ -371,8 +371,9 @@ def merge_patterns(edge1, edge2):
 
 
 def apply_variable(edge, var_name, var_edge):
-    if edge == var_edge or (type(var_edge) == list and edge in var_edge):
-        return hedge(('var', edge, var_name)), True
+    clean_edge = remove_variables(edge)
+    if clean_edge == var_edge or (type(var_edge) == list and clean_edge in var_edge):
+        return hedge(('var', clean_edge, var_name)), True
 
     subedges = []
     found = False
