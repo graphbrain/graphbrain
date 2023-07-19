@@ -1,3 +1,6 @@
+.. note:: Read our publications and explore some use cases `here <https://graphbrain.net/pubs-cases.html>`_.
+
+
 .. raw:: html
 
     <div class="classictemplate template" style="display: block;">
@@ -65,8 +68,8 @@ Graphbrain is written in Python, to both take advantage and facilitate integrati
    :maxdepth: 2
    :caption: Contents:
 
-   installation.rst
    pubs-cases.rst
+   installation.rst
    tutorials.rst
    manual.rst
    team.rst
