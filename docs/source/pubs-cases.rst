@@ -23,7 +23,7 @@ Use Cases
             </a>
          </td>
          <td>
-            <strong>Use Case A</strong> <br />
+            <strong>Use Case A: Conflict Networks</strong> <br />
             Extract inter-actor conflict network and topics of conflict from news headers.<br />
             <br />
             <a href="https://graphbrain.net/_static/one-pagers/GB-A.png">Download here</a>
@@ -36,7 +36,7 @@ Use Cases
             </a>
          </td>
          <td>
-            <strong>Use Case C</strong> <br />
+            <strong>Use Case C: Scientific Results</strong> <br />
             Identify positive and negative results in scientific articles.<br />
             <br />
             <a href="https://graphbrain.net/_static/one-pagers/GB-C.png">Download here</a>
