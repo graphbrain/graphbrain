@@ -17,22 +17,29 @@ Use Cases
 
    <table style="border-style: none; border-spacing: 25px; border-collapse: separate;">
       <tr>
-         <td><img src="_static/one-pagers/GB-A_thumb.png" width="200px" /></td>
          <td>
-            <strong>Use Case A <br />
+            <a href="https://graphbrain.net/_static/one-pagers/GB-A.png">
+               <img src="_static/one-pagers/GB-A_thumb.png" width="200px" />
+            </a>
+         </td>
+         <td>
+            <strong>Use Case A</strong> <br />
             Extract inter-actor conflict network and topics of conflict from news headers.<br />
             <br />
-            `Download here <https://graphbrain.net/_static/one-pagers/GB-A.png>`_
-            <a href="http://www.telmomenezes.net">http://www.telmomenezes.net</a>
+            <a href="https://graphbrain.net/_static/one-pagers/GB-A.png">Download here</a>
          </td>
       </tr>
       <tr>
-         <td><img src="_static/one-pagers/GB-C_thumb.png" width="200px" /></td>
          <td>
-            <strong>Use Case C <br />
+            <a href="https://graphbrain.net/_static/one-pagers/GB-C.png">
+               <img src="_static/one-pagers/GB-C_thumb.png" width="200px" />
+            </a>
+         </td>
+         <td>
+            <strong>Use Case C</strong> <br />
             Identify positive and negative results in scientific articles.<br />
             <br />
-            `Download here <https://graphbrain.net/_static/one-pagers/GB-C.png>`_
+            <a href="https://graphbrain.net/_static/one-pagers/GB-C.png">Download here</a>
          </td>
       </tr>
    </table>
