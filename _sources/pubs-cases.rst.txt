@@ -1,0 +1,16 @@
+==========================
+Publications and Use Cases
+==========================
+
+
+Publications
+============
+
+* Telmo Menezes and Camille Roth. `"Semantic hypergraphs." arXiv preprint arXiv:1908.10784 <https://arxiv.org/abs/1908.10784>`_ (2021)
+* Telmo Menezes, Antonin Pottier, and Camille Roth. `"The two sides of the Environmental Kuznets Curve: a socio-semantic analysis." arXiv preprint arXiv:2212.06681 <https://arxiv.org/abs/2212.06681>`_ (2022).
+
+
+Use Cases
+=========
+
+TODO

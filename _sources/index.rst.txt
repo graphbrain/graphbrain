@@ -1,5 +1,3 @@
-.. note:: **NEW PUBLICATION**: The preprint of our first Graphbrain-related article `"Semantic Hypergraphs" is now available at arXiv <https://arxiv.org/abs/1908.10784>`_.
-
 .. raw:: html
 
     <div class="classictemplate template" style="display: block;">
@@ -68,6 +66,7 @@ Graphbrain is written in Python, to both take advantage and facilitate integrati
    :caption: Contents:
 
    installation.rst
+   pubs-cases.rst
    tutorials.rst
    manual.rst
    team.rst

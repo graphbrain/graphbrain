@@ -50,6 +50,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pubs-cases.html">Publications and Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
@@ -815,26 +816,26 @@ Type inference is performed.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.build_atom">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">build_atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.build_atom" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">build_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">parts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.build_atom" title="Permalink to this definition"></a></dt>
 <dd><p>Build an atom from text and other parts.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.hedge">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">hedge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.hedge" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">hedge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.hedge" title="Permalink to this definition"></a></dt>
 <dd><p>Create a hyperedge.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.split_edge_str">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">split_edge_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.split_edge_str" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">split_edge_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.split_edge_str" title="Permalink to this definition"></a></dt>
 <dd><p>Shallow split into tokens of a string representation of an edge,
 without outer parenthesis.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.hyperedge.str2atom">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">str2atom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.str2atom" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.hyperedge.</span></span><span class="sig-name descname"><span class="pre">str2atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.str2atom" title="Permalink to this definition"></a></dt>
 <dd><p>Converts a string into a valid atom.</p>
 </dd></dl>
 
@@ -1046,7 +1047,7 @@ the degree and deep degree of that edge.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphbrain.hypergraph.Hypergraph.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">graphbrain.hyperedge.Hyperedge</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphbrain.hyperedge.Hyperedge" title="graphbrain.hyperedge.Hyperedge"><span class="pre">Hyperedge</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search" title="Permalink to this definition"></a></dt>
 <dd><p>Returns generator for all the edges that match a pattern.</p>
 <p>Patterns are themselves edges. They can match families of edges
 by employing special atoms:
@@ -1125,7 +1126,7 @@ parameter.</p>
 <span id="patterns-module"></span><h2>patterns module<a class="headerlink" href="#module-graphbrain.patterns" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.edge_matches_pattern">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">edge_matches_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.edge_matches_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">edge_matches_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.edge_matches_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Check if an edge matches a pattern.</p>
 <p>Patterns are themselves edges. They can match families of edges
 by employing special atoms:</p>
@@ -1140,42 +1141,42 @@ Examples: (is/Pd graphbrain/C .)
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.is_full_pattern">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_full_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_full_pattern" title="Permalink to this definition"></a></dt>
-<dd><p>Check if every atom is a pattern matchers.</p>
-<p>Pattern matchers are:
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_full_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_full_pattern" title="Permalink to this definition"></a></dt>
+<dd><p>Check if every atom is a pattern matcher.</p>
+<p>Pattern matcher are:
 ‘*’, ‘.’, ‘(*)’, ‘…’, variables (atom label starting with an
 uppercase letter) and functional patterns.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.is_pattern">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Check if this edge defines a pattern, i.e. if it includes at least
-one pattern matchers.</p>
-<p>Pattern matchers are:
+one pattern matcher.</p>
+<p>Pattern matcher are:
 - ‘*’, ‘.’, ‘(*)’, ‘…’
 - variables (atom label starting with an uppercase letter)
-- argument role matchers (unordered argument roles surrounded by curly brackets)
+- argument role matcher (unordered argument roles surrounded by curly brackets)
 - functional patterns (var, atoms, lemma, …)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.is_unordered_pattern">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_unordered_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_unordered_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_unordered_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_unordered_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Check if this edge defines an unordered pattern, i.e. if it includes at least
 one instance of unordered argument roles surrounded by curly brackets.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.is_wildcard">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_wildcard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_wildcard" title="Permalink to this definition"></a></dt>
-<dd><p>Check if this atom defines a wildcard, i.e. if its root is a pattern matchers.
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">is_wildcard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.is_wildcard" title="Permalink to this definition"></a></dt>
+<dd><p>Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
 (*, ., …, if it is surrounded by parenthesis or variable label starting with an uppercase letter)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.patterns.match_pattern">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">match_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.match_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.patterns.</span></span><span class="sig-name descname"><span class="pre">match_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curvars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.patterns.match_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Matches an edge to a pattern. This means that, if the edge fits the
 pattern, then a dictionary will be returned with the values for each
 pattern variable. If the pattern specifies no variables but the edge
@@ -1247,33 +1248,33 @@ the second is a dictionary of attribute values
 <span id="permutations-module"></span><h3>permutations module<a class="headerlink" href="#module-graphbrain.memory.permutations" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.memory.permutations.do_with_edge_permutations">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">do_with_edge_permutations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.do_with_edge_permutations" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">do_with_edge_permutations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.do_with_edge_permutations" title="Permalink to this definition"></a></dt>
 <dd><p>Applies the function f to all permutations of the given edge.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.memory.permutations.perm2edge">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">perm2edge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.perm2edge" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">perm2edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.perm2edge" title="Permalink to this definition"></a></dt>
 <dd><p>Transforms a permutation string from a database query
 into an edge.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.memory.permutations.permutate">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">permutate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.permutate" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">permutate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nper</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.permutate" title="Permalink to this definition"></a></dt>
 <dd><p>Reorder the tokens vector to perform a permutation,
 specified by nper.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.memory.permutations.str_plus_1">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">str_plus_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.str_plus_1" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">str_plus_1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.str_plus_1" title="Permalink to this definition"></a></dt>
 <dd><p>Increment a string by one, regaring lexicographical ordering.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphbrain.memory.permutations.unpermutate">
-<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">unpermutate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.unpermutate" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">unpermutate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nper</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.unpermutate" title="Permalink to this definition"></a></dt>
 <dd><p>Reorder the tokens vector to revert a permutation,
 specified by nper.</p>
 </dd></dl>
