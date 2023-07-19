@@ -17,7 +17,7 @@ USE_CYTHON = True
 CYTHON_ANNOTATE = False
 
 # Force compilation of all Cython code.
-CYTHON_FORCE_COMPILATION = False
+CYTHON_FORCE_COMPILATION = True
 
 # Current Graphbrain version
 with open('VERSION', 'r') as version_file:
