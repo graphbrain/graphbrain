@@ -18,6 +18,7 @@
 - Fixed bug on match_pattern(), variables were not correctly matched when argument roles were specified past the first position in an atoms functional pattern.
 - Simplified default systems connectors (breaks hypergraph DB backwards compatibility).
 - max_text argument in parser.parse_and_add().
+- Matches from patterns with repeated variables are collected in lists.
 
 ### Removed
 - graphbrain.logic obsolete module.

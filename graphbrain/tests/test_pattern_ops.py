@@ -197,6 +197,36 @@ class TestPatternOps(unittest.TestCase):
         edge2 = hedge('(likes/P.so john/C (of/B.ma games/C go/C))')
         self.assertEqual(common_pattern(edge1, edge2), None)
 
+    def test_common_pattern_repeated_vars_1(self):
+        edge1 = hedge('((var is/P.sc X) (var (my/M name/C) X) (var telmo/C Z))')
+        edge2 = hedge('((var is/P.sc X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), hedge('((var is/P.{sc} X) (var (*/M name/C) X) (var */C Z))'))
+
+    def test_common_pattern_repeated_vars_2(self):
+        edge1 = hedge('((var is/P.sc X) (var (my/M name/C) Y) (var telmo/C Z))')
+        edge2 = hedge('((var is/P.sc X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), None)
+
+    def test_common_pattern_repeated_vars_3(self):
+        edge1 = hedge('((var is/P.scx X) (var (my/M name/C) X) (var telmo/C Z) (in/T 2023/C))')
+        edge2 = hedge('((var is/P.sc X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), hedge('((var is/P.{sc} X) (var (*/M name/C) X) (var */C Z))'))
+
+    def test_common_pattern_repeated_vars_4(self):
+        edge1 = hedge('((var is/P.sc X) (my/M name/C) (var telmo/C Z))')
+        edge2 = hedge('((var is/P.sc X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), None)
+
+    def test_common_pattern_repeated_vars_5(self):
+        edge1 = hedge('((var is/J X) (my/M name/C) (var telmo/C Z))')
+        edge2 = hedge('((var is/J X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), None)
+
+    def test_common_pattern_repeated_vars_6(self):
+        edge1 = hedge('((var is/P.c X) (var telmo/C Z))')
+        edge2 = hedge('((var is/P.sc X) (var (her/M name/C) X) (var maria/C Z))')
+        self.assertEqual(common_pattern(edge1, edge2), None)
+
     def test_common_pattern_misc1(self):
         edge1 = hedge('(*/P.{sx} (var */C EFFECT) (*/T (var * CAUSE)))')
         edge2 = hedge('(*/P.{sxx} (var */C EFFECT) * (*/T (var * CAUSE)))')

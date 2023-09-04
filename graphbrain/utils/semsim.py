@@ -47,7 +47,7 @@ def replace_edge_word_part(edge: Hyperedge, pattern_word_part: str):
     return hedge('/'.join([pattern_word_part] + edge.parts()[1:]))  # type: ignore
 
 
-def get_edge_word_part(edge: Hyperedge) -> str | None:
+def get_edge_word_part(edge: Hyperedge):  # -> str | None:
     if edge.not_atom:
         return None
 
@@ -72,7 +72,7 @@ def extract_pattern_words(pattern_word_part: str):
 # ----- SemSim general ----- #
 
 # extract similarity threshold if given
-def extract_similarity_threshold(pattern: Hyperedge) -> float | None:
+def extract_similarity_threshold(pattern: Hyperedge):  # -> float | None:
     if not len(pattern) > 1:
         return None
 

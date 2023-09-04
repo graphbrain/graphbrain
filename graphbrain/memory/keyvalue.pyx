@@ -217,6 +217,7 @@ class KeyValue(Hypergraph, ABC):
     def _set_primary(self, edge, value):
         self._set_attribute(edge, 'p', 1 if value else 0)
 
+    #TODO: should this go to Hypergraph?
     def _search(self, pattern, strict, ref_edges=None):
         for result in self._match(pattern, strict, ref_edges=ref_edges):
             yield result[0]
@@ -229,6 +230,7 @@ class KeyValue(Hypergraph, ABC):
             if len(results) > 0:
                 yield edge, results
 
+    #TODO: should this go to Hypergraph?
     def _match_edges(self, edges, pattern, strict, curvars=None, ref_edges=None):
         if curvars is None:
             curvars = {}

@@ -15,6 +15,7 @@ animacy_connector = '_animacy'
 singular_plural_connector = '_sng_pl'
 parser_coref_connector = '_pcoref'
 inference_srcs_connector = '_infsrcs'
+list_or_matches_builder = 'list/J/.'
 
 # Pre-defined entity keys
 coref_set_id_key = 'coref'

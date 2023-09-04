@@ -1,5 +1,7 @@
+from collections import Counter
 from itertools import combinations, permutations, product
 
+import graphbrain.constants as const
 from graphbrain import hedge
 
 
@@ -96,17 +98,18 @@ def contains_variable(edge):
         return any(contains_variable(subedge) for subedge in edge)
 
 
-def all_variables(edge):
-    _vars = set()
+def all_variables(edge, _vars=None):
+    if _vars is None:
+        _vars = Counter()
     if edge is None:
         return _vars
     if edge.atom:
         return _vars
     else:
         if is_variable(edge):
-            return {edge[2]} | all_variables(edge[1])
+            _vars[edge[2]] += 1
         for subedge in edge:
-            _vars |= all_variables(subedge)
+            all_variables(subedge, _vars=_vars)
     return _vars
 
 
@@ -120,8 +123,8 @@ def is_valid(edge, _vars=None):
     if is_variable(edge):
         if edge[2].not_atom:
             return False
-        if edge[2] in _vars:
-            return False
+        # if edge[2] in _vars:
+        #     return False
         _vars.add(edge[2])
         return is_valid(edge[1], _vars=_vars)
     return all(is_valid(subedge, _vars=_vars) for subedge in edge)
@@ -135,7 +138,15 @@ def extract_vars_map(edge, _vars=None):
         return _vars
     if edge.not_atom:
         if is_variable(edge):
-            _vars[str(edge[2])] = edge[1]
+            new_edge = edge[1]
+            var_name = str(edge[2])
+            if var_name in _vars:
+                cur_edge = _vars[var_name]
+                if cur_edge.not_atom and str(cur_edge[0]) == const.list_or_matches_builder:
+                    new_edge = cur_edge + (new_edge,)
+                else:
+                    new_edge = hedge((hedge(const.list_or_matches_builder), cur_edge, new_edge))
+            _vars[var_name] = new_edge
         for subedge in edge:
             extract_vars_map(subedge, _vars=_vars)
     return _vars
@@ -357,3 +368,30 @@ def merge_patterns(edge1, edge2):
         return edge
     else:
         return None
+
+
+def apply_variable(edge, var_name, var_edge):
+    clean_edge = remove_variables(edge)
+    if clean_edge == var_edge or (type(var_edge) == list and clean_edge in var_edge):
+        return hedge(('var', clean_edge, var_name)), True
+
+    subedges = []
+    found = False
+    if edge.not_atom:
+        for subedge in edge:
+            vedge, result = apply_variable(subedge, var_name, var_edge)
+            subedges.append(vedge)
+            if result:
+                found = True
+        return hedge(subedges), found
+
+    return edge, False
+
+
+def apply_variables(edge, variables):
+    new_edge = edge
+    for var_name, var_edge in variables.items():
+        new_edge, found = apply_variable(new_edge, var_name, var_edge)
+        if not found:
+            return None
+    return new_edge
