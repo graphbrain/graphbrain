@@ -1,8 +1,5 @@
 import graphbrain.constants as const
 
-from graphbrain import hedge
-import graphbrain.patterns as gbp
-
 
 def lemma(hg, atom, same_if_none=False):
     """Returns the lemma of the given atom if it exists, None otherwise.
