@@ -21,6 +21,7 @@ from graphbrain.readers.dir import DirReader
 from graphbrain.readers.csv import CsvReader
 from graphbrain.readers.wikipedia import WikipediaReader
 from graphbrain.readers.reddit import RedditReader
+from graphbrain.readers.url import URLReader
 
 
 def _show_logo():
@@ -132,6 +133,13 @@ def cli():
         print('{} edges imported.'.format(n))
     elif args.command == 'txt':
         TxtReader(args.infile,
+                  hg=hgraph(args.hg),
+                  sequence=args.sequence,
+                  lang=args.lang,
+                  corefs=args.corefs,
+                  infsrcs=args.infsrcs).read()
+    elif args.command == 'url':
+        URLReader(args.url,
                   hg=hgraph(args.hg),
                   sequence=args.sequence,
                   lang=args.lang,
