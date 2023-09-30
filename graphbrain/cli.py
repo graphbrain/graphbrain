@@ -59,7 +59,7 @@ def cli():
     args = parser.parse_args()
 
     # init logging
-    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+    logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
     # determine language
     if args.parser:
