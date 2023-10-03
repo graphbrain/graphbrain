@@ -436,7 +436,7 @@ class AlphaBeta(Parser, ABC):
             self.atom2token[unew_pred] = self.atom2token[upred]
             self.temp_atoms.add(upred)
             self.orig_atom[unew_pred] = upred
-            new_entity = edge.replace_atom(pred, new_pred)
+            new_entity = edge.replace_atom(pred, new_pred, unique=True)
 
         # Extend builder connectors with argument types
         elif edge.connector_mtype() == 'B':
@@ -456,7 +456,7 @@ class AlphaBeta(Parser, ABC):
                     self.atom2token[unew_builder] = self.atom2token[ubuilder]
                     self.temp_atoms.add(ubuilder)
                 self.orig_atom[unew_builder] = ubuilder
-                new_entity = edge.replace_atom(builder, new_builder)
+                new_entity = edge.replace_atom(builder, new_builder, unique=True)
 
         new_args = [self._apply_arg_roles(subentity) for subentity in new_entity[1:]]
         new_entity = hedge([new_entity[0]] + new_args)
