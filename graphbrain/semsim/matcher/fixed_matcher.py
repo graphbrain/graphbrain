@@ -37,19 +37,21 @@ class FixedEmbeddingMatcher(SemSimMatcher):
     def _similarities(
             self,
             cand_word: str = None,
-            ref_word: list[str] = None,
+            ref_words: list[str] = None,
             **kwargs
     ) -> Union[dict[str, float], None]:
-        assert cand_word is not None and ref_word is not None, "Candidate and references must be specified!"
-        logger.debug(f"Candidate string: {cand_word} | References: {ref_word}")
+        assert cand_word is not None and ref_words is not None, (
+            f"Candidate and references must be specified! {cand_word=} | {ref_words=}"
+        )
+        logger.debug(f"Candidate string: {cand_word} | References: {ref_words}")
 
-        if not (filtered_references := self._in_vocab(ref_word, return_filtered=True)):
-            logger.warning(f"All reference word(s) out of vocabulary: {ref_word}")
+        if not (filtered_references := self._in_vocab(ref_words, return_filtered=True)):
+            logger.warning(f"All reference word(s) out of vocabulary: {ref_words}")
             return None
 
-        if len(filtered_references) < len(ref_word):
+        if len(filtered_references) < len(ref_words):
             logger.info(f"Some reference words out of vocabulary: "
-                        f"{[r for r in ref_word if r not in filtered_references]}")
+                        f"{[r for r in ref_words if r not in filtered_references]}")
 
         if not self._in_vocab([cand_word]):
             return None
