@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-from pathlib import Path
-from itertools import chain
-from setuptools import setup, find_packages
-from setuptools.extension import Extension
 
+from setuptools import setup, find_packages
+from setup_utils import get_ext_modules
 
 # True to enable building extensions using Cython.
 # False to build extensions from the C files that were previously
@@ -20,38 +18,6 @@ CYTHON_ANNOTATE = False
 # Force compilation of all Cython code.
 CYTHON_FORCE_COMPILATION = True
 
-# Current Graphbrain version
-with open('VERSION') as version_file:
-    VERSION = version_file.read()
-
-
-def get_source_file_paths(module_name: str, use_cython: bool) -> list[Path]:
-    module_base_path = Path(module_name.replace('.', '/'))
-    module_source_file = Path(f"{module_base_path}.{'pyx' if use_cython else 'c'}")
-    if module_source_file.exists():
-        return [module_source_file]
-    return list(Path(f"{module_base_path}").glob(f"**/*.{'pyx' if use_cython else 'c'}"))
-
-
-def get_sub_module_names(source_file_paths: list[Path]):
-    return [
-        str(source_file_path.with_suffix('')).replace("/", ".") for source_file_path in source_file_paths
-    ]
-
-
-def get_ext_modules(module_names: list[str], use_cython: bool) -> list[Extension]:
-    source_file_paths = list(chain(*[get_source_file_paths(module_name, use_cython) for module_name in module_names]))
-    sub_module_names = get_sub_module_names(source_file_paths)
-
-    ext_modules_ = []
-    for module_name, source_file_path in zip(sub_module_names, source_file_paths):
-        if use_cython:
-            ext_modules_.append(Extension(module_name, [str(source_file_path)]))
-        else:
-            ext_modules_.append(Extension(module_name, [str(source_file_path)], include_dirs=['.']))
-    return ext_modules_
-
-
 EXT_MODULES = [
     "graphbrain.hyperedge",
     "graphbrain.patterns",
@@ -61,10 +27,21 @@ EXT_MODULES = [
 
 ext_modules = get_ext_modules(EXT_MODULES, USE_CYTHON)
 
+if USE_CYTHON:
+    from Cython.Build import cythonize  # noqa
+    ext_modules = cythonize(
+        ext_modules,
+        annotate=CYTHON_ANNOTATE,
+        force=CYTHON_FORCE_COMPILATION,
+        compiler_directives={'language_level': '3'}
+    )
+
+# Current Graphbrain version
+with open('VERSION') as version_file:
+    VERSION = version_file.read()
 
 with open('README.md', encoding='utf8') as fh:
     long_description = fh.read()
-
 
 python_requires = '>=3.9'
 
