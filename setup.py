@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+from pathlib import Path
+from itertools import chain
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 
@@ -9,7 +10,7 @@ from setuptools.extension import Extension
 # created by Cython.
 USE_CYTHON = True
 
-# "If True, will produce a HTML file for each of the .pyx or .py files
+# "If True, will produce an HTML file for each of the .pyx or .py files
 # compiled. The HTML file gives an indication of how much Python interaction
 # there is in each of the source code lines, compared to plain C code."
 # https://cython.readthedocs.io/en/latest/src/userguide/
@@ -20,45 +21,48 @@ CYTHON_ANNOTATE = False
 CYTHON_FORCE_COMPILATION = True
 
 # Current Graphbrain version
-with open('VERSION', 'r') as version_file:
+with open('VERSION') as version_file:
     VERSION = version_file.read()
 
 
-if USE_CYTHON:
-    from Cython.Build import cythonize
+def get_source_file_paths(module_name: str, use_cython: bool) -> list[Path]:
+    module_base_path = Path(module_name.replace('.', '/'))
+    module_source_file = Path(f"{module_base_path}.{'pyx' if use_cython else 'c'}")
+    if module_source_file.exists():
+        return [module_source_file]
+    return list(Path(f"{module_base_path}").glob(f"**/*.{'pyx' if use_cython else 'c'}"))
 
 
-if USE_CYTHON:
-    ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx']),
-        Extension('graphbrain.patterns', ['graphbrain/patterns.pyx']),
-        Extension('graphbrain.memory.keyvalue', ['graphbrain/memory/keyvalue.pyx']),
-        Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.pyx']),
-        Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.pyx']),
-        Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.pyx']),
-        Extension('graphbrain.parsers.alpha', ['graphbrain/parsers/alpha.pyx']),
-        Extension('graphbrain.parsers.alpha_beta', ['graphbrain/parsers/alpha_beta.pyx']),
-        Extension('graphbrain.parsers.parser_en', ['graphbrain/parsers/parser_en.pyx'])
-    ]
-    ext_modules = cythonize(ext_modules,
-                            annotate=CYTHON_ANNOTATE,
-                            force=CYTHON_FORCE_COMPILATION,
-                            compiler_directives={'language_level': '3'})
-else:
-    ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], include_dirs=['.']),
-        Extension('graphbrain.patterns', ['graphbrain/patterns.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.keyvalue', ['graphbrain/memory/keyvalue.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.c'], include_dirs=['.']),
-        Extension('graphbrain.parsers.alpha', ['graphbrain/parsers/alpha.c'], include_dirs=['.']),
-        Extension('graphbrain.parsers.alpha_beta', ['graphbrain/parsers/alpha_beta.c'], include_dirs=['.']),
-        Extension('graphbrain.parsers.parser_en', ['graphbrain/parsers/parser_en.c'], include_dirs=['.'])
+def get_sub_module_names(source_file_paths: list[Path]):
+    return [
+        str(source_file_path.with_suffix('')).replace("/", ".") for source_file_path in source_file_paths
     ]
 
 
-with open('README.md', 'r', encoding='utf8') as fh:
+def get_ext_modules(module_names: list[str], use_cython: bool) -> list[Extension]:
+    source_file_paths = list(chain(*[get_source_file_paths(module_name, use_cython) for module_name in module_names]))
+    sub_module_names = get_sub_module_names(source_file_paths)
+
+    ext_modules_ = []
+    for module_name, source_file_path in zip(sub_module_names, source_file_paths):
+        if use_cython:
+            ext_modules_.append(Extension(module_name, [str(source_file_path)]))
+        else:
+            ext_modules_.append(Extension(module_name, [str(source_file_path)], include_dirs=['.']))
+    return ext_modules_
+
+
+EXT_MODULES = [
+    "graphbrain.hyperedge",
+    "graphbrain.patterns",
+    "graphbrain.memory",
+    "graphbrain.parsers",
+]
+
+ext_modules = get_ext_modules(EXT_MODULES, USE_CYTHON)
+
+
+with open('README.md', encoding='utf8') as fh:
     long_description = fh.read()
 
 
