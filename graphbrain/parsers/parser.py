@@ -120,7 +120,8 @@ class Parser(object):
                 self._set_edge_tokens(main_edge, hg, parse)
                 if self.corefs:
                     if unresolved_edge != main_edge:
-                        _set_edge_text(main_edge, hg, parse)
+                        _set_edge_text(unresolved_edge, hg, parse)
+                        self._set_edge_tokens(unresolved_edge, hg, parse)
                     coref_res_edge = hedge((const.coref_res_connector, unresolved_edge, main_edge))
                     hg.add(coref_res_edge)
                 # add extra edges
