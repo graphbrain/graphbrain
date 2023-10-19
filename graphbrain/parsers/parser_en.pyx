@@ -120,6 +120,27 @@ def process_colon_conjunctions(edge):
     return edge
 
 
+def fix_argroles(edge):
+    if edge.atom:
+        return edge
+    edge = hedge([fix_argroles(subedge) for subedge in edge])
+    ars = edge.argroles()
+    if ars != '' and edge.mt == 'R':
+        _ars = ''
+        for ar, subedge in zip(ars, edge[1:]):
+            if ar == '?':
+                if subedge.mt == 'R':
+                    _ars += 'r'
+                elif subedge.mt == 'S':
+                    _ars += 'x'
+                else:
+                    _ars += '?'
+            else:
+                _ars += ar
+        return edge.replace_argroles(_ars)
+    return edge
+
+
 class ParserEN(AlphaBeta):
     def __init__(self, lemmas=False, corefs=False, beta='repair', normalize=True):
         if spacy.util.is_package('en_core_web_trf'):
@@ -414,4 +435,6 @@ class ParserEN(AlphaBeta):
             return 0
 
     def _post_process(self, edge):
-        return process_colon_conjunctions(edge)
+        _edge = fix_argroles(edge)
+        _edge = process_colon_conjunctions(_edge)
+        return _edge
