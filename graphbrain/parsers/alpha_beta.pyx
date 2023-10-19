@@ -91,7 +91,7 @@ def _generate_tok_pos(parse, edge):
 
 
 class AlphaBeta(Parser, ABC):
-    def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
+    def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True):
         super().__init__(lemmas=lemmas, corefs=corefs)
         self.nlp = nlp
         if beta == 'strict':
@@ -101,7 +101,6 @@ class AlphaBeta(Parser, ABC):
         else:
             raise RuntimeError('unkown beta stage: {}'.format(beta))
         self.normalize = normalize
-        self.post_process = post_process
 
         self.atom2token = None
         self.temp_atoms = None
@@ -182,8 +181,7 @@ class AlphaBeta(Parser, ABC):
                     main_edge = self._repair(main_edge)
                 if self.normalize:
                     main_edge = self._normalize(main_edge)
-                if self.post_process:
-                    main_edge = self._post_process(main_edge)
+                main_edge = self._apply_temporal_triggers(main_edge)
                 atom2word = self._generate_atom2word(main_edge, offset=offset)
             else:
                 atom2word = {}
@@ -382,9 +380,9 @@ class AlphaBeta(Parser, ABC):
                     return True
             return False
 
-    def _post_process(self, edge):
+    def _apply_temporal_triggers(self, edge):
         if edge.not_atom:
-            edge = hedge([self._post_process(subedge) for subedge in edge])
+            edge = hedge([self._apply_temporal_triggers(subedge) for subedge in edge])
 
             if edge.connector_mtype() == 'T':
                 # Make triggers temporal, if appropriate.
@@ -741,55 +739,51 @@ class AlphaBeta(Parser, ABC):
         hg.set_attribute(edge, 'tok_pos', _generate_tok_pos(parse, edge))
 
     def _resolve_corefs(self, parse_results):
-        if self.corefs:
-            for parse in parse_results['parses']:
-                if parse['main_edge'] is not None:
-                    self._edge2toks(parse['main_edge'])
+        for parse in parse_results['parses']:
+            if parse['main_edge'] is not None:
+                self._edge2toks(parse['main_edge'])
 
-            coref_clusters = []
-            i = 1
+        coref_clusters = []
+        i = 1
+        while True:
+            key = 'coref_clusters_{}'.format(i)
+            if key in self.doc.spans:
+                coref_clusters.append(self.doc.spans[key])
+                i += 1
+            else:
+                break
+
+        toks2resolved = {}
+        clusters = {}
+        for cluster in coref_clusters:
+            mtoks = tuple(sorted(list(cluster[0])))
+            if mtoks in self.toks2edge:
+                redge = self.toks2edge[mtoks]
+                clusters[redge] = []
+                for span in cluster:
+                    stoks = tuple(sorted(list(span)))
+                    toks2resolved[stoks] = redge
+                    if stoks in self.toks2edge:
+                        clusters[redge].append(self.toks2edge[stoks])
+
+        for edge, toks in self.edge2toks.items():
+            if toks in toks2resolved:
+                redge = toks2resolved[toks]
+                if edge != redge:
+                    self.edge2coref[edge] = redge
+                    self.resolved_corefs.add(redge)
+
+        for parse in parse_results['parses']:
+            resolved_edge = parse['main_edge']
             while True:
-                key = 'coref_clusters_{}'.format(i)
-                if key in self.doc.spans:
-                    coref_clusters.append(self.doc.spans[key])
-                    i += 1
-                else:
+                new_edge = self._resolve_corefs_edge(resolved_edge)
+                if new_edge == resolved_edge:
                     break
+                else:
+                    resolved_edge = new_edge
+            parse['resolved_corefs'] = resolved_edge
 
-            toks2resolved = {}
-            clusters = {}
-            for cluster in coref_clusters:
-                mtoks = tuple(sorted(list(cluster[0])))
-                if mtoks in self.toks2edge:
-                    redge = self.toks2edge[mtoks]
-                    clusters[redge] = []
-                    for span in cluster:
-                        stoks = tuple(sorted(list(span)))
-                        toks2resolved[stoks] = redge
-                        if stoks in self.toks2edge:
-                            clusters[redge].append(self.toks2edge[stoks])
-
-            for edge, toks in self.edge2toks.items():
-                if toks in toks2resolved:
-                    redge = toks2resolved[toks]
-                    if edge != redge:
-                        self.edge2coref[edge] = redge
-                        self.resolved_corefs.add(redge)
-
-            for parse in parse_results['parses']:
-                resolved_edge = parse['main_edge']
-                while True:
-                    new_edge = self._resolve_corefs_edge(resolved_edge)
-                    if new_edge == resolved_edge:
-                        break
-                    else:
-                        resolved_edge = new_edge
-                parse['resolved_corefs'] = resolved_edge
-
-            inferred_edges = set()
-            for main_edge, edges in clusters.items():
-                inferred_edges |= self._coref_inferences(main_edge, edges)
-            parse_results['inferred_edges'] = list(inferred_edges)
-        else:
-            for parse in parse_results['parses']:
-                parse['resolved_corefs'] = parse['main_edge']
+        inferred_edges = set()
+        for main_edge, edges in clusters.items():
+            inferred_edges |= self._coref_inferences(main_edge, edges)
+        parse_results['inferred_edges'] = list(inferred_edges)

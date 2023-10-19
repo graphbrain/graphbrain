@@ -85,11 +85,19 @@ class Parser(object):
         # remove repeated spaces
         clean_text = ' '.join(clean_text.split())
         parse_results = self._parse(clean_text)
+
+        # coreference resolution
         if self.corefs:
             self._resolve_corefs(parse_results)
-        else:
-            for parse in parse_results['parses']:
+
+        # post-processing
+        for parse in parse_results['parses']:
+            parse['main_edge'] = self._post_process(parse['main_edge'])
+            if self.corefs:
+                parse['resolved_corefs'] = self._post_process(parse['resolved_corefs'])
+            else:
                 parse['resolved_corefs'] = parse['main_edge']
+
         return parse_results
 
     def parse_and_add(self, text, hg, sequence=None, infsrcs=False, max_text=1500):
@@ -150,9 +158,6 @@ class Parser(object):
     def atom_animacy(self, atom):
         raise NotImplementedError()
 
-    def _post_process(self, edge):
-        raise NotImplementedError()
-
     def _parse_token(self, token, atom_type):
         raise NotImplementedError()
 
@@ -167,6 +172,9 @@ class Parser(object):
 
     def _set_edge_tokens(self, edge, hg, parse):
         raise NotImplementedError()
+
+    def _post_process(self, edge):
+        return edge
 
     def _resolve_corefs(self, parse_results):
         # do nothing if not implemented in derived classes
