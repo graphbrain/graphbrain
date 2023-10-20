@@ -146,15 +146,17 @@ def fix_argroles(edge):
     if ars != '' and edge.mt == 'R':
         _ars = ''
         for ar, subedge in zip(ars, edge[1:]):
+            _ar = ar
             if ar == '?':
                 if subedge.mt == 'R':
-                    _ars += 'r'
+                    _ar = 'r'
                 elif subedge.mt == 'S':
-                    _ars += 'x'
-                else:
-                    _ars += '?'
-            else:
-                _ars += ar
+                    _ar = 'x'
+            elif ar == 'r':
+                pred = first_predicate(subedge)
+                if pred and hedge('to/Mi/en') in pred.atoms():
+                    _ar = 'x'
+            _ars += _ar
         return edge.replace_argroles(_ars)
     return edge
 
