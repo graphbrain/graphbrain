@@ -435,6 +435,8 @@ class ParserEN(AlphaBeta):
             return 0
 
     def _post_process(self, edge):
+        if edge is None:
+            return None
         _edge = fix_argroles(edge)
         _edge = process_colon_conjunctions(_edge)
         return _edge
