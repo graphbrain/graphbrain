@@ -83,6 +83,21 @@ def insert_arg_in_tail(edge, arg):
     return edge.insert_edge_with_argrole(arg, 'x', len(edge))
 
 
+def insert_spec_rightmost_relation(edge, arg):
+    if edge.atom:
+        return edge
+    if 'P' in [atom.mt for atom in edge[-1].atoms()]:
+        return hedge(list(edge[:-1]) + [insert_spec_rightmost_relation(edge[-1], arg)])
+    if edge[0].mt == 'P':
+        return edge.insert_edge_with_argrole(arg, 'x', len(edge))
+    for pos, subedge in reversed(list(enumerate(edge))):
+        if 'P' in [atom.mt for atom in subedge.atoms()]:
+            new_edge = list(edge)
+            new_edge[pos] = insert_spec_rightmost_relation(subedge, arg)
+            return hedge(new_edge)
+    return edge
+
+
 def process_colon_conjunctions(edge):
     if edge.atom:
         return edge
@@ -99,6 +114,9 @@ def process_colon_conjunctions(edge):
                 if tatom.t == 'Ca' and pred and hedge('to/Mi/en') in pred.atoms():
                     # Ca tail
                     return edge[1].replace_atom(tatom, hedge([':/Jr.ma', tatom, edge[2]]))
+                elif pred and hedge('to/Mi/en') in pred.atoms():
+                    # second is specification of rightmost relation
+                    return insert_spec_rightmost_relation(edge[1], edge[2])
             # RS
             elif edge[2].mt == 'S':
                 # second is specification
