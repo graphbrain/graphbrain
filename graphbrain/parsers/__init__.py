@@ -5,7 +5,8 @@ from .parser_en import ParserEN
 from .text import edge_text
 
 
-def create_parser(lang=None, parser_class=None, lemmas=False, corefs=False, beta='repair', normalize=True):
+def create_parser(lang=None, parser_class=None, lemmas=False, corefs=False, beta='repair', normalize=True,
+                  post_process=True):
     """Creates and returns a parser (as an instanceof a subclass of Parser)
     for the language specified in the parameter. If parser_class is specified,
     then the parser specified by this class is instantiated instead. Throws
@@ -38,13 +39,13 @@ def create_parser(lang=None, parser_class=None, lemmas=False, corefs=False, beta
         class_name = path_parts[-1]
         class_obj = getattr(import_module(module_name, package=package),
                             class_name)
-        parser = class_obj(lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize)
+        parser = class_obj(lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize, post_process=post_process)
         if lang and parser.lang != lang:
             raise RuntimeError(
                 'Specified language and parser class do not match.')
         return parser
     elif lang == 'en':
-        return ParserEN(lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize)
+        return ParserEN(lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize, post_process=post_process)
     else:
         raise RuntimeError('Unknown parser: {}'.format(lang))
 

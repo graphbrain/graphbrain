@@ -43,9 +43,10 @@ class Parser(object):
     Parsers transofrm natural text into graphbrain hyperedges.
     """
 
-    def __init__(self, lemmas=True, corefs=True, debug=False):
+    def __init__(self, lemmas=True, corefs=True, post_process=True, debug=False):
         self.lemmas = lemmas
         self.corefs = corefs
+        self.post_process = post_process
         self.debug = debug
 
         # to be created by derived classes
@@ -92,9 +93,11 @@ class Parser(object):
 
         # post-processing
         for parse in parse_results['parses']:
-            parse['main_edge'] = self._post_process(parse['main_edge'])
+            if self.post_process:
+                parse['main_edge'] = self._post_process(parse['main_edge'])
             if self.corefs:
-                parse['resolved_corefs'] = self._post_process(parse['resolved_corefs'])
+                if self.post_process:
+                    parse['resolved_corefs'] = self._post_process(parse['resolved_corefs'])
             else:
                 parse['resolved_corefs'] = parse['main_edge']
 

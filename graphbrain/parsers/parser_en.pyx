@@ -142,7 +142,7 @@ def fix_argroles(edge):
 
 
 class ParserEN(AlphaBeta):
-    def __init__(self, lemmas=False, corefs=False, beta='repair', normalize=True):
+    def __init__(self, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
         if spacy.util.is_package('en_core_web_trf'):
             nlp = spacy.load('en_core_web_trf')
             print('Using language model: {}'.format('en_core_web_trf'))
@@ -162,7 +162,7 @@ class ParserEN(AlphaBeta):
             nlp.add_pipe('span_resolver', source=nlp_coref)
             nlp.add_pipe('span_cleaner', source=nlp_coref)
              
-        super().__init__(nlp, lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize)
+        super().__init__(nlp, lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize, post_process=post_process)
         self.lang = LANG
         cases_str = pkg_resources.resource_string('graphbrain', 'data/atoms-en.csv').decode('utf-8')
         self.alpha = Alpha(cases_str)

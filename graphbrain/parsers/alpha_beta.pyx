@@ -91,8 +91,8 @@ def _generate_tok_pos(parse, edge):
 
 
 class AlphaBeta(Parser, ABC):
-    def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True):
-        super().__init__(lemmas=lemmas, corefs=corefs)
+    def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
+        super().__init__(lemmas=lemmas, corefs=corefs, post_process=post_process)
         self.nlp = nlp
         if beta == 'strict':
             self.rules = strict_rules
