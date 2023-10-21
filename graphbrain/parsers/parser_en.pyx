@@ -34,9 +34,6 @@ _p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en", "her/Ci/
        "theirs/Ci/en", "her/Mp/en", "his/Mp/en", "its/Mp/en", "their/Mp/en", "whose/Mp/en"}
 
 
-# ===============
-# Post-processing
-# ===============
 def tail_atom(edge):
     if edge.atom:
         return edge
@@ -51,114 +48,6 @@ def first_predicate(edge):
         else:
             return first_predicate(edge[1])
     return None
-
-
-def insert_arg_in_tail(edge, arg):
-    if edge.atom:
-        return edge
-
-    if edge.cmt == 'P':
-        ars = edge.argroles()
-        ar = None
-        if 'p' in ars:
-            if 'a' not in ars:
-                ar = 'a'
-        elif 'a' in ars:
-            ar = 'p'
-        elif 's' not in ars:
-            ar = 's'
-        elif 'o' not in ars:
-            ar = 'o'
-        if ar:
-            return edge.insert_edge_with_argrole(arg, ar, len(edge))
-
-    new_tail = insert_arg_in_tail(edge[-1], arg)
-    if new_tail != edge[-1]:
-        return hedge(list(edge[:-1]) + [new_tail])
-    if edge.cmt != 'P':
-        return edge
-    ars = edge.argroles()
-    if ars == '':
-        return edge
-    return edge.insert_edge_with_argrole(arg, 'x', len(edge))
-
-
-def insert_spec_rightmost_relation(edge, arg):
-    if edge.atom:
-        return edge
-    if 'P' in [atom.mt for atom in edge[-1].atoms()]:
-        return hedge(list(edge[:-1]) + [insert_spec_rightmost_relation(edge[-1], arg)])
-    if edge[0].mt == 'P':
-        return edge.insert_edge_with_argrole(arg, 'x', len(edge))
-    for pos, subedge in reversed(list(enumerate(edge))):
-        if 'P' in [atom.mt for atom in subedge.atoms()]:
-            new_edge = list(edge)
-            new_edge[pos] = insert_spec_rightmost_relation(subedge, arg)
-            return hedge(new_edge)
-    return edge
-
-
-def process_colon_conjunctions(edge):
-    if edge.atom:
-        return edge
-    edge = hedge([process_colon_conjunctions(subedge) for subedge in edge])
-    if str(edge[0]) == ':/J/.' and any(subedge.mt == 'R' for subedge in edge):
-        if edge[1].mt == 'R':
-            # RR
-            if edge[2].mt == 'R':
-                if edge[2].connector_atom().root() in {'says', 'say', 'said'}:
-                    # first inside second
-                    return edge[2].insert_edge_with_argrole(edge[1], 'r', len(edge[1]))
-                tatom = tail_atom(edge[1])
-                pred = first_predicate(edge[2])
-                if tatom.t == 'Ca' and pred and hedge('to/Mi/en') in pred.atoms():
-                    # Ca tail
-                    return edge[1].replace_atom(tatom, hedge([':/Jr.ma', tatom, edge[2]]))
-                elif pred and hedge('to/Mi/en') in pred.atoms():
-                    # second is specification of rightmost relation
-                    return insert_spec_rightmost_relation(edge[1], edge[2])
-            # RS
-            elif edge[2].mt == 'S':
-                # second is specification
-                return edge[1].insert_edge_with_argrole(edge[2], 'x', len(edge[1]))
-            # RC
-            elif edge[2].mt == 'C':
-                return insert_arg_in_tail(edge[1], edge[2])
-        # CR
-        elif edge[1].mt == 'C':
-            if edge[2].mt == 'R':
-                if not 's' in edge[2].argroles():
-                    # concept is subject
-                    return edge[2].insert_edge_with_argrole(edge[1], 's', 0)
-        # SR
-        elif edge[1].mt == 'S':
-            if edge[2].mt == 'R':
-                # first is specification
-                return edge[2].insert_edge_with_argrole(edge[1], 'x', len(edge[2]))
-    return edge
-
-
-def fix_argroles(edge):
-    if edge.atom:
-        return edge
-    edge = hedge([fix_argroles(subedge) for subedge in edge])
-    ars = edge.argroles()
-    if ars != '' and edge.mt == 'R':
-        _ars = ''
-        for ar, subedge in zip(ars, edge[1:]):
-            _ar = ar
-            if ar == '?':
-                if subedge.mt == 'R':
-                    _ar = 'r'
-                elif subedge.mt == 'S':
-                    _ar = 'x'
-            elif ar == 'r':
-                pred = first_predicate(subedge)
-                if pred and hedge('to/Mi/en') in pred.atoms():
-                    _ar = 'x'
-            _ars += _ar
-        return edge.replace_argroles(_ars)
-    return edge
 
 
 class ParserEN(AlphaBeta):
@@ -454,9 +343,116 @@ class ParserEN(AlphaBeta):
         else:
             return 0
 
+    # ===============
+    # Post-processing
+    # ===============
+    def _insert_arg_in_tail(self, edge, arg):
+        if edge.atom:
+            return edge
+
+        if edge.cmt == 'P':
+            ars = edge.argroles()
+            ar = None
+            if 'p' in ars:
+                if 'a' not in ars:
+                    ar = 'a'
+            elif 'a' in ars:
+                ar = 'p'
+            elif 's' not in ars:
+                ar = 's'
+            elif 'o' not in ars:
+                ar = 'o'
+            if ar:
+                return self._insert_edge_with_argrole(edge, arg, ar, len(edge))
+
+        new_tail = self._insert_arg_in_tail(edge[-1], arg)
+        if new_tail != edge[-1]:
+            return hedge(list(edge[:-1]) + [new_tail])
+        if edge.cmt != 'P':
+            return edge
+        ars = edge.argroles()
+        if ars == '':
+            return edge
+        return self._insert_edge_with_argrole(edge, arg, 'x', len(edge))
+
+    def _insert_spec_rightmost_relation(self, edge, arg):
+        if edge.atom:
+            return edge
+        if 'P' in [atom.mt for atom in edge[-1].atoms()]:
+            return hedge(list(edge[:-1]) + [self._insert_spec_rightmost_relation(edge[-1], arg)])
+        if edge[0].mt == 'P':
+            return self._insert_edge_with_argrole(edge, arg, 'x', len(edge))
+        for pos, subedge in reversed(list(enumerate(edge))):
+            if 'P' in [atom.mt for atom in subedge.atoms()]:
+                new_edge = list(edge)
+                new_edge[pos] = self._insert_spec_rightmost_relation(subedge, arg)
+                return hedge(new_edge)
+        return edge
+
+    def _process_colon_conjunctions(self, edge):
+        if edge.atom:
+            return edge
+        edge = hedge([self._process_colon_conjunctions(subedge) for subedge in edge])
+        if str(edge[0]) == ':/J/.' and any(subedge.mt == 'R' for subedge in edge):
+            if edge[1].mt == 'R':
+                # RR
+                if edge[2].mt == 'R':
+                    if edge[2].connector_atom().root() in {'says', 'say', 'said'}:
+                        # first inside second
+                        return self._insert_edge_with_argrole(edge[2], edge[1], 'r', len(edge[1]))
+                    tatom = tail_atom(edge[1])
+                    pred = first_predicate(edge[2])
+                    if tatom.t == 'Ca' and pred and hedge('to/Mi/en') in pred.atoms():
+                        # Ca tail
+                        return self._replace_atom(edge[1], tatom, hedge([':/Jr.ma', tatom, edge[2]]))
+                    elif pred and hedge('to/Mi/en') in pred.atoms():
+                        # second is specification of rightmost relation
+                        return self._insert_spec_rightmost_relation(edge[1], edge[2])
+                # RS
+                elif edge[2].mt == 'S':
+                    # second is specification
+                    return self._insert_edge_with_argrole(edge[1], edge[2], 'x', len(edge[1]))
+                # RC
+                elif edge[2].mt == 'C':
+                    return self._insert_arg_in_tail(edge[1], edge[2])
+            # CR
+            elif edge[1].mt == 'C':
+                if edge[2].mt == 'R':
+                    if not 's' in edge[2].argroles():
+                        # concept is subject
+                        return self._insert_edge_with_argrole(edge[2], edge[1], 's', 0)
+            # SR
+            elif edge[1].mt == 'S':
+                if edge[2].mt == 'R':
+                    # first is specification
+                    return self._insert_edge_with_argrole(edge[2], edge[1], 'x', len(edge[2]))
+        return edge
+
+    def _fix_argroles(self, edge):
+        if edge.atom:
+            return edge
+        edge = hedge([self._fix_argroles(subedge) for subedge in edge])
+        ars = edge.argroles()
+        if ars != '' and edge.mt == 'R':
+            _ars = ''
+            for ar, subedge in zip(ars, edge[1:]):
+                _ar = ar
+                if ar == '?':
+                    if subedge.mt == 'R':
+                        _ar = 'r'
+                    elif subedge.mt == 'S':
+                        _ar = 'x'
+                elif ar == 'r':
+                    pred = first_predicate(subedge)
+                    if pred and hedge('to/Mi/en') in pred.atoms():
+                        _ar = 'x'
+                _ars += _ar
+            return self._replace_argroles(edge, _ars)
+        return edge
+
     def _post_process(self, edge):
         if edge is None:
             return None
-        _edge = fix_argroles(edge)
-        _edge = process_colon_conjunctions(_edge)
+        _edge = self._fix_argroles(edge)
+        _edge = self._process_colon_conjunctions(_edge)
         return _edge

@@ -43,10 +43,9 @@ class Parser(object):
     Parsers transofrm natural text into graphbrain hyperedges.
     """
 
-    def __init__(self, lemmas=True, corefs=True, post_process=True, debug=False):
+    def __init__(self, lemmas=True, corefs=True, debug=False):
         self.lemmas = lemmas
         self.corefs = corefs
-        self.post_process = post_process
         self.debug = debug
 
         # to be created by derived classes
@@ -90,15 +89,8 @@ class Parser(object):
         # coreference resolution
         if self.corefs:
             self._resolve_corefs(parse_results)
-
-        # post-processing
-        for parse in parse_results['parses']:
-            if self.post_process:
-                parse['main_edge'] = self._post_process(parse['main_edge'])
-            if self.corefs:
-                if self.post_process:
-                    parse['resolved_corefs'] = self._post_process(parse['resolved_corefs'])
-            else:
+        else:
+            for parse in parse_results['parses']:
                 parse['resolved_corefs'] = parse['main_edge']
 
         return parse_results
@@ -164,20 +156,11 @@ class Parser(object):
     def _parse_token(self, token, atom_type):
         raise NotImplementedError()
 
-    def _before_parse_sentence(self):
-        raise NotImplementedError()
-
-    def _parse_sentence(self, sent):
-        raise NotImplementedError()
-
     def _parse(self, text):
         raise NotImplementedError()
 
     def _set_edge_tokens(self, edge, hg, parse):
         raise NotImplementedError()
-
-    def _post_process(self, edge):
-        return edge
 
     def _resolve_corefs(self, parse_results):
         # do nothing if not implemented in derived classes

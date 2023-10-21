@@ -1,5 +1,4 @@
 import json
-import sys
 import traceback
 from abc import ABC
 from collections import Counter
@@ -92,8 +91,9 @@ def _generate_tok_pos(parse, edge):
 
 class AlphaBeta(Parser, ABC):
     def __init__(self, nlp, lemmas=False, corefs=False, beta='repair', normalize=True, post_process=True):
-        super().__init__(lemmas=lemmas, corefs=corefs, post_process=post_process)
+        super().__init__(lemmas=lemmas, corefs=corefs)
         self.nlp = nlp
+        self.post_process = post_process
         if beta == 'strict':
             self.rules = strict_rules
         elif beta == 'repair':
@@ -144,7 +144,7 @@ class AlphaBeta(Parser, ABC):
     def _builder_arg_roles(self, edge):
         raise NotImplementedError()
 
-    def _is_noun(token):
+    def _is_noun(self, token):
         raise NotImplementedError()
 
     def _is_verb(self, token):
@@ -155,6 +155,9 @@ class AlphaBeta(Parser, ABC):
 
     def _adjust_score(self, edges):
         raise NotImplementedError()
+
+    def _post_process(self, edge):
+        return edge
 
     # =========================
     # Language-agnostic methods
@@ -182,6 +185,8 @@ class AlphaBeta(Parser, ABC):
                 if self.normalize:
                     main_edge = self._normalize(main_edge)
                 main_edge = self._apply_temporal_triggers(main_edge)
+                if self.post_process:
+                    main_edge = self._post_process(main_edge)
                 atom2word = self._generate_atom2word(main_edge, offset=offset)
             else:
                 atom2word = {}
@@ -380,6 +385,33 @@ class AlphaBeta(Parser, ABC):
                     return True
             return False
 
+
+    def _update_atom(self, old, new):
+        uold = UniqueAtom(old)
+        unew = UniqueAtom(new)
+        if uold in self.atom2token:
+            self.atom2token[unew] = self.atom2token[uold]
+            self.temp_atoms.add(uold)
+        self.orig_atom[unew] = uold
+
+    def _replace_atom(self, edge, old, new):
+        self._update_atom(old, new)
+        return edge.replace_atom(old, new)
+
+    def _insert_edge_with_argrole(self, edge, arg, argrole, pos):
+        new_edge = edge.insert_edge_with_argrole(arg, argrole, pos)
+        old_pred = edge[0].inner_atom()
+        new_pred = new_edge[0].inner_atom()
+        self._update_atom(old_pred, new_pred)
+        return new_edge
+
+    def _replace_argroles(self, edge, argroles):
+        new_edge = edge.replace_argroles(argroles)
+        old_pred = edge[0].inner_atom()
+        new_pred = new_edge[0].inner_atom()
+        self._update_atom(old_pred, new_pred)
+        return new_edge
+
     def _apply_temporal_triggers(self, edge):
         if edge.not_atom:
             edge = hedge([self._apply_temporal_triggers(subedge) for subedge in edge])
@@ -394,13 +426,7 @@ class AlphaBeta(Parser, ABC):
                     if len(triparts) > 2:
                         newparts += tuple(triparts[2:])
                     new_trigger = hedge('/'.join(newparts))
-                    utrigger_atom = UniqueAtom(trigger_atom)
-                    unew_trigger = UniqueAtom(new_trigger)
-                    if utrigger_atom in self.atom2token:
-                        self.atom2token[unew_trigger] = self.atom2token[utrigger_atom]
-                        self.temp_atoms.add(utrigger_atom)
-                    self.orig_atom[unew_trigger] = utrigger_atom
-                    edge = edge.replace_atom(trigger_atom, new_trigger)
+                    edge = self._replace_atom(edge, trigger_atom, new_trigger)
 
         return edge
 
