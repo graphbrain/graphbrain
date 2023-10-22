@@ -210,8 +210,7 @@ class Hyperedge(tuple):
         roots_only -- only the roots of the atoms will be used to create
         the string representation.
         """
-        s = ' '.join([edge.to_str(roots_only=roots_only)
-                      for edge in self if edge])
+        s = ' '.join([edge.to_str(roots_only=roots_only) for edge in self if edge])
         return ''.join(('(', s, ')'))
 
     def label(self):
