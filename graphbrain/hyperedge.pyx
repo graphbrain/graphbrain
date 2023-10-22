@@ -130,7 +130,7 @@ def hedge(source):
         if not tokens:
             return None
         edges = tuple(_parsed_token(token) for token in tokens)
-        if len(edges) > 1:
+        if len(edges) > 1 or type(edges[0]) == Hyperedge:
             return Hyperedge(edges)
         elif len(edges) > 0:
             return Atom(edges[0], parens)
