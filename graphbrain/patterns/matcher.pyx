@@ -1,28 +1,35 @@
-import itertools
 from collections import Counter
 from typing import List
 
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge
 from graphbrain.patterns import is_fun_pattern, is_pattern
+from graphbrain.patterns.argroles import _match_by_argroles
 from graphbrain.patterns.atoms import _matches_atomic_pattern
 from graphbrain.patterns.utils import _defun_pattern_argroles, _atoms_and_tok_pos
-from graphbrain.patterns.variables import _remove_special_vars, _varname, _assign_edge_to_var, _regular_var_count, \
-    _generate_special_var_name
+from graphbrain.patterns.variables import (
+    _remove_special_vars, _varname, _assign_edge_to_var, _generate_special_var_name
+)
 from graphbrain.semsim import semsim
 from graphbrain.utils.lemmas import lemma
-from graphbrain.utils.semsim import get_edge_word_part, extract_pattern_words, extract_similarity_threshold, \
-    replace_edge_word_part, SEMSIM_CTX_TOK_POS_VAR_CODE, SEMSIM_CTX_THRESHOLD_VAR_CODE
+from graphbrain.utils.semsim import (
+    get_edge_word_part,
+    extract_pattern_words,
+    extract_similarity_threshold,
+    replace_edge_word_part,
+    SEMSIM_CTX_TOK_POS_VAR_CODE,
+    SEMSIM_CTX_THRESHOLD_VAR_CODE
+)
 
 
 class Matcher:
     def __init__(self, edge, pattern, curvars=None, tok_pos=None, hg=None):
         self.hg = hg
         self.semsim_ctx = False
-        self.results_with_special_vars = self._match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
+        self.results_with_special_vars = self.match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
         self.results = [_remove_special_vars(result) for result in self.results_with_special_vars]
 
-    def _match(self, edge, pattern, curvars=None, tok_pos=None):
+    def match(self, edge, pattern, curvars=None, tok_pos=None):
         if curvars is None:
             curvars = {}
 
@@ -104,7 +111,7 @@ class Matcher:
                             except AssertionError:
                                 raise RuntimeError(f"Index '{i}' in tok_pos '{tok_pos}' is out of range")
                             tok_pos_item = tok_pos[i]
-                        _result += self._match(
+                        _result += self.match(
                             eitem,
                             pitem,
                             {**curvars, **variables},
@@ -117,14 +124,15 @@ class Matcher:
             # match connector first
             # TODO: avoid matching connector twice!
             ctok_pos = tok_pos[0] if tok_pos else None
-            if self._match(edge[0], pattern[0], curvars, tok_pos=ctok_pos):
+            if self.match(edge[0], pattern[0], curvars, tok_pos=ctok_pos):
                 role_counts = Counter(argroles_opt).most_common()
                 unknown_roles = (len(pattern) - 1) - len(argroles_opt)
                 if unknown_roles > 0:
                     role_counts.append(('*', unknown_roles))
                 # add connector pseudo-argrole
                 role_counts = [('X', 1)] + role_counts
-                result = self._match_by_argroles(
+                result = _match_by_argroles(
+                    self,
                     edge,
                     pattern,
                     role_counts,
@@ -139,81 +147,6 @@ class Matcher:
             if v not in unique_vars:
                 unique_vars.append(v)
         return unique_vars
-
-    def _match_by_argroles(
-            self,
-            edge,
-            pattern,
-            role_counts,
-            min_vars,
-            matched=(),
-            curvars=None,
-            tok_pos=None
-    ):
-        if curvars is None:
-            curvars = {}
-
-        if len(role_counts) == 0:
-            return [curvars]
-
-        argrole, n = role_counts[0]
-
-        # match connector
-        if argrole == 'X':
-            eitems = [edge[0]]
-            pitems = [pattern[0]]
-        # match any argrole
-        elif argrole == '*':
-            eitems = [e for e in edge if e not in matched]
-            pitems = pattern[-n:]
-        # match specific argrole
-        else:
-            eitems = edge.edges_with_argrole(argrole)
-            pitems = _defun_pattern_argroles(pattern).edges_with_argrole(argrole)
-
-        if len(eitems) < n:
-            if _regular_var_count(curvars) >= min_vars:
-                return [curvars]
-            else:
-                return []
-
-        result = []
-
-        if tok_pos:
-            tok_pos_items = [tok_pos[i] for i, subedge in enumerate(edge) if subedge in eitems]
-            tok_pos_perms = tuple(itertools.permutations(tok_pos_items, r=n))
-
-        for perm_n, perm in enumerate(tuple(itertools.permutations(eitems, r=n))):
-            if tok_pos:
-                tok_pos_perm = tok_pos_perms[perm_n]
-            perm_result = [{}]
-            for i, eitem in enumerate(perm):
-                pitem = pitems[i]
-                tok_pos_item = tok_pos_perm[i] if tok_pos else None
-                item_result = []
-                for variables in perm_result:
-                    item_result += self._match(
-                        eitem,
-                        pitem,
-                        {**curvars, **variables},
-                        tok_pos=tok_pos_item
-                    )
-                perm_result = item_result
-                if len(item_result) == 0:
-                    break
-
-            for variables in perm_result:
-                result += self._match_by_argroles(
-                    edge,
-                    pattern,
-                    role_counts[1:],
-                    min_vars,
-                    matched + perm,
-                    {**curvars, **variables},
-                    tok_pos=tok_pos
-                )
-
-        return result
 
     def _match_atoms(
             self,
@@ -235,7 +168,7 @@ class Matcher:
         for atom_pos, atom in enumerate(atoms):
             if atom not in matched_atoms:
                 tok_pos = atoms_tok_pos[atom_pos] if atoms_tok_pos else None
-                svars = self._match(atom, atom_pattern, curvars, tok_pos=tok_pos)
+                svars = self.match(atom, atom_pattern, curvars, tok_pos=tok_pos)
                 for variables in svars:
                     results += self._match_atoms(
                         atom_patterns[1:],
@@ -308,7 +241,7 @@ class Matcher:
             var_name = fun_pattern[2].root()
             if edge.not_atom and str(edge[0]) == 'var' and len(edge) == 3 and str(edge[2]) == var_name:
                 this_var = _assign_edge_to_var(curvars, var_name, edge[1])
-                return self._match(
+                return self.match(
                     edge[1],
                     pattern,
                     curvars={**curvars, **this_var},
@@ -316,7 +249,7 @@ class Matcher:
                 )
             else:
                 this_var = _assign_edge_to_var(curvars, var_name, edge)
-                return self._match(
+                return self.match(
                     edge,
                     pattern,
                     curvars={**curvars, **this_var},
@@ -351,7 +284,7 @@ class Matcher:
                 _generate_special_var_name(SEMSIM_CTX_TOK_POS_VAR_CODE, curvars): tok_pos,
                 _generate_special_var_name(SEMSIM_CTX_THRESHOLD_VAR_CODE, curvars): threshold
             }
-            return self._match(
+            return self.match(
                 edge,
                 fun_pattern[1],
                 curvars={**curvars, **special_vars},
@@ -359,7 +292,7 @@ class Matcher:
             )
         elif fun == 'any':
             for pattern in fun_pattern[1:]:
-                matches = self._match(
+                matches = self.match(
                     edge,
                     pattern,
                     curvars=curvars,
