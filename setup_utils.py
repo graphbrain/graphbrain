@@ -11,7 +11,7 @@ def get_source_file_paths(module_name: str, use_cython: bool) -> list[Path]:
     return list(Path(f"{module_base_path}").glob(f"**/*.{'pyx' if use_cython else 'c'}"))
 
 
-def get_sub_module_names(source_file_paths: list[Path]):
+def get_sub_module_names(source_file_paths: list[Path]) -> list[str]:
     return [
         str(source_file_path.with_suffix('')).replace("/", ".")
         for source_file_path in source_file_paths
