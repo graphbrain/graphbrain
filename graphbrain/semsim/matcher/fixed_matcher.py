@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import logging
 from pathlib import Path
 from typing import Union
@@ -8,7 +7,7 @@ from typing import Union
 import gensim.downloader
 from gensim.models import KeyedVectors
 
-from graphbrain.semsim.matcher.matcher import SemSimMatcher, SemSimType, SemSimConfig
+from graphbrain.semsim.matcher.matcher import SemSimMatcher, SemSimConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ class FixedEmbeddingMatcher(SemSimMatcher):
         self._model_dir: Path = self._create_sub_dir("gensim-data", base_dir=self._base_model_dir)
         self._model: KeyedVectors = self._load_model(config.model_name)
 
-    def _in_vocab(self, words: list[str], return_filtered: bool = False) -> bool | list[str]:
+    def _in_vocab(self, words: list[str], return_filtered: bool = False) -> Union[bool | list[str]]:
         oov_words = [w for w in words if w not in self._model]
         if oov_words:
             logger.debug(f"Queried word(s) out of vocabulary: {oov_words}")

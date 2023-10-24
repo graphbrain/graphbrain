@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import logging
 from functools import lru_cache
+from typing import Union
 
 from spacy.language import Language
 from spacy.lang.en import English
@@ -25,10 +26,6 @@ class ContextEmbeddingMatcher(SemSimMatcher):
     _SPACY_PIPE_TRF_COMPONENT_NAME: str = 'transformer'
     _SPACY_DOC_CACHE_SIZE: int = 64
     _EMBEDDING_CACHE_SIZE: int = 64
-
-    # # this is specific to the 'intfloat/e5-large-v2' model
-    # # should be generalized to other models if needed
-    # _EMBEDDING_MODEL_PREFIX: str = "query:"
 
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
@@ -60,7 +57,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             ref_tok_poses: list[Hyperedge] = None,
             hg: Hypergraph = None,
             **kwargs
-    ) -> dict[str, float] | None:
+    ) ->  Union[dict[str, float], None]:
         assert cand_edge and cand_tok_pos and ref_edges and ref_tok_poses and hg, (
             f"Missing argument(s): {cand_edge=} {cand_tok_pos=} {ref_edges=} {ref_tok_poses=} {hg=}"
         )
@@ -77,8 +74,8 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         if not cand_tokens or not all(refs_tokens):
             return None
 
-        cand_embedding: Tensor | None = self._get_embedding(cand_tokens, cand_tok_idxes)
-        refs_embeddings: list[Tensor | None] = [
+        cand_embedding: Union[Tensor, None] = self._get_embedding(cand_tokens, cand_tok_idxes)
+        refs_embeddings: list[Union[Tensor, None]] = [
             self._get_embedding(ref_tokens, ref_tok_idxes)
             for ref_tokens, ref_tok_idxes in zip(refs_tokens, refs_tok_idxes)
         ]
@@ -92,7 +89,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         }
 
     @lru_cache(maxsize=_EMBEDDING_CACHE_SIZE)
-    def _get_embedding(self, tokens: tuple[str], tok_idxes: tuple[int]) -> Tensor | None:
+    def _get_embedding(self, tokens: tuple[str], tok_idxes: tuple[int]) -> Union[Tensor, None]:
         prefixed_tokens: tuple[str] = tuple(self._embedding_prefix_tokens + list(tokens))
 
         spacy_doc, spacy_tokens = self._get_spacy_doc_and_tokens(prefixed_tokens)
@@ -176,7 +173,7 @@ def _validate_spacy_tokenization(tokens: tuple[str], spacy_tokens: tuple[str]) -
 
 def _get_and_validate_tokens(
         edge: Hyperedge, tok_idxes: tuple[int], hg: Hypergraph
-) -> tuple[str] | None:
+) -> Union[tuple[str], None]:
     tokens: tuple[str] = _get_and_validate_edge_tokens(edge, hg)
     if not tokens:
         return None
@@ -187,7 +184,7 @@ def _get_and_validate_tokens(
     return tokens
 
 
-def _get_and_validate_edge_tokens(edge: Hyperedge, hg: Hypergraph) -> tuple[str] | None:
+def _get_and_validate_edge_tokens(edge: Hyperedge, hg: Hypergraph) -> Union[tuple[str], None]:
     tokens_str: str = hg.get_str_attribute(edge, 'tokens')
     if not tokens_str:
         return None
@@ -221,13 +218,13 @@ def _get_tok_idxes(tok_pos: Hyperedge) -> list[int]:
 
     tok_idxes: list[int] = []
     for tok_pos_atom in tok_pos_atoms:
-        tok_idx: int | None = _get_and_validate_tok_idx(tok_pos_atom)
+        tok_idx: Union[int, None] = _get_and_validate_tok_idx(tok_pos_atom)
         if tok_idx is not None:
             tok_idxes.append(tok_idx)
     return tok_idxes
 
 
-def _get_and_validate_tok_idx(tok_pos: Hyperedge) -> int | None:
+def _get_and_validate_tok_idx(tok_pos: Hyperedge) -> Union[int, None]:
     try:
         assert tok_pos.is_atom()
     except AssertionError:

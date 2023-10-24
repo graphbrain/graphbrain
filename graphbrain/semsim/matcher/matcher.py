@@ -5,7 +5,6 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from statistics import mean
 
 logger = logging.getLogger(__name__)
 
