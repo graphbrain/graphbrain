@@ -7,12 +7,13 @@ from graphbrain.readers.reader import Reader
 
 class URLReader(Reader):
     def __init__(self, url, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None,
-                 infsrcs=False):
+                 infsrcs=False, outfile=None):
         if sequence is None:
             sequence = url
         super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs, parser=parser, parser_class=parser_class,
                          infsrcs=infsrcs)
         self.url = url
+        self.outfile = outfile
 
     def read(self):
         document = fetch_url(self.url)
@@ -31,6 +32,9 @@ class URLReader(Reader):
             i = 0
             for field, lines in content.items():
                 for line in lines:
+                    if self.outfile is not None:
+                        with open(self.outfile, 'at') as f:
+                            f.write(f'{line}\n')
                     try:
                         parse_result = self.parser.parse_and_add(line, self.hg, sequence=self.sequence,
                                                                  infsrcs=self.infsrcs)
