@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 
+import progressbar
 import mwparserfromhell
 import requests
 
@@ -109,7 +110,14 @@ class WikipediaReader(Reader):
         wikicode = read_wikipedia(self.url)
         sections = WikicodeTextExtractor().extract(wikicode)
 
-        for section, text in sections.items():
-            print(section)
-            for line in text.split('\n'):
-                self.parser.parse_and_add(line.strip(), self.hg, sequence=self.sequence, infsrcs=self.infsrcs)
+        nedges = 0
+        with progressbar.ProgressBar(max_value=len(sections)) as bar:
+            i = 0
+            for section, text in sections.items():
+                for line in text.split('\n'):
+                    parse_result = self.parser.parse_and_add(line.strip(), self.hg, sequence=self.sequence,
+                                                             infsrcs=self.infsrcs)
+                    nedges += len([parse for parse in parse_result['parses'] if parse['main_edge']])
+                i += 1
+                bar.update(i)
+        print(f'{nedges} edges added')
