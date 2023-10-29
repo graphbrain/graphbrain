@@ -14,10 +14,13 @@ IGNORE_SECTIONS = {'See also',
                    'External links',
                    'Sources',
                    'Selected bibliography',
-                   'Awards and recognition'}
+                   'Awards and recognition',
+                   'Selected works',
+                   'Notes',
+                   'Citations'}
 
 
-def url2title_and_lang(url):
+def _url2title_and_lang(url):
     p = urlparse(url)
 
     netloc = p.netloc.split('.')
@@ -33,86 +36,80 @@ def url2title_and_lang(url):
     return title, lang
 
 
-def read_wikipedia(title, lang='en'):
+def read_wikipedia(url):
+    title, lang = _url2title_and_lang(url)
     params = {
         'action': 'query',
-        'format': 'json',
+        'prop': 'revisions',
+        'rvprop': 'content',
+        'rvslots': 'main',
+        'rvlimit': 1,
         'titles': title,
-        'prop': 'extracts|revisions',
-        'explaintext': '',
-        'rvprop': 'ids',
+        'format': 'json',
+        'formatversion': '2',
     }
-
-    api_url = 'http://{}.wikipedia.org/w/api.php'.format(lang)
-    r = requests.get(api_url, params=params)
-    request = r.json()
-
-    for page_id in request['query']['pages']:
-        return request['query']['pages'][page_id]['extract']
-
-    return None
+    headers = {'User-Agent': 'Graphbrain/1.0'}
+    req = requests.get(f'https://{lang}.wikipedia.org/w/api.php',
+                       headers=headers, params=params)
+    res = req.json()
+    revision = res['query']['pages'][0]['revisions'][0]
+    text = revision['slots']['main']['content']
+    return mwparserfromhell.parse(text)
 
 
-def clean_sections(sections):
-    csecs = []
-    for section in sections:
-        if type(section) == str:
-            if len(section) > 0:
-                csecs.append(section)
-        elif type(section) == dict:
-            cdict = {}
-            for title in section:
-                if title not in IGNORE_SECTIONS:
-                    cdict[title] = clean_sections(section[title])
-            if len(cdict) > 0:
-                csecs.append(cdict)
-    return csecs
+class WikicodeTextExtractor:
+    def __init__(self):
+        self.cur_section = []
+        self.sections = {'': self.cur_section}
 
+    def _extract(self, wikicode):
+        for node in wikicode.nodes:
+            if type(node) == mwparserfromhell.nodes.heading.Heading:
+                self.cur_section = []
+                self._extract(node.title)
+                title = ''.join(self.cur_section).strip()
+                self.cur_section = []
+                self.sections[title] = self.cur_section
+            elif type(node) == mwparserfromhell.nodes.text.Text:
+                self.cur_section.append(str(node))
+            elif type(node) == mwparserfromhell.nodes.tag.Tag:
+                if str(node.tag) not in {'ref', 'div'}:
+                    _cur_section = self.cur_section
+                    self.cur_section = []
+                    self._extract(node.contents)
+                    text = ''.join(self.cur_section).strip()
+                    self.cur_section = _cur_section
+                    self.cur_section.append(text)
+            elif type(node) == mwparserfromhell.nodes.wikilink.Wikilink:
+                if 'File:' not in str(node.title):
+                    _wikicode = node.title if node.text is None else node.text
+                    _cur_section = self.cur_section
+                    self.cur_section = []
+                    self._extract(_wikicode)
+                    text = ''.join(self.cur_section).strip()
+                    self.cur_section = _cur_section
+                    self.cur_section.append(text)
 
-def sections2texts(sections):
-    paragraphs = []
-    for section in sections:
-        if type(section) == str:
-            paragraphs.append(section)
-        if type(section) == dict:
-            for title in section:
-                paragraphs += sections2texts(section[title])
-    return paragraphs
+    def extract(self, wikicode):
+        self._extract(wikicode)
+        return {section: ''.join(texts).strip() for section, texts in self.sections.items()
+                if section not in IGNORE_SECTIONS}
 
 
 class WikipediaReader(Reader):
     def __init__(self, url, hg=None, sequence=None, lang=None, corefs=False, parser=None, parser_class=None,
                  infsrcs=False):
+        if sequence is None:
+            sequence = url
         super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs, parser=parser, parser_class=parser_class,
                          infsrcs=infsrcs)
         self.url = url
 
     def read(self):
-        title, lang = url2title_and_lang(self.url)
-        text = read_wikipedia(title, lang)
+        wikicode = read_wikipedia(self.url)
+        sections = WikicodeTextExtractor().extract(wikicode)
 
-        wikicode = mwparserfromhell.parse(text)
-
-        sections = []
-        section_stack = [sections]
-        level = 1
-        for node in wikicode.nodes:
-            if type(node) == mwparserfromhell.nodes.heading.Heading:
-                title = node.title.strip()
-                if node.level <= level:
-                    section_stack.pop()
-                if node.level < level:
-                    section_stack.pop()
-                new_section = []
-                section_stack[-1].append({title: new_section})
-                section_stack.append(new_section)
-                level = node.level
-            elif type(node) == mwparserfromhell.nodes.text.Text:
-                text = ' '.join(str(node).split())
-                section_stack[-1].append(text)
-
-        sections = clean_sections(sections)
-        texts = sections2texts(sections)
-
-        for text in texts:
-            self.parser.parse_and_add(text, self.hg, sequence=self.sequence, infsrcs=self.infsrcs)
+        for section, text in sections.items():
+            print(section)
+            for line in text.split('\n'):
+                self.parser.parse_and_add(line.strip(), self.hg, sequence=self.sequence, infsrcs=self.infsrcs)
