@@ -46,8 +46,8 @@
     
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pubs-cases.html">Publications and Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../manual.html">Manual</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Team</a></li>
@@ -167,11 +167,14 @@
         <span class="c1"># remove repeated spaces</span>
         <span class="n">clean_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clean_text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">clean_text</span><span class="p">)</span>
+
+        <span class="c1"># coreference resolution</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">corefs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_corefs</span><span class="p">(</span><span class="n">parse_results</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
                 <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
+
         <span class="k">return</span> <span class="n">parse_results</span></div>
 
     <span class="k">def</span> <span class="nf">parse_and_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">infsrcs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_text</span><span class="o">=</span><span class="mi">1500</span><span class="p">):</span>
@@ -202,7 +205,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_set_edge_tokens</span><span class="p">(</span><span class="n">main_edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">corefs</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">unresolved_edge</span> <span class="o">!=</span> <span class="n">main_edge</span><span class="p">:</span>
-                        <span class="n">_set_edge_text</span><span class="p">(</span><span class="n">main_edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
+                        <span class="n">_set_edge_text</span><span class="p">(</span><span class="n">unresolved_edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_set_edge_tokens</span><span class="p">(</span><span class="n">unresolved_edge</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">parse</span><span class="p">)</span>
                     <span class="n">coref_res_edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">coref_res_connector</span><span class="p">,</span> <span class="n">unresolved_edge</span><span class="p">,</span> <span class="n">main_edge</span><span class="p">))</span>
                     <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">coref_res_edge</span><span class="p">)</span>
                 <span class="c1"># add extra edges</span>
@@ -231,16 +235,7 @@
     <span class="k">def</span> <span class="nf">atom_animacy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_post_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
     <span class="k">def</span> <span class="nf">_parse_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">atom_type</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_before_parse_sentence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_parse_sentence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
