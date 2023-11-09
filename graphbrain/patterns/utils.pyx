@@ -1,15 +1,15 @@
-# remove pattern functions from pattern, so that .argroles() works normally
 import logging
 from typing import Union
 
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge
 from graphbrain.hypergraph import Hypergraph
-from graphbrain.patterns import is_fun_pattern
+from graphbrain.patterns.properties import is_fun_pattern
 
 logger = logging.getLogger(__name__)
 
 
+# remove pattern functions from pattern, so that .argroles() works normally
 def _defun_pattern_argroles(edge):
     if edge.atom:
         return edge

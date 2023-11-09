@@ -57,10 +57,17 @@ class ContextEmbeddingMatcher(SemSimMatcher):
             ref_tok_poses: list[Hyperedge] = None,
             hg: Hypergraph = None,
             **kwargs
-    ) ->  Union[dict[str, float], None]:
-        assert cand_edge and cand_tok_pos and ref_edges and ref_tok_poses and hg, (
-            f"Missing argument(s): {cand_edge=} {cand_tok_pos=} {ref_edges=} {ref_tok_poses=} {hg=}"
-        )
+    ) -> Union[dict[str, float], None]:
+        if not cand_tok_pos:
+            logger.debug(f"Missing tok_pos for candidate edge: {cand_edge=}")
+            return None
+
+        if not ref_edges:
+            logger.warning(f"Missing reference edges for SemSim CTX: {ref_edges=}")
+            return None
+
+        # this should not happen and indicates a bug
+        assert cand_edge and hg, f"Missing argument(s): {hg=} {cand_edge=} {ref_tok_poses=}"
 
         cand_tok_idxes: tuple[int] = _get_tok_idxes_sorted(cand_tok_pos)
         refs_tok_idxes: list[tuple[int]] = [_get_tok_idxes_sorted(ref_tok_pos) for ref_tok_pos in ref_tok_poses]

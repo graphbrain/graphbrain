@@ -1,33 +1,37 @@
 from collections import Counter
-from typing import List
+from typing import List, Dict
 
 from graphbrain import hedge
 from graphbrain.hyperedge import Hyperedge
-from graphbrain.patterns import is_fun_pattern, is_pattern
+from graphbrain.hypergraph import Hypergraph
 from graphbrain.patterns.argroles import _match_by_argroles
 from graphbrain.patterns.atoms import _matches_atomic_pattern
+from graphbrain.patterns.properties import is_fun_pattern, is_pattern, FUNS
+from graphbrain.patterns.semsim.matching import match_semsim, SEMSIM_FUNS
+from graphbrain.patterns.semsim.instances import SemSimInstance, process_semsim_instance_vars
 from graphbrain.patterns.utils import _defun_pattern_argroles, _atoms_and_tok_pos
-from graphbrain.patterns.variables import (
-    _remove_special_vars, _varname, _assign_edge_to_var, _generate_special_var_name
-)
-from graphbrain.semsim import semsim
+from graphbrain.patterns.variables import _varname, _assign_edge_to_var
 from graphbrain.utils.lemmas import lemma
-from graphbrain.utils.semsim import (
-    get_edge_word_part,
-    extract_pattern_words,
-    extract_similarity_threshold,
-    replace_edge_word_part,
-    SEMSIM_CTX_TOK_POS_VAR_CODE,
-    SEMSIM_CTX_THRESHOLD_VAR_CODE
-)
 
 
 class Matcher:
-    def __init__(self, edge, pattern, curvars=None, tok_pos=None, hg=None):
-        self.hg = hg
-        self.semsim_ctx = False
-        self.results_with_special_vars = self.match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
-        self.results = [_remove_special_vars(result) for result in self.results_with_special_vars]
+    def __init__(
+            self,
+            edge: Hyperedge,
+            pattern: Hyperedge,
+            curvars: dict = None,
+            tok_pos: Hyperedge = None,
+            skip_semsim: bool = False,
+            hg: Hypergraph = None
+    ):
+        self.hg: Hypergraph = hg
+        self.skip_semsim: bool = skip_semsim
+
+        self.semsim_instances_mapped: Dict[int, SemSimInstance] = {}  # mapping from instance idx to instance
+        self.semsim_instances_sorted: List[List[SemSimInstance]] = []  # store the sorted instances here
+
+        self.results: List[Dict] = self.match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
+        process_semsim_instance_vars(self)
 
     def match(self, edge, pattern, curvars=None, tok_pos=None):
         if curvars is None:
@@ -202,38 +206,14 @@ class Matcher:
 
         return []
 
-    def _match_semsim(
-            self,
-            pattern: Hyperedge,
-            edge: Hyperedge,
-            curvars: dict,
-    # ) -> list[dict]:
-    ) -> List[dict]:
-        edge_word_part: str = get_edge_word_part(edge)
-        if not edge_word_part:
-            return []
-
-        # can be one word (e.g. "say") or a list of words (e.g. ["say, tell, speak"])
-        pattern_words_part: str = pattern[0].parts()[0]
-        reference_words: list[str] = extract_pattern_words(pattern_words_part)
-
-        threshold: float | None = extract_similarity_threshold(pattern)
-        if not semsim(
-                semsim_type="FIX",
-                threshold=threshold,
-                cand_word=edge_word_part,
-                ref_words=reference_words,
-        ):
-            return []
-
-        edge_with_pattern_word_part = replace_edge_word_part(edge, pattern_words_part)
-        if _matches_atomic_pattern(edge_with_pattern_word_part, pattern[0]):
-            return [curvars]
-
-        return []
-
     def _match_fun_pat(self, edge, fun_pattern, curvars, tok_pos=None) -> list:
         fun = fun_pattern[0].root()
+
+        try:
+            assert fun in FUNS
+        except AssertionError:
+                raise ValueError(f"Unknown pattern function: {fun}")
+
         if fun == 'var':
             if len(fun_pattern) != 3:
                 raise RuntimeError('var pattern function must have two arguments')
@@ -268,28 +248,6 @@ class Matcher:
                 curvars,
                 atoms_tok_pos=atoms_tok_pos
             )
-        elif fun == 'lemma':
-            return self._match_lemma(fun_pattern[1], edge, curvars)
-        elif fun == 'semsim' or fun == 'semsim-fix':
-            return self._match_semsim(
-                fun_pattern[1:],
-                edge,
-                curvars,
-                hg=self.hg,
-            )
-        elif fun == 'semsim-ctx':
-            self.semsim_ctx = True
-            threshold = extract_similarity_threshold(fun_pattern[1:])
-            special_vars = {
-                _generate_special_var_name(SEMSIM_CTX_TOK_POS_VAR_CODE, curvars): tok_pos,
-                _generate_special_var_name(SEMSIM_CTX_THRESHOLD_VAR_CODE, curvars): threshold
-            }
-            return self.match(
-                edge,
-                fun_pattern[1],
-                curvars={**curvars, **special_vars},
-                tok_pos=tok_pos
-            )
         elif fun == 'any':
             for pattern in fun_pattern[1:]:
                 matches = self.match(
@@ -301,5 +259,16 @@ class Matcher:
                 if len(matches) > 0:
                     return matches
             return []
+        elif fun == 'lemma':
+            return self._match_lemma(fun_pattern[1], edge, curvars)
+        elif fun in SEMSIM_FUNS:
+            return match_semsim(
+                matcher=self,
+                semsim_fun=fun,
+                pattern_parts=fun_pattern[1:],
+                edge=edge,
+                curvars=curvars,
+                tok_pos=tok_pos,
+            )
         else:
-            raise RuntimeError(f"Unknown pattern function: {fun}")
+            raise NotImplementedError(f"Pattern function '{fun}' not implemented.")

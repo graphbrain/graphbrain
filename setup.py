@@ -23,6 +23,7 @@ EXT_MODULES = [
     "graphbrain.patterns",
     "graphbrain.memory",
     "graphbrain.parsers",
+    "graphbrain.patterns.semsim",
 ]
 
 ext_modules = get_ext_modules(EXT_MODULES, USE_CYTHON)
