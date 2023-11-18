@@ -15,7 +15,8 @@ _SEMSIM_INSTANCE_VAR_CODE: str = 'semsim-instances'
 class SemSimInstance:
     type: SemSimType
     edge: Hyperedge
-    tok_pos: Hyperedge
+    word: str
+    tok_pos: Optional[Hyperedge] = None
     threshold: Optional[float] = None
 
 
@@ -24,8 +25,9 @@ def _generate_semsim_instance(
         results: List[Dict],
         semsim_type: SemSimType,
         edge: Hyperedge,
-        tok_pos: Hyperedge,
-        threshold: Optional[float] = None,
+        word: Optional[str],
+        tok_pos: Optional[Hyperedge],
+        threshold: Optional[float],
 ):
     for variable_assignment in results:
         svar_name: str = _generate_special_var(_SEMSIM_INSTANCE_VAR_CODE, variable_assignment, default_var_val=[])
@@ -33,7 +35,7 @@ def _generate_semsim_instance(
         variable_assignment[svar_name].append(semsim_instance_id)
 
         matcher.semsim_instances_mapped[semsim_instance_id] = SemSimInstance(
-            type=semsim_type, edge=edge, tok_pos=tok_pos, threshold=threshold
+            type=semsim_type, edge=edge, word=word, tok_pos=tok_pos, threshold=threshold
         )
 
 

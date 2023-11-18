@@ -1,6 +1,6 @@
 from typing import Set
 
-from graphbrain.patterns.semsim import SEMSIM_FUNS
+from graphbrain.patterns.semsim.types import SEMSIM_FUNS
 
 FUNS: Set[str] = {'var', 'atoms', 'lemma', 'any'} | SEMSIM_FUNS.keys()
 

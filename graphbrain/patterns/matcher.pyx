@@ -7,7 +7,8 @@ from graphbrain.hypergraph import Hypergraph
 from graphbrain.patterns.argroles import _match_by_argroles
 from graphbrain.patterns.atoms import _matches_atomic_pattern
 from graphbrain.patterns.properties import is_fun_pattern, is_pattern, FUNS
-from graphbrain.patterns.semsim.matching import match_semsim, SEMSIM_FUNS
+from graphbrain.patterns.semsim.matching import match_semsim
+from graphbrain.patterns.semsim.types import SEMSIM_FUNS
 from graphbrain.patterns.semsim.instances import SemSimInstance, process_semsim_instance_vars
 from graphbrain.patterns.utils import _defun_pattern_argroles, _atoms_and_tok_pos
 from graphbrain.patterns.variables import _varname, _assign_edge_to_var

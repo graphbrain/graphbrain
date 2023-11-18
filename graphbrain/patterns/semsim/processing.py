@@ -50,7 +50,7 @@ def process_semsim_instances(
         if not semsim(
             semsim_type=instance.type,
             threshold=instance.threshold,
-            cand_word=hg.text(instance.edge),  # TODO: validation!?
+            cand_word=instance.word,
             ref_words=ref_words,
             cand_edge=edge,
             cand_tok_pos=instance.tok_pos,
