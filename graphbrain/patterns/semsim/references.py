@@ -9,8 +9,7 @@ from graphbrain.patterns.utils import _edge_tok_pos
 
 logger: logging.Logger = logging.getLogger(__name__)
 
-
-# TODO: better caching, this is insensitive to changes in the hypergraph
+# caching is insensitive to changes in the hypergraph
 _HG_STORE: dict[int, Hypergraph] = {}
 
 
@@ -55,16 +54,6 @@ def _get_semsim_tok_poses(ref_matchers: List[Matcher], ref_edges: Tuple[Hyperedg
     ref_tok_poses: list[list[Hyperedge]] = []
     for matcher, ref_edge in zip(ref_matchers, ref_edges):
         assert matcher.results, f"Reference edge does not match pattern: {ref_edge}"
-        assert all(matcher.semsim_instances_sorted), (
-            f"No semsim instances found for reference edge: {ref_edge}"
-        )
-
-        if len(matcher.semsim_instances_sorted) > 1:
-            logger.warning(
-                f"Found multiple sets of semsim instances for reference edge: {ref_edge}"
-            )
-        ref_tok_poses.append(
-            [instance.tok_pos for instance in matcher.semsim_instances_sorted[0]]
-        )
-
+        assert matcher.semsim_instances, f"No semsim instances found for reference edge: {ref_edge}"
+        ref_tok_poses.append([instance.tok_pos for instance in matcher.semsim_instances])
     return ref_tok_poses

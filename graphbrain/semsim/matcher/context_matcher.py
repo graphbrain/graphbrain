@@ -43,7 +43,6 @@ class ContextEmbeddingMatcher(SemSimMatcher):
                 "tokenizer_config": {"use_fast": True},
             }
         }
-        # noinspection PyTypeChecker
         trf: Transformer = nlp.add_pipe(self._SPACY_PIPE_TRF_COMPONENT_NAME, config=config)
         trf.model.initialize()
         logger.info("Done creating SpaCy transformer pipeline!")

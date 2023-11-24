@@ -2,7 +2,6 @@ from graphbrain import hedge
 from graphbrain.patterns.properties import is_pattern
 import graphbrain.constants as const
 
-_SPECIAL_VARIABLE_PREFIX = '__'
 
 def apply_vars(edge, variables):
     if edge.atom:
@@ -13,6 +12,7 @@ def apply_vars(edge, variables):
         return edge
     else:
         return hedge([apply_vars(subedge, variables) for subedge in edge])
+
 
 def _varname(atom):
     if not atom.atom:
@@ -28,33 +28,6 @@ def _varname(atom):
         return label
     else:
         return ''
-
-# def _generate_special_var_name(var_code, vars_):
-#     prefix = f'__{var_code}'
-#     var_count = len([var_name for var_name in vars_ if var_name.startswith(prefix)])
-#     return f'__{var_code}_{var_count}'
-
-
-def _generate_special_var(var_code, vars_, default_var_val=None):
-    svar_name: str = f"{_SPECIAL_VARIABLE_PREFIX}{var_code}"
-    if svar_name not in vars_:
-        vars_[svar_name] = default_var_val
-    return svar_name
-
-
-def _get_special_var_val(var_code, vars_):
-    svar_name: str = f"{_SPECIAL_VARIABLE_PREFIX}{var_code}"
-    if svar_name in vars_:
-        return vars_[svar_name]
-    return None
-
-
-def _remove_special_vars(vars_):
-    return {key: value for key, value in vars_.items() if not key.startswith(_SPECIAL_VARIABLE_PREFIX)}
-
-
-def _regular_var_count(vars_):
-    return len([var_name for var_name in vars_ if not var_name.startswith(_SPECIAL_VARIABLE_PREFIX)])
 
 
 def _assign_edge_to_var(curvars, var_name, edge):

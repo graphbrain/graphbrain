@@ -3,7 +3,8 @@ from typing import Dict, List, Tuple, Optional, Union
 from graphbrain.hyperedge import Hyperedge, hedge
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.patterns.matcher import Matcher
-from graphbrain.patterns.semsim.processing import filter_results_by_semsim_instances
+from graphbrain.patterns.semsim.instances import SemSimInstance
+from graphbrain.patterns.semsim.processing import match_semsim_instances
 from graphbrain.patterns.utils import _normalize_fun_patterns, _edge_tok_pos
 
 
@@ -14,7 +15,7 @@ def match_pattern(
         ref_edges: Optional[List[Union[Hyperedge, str, list, tuple]]] = None,
         skip_semsim: bool = False,
         hg: Optional[Hypergraph] = None
-) -> Union[List[Dict], Tuple[List[Dict], List[List]]]:
+) -> Union[List[Dict], Tuple[List[Dict], List[SemSimInstance]]]:
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a list of dictionaries will be returned. If the pattern
     specifies variables, then the returned dictionaries will be populated
@@ -64,15 +65,18 @@ def match_pattern(
     )
 
     if skip_semsim:
-        return matcher.results, matcher.semsim_instances_sorted
+        return matcher.results, matcher.semsim_instances
 
-    results: List[Dict] = filter_results_by_semsim_instances(
-        matcher,
-        pattern=pattern,
-        edge=edge,
-        ref_edges=ref_edges
-    )
-    return results
+    if matcher.results and match_semsim_instances(
+            matcher.semsim_instances,
+            pattern=pattern,
+            edge=edge,
+            ref_edges=ref_edges,
+            hg=hg
+    ):
+        return matcher.results
+
+    return []
 
 
 def edge_matches_pattern(

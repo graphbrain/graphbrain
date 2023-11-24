@@ -5,6 +5,7 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ class SemSimType(str, Enum):
 class SemSimConfig:
     model_name: str
     similarity_threshold: float
-    embedding_prefix: str = None
+    embedding_prefix: Optional[str] = None
 
 
 class SemSimMatcher(ABC):

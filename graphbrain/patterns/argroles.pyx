@@ -3,13 +3,13 @@ from typing import TYPE_CHECKING
 
 from graphbrain.hyperedge import Hyperedge
 from graphbrain.patterns.utils import _defun_pattern_argroles
-from graphbrain.patterns.variables import _regular_var_count
 
 if TYPE_CHECKING:
     from graphbrain.patterns.matcher import Matcher
 
+
 def _match_by_argroles(
-        matcher: Matcher,
+        matcher: 'Matcher',
         edge: Hyperedge,
         pattern: Hyperedge,
         role_counts,
@@ -40,7 +40,7 @@ def _match_by_argroles(
         pitems = _defun_pattern_argroles(pattern).edges_with_argrole(argrole)
 
     if len(eitems) < n:
-        if _regular_var_count(curvars) >= min_vars:
+        if len(curvars) >= min_vars:
             return [curvars]
         else:
             return []
