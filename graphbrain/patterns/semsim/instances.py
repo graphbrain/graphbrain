@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class SemSimInstance:
     type: SemSimType
     edge: Hyperedge
-    word: str
+    word: Optional[str] = None
     tok_pos: Optional[Hyperedge] = None
     threshold: Optional[float] = None
 
