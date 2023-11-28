@@ -5,6 +5,7 @@ import logging
 from functools import lru_cache
 from typing import Union
 
+from spacy import prefer_gpu
 from spacy.language import Language
 from spacy.lang.en import English
 from spacy.tokens import Doc
@@ -35,6 +36,10 @@ class ContextEmbeddingMatcher(SemSimMatcher):
 
     def _create_spacy_pipeline(self, model_name: str) -> Language:
         logger.info("Creating SpaCy transformer pipeline...")
+        
+        gpu_active: bool = prefer_gpu()
+        logger.info(f"### GPU ACTIVE: {gpu_active}")
+
         nlp: Language = English()
         config = {
             "model": {
