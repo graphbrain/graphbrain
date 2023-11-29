@@ -25,8 +25,8 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 class ContextEmbeddingMatcher(SemSimMatcher):
     _SPACY_PIPE_TRF_COMPONENT_NAME: str = 'transformer'
-    _SPACY_DOC_CACHE_SIZE: int = 64
-    _EMBEDDING_CACHE_SIZE: int = 64
+    _SPACY_DOC_CACHE_SIZE: int = 2048
+    _EMBEDDING_CACHE_SIZE: int = 2048
 
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
