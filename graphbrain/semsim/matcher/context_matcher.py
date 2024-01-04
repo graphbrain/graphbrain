@@ -36,9 +36,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
 
     def _create_spacy_pipeline(self, model_name: str) -> Language:
         logger.info("Creating SpaCy transformer pipeline...")
-        
-        gpu_active: bool = prefer_gpu()
-        logger.info(f"### GPU ACTIVE: {gpu_active}")
+        logger.info(f"### GPU ACTIVE: {prefer_gpu()}")
 
         nlp: Language = English()
         config = {
@@ -73,11 +71,11 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         # this should not happen and indicates a bug
         assert cand_edge and hg, f"Missing argument(s): {hg=} {cand_edge=} {ref_tok_poses=}"
 
-        cand_tok_idxes: tuple[int] = _get_tok_idxes_sorted(cand_tok_pos)
-        refs_tok_idxes: list[tuple[int]] = [_get_tok_idxes_sorted(ref_tok_pos) for ref_tok_pos in ref_tok_poses]
+        cand_tok_idxes: tuple[int, ...] = _get_tok_idxes_sorted(cand_tok_pos)
+        refs_tok_idxes: list[tuple[int, ...]] = [_get_tok_idxes_sorted(ref_tok_pos) for ref_tok_pos in ref_tok_poses]
 
-        cand_tokens: tuple[str] = _get_and_validate_tokens(cand_edge, cand_tok_idxes, hg)
-        refs_tokens: list[tuple[str]] = [
+        cand_tokens: tuple[str, ...] = _get_and_validate_tokens(cand_edge, cand_tok_idxes, hg)
+        refs_tokens: list[tuple[str, ...]] = [
             _get_and_validate_tokens(ref_edge, ref_tok_idxes, hg)
             for ref_edge, ref_tok_idxes in zip(ref_edges, refs_tok_idxes)
         ]
@@ -100,26 +98,30 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         }
 
     @lru_cache(maxsize=_EMBEDDING_CACHE_SIZE)
-    def _get_embedding(self, tokens: tuple[str], tok_idxes: tuple[int]) -> Union[Tensor, None]:
-        prefixed_tokens: tuple[str] = tuple(self._embedding_prefix_tokens + list(tokens))
+    def _get_embedding(self, tokens: tuple[str, ...], tok_idxes: tuple[int, ...]) -> Union[Tensor, None]:
+        prefixed_tokens: tuple[str, ...] = tuple(self._embedding_prefix_tokens + list(tokens))
 
         spacy_doc, spacy_tokens = self._get_spacy_doc_and_tokens(prefixed_tokens)
         if not _validate_spacy_tokenization(prefixed_tokens, spacy_tokens):
             return None
 
-        prefixed_tok_idxes: tuple[int] = tuple(tok_idx + len(self._embedding_prefix_tokens) for tok_idx in tok_idxes)
+        prefixed_tok_idxes: tuple[int, ...] = tuple(
+            tok_idx + len(self._embedding_prefix_tokens) for tok_idx in tok_idxes
+        )
         return _get_trf_embedding_of_lex_tokens(spacy_tokens, prefixed_tok_idxes, spacy_doc._.trf_data)
 
     @lru_cache(maxsize=_SPACY_DOC_CACHE_SIZE)
-    def _get_spacy_doc_and_tokens(self, tokens: tuple[str] = None) -> tuple[Doc, tuple[str]]:
+    def _get_spacy_doc_and_tokens(self, tokens: tuple[str, ...] = None) -> tuple[Doc, tuple[str, ...]]:
         spacy_doc: Doc = Doc(self._spacy_pipe.vocab, words=tokens)
         self._spacy_pipe.get_pipe(self._SPACY_PIPE_TRF_COMPONENT_NAME)(spacy_doc)
         assert spacy_doc._.trf_data is not None, f"Missing trf_data"  # noqa
         return spacy_doc, tuple(tok.text for tok in spacy_doc)
 
 
-def _get_trf_embedding_of_lex_tokens(lexical_tokens: tuple[str], lex_tok_idxes: tuple[int], trf_data: TransformerData):
-    trf_tok_idxes: tuple[int] = _get_trf_tok_idxes(len(lexical_tokens), lex_tok_idxes, trf_data.align)
+def _get_trf_embedding_of_lex_tokens(
+        lexical_tokens: tuple[str, ...], lex_tok_idxes: tuple[int, ...], trf_data: TransformerData
+) -> Union[Tensor, None]:
+    trf_tok_idxes: tuple[int, ...] = _get_trf_tok_idxes(len(lexical_tokens), lex_tok_idxes, trf_data.align)
 
     lex_tokens: list[str] = [lexical_tokens[tok_idx] for tok_idx in lex_tok_idxes]
     trf_tokens: list[str] = [trf_data.wordpieces.strings[0][tok_idx] for tok_idx in trf_tok_idxes]
@@ -129,7 +131,9 @@ def _get_trf_embedding_of_lex_tokens(lexical_tokens: tuple[str], lex_tok_idxes: 
     return _average_pool(trf_embeddings, Tensor(trf_data.wordpieces.attention_mask[:, trf_tok_idxes]))
 
 
-def _get_trf_tok_idxes(n_lex_tokens: int, lex_tok_idxes: tuple[int], alignment_data: Ragged):
+def _get_trf_tok_idxes(
+        n_lex_tokens: int, lex_tok_idxes: tuple[int, ...], alignment_data: Ragged
+) -> tuple[int, ...]:
     lex2trf_idx: dict[int, list[int]] = _get_lex2trf_tok_idx(n_lex_tokens, alignment_data)
     tok_trf_idxes: list[int] = []
     for lex_tok_idx in lex_tok_idxes:
@@ -146,7 +150,8 @@ def _get_lex2trf_tok_idx(n_lex_toks: int, alignment_data: Ragged) -> dict[int, l
     trf_idx: int = 0
     for lex_idx in range(n_lex_toks):
         trf_token_length: int = alignment_data.lengths[lex_idx]
-        lex2trf_idx[lex_idx] = list(alignment_data.dataXd[trf_idx:trf_idx + trf_token_length])
+        lex2trf_idx[lex_idx] = [int(i) for i in alignment_data.dataXd[trf_idx:trf_idx + trf_token_length]]
+
         trf_idx += trf_token_length
     return lex2trf_idx
 
@@ -173,7 +178,7 @@ def _get_embedding_prefix_tokens(prefix: str) -> list[str]:
     return prefix_tokens
 
 
-def _validate_spacy_tokenization(tokens: tuple[str], spacy_tokens: tuple[str]) -> bool:
+def _validate_spacy_tokenization(tokens: tuple[str, ...], spacy_tokens: tuple[str, ...]) -> bool:
     try:
         assert spacy_tokens == tokens
     except AssertionError:
@@ -183,9 +188,9 @@ def _validate_spacy_tokenization(tokens: tuple[str], spacy_tokens: tuple[str]) -
 
 
 def _get_and_validate_tokens(
-        edge: Hyperedge, tok_idxes: tuple[int], hg: Hypergraph
-) -> Union[tuple[str], None]:
-    tokens: tuple[str] = _get_and_validate_edge_tokens(edge, hg)
+        edge: Hyperedge, tok_idxes: tuple[int, ...], hg: Hypergraph
+) -> Union[tuple[str, ...], None]:
+    tokens: tuple[str, ...] = _get_and_validate_edge_tokens(edge, hg)
     if not tokens:
         return None
 
@@ -195,7 +200,7 @@ def _get_and_validate_tokens(
     return tokens
 
 
-def _get_and_validate_edge_tokens(edge: Hyperedge, hg: Hypergraph) -> Union[tuple[str], None]:
+def _get_and_validate_edge_tokens(edge: Hyperedge, hg: Hypergraph) -> Union[tuple[str, ...], None]:
     tokens_str: str = hg.get_str_attribute(edge, 'tokens')
     if not tokens_str:
         return None
@@ -207,7 +212,7 @@ def _get_and_validate_edge_tokens(edge: Hyperedge, hg: Hypergraph) -> Union[tupl
     return tuple(tokens)
 
 
-def _validate_tok_idxes_for_tokens(tok_idxes: tuple[int], tokens: tuple[str]) -> bool:
+def _validate_tok_idxes_for_tokens(tok_idxes: tuple[int, ...], tokens: tuple[str, ...]) -> bool:
     out_of_range_tok_idxes: list[int] = [tok_idx for tok_idx in tok_idxes if tok_idx >= len(tokens)]
     try:
         assert not out_of_range_tok_idxes
@@ -219,7 +224,7 @@ def _validate_tok_idxes_for_tokens(tok_idxes: tuple[int], tokens: tuple[str]) ->
     return True
 
 
-def _get_tok_idxes_sorted(tok_pos: Hyperedge) -> tuple[int]:
+def _get_tok_idxes_sorted(tok_pos: Hyperedge) -> tuple[int, ...]:
     return tuple(sorted(_get_tok_idxes(tok_pos)))
 
 
