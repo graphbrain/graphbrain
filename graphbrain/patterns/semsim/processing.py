@@ -24,7 +24,7 @@ def match_semsim_instances(
         ref_tok_poses_per_ref_edge: List[List[Hyperedge]] = _get_ref_tok_poses(pattern, ref_edges, hg)
 
     for instance_idx, instance in enumerate(semsim_instances):
-        threshold: float = threshold or instance.threshold
+        threshold: float = threshold if threshold is not None else instance.threshold
 
         ref_tok_poses: List[Hyperedge] | None = None
         if ref_tok_poses_per_ref_edge:
