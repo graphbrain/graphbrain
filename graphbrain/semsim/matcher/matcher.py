@@ -5,7 +5,7 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -18,14 +18,17 @@ class SemSimType(str, Enum):
 @dataclass
 class SemSimConfig:
     model_name: str
-    similarity_threshold: float
+    similarity_threshold: Optional[float] = None
+    # these parameters are optional, because
+    # they are only used for the CTX matcher
     embedding_prefix: Optional[str] = None
+    use_all_tokens: Optional[bool] = None
 
 
 class SemSimMatcher(ABC):
     def __init__(self, config: SemSimConfig):
         self._base_model_dir: Path = self._create_sub_dir('models')
-        self._similarity_threshold: float = config.similarity_threshold
+        self._similarity_threshold: Union[float, None] = config.similarity_threshold
 
     def similar(
             self,
@@ -37,7 +40,9 @@ class SemSimMatcher(ABC):
         if not similarities:
             return False
 
-        similarity_threshold: float = threshold if threshold is not None else self._similarity_threshold
+        similarity_threshold: Union[float, None] = threshold if threshold is not None else self._similarity_threshold
+        assert similarity_threshold is not None, "Similarity threshold must either be passed or set in SemSim config"
+
         if (similarity := max(similarities.values())) < similarity_threshold:
             logger.debug(f"Max similarity is lower than threshold: {similarity:.2f} < {similarity_threshold}")
             return False

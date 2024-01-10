@@ -30,6 +30,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
 
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
+        self._use_all_tokes: bool = config.use_all_tokens
         self._spacy_pipe: Language = self._create_spacy_pipeline(config.model_name)
         self._embedding_prefix_tokens: list[str] = _get_embedding_prefix_tokens(config.embedding_prefix)
         self._cos_sim: CosineSimilarity = CosineSimilarity()
@@ -71,16 +72,17 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         # this should not happen and indicates a bug
         assert cand_edge and hg, f"Missing argument(s): {hg=} {cand_edge=} {ref_tok_poses=}"
 
-        cand_tok_idxes: tuple[int, ...] = _get_tok_idxes_sorted(cand_tok_pos)
-        refs_tok_idxes: list[tuple[int, ...]] = [_get_tok_idxes_sorted(ref_tok_pos) for ref_tok_pos in ref_tok_poses]
+        cand_tokens: tuple[str, ...] = _get_and_validate_tokens(cand_edge, hg)
+        refs_tokens: list[tuple[str, ...]] = [_get_and_validate_tokens(ref_edge, hg) for ref_edge in ref_edges]
 
-        cand_tokens: tuple[str, ...] = _get_and_validate_tokens(cand_edge, cand_tok_idxes, hg)
-        refs_tokens: list[tuple[str, ...]] = [
-            _get_and_validate_tokens(ref_edge, ref_tok_idxes, hg)
-            for ref_edge, ref_tok_idxes in zip(ref_edges, refs_tok_idxes)
+        cand_tok_idxes: tuple[int, ...] = _get_and_validate_tok_idxes(cand_tok_pos, cand_tokens, self._use_all_tokes)
+        refs_tok_idxes: list[tuple[int, ...]] = [
+            _get_and_validate_tok_idxes(ref_tok_pos, ref_tokens, self._use_all_tokes)
+            for ref_tok_pos, ref_tokens in zip(ref_tok_poses, refs_tokens)
         ]
 
-        if not cand_tokens or not all(refs_tokens):
+        if not cand_tok_idxes or not all(refs_tokens):
+            # validation of tok_idxes for tokens failed
             return None
 
         cand_embedding: Union[Tensor, None] = self._get_embedding(cand_tokens, cand_tok_idxes)
@@ -187,20 +189,7 @@ def _validate_spacy_tokenization(tokens: tuple[str, ...], spacy_tokens: tuple[st
     return True
 
 
-def _get_and_validate_tokens(
-        edge: Hyperedge, tok_idxes: tuple[int, ...], hg: Hypergraph
-) -> Union[tuple[str, ...], None]:
-    tokens: tuple[str, ...] = _get_and_validate_edge_tokens(edge, hg)
-    if not tokens:
-        return None
-
-    if not _validate_tok_idxes_for_tokens(tok_idxes, tokens):
-        return None
-
-    return tokens
-
-
-def _get_and_validate_edge_tokens(edge: Hyperedge, hg: Hypergraph) -> Union[tuple[str, ...], None]:
+def _get_and_validate_tokens(edge: Hyperedge, hg: Hypergraph) -> Union[tuple[str, ...], None]:
     tokens_str: str = hg.get_str_attribute(edge, 'tokens')
     if not tokens_str:
         return None
@@ -224,11 +213,18 @@ def _validate_tok_idxes_for_tokens(tok_idxes: tuple[int, ...], tokens: tuple[str
     return True
 
 
-def _get_tok_idxes_sorted(tok_pos: Hyperedge) -> tuple[int, ...]:
-    return tuple(sorted(_get_tok_idxes(tok_pos)))
+def _get_and_validate_tok_idxes(tok_pos: Hyperedge, tokens: tuple[str, ...], use_all_tokens: bool) -> tuple[int, ...] | None:
+    if use_all_tokens:
+        tok_idxes = tuple(range(len(tokens)))
+    else:
+        tok_idxes = _get_tok_idxes_from_tok_pos(tok_pos)
+
+    if not _validate_tok_idxes_for_tokens(tok_idxes, tokens):
+        return None
+    return tok_idxes
 
 
-def _get_tok_idxes(tok_pos: Hyperedge) -> list[int]:
+def _get_tok_idxes_from_tok_pos(tok_pos: Hyperedge) -> tuple[int, ...]:
     # list of atoms in tok_pos (possibly with duplicates)
     tok_pos_atoms: list[Atom] = tok_pos.all_atoms()
 
@@ -237,7 +233,9 @@ def _get_tok_idxes(tok_pos: Hyperedge) -> list[int]:
         tok_idx: Union[int, None] = _get_and_validate_tok_idx(tok_pos_atom)
         if tok_idx is not None:
             tok_idxes.append(tok_idx)
-    return tok_idxes
+
+    # return tok_idxes sorted
+    return tuple(sorted(tok_idxes))
 
 
 def _get_and_validate_tok_idx(tok_pos: Hyperedge) -> Union[int, None]:
