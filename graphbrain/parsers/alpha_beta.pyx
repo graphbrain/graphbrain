@@ -9,6 +9,22 @@ from graphbrain.hyperedge import build_atom, hedge, non_unique, unique, UniqueAt
 from graphbrain.utils.concepts import has_common_or_proper_concept
 
 
+def _resolved_to(edge, resolved_edge):
+    if edge == resolved_edge:
+        return resolved_edge
+    else:
+        return hedge((const.resolved_to_connector, edge, resolved_edge))
+
+
+def _resolution_only(edge):
+    if edge is None or edge.atom:
+        return edge
+    if str(edge[0]) == const.resolved_to_connector:
+        return _resolution_only(edge[2])
+    else:
+        return hedge([_resolution_only(_edge) for _edge in edge])
+
+
 class Rule:
     def __init__(self, first_type, arg_types, size, connector=None):
         self.first_type = first_type
@@ -191,10 +207,11 @@ class AlphaBeta(Parser, ABC):
             else:
                 atom2word = {}
 
-            atom2token = {}
-            for atom in self.atom2token:
-                if atom not in self.temp_atoms:
-                    atom2token[atom] = self.atom2token[atom]
+            # atom2token = {}
+            # for atom in self.atom2token:
+            #     if atom not in self.temp_atoms:
+            #         atom2token[atom] = self.atom2token[atom]
+            atom2token = self.atom2token
 
             return {'main_edge': main_edge,
                     'extra_edges': self.extra_edges,
@@ -730,26 +747,29 @@ class AlphaBeta(Parser, ABC):
     def _resolve_corefs_edge(self, edge):
         if edge is None:
             return None
-        # e.g. "ihr Hund", "son chien", "her dog", ...
-        # (her/Mp dog/Cc) -> (poss/Bp.am/. mary/Cp dog/Cc)
-        elif (edge.not_atom and
-              edge[0].t == 'Mp' and
-              len(edge) == 2 and
-              edge[0] in self.edge2coref and
-              self.edge2coref[edge[0]].mt == 'C' and
-              (self.edge2coref[edge[0]].atom or
-                self.edge2coref[edge[0]][0].t != 'Mp')):
-            return hedge(
-                (const.possessive_builder, self.edge2coref[edge[0]], edge[1]))
-        elif edge in self.resolved_corefs:
-            return edge
-        elif (edge in self.edge2coref and
-              edge.mtype() == self.edge2coref[edge].mtype()):
-            return self.edge2coref[edge]
-        elif edge.atom:
+        if edge.atom:
             return edge
         else:
-            return hedge([self._resolve_corefs_edge(subedge) for subedge in edge])
+            if str(edge[0]) == const.resolved_to_connector:
+                _edge = self._resolve_corefs_edge(edge[2])
+                if str(_edge[0]) == const.resolved_to_connector:
+                    _edge = edge[2]
+                return hedge((edge[0], edge[1], _edge))
+            # e.g. "ihr Hund", "son chien", "her dog", ...
+            # (her/Mp dog/Cc) -> (poss/Bp.am/. mary/Cp dog/Cc)
+            elif (edge.ct == 'Mp' and
+                  len(edge) == 2 and
+                  edge[0] in self.edge2coref and
+                  self.edge2coref[edge[0]].mt == 'C' and
+                  self.edge2coref[edge[0]].t != 'Ci' and
+                  (self.edge2coref[edge[0]].atom or self.edge2coref[edge[0]][0].t != 'Mp')):
+                return _resolved_to(edge, hedge((const.possessive_builder, self.edge2coref[edge[0]], edge[1])))
+            elif edge in self.resolved_corefs:
+                return edge
+            elif edge in self.edge2coref and edge.mt == self.edge2coref[edge].mt:
+                return _resolved_to(edge, self.edge2coref[edge])
+            else:
+                return hedge([self._resolve_corefs_edge(subedge) for subedge in edge])
 
     def _edge2toks(self, edge):
         uatoms = [unique(atom) for atom in edge.all_atoms()]
@@ -807,7 +827,8 @@ class AlphaBeta(Parser, ABC):
                     break
                 else:
                     resolved_edge = new_edge
-            parse['resolved_corefs'] = resolved_edge
+            parse['resolved_to'] = resolved_edge
+            parse['resolved_corefs'] = _resolution_only(resolved_edge)
 
         inferred_edges = set()
         for main_edge, edges in clusters.items():

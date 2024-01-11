@@ -709,7 +709,7 @@ class Atom(Hyperedge):
         if roots_only:
             atom_str = self.root()
         else:
-            atom_str = self[0]
+            atom_str = str(self[0])
         if self.parens:
             return '({})'.format(atom_str)
         else:

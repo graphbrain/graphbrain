@@ -343,6 +343,15 @@ class ParserEN(AlphaBeta):
         else:
             return 0
 
+    def _poss2text(self, edge, parse):
+        part1 = self._edge2text(edge[1], parse).strip()
+        part2 = self._edge2text(edge[2], parse)
+        if part1[-1] == 's':
+            poss = "'"
+        else:
+            poss = "'s"
+        return f'{part1}{poss} {part2}'
+
     # ===============
     # Post-processing
     # ===============
