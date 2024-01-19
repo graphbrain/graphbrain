@@ -159,7 +159,7 @@ class Parser(object):
                         self._set_edge_text(unresolved_edge, unresolved_edge, hg, parse)
                         self._set_edge_tokens(unresolved_edge, hg, parse)
                     coref_res_edge = hedge((const.coref_res_connector, unresolved_edge, main_edge))
-                    hg.add(coref_res_edge, count=True)
+                    hg.add(coref_res_edge)
                 # add extra edges
                 for edge in parse['extra_edges']:
                     hg.add(edge)
