@@ -19,11 +19,11 @@ CYTHON_ANNOTATE = False
 CYTHON_FORCE_COMPILATION = True
 
 EXT_MODULES = [
-    "graphbrain.hyperedge",
-    "graphbrain.patterns",
-    "graphbrain.memory",
-    "graphbrain.parsers",
-    "graphbrain.patterns.semsim",
+    'graphbrain.hyperedge',
+    'graphbrain.memory',
+    'graphbrain.parsers',
+    'graphbrain.patterns',
+    'graphbrain.patterns.semsim',
 ]
 
 ext_modules = get_ext_modules(EXT_MODULES, USE_CYTHON)

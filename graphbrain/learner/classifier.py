@@ -2,11 +2,10 @@ import json
 import logging
 
 from graphbrain.hyperedge import hedge
-from graphbrain.learner.pattern_ops import (common_pattern, is_variable, contains_variable, remove_variables,
-                                            all_variables, merge_patterns, apply_variables)
+from graphbrain.patterns import (is_wildcard, common_pattern, is_variable, contains_variable, remove_variables,
+                                 all_variables, merge_patterns, apply_variables)
 from graphbrain.learner.rule import Rule
 from graphbrain.learner.rule import from_json as rule_from_json
-from graphbrain.patterns import is_wildcard
 from graphbrain.utils.lemmas import lemma
 
 

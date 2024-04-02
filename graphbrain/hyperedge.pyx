@@ -499,6 +499,10 @@ class Hyperedge(tuple):
             return ''
         return self[1].argroles()
 
+    def has_argroles(self):
+        """Returns True if the edge has argroles, False otherwise."""
+        return self.argroles() != ''
+
     def replace_argroles(self, argroles):
         """Returns an edge with the argroles of the connector atom replaced
         with the provided string.

@@ -9,8 +9,7 @@ import editdistance
 from graphbrain import hgraph, hedge
 from graphbrain.learner.classifier import Classifier
 from graphbrain.learner.classifier import from_file as classifier_from_file
-from graphbrain.learner.pattern_ops import contains_variable
-from graphbrain.patterns import match_pattern
+from graphbrain.patterns import contains_variable, match_pattern
 
 
 def relax_pattern(edge):
