@@ -217,27 +217,28 @@ class KeyValue(Hypergraph, ABC):
     def _set_primary(self, edge, value):
         self._set_attribute(edge, 'p', 1 if value else 0)
 
-    #TODO: should this go to Hypergraph?
     def _search(self, pattern, strict, ref_edges=None):
         for result in self._match(pattern, strict, ref_edges=ref_edges):
             yield result[0]
 
-    def _match(self, pattern, strict, curvars=None, ref_edges=None):
-        if curvars is None:
-            curvars = {}
+    def _match(self, pattern, strict, skip_semsim=False, curvars=None, ref_edges=None):
         for edge in self._match_structure(pattern, strict):
-            results = match_pattern(edge, pattern, curvars=curvars, hg=self, ref_edges=ref_edges)
-            if len(results) > 0:
-                yield edge, results
+            yield from self._match_pattern(edge, pattern, strict, skip_semsim, curvars, ref_edges)
 
-    #TODO: should this go to Hypergraph?
-    def _match_edges(self, edges, pattern, strict, curvars=None, ref_edges=None):
+    def _match_edges(self, edges, pattern, strict, skip_semsim=False, curvars=None, ref_edges=None):
+        for edge in edges:
+            yield from self._match_pattern(edge, pattern, strict, skip_semsim, curvars, ref_edges)
+
+    def _match_pattern(self, edge, pattern, strict, skip_semsim=False, curvars=None, ref_edges=None):
         if curvars is None:
             curvars = {}
-        for edge in edges:
-            results = match_pattern(edge, pattern, curvars=curvars, hg=self, ref_edges=ref_edges)
-            if len(results) > 0:
-                yield edge, results
+        results = match_pattern(
+            edge, pattern, curvars=curvars, ref_edges=ref_edges, skip_semsim=skip_semsim, hg=self
+        )
+        if skip_semsim and results and results[0]:
+            yield edge, results[0], results[1]
+        if not skip_semsim and results:
+            yield edge, results
 
     def _set_attribute(self, edge, attribute, value):
         self.begin_transaction()

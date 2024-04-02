@@ -19,8 +19,9 @@ DEFAULT_CONFIGS: dict[SemSimType, SemSimConfig] = {
         similarity_threshold=0.2
     ),
     SemSimType.CTX: SemSimConfig(
-        model_name='intfloat/e5-large',
-        similarity_threshold=0.65
+        model_name='intfloat/e5-large-v2',
+        similarity_threshold=0.65,
+        embedding_prefix="query:"
     )
 }
 
@@ -37,7 +38,10 @@ def init_matcher(matcher_type: SemSimType, config: SemSimConfig = None):
 
     if not config:
         config = DEFAULT_CONFIGS[matcher_type]
-        logger.info(f"No SemSim config given, using default for matcher type '{matcher_type}'")
+        logger.info(
+            f"No SemSim config given, using default config"
+            f"for SemSim matcher of type '{matcher_type}'"
+        )
 
     _matchers[matcher_type] = _matcher_type_mapping[matcher_type](config=config)
     logger.info(f"Initialized SemSim matcher for type '{matcher_type}': {config=}")

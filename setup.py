@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
-from setuptools.extension import Extension
-
+from setup_utils import get_ext_modules
 
 # True to enable building extensions using Cython.
 # False to build extensions from the C files that were previously
 # created by Cython.
 USE_CYTHON = True
 
-# "If True, will produce a HTML file for each of the .pyx or .py files
+# "If True, will produce an HTML file for each of the .pyx or .py files
 # compiled. The HTML file gives an indication of how much Python interaction
 # there is in each of the source code lines, compared to plain C code."
 # https://cython.readthedocs.io/en/latest/src/userguide/
@@ -19,48 +18,31 @@ CYTHON_ANNOTATE = False
 # Force compilation of all Cython code.
 CYTHON_FORCE_COMPILATION = True
 
+EXT_MODULES = [
+    "graphbrain.hyperedge",
+    "graphbrain.patterns",
+    "graphbrain.memory",
+    "graphbrain.parsers",
+    "graphbrain.patterns.semsim",
+]
+
+ext_modules = get_ext_modules(EXT_MODULES, USE_CYTHON)
+
+if USE_CYTHON:
+    from Cython.Build import cythonize  # noqa
+    ext_modules = cythonize(
+        ext_modules,
+        annotate=CYTHON_ANNOTATE,
+        force=CYTHON_FORCE_COMPILATION,
+        compiler_directives={'language_level': '3'}
+    )
+
 # Current Graphbrain version
-with open('VERSION', 'r') as version_file:
+with open('VERSION') as version_file:
     VERSION = version_file.read()
 
-
-if USE_CYTHON:
-    from Cython.Build import cythonize
-
-
-if USE_CYTHON:
-    ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx']),
-        Extension('graphbrain.patterns', ['graphbrain/patterns.pyx']),
-        Extension('graphbrain.memory.keyvalue', ['graphbrain/memory/keyvalue.pyx']),
-        Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.pyx']),
-        Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.pyx']),
-        Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.pyx']),
-        Extension('graphbrain.parsers.alpha', ['graphbrain/parsers/alpha.pyx']),
-        Extension('graphbrain.parsers.alpha_beta', ['graphbrain/parsers/alpha_beta.pyx']),
-        Extension('graphbrain.parsers.parser_en', ['graphbrain/parsers/parser_en.pyx'])
-    ]
-    ext_modules = cythonize(ext_modules,
-                            annotate=CYTHON_ANNOTATE,
-                            force=CYTHON_FORCE_COMPILATION,
-                            compiler_directives={'language_level': '3'})
-else:
-    ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], include_dirs=['.']),
-        Extension('graphbrain.patterns', ['graphbrain/patterns.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.keyvalue', ['graphbrain/memory/keyvalue.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.sqlite', ['graphbrain/memory/sqlite.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.leveldb', ['graphbrain/memory/leveldb.c'], include_dirs=['.']),
-        Extension('graphbrain.memory.permutations', ['graphbrain/memory/permutations.c'], include_dirs=['.']),
-        Extension('graphbrain.parsers.alpha', ['graphbrain/parsers/alpha.c'], include_dirs=['.']),
-        Extension('graphbrain.parsers.alpha_beta', ['graphbrain/parsers/alpha_beta.c'], include_dirs=['.']),
-        Extension('graphbrain.parsers.parser_en', ['graphbrain/parsers/parser_en.c'], include_dirs=['.'])
-    ]
-
-
-with open('README.md', 'r', encoding='utf8') as fh:
+with open('README.md', encoding='utf8') as fh:
     long_description = fh.read()
-
 
 python_requires = '>=3.9'
 
@@ -76,6 +58,7 @@ install_requires = [
         'plyvel',
         'progressbar2',
         'scikit-learn',
+        # semsim might require 'spacy-experimental==0.6.4'?
         'spacy-experimental==0.6.1',
         'spacy',
         'termcolor',

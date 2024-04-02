@@ -67,9 +67,5 @@ __pycache__
 *.hg
 *.db
 
-# Semsim data #
-#####################
-graphbrain/semsim/models
-
 
 
