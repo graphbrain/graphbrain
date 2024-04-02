@@ -11,6 +11,7 @@
 - Functional pattern: any.
 - Parser-level inference of coreferences between proper nouns.
 - Parser.parse_and_add() now adds token information to the main edge of a sentence: the attribute 'tokens' contains the list of tokens and 'tok_pos' a structure with the token position for each atom in the edge.
+- Post-processing step improves parser.
 
 ### Changed
 - Python >=3.9 now required.

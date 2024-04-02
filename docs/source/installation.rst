@@ -57,10 +57,10 @@ Coreference resolution
 
 If you want to perform coreference resolution, you will need to install the transformer model and also the following model::
 
-   pip install https://github.com/explosion/spacy-experimental/releases/download/v0.6.0/en_coreference_web_trf-3.4.0a0-py3-none-any.whl
+   pip install https://github.com/explosion/spacy-experimental/releases/download/v0.6.1/en_coreference_web_trf-3.4.0a2-py3-none-any.whl
 
 
-Coreference resolution currently requires version 0.6.0 of the package ``spacy-experimental`` (`more info <https://github.com/explosion/spacy-experimental/releases/tag/v0.6.0>`_). Graphbrain requirements specify this version, but if you run into problems make sure you have the correct one installed.
+Coreference resolution currently requires version 0.6.1 of the package ``spacy-experimental`` (`more info <https://github.com/explosion/spacy-experimental/releases/tag/v0.6.1>`_). Graphbrain requirements specify this version, but if you run into problems make sure you have the correct one installed.
 
 Install from the code repository (github)
 =========================================
