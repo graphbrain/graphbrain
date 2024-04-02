@@ -16,7 +16,7 @@ argrole_order = {
 
 def str2atom(s):
     """Converts a string into a valid atom."""
-    atom = s.lower()
+    atom = s.lower() 
 
     atom = atom.replace('%', '%25')
     atom = atom.replace('/', '%2f')
