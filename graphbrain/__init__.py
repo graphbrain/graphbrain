@@ -32,3 +32,8 @@ def hopen(*args, **kwds):
         hg.batch_mode = False
         hg.end_transaction()
         hg.close()
+
+
+__all__ = [
+    'hedge'
+]
