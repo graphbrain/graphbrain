@@ -217,7 +217,7 @@ class Hyperedge(tuple):
         """Generate human-readable label for edge."""
         if len(self) == 2:
             edge = self
-        elif self[0][0][:3] == '+/B':
+        elif self.connector_atom().parts()[-1] == '.':
             edge = self[1:]
         else:
             edge = (self[1], self[0]) + self[2:]
