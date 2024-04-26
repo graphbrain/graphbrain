@@ -2,9 +2,8 @@ from urllib.parse import quote
 
 import graphbrain.constants as const
 from graphbrain.hyperedge import hedge
-from graphbrain.learner.pattern_ops import extract_vars_map
 from graphbrain.notebook import _edge2html_blocks
-from graphbrain.patterns import match_pattern
+from graphbrain.patterns import match_pattern, extract_vars_map
 
 
 def _is_list(edge):

@@ -1,7 +1,7 @@
 import itertools
 from typing import TYPE_CHECKING
 
-from graphbrain.hyperedge import Hyperedge
+from graphbrain.hyperedge import Hyperedge, hedge
 from graphbrain.patterns.utils import _defun_pattern_argroles
 
 if TYPE_CHECKING:
@@ -83,3 +83,53 @@ def _match_by_argroles(
             )
 
     return result
+
+
+def edge2rolemap(edge):
+    argroles = edge[0].argroles()
+    if argroles[0] == '{':
+        argroles = argroles[1:-1]
+    args = list(zip(argroles, edge[1:]))
+    rolemap = {}
+    for role, subedge in args:
+        if role not in rolemap:
+            rolemap[role] = []
+        rolemap[role].append(subedge)
+    return rolemap
+
+
+def rolemap2edge(pred, rm):
+    roles = list(rm.keys())
+    argroles = ''
+    subedges = [pred]
+    for role in roles:
+        for arg in rm[role]:
+            argroles += role
+            subedges.append(arg)
+    edge = hedge(subedges)
+    return edge.replace_argroles(argroles)
+
+
+def rolemap_pairings(rm1, rm2):
+    roles = list(set(rm1.keys()) & set(rm2.keys()))
+    role_counts = {}
+    for role in roles:
+        role_counts[role] = min(len(rm1[role]), len(rm2[role]))
+
+    pairings = []
+    for role in roles:
+        role_pairings = []
+        n = role_counts[role]
+        for args1_combs in itertools.combinations(rm1[role], n):
+            for args1 in itertools.permutations(args1_combs):
+                for args2 in itertools.combinations(rm2[role], n):
+                    role_pairings.append((args1, args2))
+        pairings.append(role_pairings)
+
+    for pairing in itertools.product(*pairings):
+        rm1_ = {}
+        rm2_ = {}
+        for role, role_pairing in zip(roles, pairing):
+            rm1_[role] = role_pairing[0]
+            rm2_[role] = role_pairing[1]
+        yield rm1_, rm2_

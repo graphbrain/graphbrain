@@ -217,7 +217,7 @@ class Hyperedge(tuple):
         """Generate human-readable label for edge."""
         if len(self) == 2:
             edge = self
-        elif self[0][0][:3] == '+/B':
+        elif self.connector_atom().parts()[-1] == '.':
             edge = self[1:]
         else:
             edge = (self[1], self[0]) + self[2:]
@@ -498,6 +498,10 @@ class Hyperedge(tuple):
         if et not in {'B', 'P'}:
             return ''
         return self[1].argroles()
+
+    def has_argroles(self):
+        """Returns True if the edge has argroles, False otherwise."""
+        return self.argroles() != ''
 
     def replace_argroles(self, argroles):
         """Returns an edge with the argroles of the connector atom replaced

@@ -1,7 +1,7 @@
 from collections import Counter
 
 from graphbrain import hedge
-from graphbrain.patterns import edge_matches_pattern
+from graphbrain.patterns.entrypoints import edge_matches_pattern
 
 
 class PatternCounter:
