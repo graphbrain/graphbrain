@@ -58,8 +58,8 @@ install_requires = [
         'plyvel',
         'progressbar2',
         'scikit-learn',
-        # 'spacy-experimental==0.6.0',
-        'spacy-experimental==0.6.4',
+        # semsim might require 'spacy-experimental==0.6.4'?
+        'spacy-experimental==0.6.1',
         'spacy',
         'termcolor',
         'trafilatura',

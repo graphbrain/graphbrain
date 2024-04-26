@@ -144,7 +144,8 @@ def cli():
                   sequence=args.sequence,
                   lang=args.lang,
                   corefs=args.corefs,
-                  infsrcs=args.infsrcs).read()
+                  infsrcs=args.infsrcs,
+                  outfile=args.outfile).read()
     elif args.command == 'dir':
         DirReader(args.indir,
                   hg=hgraph(args.hg),

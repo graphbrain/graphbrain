@@ -16,7 +16,7 @@ argrole_order = {
 
 def str2atom(s):
     """Converts a string into a valid atom."""
-    atom = s.lower()
+    atom = s.lower() 
 
     atom = atom.replace('%', '%25')
     atom = atom.replace('/', '%2f')
@@ -130,7 +130,7 @@ def hedge(source):
         if not tokens:
             return None
         edges = tuple(_parsed_token(token) for token in tokens)
-        if len(edges) > 1:
+        if len(edges) > 1 or type(edges[0]) == Hyperedge:
             return Hyperedge(edges)
         elif len(edges) > 0:
             return Atom(edges[0], parens)
@@ -210,8 +210,7 @@ class Hyperedge(tuple):
         roots_only -- only the roots of the atoms will be used to create
         the string representation.
         """
-        s = ' '.join([edge.to_str(roots_only=roots_only)
-                      for edge in self if edge])
+        s = ' '.join([edge.to_str(roots_only=roots_only) for edge in self if edge])
         return ''.join(('(', s, ')'))
 
     def label(self):
@@ -710,7 +709,7 @@ class Atom(Hyperedge):
         if roots_only:
             atom_str = self.root()
         else:
-            atom_str = self[0]
+            atom_str = str(self[0])
         if self.parens:
             return '({})'.format(atom_str)
         else:
