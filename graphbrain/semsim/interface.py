@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIGS: dict[SemSimType, SemSimConfig] = {
     SemSimType.FIX: SemSimConfig(
-        model_name='word2vec-google-news-300',
-        similarity_threshold=0.2
+        model_name='conceptnet-numberbatch-17-06-300',
+        similarity_threshold=0.3
     ),
     SemSimType.CTX: SemSimConfig(
         model_name='intfloat/e5-large-v2',
-        similarity_threshold=0.65,
+        similarity_threshold=0.72,
         embedding_prefix="query:"
     )
 }
@@ -65,7 +65,8 @@ def semsim(
         cand_tok_pos: Hyperedge = None,
         ref_edges: list[Hyperedge] = None,
         ref_tok_poses: list[Hyperedge] = None,
-        hg: Hypergraph = None
+        return_similarity: bool = False,
+    hg: Hypergraph = None,
 ) -> bool:
     try:
         semsim_type: SemSimType = SemSimType(semsim_type)
@@ -83,5 +84,6 @@ def semsim(
         cand_tok_pos=cand_tok_pos,
         ref_edges=ref_edges,
         ref_tok_poses=ref_tok_poses,
+        return_similarity=return_similarity,
         hg=hg
     )

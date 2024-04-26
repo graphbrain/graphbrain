@@ -33,17 +33,22 @@ class SemSimMatcher(ABC):
     def similar(
             self,
             threshold: float = None,
+            return_similarity: bool = False,
             **kwargs
-    ) -> bool:
+    ) -> Union[bool, float]:
         similarities: dict[str, float] = self._similarities(**kwargs)
         logger.debug(f"Similarities: {similarities}")
         if not similarities:
             return False
 
+        similarity: float = max(similarities.values())
+        if return_similarity:
+            return similarity
+
         similarity_threshold: Union[float, None] = threshold if threshold is not None else self._similarity_threshold
         assert similarity_threshold is not None, "Similarity threshold must either be passed or set in SemSim config"
 
-        if (similarity := max(similarities.values())) < similarity_threshold:
+        if similarity < similarity_threshold:
             logger.debug(f"Max similarity is lower than threshold: {similarity:.2f} < {similarity_threshold}")
             return False
 

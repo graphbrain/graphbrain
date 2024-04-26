@@ -11,6 +11,7 @@ def _hedge_params(pattern, ref_edges=None):
     pattern = hedge(pattern)
     if ref_edges:
         ref_edges = [hedge(e) for e in ref_edges]
+        assert all([e is not None for e in ref_edges]), f'Invalid ref_edges: {ref_edges}. Malformed string?'
     return pattern, ref_edges
 
 

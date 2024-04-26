@@ -30,7 +30,7 @@ class ContextEmbeddingMatcher(SemSimMatcher):
 
     def __init__(self, config: SemSimConfig):
         super().__init__(config=config)
-        self._use_all_tokes: bool = config.use_all_tokens
+        self._use_all_tokens: bool = config.use_all_tokens
         self._spacy_pipe: Language = self._create_spacy_pipeline(config.model_name)
         self._embedding_prefix_tokens: list[str] = _get_embedding_prefix_tokens(config.embedding_prefix)
         self._cos_sim: CosineSimilarity = CosineSimilarity()
@@ -75,9 +75,9 @@ class ContextEmbeddingMatcher(SemSimMatcher):
         cand_tokens: tuple[str, ...] = _get_and_validate_tokens(cand_edge, hg)
         refs_tokens: list[tuple[str, ...]] = [_get_and_validate_tokens(ref_edge, hg) for ref_edge in ref_edges]
 
-        cand_tok_idxes: tuple[int, ...] = _get_and_validate_tok_idxes(cand_tok_pos, cand_tokens, self._use_all_tokes)
+        cand_tok_idxes: tuple[int, ...] = _get_and_validate_tok_idxes(cand_tok_pos, cand_tokens, self._use_all_tokens)
         refs_tok_idxes: list[tuple[int, ...]] = [
-            _get_and_validate_tok_idxes(ref_tok_pos, ref_tokens, self._use_all_tokes)
+            _get_and_validate_tok_idxes(ref_tok_pos, ref_tokens, self._use_all_tokens)
             for ref_tok_pos, ref_tokens in zip(ref_tok_poses, refs_tokens)
         ]
 

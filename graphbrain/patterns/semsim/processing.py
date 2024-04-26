@@ -15,6 +15,7 @@ def match_semsim_instances(
         threshold: float = None,
         ref_words: List[str] = None,
         ref_edges: List[Hyperedge] = None,
+        return_similarities: bool = False
 ) -> bool:
     ref_tok_poses_per_ref_edge: Union[List[List[Hyperedge]], None] = None
     if ref_edges:
@@ -23,6 +24,7 @@ def match_semsim_instances(
         # if the pattern contains n semsim instances, the lists will have n elements
         ref_tok_poses_per_ref_edge: List[List[Hyperedge]] = _get_ref_tok_poses(pattern, ref_edges, hg)
 
+    results: list[bool] | list[float] = []
     for instance_idx, instance in enumerate(semsim_instances):
         threshold: float = threshold if threshold is not None else instance.threshold
 
@@ -30,7 +32,7 @@ def match_semsim_instances(
         if ref_tok_poses_per_ref_edge:
             ref_tok_poses = [ref_tok_poses[instance_idx] for ref_tok_poses in ref_tok_poses_per_ref_edge]
 
-        if not semsim(
+        results.append(semsim(
             semsim_type=instance.type,
             threshold=threshold,
             cand_word=instance.word,
@@ -39,8 +41,12 @@ def match_semsim_instances(
             cand_tok_pos=instance.tok_pos,
             ref_edges=ref_edges,
             ref_tok_poses=ref_tok_poses,
+            return_similarity=return_similarities,
             hg=hg
-        ):
-            return False
+        ))
 
-    return True
+    if return_similarities:
+        return results
+
+    if all(results):
+        return True

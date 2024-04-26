@@ -67,8 +67,10 @@ class FixedEmbeddingMatcher(SemSimMatcher):
             return None
 
         if len(filtered_references) < len(ref_words):
-            logger.info(f"Some reference words out of vocabulary: "
-                        f"{[r for r in ref_words if r not in filtered_references]}")
+            logger.info(
+                f"Some reference words out of vocabulary: "
+                f"{[r for r in ref_words if r not in filtered_references]}"
+            )
 
         if not self._in_vocab([cand_word]):
             return None
