@@ -3,8 +3,9 @@ from typing import Dict, List, Tuple, Optional, Union
 from graphbrain.hyperedge import Hyperedge, hedge
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.patterns.matcher import Matcher
-from graphbrain.patterns.semsim.instances import SemSimInstance
-from graphbrain.patterns.semsim.processing import match_semsim_instances
+# SEMSIM disabled for now (see also commented code below)
+# from graphbrain.patterns.semsim.instances import SemSimInstance
+# from graphbrain.patterns.semsim.processing import match_semsim_instances
 from graphbrain.patterns.utils import _normalize_fun_patterns, _edge_tok_pos
 
 
@@ -13,9 +14,11 @@ def match_pattern(
         pattern: Union[Hyperedge, str, list, tuple],
         curvars: Optional[dict[str, Hyperedge]] = None,
         ref_edges: Optional[List[Union[Hyperedge, str, list, tuple]]] = None,
-        skip_semsim: bool = False,
+        skip_semsim: bool = True,
         hg: Optional[Hypergraph] = None
-) -> Union[List[Dict], Tuple[List[Dict], List[SemSimInstance]]]:
+# SEMSIM disabled for now
+# ) -> Union[List[Dict], Tuple[List[Dict], List[SemSimInstance]]]:
+) -> List[Dict]:
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a list of dictionaries will be returned. If the pattern
     specifies variables, then the returned dictionaries will be populated
@@ -64,17 +67,19 @@ def match_pattern(
         hg=hg
     )
 
-    if skip_semsim:
-        return matcher.results, matcher.semsim_instances
+    return matcher.results  # remove when activating SEMSIM
+    # SEMSIM disabled for now
+    # if skip_semsim:
+    #     return matcher.results, matcher.semsim_instances
 
-    if matcher.results and match_semsim_instances(
-            matcher.semsim_instances,
-            pattern=pattern,
-            edge=edge,
-            ref_edges=ref_edges,
-            hg=hg
-    ):
-        return matcher.results
+    # if matcher.results and match_semsim_instances(
+    #         matcher.semsim_instances,
+    #         pattern=pattern,
+    #         edge=edge,
+    #         ref_edges=ref_edges,
+    #         hg=hg
+    # ):
+    #     return matcher.results
 
     return []
 

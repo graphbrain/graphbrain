@@ -7,9 +7,10 @@ from graphbrain.hypergraph import Hypergraph
 from graphbrain.patterns.argroles import _match_by_argroles
 from graphbrain.patterns.atoms import _matches_atomic_pattern
 from graphbrain.patterns.properties import is_fun_pattern, is_pattern, FUNS
-from graphbrain.patterns.semsim.types import SEMSIM_FUNS
-from graphbrain.patterns.semsim.matching import match_semsim
-from graphbrain.patterns.semsim.instances import SemSimInstance
+# SEMSIM disabled for now (see also commented code below)
+# from graphbrain.patterns.semsim.types import SEMSIM_FUNS
+# from graphbrain.patterns.semsim.matching import match_semsim
+# from graphbrain.patterns.semsim.instances import SemSimInstance
 from graphbrain.patterns.utils import _defun_pattern_argroles, _atoms_and_tok_pos
 from graphbrain.patterns.variables import _varname, _assign_edge_to_var
 from graphbrain.utils.lemmas import lemma
@@ -28,7 +29,8 @@ class Matcher:
         self.hg: Hypergraph = hg
         self.skip_semsim: bool = skip_semsim
 
-        self.semsim_instances: List[SemSimInstance] = []
+        # SEMSIM disabled for now
+        # self.semsim_instances: List[SemSimInstance] = []
         self.results: List[Dict] = self.match(edge, pattern, curvars=curvars, tok_pos=tok_pos)
 
     def match(self, edge, pattern, curvars=None, tok_pos=None):
@@ -259,14 +261,15 @@ class Matcher:
             return []
         elif fun == 'lemma':
             return self._match_lemma(fun_pattern[1], edge, curvars)
-        elif fun in SEMSIM_FUNS:
-            return match_semsim(
-                matcher=self,
-                semsim_fun=fun,
-                pattern_parts=fun_pattern[1:],
-                edge=edge,
-                curvars=curvars,
-                tok_pos=tok_pos,
-            )
+        # SEMSIM disabled for now
+        # elif fun in SEMSIM_FUNS:
+        #     return match_semsim(
+        #         matcher=self,
+        #         semsim_fun=fun,
+        #         pattern_parts=fun_pattern[1:],
+        #         edge=edge,
+        #         curvars=curvars,
+        #         tok_pos=tok_pos,
+        #     )
         else:
             raise NotImplementedError(f"Pattern function '{fun}' not implemented.")

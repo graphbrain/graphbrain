@@ -50,7 +50,8 @@ install_requires = [
         'asciitree',
         'editdistance',
         'flask',
-        'gensim',
+        # SEMSIM disabled
+        # 'gensim',
         'ipython',
         'mwparserfromhell',
         'networkx',
@@ -58,15 +59,13 @@ install_requires = [
         'plyvel',
         'progressbar2',
         'scikit-learn',
-        # semsim might require 'spacy-experimental==0.6.4'?
-        'spacy-experimental==0.6.1',
         'spacy',
+        'spacy-experimental==0.6.1',
+        'spacy-transformers',
         'termcolor',
-        'trafilatura',
-        'gensim',
         'thinc',
         'torch',
-        'spacy-transformers',
+        'trafilatura',
     ]
 
 setup(
