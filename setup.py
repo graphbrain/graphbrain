@@ -22,8 +22,18 @@ EXT_MODULES = [
     'graphbrain.hyperedge',
     'graphbrain.memory',
     'graphbrain.parsers',
-    'graphbrain.patterns',
-    'graphbrain.patterns.semsim',
+    'graphbrain.patterns.argroles',
+    'graphbrain.patterns.atoms',
+    'graphbrain.patterns.common',
+    'graphbrain.patterns.counter',
+    'graphbrain.patterns.entrypoints',
+    'graphbrain.patterns.matcher',
+    'graphbrain.patterns.merge',
+    'graphbrain.patterns.properties',
+    'graphbrain.patterns.utils',
+    'graphbrain.patterns.variables',
+    # SEMSIM disabled
+    # 'graphbrain.patterns.semsim',
 ]
 
 ext_modules = get_ext_modules(EXT_MODULES, USE_CYTHON)
