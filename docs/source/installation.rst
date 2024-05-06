@@ -79,9 +79,15 @@ Install Cython::
 
    $ pip install cython
 
-Now we can build and install graphbrain::
+Now you can build and install graphbrain::
 
    $ pip install .
+
+If you are working on graphbrain development or wish to modify the code for your own purposes, it is advisable to install the project in editable mode, useing the `-e` flag::
+
+   $ pip install -e .
+
+This way, graphbrain will be added to your environment by linking to the local project directory, which means that any change in the code will reflect directly in the environment. Another important consequence of this is that you will be able to import graphbrain from the project directory and run development tools such as `pytest`, otherwise there could be conflicts caused by the `graphbrain` package in the current path not containing the compiled cython modules.
 
 It is then necessary to download a spaCy language model and optionally the coreference resolution model, as detailed above.
 
@@ -99,7 +105,7 @@ From the project's root directory::
 
   $ pytest graphbrain
 
-Notice that this requires the `pytest` package to be installed. The `pytest` package is included in the above mentioned development dependencies.
+Notice that this requires graphbrain to have been installed with the `-e` pip flag, and for the `pytest` package to be installed. The `pytest` package is included in the above mentioned development dependencies.
 
 Prerequisites
 =============
