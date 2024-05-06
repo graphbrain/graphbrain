@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="_static/favicon.png"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8fb39b0a"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,12 +31,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-            <a href="index.html">
-            <img src="_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/graphbrain-logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -88,7 +93,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
@@ -101,7 +106,7 @@
            <div itemprop="articleBody">
              
   <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <p>Graphbrain requires Python &gt;=3.9 and runs on macOS, Linux and Windows.</p>
 <p>We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. <a class="reference external" href="#prerequisites">For such cases or to build from the sources, check the prerequisites for your OS</a>.</p>
 <div class="admonition warning">
@@ -109,7 +114,7 @@
 <p><em>Important for macOS users:</em> You will need to install a specific version of LevelDB before installing Graphbrain. <a class="reference external" href="#macos">Please refer to the prerequisites section below for details</a>.</p>
 </div>
 <section id="install-with-pip">
-<h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Permalink to this heading"></a></h2>
+<h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install graphbrain
 </pre></div>
 </div>
@@ -133,7 +138,7 @@ $ pip install graphbrain
 </pre></div>
 </div>
 <section id="choose-language-model">
-<h3>Choose language model<a class="headerlink" href="#choose-language-model" title="Permalink to this heading"></a></h3>
+<h3>Choose language model<a class="headerlink" href="#choose-language-model" title="Link to this heading"></a></h3>
 <p>It is still necessary to download a spaCy language model. Graphbrain supports both the transformer model (modern, GPU optimized) and a CPU optimized model. The transformer model can be installed in the following way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m spacy download en_core_web_trf
 </pre></div>
@@ -148,7 +153,7 @@ $ pip install graphbrain
 </div>
 </section>
 <section id="coreference-resolution">
-<h3>Coreference resolution<a class="headerlink" href="#coreference-resolution" title="Permalink to this heading"></a></h3>
+<h3>Coreference resolution<a class="headerlink" href="#coreference-resolution" title="Link to this heading"></a></h3>
 <p>If you want to perform coreference resolution, you will need to install the transformer model and also the following model:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">explosion</span><span class="o">/</span><span class="n">spacy</span><span class="o">-</span><span class="n">experimental</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">v0</span><span class="mf">.6.1</span><span class="o">/</span><span class="n">en_coreference_web_trf</span><span class="o">-</span><span class="mf">3.4.0</span><span class="n">a2</span><span class="o">-</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
 </pre></div>
@@ -157,7 +162,7 @@ $ pip install graphbrain
 </section>
 </section>
 <section id="install-from-the-code-repository-github">
-<h2>Install from the code repository (github)<a class="headerlink" href="#install-from-the-code-repository-github" title="Permalink to this heading"></a></h2>
+<h2>Install from the code repository (github)<a class="headerlink" href="#install-from-the-code-repository-github" title="Link to this heading"></a></h2>
 <p>Another way to install graphbrain is to build it from the GitHub repository source. You should use this method if you wish to make changes to the code base.</p>
 <p>Start by cloning the source code to your current local directory.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/graphbrain/graphbrain.git
@@ -169,32 +174,37 @@ $ cd graphbrain
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install cython
 </pre></div>
 </div>
-<p>Now we can build and install graphbrain:</p>
+<p>Now you can build and install graphbrain:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install .
 </pre></div>
 </div>
+<p>If you are working on graphbrain development or wish to modify the code for your own purposes, it is advisable to install the project in editable mode, useing the <cite>-e</cite> flag:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -e .
+</pre></div>
+</div>
+<p>This way, graphbrain will be added to your environment by linking to the local project directory, which means that any change in the code will reflect directly in the environment. Another important consequence of this is that you will be able to import graphbrain from the project directory and run development tools such as <cite>pytest</cite>, otherwise there could be conflicts caused by the <cite>graphbrain</cite> package in the current path not containing the compiled cython modules.</p>
 <p>It is then necessary to download a spaCy language model and optionally the coreference resolution model, as detailed above.</p>
 <section id="for-developers">
-<h3>For developers<a class="headerlink" href="#for-developers" title="Permalink to this heading"></a></h3>
+<h3>For developers<a class="headerlink" href="#for-developers" title="Link to this heading"></a></h3>
 <p>If you want to help develop graphbrain, you should also install the development dependencies:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install &#39;.[dev]&#39;
 </pre></div>
 </div>
 </section>
 <section id="run-tests">
-<h3>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this heading"></a></h3>
+<h3>Run tests<a class="headerlink" href="#run-tests" title="Link to this heading"></a></h3>
 <p>From the project’s root directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pytest graphbrain
 </pre></div>
 </div>
-<p>Notice that this requires the <cite>pytest</cite> package to be installed. The <cite>pytest</cite> package is included in the above mentioned development dependencies.</p>
+<p>Notice that this requires graphbrain to have been installed with the <cite>-e</cite> pip flag, and for the <cite>pytest</cite> package to be installed. The <cite>pytest</cite> package is included in the above mentioned development dependencies.</p>
 </section>
 </section>
 <section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
 <p>Naturally, you can ignore the prerequisites that are already installed in your machine.</p>
 <section id="linux">
-<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this heading"></a></h3>
+<h3>Linux<a class="headerlink" href="#linux" title="Link to this heading"></a></h3>
 <p>Linux distributions are diverse in terms of package managers. Please use the appropriate package manager for your
 distribution to install the prerequisites.</p>
 <ul class="simple">
@@ -205,7 +215,7 @@ distribution to install the prerequisites.</p>
 </ul>
 </section>
 <section id="macos">
-<h3>macOS<a class="headerlink" href="#macos" title="Permalink to this heading"></a></h3>
+<h3>macOS<a class="headerlink" href="#macos" title="Link to this heading"></a></h3>
 <ul>
 <li><p>XCode and the “Command Line Tools”:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ xcode-select --install

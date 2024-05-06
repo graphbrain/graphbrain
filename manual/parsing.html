@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parsing natural language &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../_static/favicon.png"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=8fb39b0a"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,12 +31,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-            <a href="../index.html">
-            <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -49,6 +54,7 @@
     
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../pubs-cases.html">Publications and Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
@@ -91,7 +97,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../manual.html">Manual</a></li>
       <li class="breadcrumb-item active">Parsing natural language</li>
       <li class="wy-breadcrumbs-aside">
@@ -105,7 +111,7 @@
            <div itemprop="articleBody">
              
   <section id="parsing-natural-language">
-<h1>Parsing natural language<a class="headerlink" href="#parsing-natural-language" title="Permalink to this heading"></a></h1>
+<h1>Parsing natural language<a class="headerlink" href="#parsing-natural-language" title="Link to this heading"></a></h1>
 <p>Parsing natural language to semantic hypergraphs is another crucial aspect of Graphbrain. This aspect of the library is covered by the <code class="docutils literal notranslate"><span class="pre">graphbrain.parsers</span></code> package. Let us see how to create a parser, and how to use it to parse a sentence:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="n">create_parser</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
@@ -156,7 +162,7 @@
 <li><p>‘spacy_sentence’: the spaCy structure representing the sentence.</p></li>
 </ul>
 <section id="lemmas">
-<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this heading"></a></h2>
+<h2>Lemmas<a class="headerlink" href="#lemmas" title="Link to this heading"></a></h2>
 <p>When creating a parser, it is possible to require it to also produce lemma relationships. Lemmas are linguistic roots of words, for example the infinitive tense of a verb or the singular form of a known. They are represented by Graphbrain in hyperedges like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">lemma</span><span class="o">/</span><span class="n">J</span><span class="o">/.</span> <span class="n">published</span><span class="o">/</span><span class="n">P</span><span class="o">/</span><span class="n">en</span> <span class="n">publish</span><span class="o">/</span><span class="n">P</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
 </pre></div>
@@ -201,7 +207,7 @@
 </div>
 </section>
 <section id="parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy">
-<h2>Parser-level coreference resolution and inference of gender, number and animacy<a class="headerlink" href="#parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy" title="Permalink to this heading"></a></h2>
+<h2>Parser-level coreference resolution and inference of gender, number and animacy<a class="headerlink" href="#parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy" title="Link to this heading"></a></h2>
 <p>Consider the sentence:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Alice says that she likes her dog.&quot;</span>
 </pre></div>

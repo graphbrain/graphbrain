@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Semantic Hypergraph notation &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../_static/favicon.png"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=8fb39b0a"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,12 +31,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-            <a href="../index.html">
-            <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -49,6 +54,7 @@
     
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../pubs-cases.html">Publications and Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
@@ -113,7 +119,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../manual.html">Manual</a></li>
       <li class="breadcrumb-item active">Semantic Hypergraph notation</li>
       <li class="wy-breadcrumbs-aside">
@@ -127,7 +133,7 @@
            <div itemprop="articleBody">
              
   <section id="semantic-hypergraph-notation">
-<h1>Semantic Hypergraph notation<a class="headerlink" href="#semantic-hypergraph-notation" title="Permalink to this heading"></a></h1>
+<h1>Semantic Hypergraph notation<a class="headerlink" href="#semantic-hypergraph-notation" title="Link to this heading"></a></h1>
 <p>SH notation is based on two simple principles:</p>
 <ul class="simple">
 <li><p>Every hyperedge belongs to one of eight basic types.</p></li>
@@ -140,15 +146,9 @@
 <p>Beyond this, the notation allows for more things: argument roles, subtypes, further type-specific additional information and namespaces. We will introduce these concepts gradually, by order of general usefulness. The two principles above extended with argument roles (which we will yet introduce) already capture a great deal of information contained in natural language, and sophisticated knowledge inference and exploration tasks can be performed at this level, while keeping the notation light and friendly to humans.</p>
 <p>Then, the additional notational devices can be employed when useful. Of course, it is always possible to utilize full notation for machine tasks while presented a simplified version for human-friendliness.</p>
 <section id="hyperedge-types">
-<h2>Hyperedge types<a class="headerlink" href="#hyperedge-types" title="Permalink to this heading"></a></h2>
+<h2>Hyperedge types<a class="headerlink" href="#hyperedge-types" title="Link to this heading"></a></h2>
 <p>All valid semantic hyperedges are of one of the 8 types shown in the table below. The first 6 types can be explicit (directly annotating an atomic hyepredge) of implicit (inferred from the types of the elements of the hyperedge). The last two types are always implicit.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 7%" />
-<col style="width: 18%" />
-<col style="width: 36%" />
-<col style="width: 39%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Code</p></th>
 <th class="head"><p>Type</p></th>
@@ -219,13 +219,9 @@
 </table>
 </section>
 <section id="type-inference-rules">
-<h2>Type inference rules<a class="headerlink" href="#type-inference-rules" title="Permalink to this heading"></a></h2>
+<h2>Type inference rules<a class="headerlink" href="#type-inference-rules" title="Link to this heading"></a></h2>
 <p>The table below shows how implicit hyperedge types are inferred.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 48%" />
-<col style="width: 52%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Element types</p></th>
 <th class="head"><p>Resulting type</p></th>
@@ -252,10 +248,10 @@
 <p>We use the notation of regular expressions: the symbol <code class="docutils literal notranslate"><span class="pre">+</span></code> is used to denote one or more entities with the type that precedes it, while square brackets indicate several possibilities (for instance, <code class="docutils literal notranslate"><span class="pre">[CRS]+</span></code> means “at least one of any of C, R or S” types). <code class="docutils literal notranslate"><span class="pre">x</span></code> means any type: <code class="docutils literal notranslate"><span class="pre">(M</span> <span class="pre">x)</span></code> is of type <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
 </section>
 <section id="argument-roles">
-<h2>Argument roles<a class="headerlink" href="#argument-roles" title="Permalink to this heading"></a></h2>
+<h2>Argument roles<a class="headerlink" href="#argument-roles" title="Link to this heading"></a></h2>
 <p>The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific. The most useful of those are argument roles in predicates and builders. As the name indicates, they specify the role that the following arguments play in the construct.</p>
 <section id="predicates">
-<h3>Predicates<a class="headerlink" href="#predicates" title="Permalink to this heading"></a></h3>
+<h3>Predicates<a class="headerlink" href="#predicates" title="Link to this heading"></a></h3>
 <p>When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>s</strong>: subject</p></li>
@@ -275,7 +271,7 @@
 <p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
 </section>
 <section id="builders">
-<h3>Builders<a class="headerlink" href="#builders" title="Permalink to this heading"></a></h3>
+<h3>Builders<a class="headerlink" href="#builders" title="Link to this heading"></a></h3>
 <p>When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>m</strong>: main concept</p></li>
@@ -287,20 +283,15 @@
 </section>
 </section>
 <section id="subtypes">
-<h2>Subtypes<a class="headerlink" href="#subtypes" title="Permalink to this heading"></a></h2>
+<h2>Subtypes<a class="headerlink" href="#subtypes" title="Link to this heading"></a></h2>
 <p>Subtypes are represented by a lowercase character following the main type code. They provide further distinctions, for example that a predicate is declarative (<code class="docutils literal notranslate"><span class="pre">Pd</span></code>), or that a concept is common (<code class="docutils literal notranslate"><span class="pre">Cc</span></code>), or that a modifier is a determinant (<code class="docutils literal notranslate"><span class="pre">Md</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">Pd</span><span class="o">.</span><span class="n">sc</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">Md</span> <span class="n">sky</span><span class="o">/</span><span class="n">Cc</span><span class="p">)</span> <span class="n">blue</span><span class="o">/</span><span class="n">Cc</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Below we show possible subtypes for several main types.</p>
 <section id="concept">
-<h3>Concept<a class="headerlink" href="#concept" title="Permalink to this heading"></a></h3>
+<h3>Concept<a class="headerlink" href="#concept" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 48%" />
-<col style="width: 32%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Code</p></th>
 <th class="head"><p>Subtype</p></th>
@@ -332,13 +323,8 @@
 </table>
 </section>
 <section id="predicate">
-<h3>Predicate<a class="headerlink" href="#predicate" title="Permalink to this heading"></a></h3>
+<h3>Predicate<a class="headerlink" href="#predicate" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 50%" />
-<col style="width: 30%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Code</p></th>
 <th class="head"><p>Subtype</p></th>
@@ -362,13 +348,8 @@
 </table>
 </section>
 <section id="builder">
-<h3>Builder<a class="headerlink" href="#builder" title="Permalink to this heading"></a></h3>
+<h3>Builder<a class="headerlink" href="#builder" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 46%" />
-<col style="width: 32%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Code</p></th>
 <th class="head"><p>Subtype</p></th>
@@ -388,13 +369,8 @@
 </table>
 </section>
 <section id="modifier">
-<h3>Modifier<a class="headerlink" href="#modifier" title="Permalink to this heading"></a></h3>
+<h3>Modifier<a class="headerlink" href="#modifier" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 45%" />
-<col style="width: 34%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Code</p></th>
 <th class="head"><p>Subtype</p></th>
@@ -430,13 +406,8 @@
 </table>
 </section>
 <section id="trigger">
-<h3>Trigger<a class="headerlink" href="#trigger" title="Permalink to this heading"></a></h3>
+<h3>Trigger<a class="headerlink" href="#trigger" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 41%" />
-<col style="width: 41%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Code</p></th>
 <th class="head"><p>Subtype</p></th>
@@ -477,10 +448,10 @@
 </section>
 </section>
 <section id="further-type-specific-additional-information">
-<h2>Further type-specific additional information<a class="headerlink" href="#further-type-specific-additional-information" title="Permalink to this heading"></a></h2>
+<h2>Further type-specific additional information<a class="headerlink" href="#further-type-specific-additional-information" title="Link to this heading"></a></h2>
 <p>Beyond argument roles, other forms of type-specific additional information are possible for the various types.</p>
 <section id="concepts">
-<h3>Concepts<a class="headerlink" href="#concepts" title="Permalink to this heading"></a></h3>
+<h3>Concepts<a class="headerlink" href="#concepts" title="Link to this heading"></a></h3>
 <p>When present, the first additional information subpart for concepts indicates number, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>s</strong>: singular, example: apple/Cc.s</p></li>
@@ -488,7 +459,7 @@
 </ul>
 </section>
 <section id="id1">
-<h3>Predicates<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>Predicates<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>Beyond argument roles, a second additional information subpart for predicates can be used to specify the features of the verb underlying the predicate. The following 7 features are specified:</p>
 <ul class="simple">
 <li><p><strong>tense</strong>: past (&lt;), present (|) or future (&gt;)</p></li>
@@ -504,13 +475,13 @@
 <p>The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).</p>
 </section>
 <section id="modifiers">
-<h3>Modifiers<a class="headerlink" href="#modifiers" title="Permalink to this heading"></a></h3>
+<h3>Modifiers<a class="headerlink" href="#modifiers" title="Link to this heading"></a></h3>
 <p>When the modifer is verbal, the first additional information subpart can be used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
 <p>(have/Mv.|f—– (been/Mv.&lt;pf—- tracking/Pd.sox.|pg—-))</p>
 </section>
 </section>
 <section id="namespaces">
-<h2>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this heading"></a></h2>
+<h2>Namespaces<a class="headerlink" href="#namespaces" title="Link to this heading"></a></h2>
 <p>Namespaces serve two functions:</p>
 <ol class="arabic simple">
 <li><p>To identify the language or symbolic space to which an atom belongs;</p></li>
@@ -535,19 +506,14 @@
 </div>
 </section>
 <section id="full-atom-structure">
-<h2>Full atom structure<a class="headerlink" href="#full-atom-structure" title="Permalink to this heading"></a></h2>
+<h2>Full atom structure<a class="headerlink" href="#full-atom-structure" title="Link to this heading"></a></h2>
 <p>We show here the full atom structure, including all optional parts.</p>
 <img alt="atom structure" class="align-center" src="../_images/atom-structure.png" />
 </section>
 <section id="special-atoms">
-<h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this heading"></a></h2>
+<h2>Special atoms<a class="headerlink" href="#special-atoms" title="Link to this heading"></a></h2>
 <p>The two special atoms below come predefined with Graphbrain and are very frequently useful.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 11%" />
-<col style="width: 36%" />
-<col style="width: 53%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Atom</p></th>
 <th class="head"><p>Purpose</p></th>
