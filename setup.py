@@ -65,7 +65,8 @@ install_requires = [
         'ipython',
         'mwparserfromhell',
         'networkx',
-        'numpy',
+        # fixed for now because of spacy
+        'numpy==1.26.4',
         'plyvel',
         'progressbar2',
         'scikit-learn',
