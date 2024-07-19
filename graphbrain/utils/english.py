@@ -3763,14 +3763,14 @@ US_GB = {
 
 
 def to_american(word):
-    if word in US_GB:
-        return US_GB[word]
+    if word in GB_US:
+        return GB_US[word]
     else:
         return word
 
 
 def to_british(word):
-    if word in GB_US:
-        return GB_US[word]
+    if word in US_GB:
+        return US_GB[word]
     else:
         return word
