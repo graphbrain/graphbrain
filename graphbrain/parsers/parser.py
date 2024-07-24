@@ -129,9 +129,12 @@ class Parser(object):
     def parse_and_add(self, text, hg, sequence=None, infsrcs=False, max_text=1500):
         # split large blocks of text to avoid coreference resolution errors
         if self.corefs and 0 < max_text < len(text):
+            parse_results = {'parses': [], 'inferred_edges': []}
             for sentence in self.sentences(text):
-                self.parse_and_add(sentence, hg=hg, sequence=sequence, infsrcs=infsrcs, max_text=-1)
-            return
+                _parse_results = self.parse_and_add(sentence, hg=hg, sequence=sequence, infsrcs=infsrcs, max_text=-1)
+                parse_results['parses'] += _parse_results['parses']
+                parse_results['inferred_edges'] += _parse_results['inferred_edges']
+            return parse_results
 
         parse_results = self.parse(text)
         edges = []
