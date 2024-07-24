@@ -131,6 +131,7 @@ class Parser(object):
         if self.corefs and 0 < max_text < len(text):
             for sentence in self.sentences(text):
                 self.parse_and_add(sentence, hg=hg, sequence=sequence, infsrcs=infsrcs, max_text=-1)
+            return
 
         parse_results = self.parse(text)
         edges = []

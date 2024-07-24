@@ -5,6 +5,7 @@ import spacy
 from graphbrain import hedge
 from graphbrain.parsers.alpha import Alpha
 from graphbrain.parsers.alpha_beta import AlphaBeta
+from graphbrain.utils.english import to_american
 
 
 LANG = 'en'
