@@ -1,3 +1,6 @@
+from graphbrain import hedge
+
+
 GB_US = {
     'accessorise': 'accessorize',
     'accessorised': 'accessorized',
@@ -3762,15 +3765,39 @@ US_GB = {
 }
 
 
-def to_american(word):
+def word_to_american(word):
     if word in GB_US:
         return GB_US[word]
     else:
         return word
 
 
-def to_british(word):
+def word_to_british(word):
     if word in US_GB:
         return US_GB[word]
     else:
         return word
+
+
+def to_american(edge):
+    if edge.atom:
+        parts = edge.parts()
+        if len(parts) == 3 and parts[2] == 'en':
+            parts[0] = word_to_american(parts[0])
+            return hedge('/'.join(parts))
+        else:
+            return edge
+    else:
+        return hedge([to_american(_edge) for _edge in edge])
+
+
+def to_british(edge):
+    if edge.atom:
+        parts = edge.parts()
+        if len(parts) == 3 and parts[2] == 'en':
+            parts[0] = word_to_british(parts[0])
+            return hedge('/'.join(parts))
+        else:
+            return edge
+    else:
+        return hedge([to_british(_edge) for _edge in edge])
