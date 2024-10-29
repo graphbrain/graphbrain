@@ -3,7 +3,7 @@ Thanks
 ======
 
 First of all, we are grateful for the funding from CNRS and the ERC Consolidator
-Grant [Socsemics](https://socsemics.huma-num.fr/) (grant #772743), which made this work possible in the first place.
+Grant `Socsemics <https://socsemics.huma-num.fr/>`_ (grant #772743), which made this work possible in the first place.
 
 Graphbrain does not exist in a vacuum. We benefit greatly from the work and generosity of others, and are particularly thankful for the following open-source projects:
 

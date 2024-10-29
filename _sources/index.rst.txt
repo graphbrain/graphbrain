@@ -68,7 +68,7 @@ Funding
 -------
 
 This software library and its associated research were funded by CNRS and the ERC Consolidator
-Grant [Socsemics](https://socsemics.huma-num.fr/) (grant #772743).
+Grant `Socsemics <https://socsemics.huma-num.fr/>`_ (grant #772743).
 
 .. toctree::
    :maxdepth: 2
