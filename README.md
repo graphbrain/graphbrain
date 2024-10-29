@@ -1,3 +1,5 @@
+# Graphbrain
+
 Graphbrain is an Artificial Intelligence open-source software library and scientific research tool. Its aim is to facilitate automated meaning extraction and text understanding, as well as the exploration and inference of knowledge. It is part of socsemics, a research project funded by the European Research Council and focused on the fragmentation in online public spaces.
 
 The ambition of this project is not simply to contribute to advancing the state-of-the-art in AI, but principally to be an effective interdisciplinary research tool. More specifically, we are interested in advancing the possibilities of automated meaning extraction for research in fields such as Computational Social Sciences, Cognitive Science and the Humanities.
@@ -13,4 +15,24 @@ The aim of SH and Graphbrain is to enable hybrid approaches, combining symbolic 
 
 Graphbrain is written in Python, to both take advantage and facilitate integration with the rich environment of scientific libraries available in this language. It is released under the highly permissive MIT open source license.
 
+## Installation and manual
+
 Installation instructions, the manual and more information can be found here: http://graphbrain.net.
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## Funding
+
+This tool and the research were funded by CNRS and the ERC Consolidator
+Grant [Socsemics](https://socsemics.huma-num.fr/) (grant #772743).
+
+<img src="docs/source/_static/socsemics.png" width="200">
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
