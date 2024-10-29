@@ -2,6 +2,9 @@
 Thanks
 ======
 
+First of all, we are grateful for the funding from CNRS and the ERC Consolidator
+Grant [Socsemics](https://socsemics.huma-num.fr/) (grant #772743), which made this work possible in the first place.
+
 Graphbrain does not exist in a vacuum. We benefit greatly from the work and generosity of others, and are particularly thankful for the following open-source projects:
 
 
@@ -13,12 +16,12 @@ https://spacy.io
 Industrial-Strength Natural Language Processing in Python
 
 
-Hugging Face's NeuralCoref
-==========================
+scikit-learn
+============
 
-https://github.com/huggingface/neuralcoref
+https://scikit-learn.org
 
-Coreference Resolution in spaCy with Neural Networks.
+Machine Learning in Python
 
 
 LevelDB

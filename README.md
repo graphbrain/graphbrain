@@ -28,10 +28,12 @@ Please make sure to update tests as appropriate.
 
 ## Funding
 
-This tool and the research were funded by CNRS and the ERC Consolidator
+This software library and its associated research were funded by CNRS and the ERC Consolidator
 Grant [Socsemics](https://socsemics.huma-num.fr/) (grant #772743).
 
-<img src="docs/source/_static/socsemics.png" width="200">
+<a href="https://socsemics.huma-num.fr/" style="margin:0px">
+  <img src="docs/source/_static/socsemics.png" width="200">
+</a>
 
 ## License
 
