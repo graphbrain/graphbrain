@@ -28,7 +28,7 @@ Please make sure to update tests as appropriate.
 
 ## Funding
 
-This software library and its associated research were funded by CNRS and the ERC Consolidator
+The creation of this software library and the associated research that made it possible were funded by CNRS and the ERC Consolidator
 Grant [Socsemics](https://socsemics.huma-num.fr/) (grant #772743).
 
 <a href="https://socsemics.huma-num.fr/" style="margin:0px">
