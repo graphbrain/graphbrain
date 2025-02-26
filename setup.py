@@ -58,8 +58,6 @@ python_requires = '>=3.9'
 
 install_requires = [
         'asciitree',
-        'editdistance',
-        'flask',
         # SEMSIM disabled
         # 'gensim',
         'ipython',

@@ -7,7 +7,6 @@ from termcolor import colored
 
 import graphbrain.constants as const
 from graphbrain import hgraph, hedge
-from graphbrain.learner.learner import Learner
 from graphbrain.parsers import parser_lang
 from graphbrain.processors.actors import Actors
 from graphbrain.processors.claims import Claims
@@ -41,11 +40,9 @@ def cli():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('command', type=str, help='command to execute')
-    parser.add_argument('--classdir', type=str, help='classifiers directory', default='classifiers')
     parser.add_argument('--col', type=str, help='table column', default=None)
     parser.add_argument('--corefs', help='perform coreference resolution', action='store_true')
     parser.add_argument('--hg', type=str, help='hypergraph db', default='gb.db')
-    parser.add_argument('--host', type=str, help='host IP address', default='')
     parser.add_argument('--indir', type=str, help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--infsrcs', help='add inference sources to hypergraph', action='store_true')
@@ -77,8 +74,6 @@ def cli():
 
     print(colored('{}\n'.format('command: {}'.format(args.command)), 'white'))
 
-    if args.classdir != 'classifiers':
-        print('classifiers directory: {}'.format(args.classdir))
     if args.col:
         print('column: {}'.format(args.col))
     if args.corefs:
@@ -189,21 +184,6 @@ def cli():
         CorefsOnto(hg=hgraph(args.hg), sequence=args.sequence).run()
     elif args.command == 'taxonomy':
         Taxonomy(hg=hgraph(args.hg), sequence=args.sequence).run()
-    elif args.command == 'web':
-        from graphbrain.web import app
-
-        learner = Learner(args.hg, args.classdir)
-        app.config['LEARNER'] = learner
-        app.config['HG'] = args.hg
-        # Set the secret key to some random bytes. Doesn't really matter at this point.
-        app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-        if args.host == '':
-            app.run()
-        else:
-            app.run(host=args.host)
-    elif args.command == 'generate_datasets':
-        learner = Learner(args.hg, args.classdir)
-        learner.generate_datasets(args.outdir)
     else:
         raise RuntimeError('Unknown command: {}'.format(args.command))
 
