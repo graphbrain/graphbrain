@@ -128,4 +128,9 @@ def apply_variables(edge, variables):
         new_edge, found = apply_variable(new_edge, var_name, var_edge)
         if not found:
             return None
+    # added check if number of variables is correct
+    var_matches = all_variables(new_edge)
+    if len(variables) != len(var_matches):
+        return None
+
     return new_edge
