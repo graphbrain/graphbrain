@@ -51,7 +51,7 @@ def _close_pars(s):
     return -pos - 1
 
 
-def _edge_str_has_outer_parens(str edge_str):
+def _edge_str_has_outer_parens(edge_str):
     """Check if string representation of edge is delimited by outer
     parenthesis.
     """
@@ -60,15 +60,14 @@ def _edge_str_has_outer_parens(str edge_str):
     return edge_str[0] == '('
 
 
-def split_edge_str(str edge_str):
+def split_edge_str(edge_str):
     """Shallow split into tokens of a string representation of an edge,
     without outer parenthesis.
     """
-    cdef int start = 0
-    cdef int depth = 0
-    cdef int str_length = len(edge_str)
-    cdef str c
-    cdef int active = 0
+    start = 0
+    depth = 0
+    str_length = len(edge_str)
+    active = 0
 
     tokens = []
     for i in range(str_length):
@@ -114,8 +113,6 @@ def _parsed_token(token):
 
 def hedge(source):
     """Create a hyperedge."""
-    cdef str edge_str
-    cdef str edge_inner_str
     if type(source) in {tuple, list}:
         return Hyperedge(tuple(hedge(item) for item in source))
     elif type(source) is str:
@@ -130,7 +127,7 @@ def hedge(source):
         if not tokens:
             return None
         edges = tuple(_parsed_token(token) for token in tokens)
-        if len(edges) > 1 or type(edges[0]) == Hyperedge:
+        if len(edges) > 1 or (len(edges) > 0 and type(edges[0]) == Hyperedge):
             return Hyperedge(edges)
         elif len(edges) > 0:
             return Atom(edges[0], parens)
@@ -644,6 +641,8 @@ class Hyperedge(tuple):
             roles_edges = zip(ar, edge[1:])
             roles_edges = sorted(roles_edges, key=lambda role_edge: argrole_order[role_edge[0]])
             edge = hedge([conn] + list(role_edge[1] for role_edge in roles_edges))
+        if edge is None:
+            return None
         return hedge([subedge.normalized() for subedge in edge])
 
     def __add__(self, other):
@@ -665,7 +664,7 @@ class Atom(Hyperedge):
     """Atomic hyperedge."""
     def __new__(cls, edge, parens=False):
         atom = super(Hyperedge, cls).__new__(cls, tuple(edge))
-        atom.parens = parens
+        atom.parens = parens # type: ignore
         return atom
 
     @property
@@ -714,7 +713,7 @@ class Atom(Hyperedge):
             atom_str = self.root()
         else:
             atom_str = str(self[0])
-        if self.parens:
+        if self.parens: # type: ignore
             return '({})'.format(atom_str)
         else:
             return atom_str

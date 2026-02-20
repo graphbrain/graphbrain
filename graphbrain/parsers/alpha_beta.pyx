@@ -246,14 +246,14 @@ class AlphaBeta(Parser, ABC):
                 atom = None
             if atom:
                 uatom = UniqueAtom(atom)
-                self.atom2token[uatom] = token
+                self.dep_[uatom] = token
                 self.token2atom[token] = uatom
                 self.orig_atom[uatom] = uatom
                 atomseq.append(uatom)
         return atomseq
 
     def reset(self, text):
-        self.atom2token = {}
+        self.dep_ = {}
         self.temp_atoms = set()
         self.orig_atom = {}
         self.edge2toks = {}
