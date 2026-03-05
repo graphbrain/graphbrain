@@ -1,6 +1,6 @@
 import unittest
 
-from graphbrain.tests.hypergraph import Hypergraph
+from tests.hypergraph import Hypergraph
 
 
 class TestSQLite(Hypergraph, unittest.TestCase):
