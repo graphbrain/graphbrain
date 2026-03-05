@@ -1,6 +1,6 @@
 [project]
 name = "graphbrain"
-version = "0.7.1"
+dynamic = ["version"]
 description = "Semantic Hypergraph Tools"
 readme = "README.md"
 license = "MIT"
@@ -63,6 +63,10 @@ graphbrain = "graphbrain.cli:cli"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "VERSION"
+pattern = "(?P<version>.+)"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/graphbrain"]
