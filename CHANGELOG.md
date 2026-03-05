@@ -13,7 +13,8 @@
 - Hypergraph.get_attributes().
 
 ### Changed
-- Python >=3.9 now required.
+- Entire project is now in pure Python
+- Python >=3.10 now required.
 - Hypergraph.search(), .match() and .count() now working with functional patterns and argument role matching.
 - Fixed bug on match_pattern(), variables were not correctly matched when argument roles were specified past the first position in an atoms functional pattern.
 - Simplified default systems connectors (breaks hypergraph DB backwards compatibility).
@@ -22,6 +23,7 @@
 
 ### Removed
 - graphbrain.logic obsolete module.
+- LevelDB backend
 
 ## [0.6.1] - 31-10-2022
 ### Changed

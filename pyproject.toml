@@ -1,6 +1,6 @@
 [project]
 name = "graphbrain"
-version = "0.7.0-dev"
+version = "0.7.0"
 description = "Semantic Hypergraph Tools"
 readme = "README.md"
 license = "MIT"

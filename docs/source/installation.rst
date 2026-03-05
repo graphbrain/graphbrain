@@ -2,12 +2,8 @@
 Installation
 ============
 
-Graphbrain requires Python >=3.9 and runs on macOS, Linux and Windows.
+Graphbrain requires Python >=3.10.
 
-We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. `For such cases or to build from the sources, check the prerequisites for your OS <#prerequisites>`_.
-
-.. warning::
-   *Important for macOS users:* You will need to install a specific version of LevelDB before installing Graphbrain. `Please refer to the prerequisites section below for details <#macos>`_.
 
 Install with pip
 ================
@@ -52,16 +48,6 @@ In case both models are present, Graphbrain will use the transformer model. A sp
 
    $ pip uninstall en_core_web_trf
 
-Coreference resolution
-----------------------
-
-If you want to perform coreference resolution, you will need to install the transformer model and also the following model::
-
-   pip install https://github.com/explosion/spacy-experimental/releases/download/v0.6.1/en_coreference_web_trf-3.4.0a2-py3-none-any.whl
-
-
-Coreference resolution currently requires version 0.6.1 of the package ``spacy-experimental`` (`more info <https://github.com/explosion/spacy-experimental/releases/tag/v0.6.1>`_). Graphbrain requirements specify this version, but if you run into problems make sure you have the correct one installed.
-
 Install from the code repository (github)
 =========================================
 
@@ -75,10 +61,6 @@ Start by cloning the source code to your current local directory.
 
 It is advisable to work with virtual environments, for reasons that are explained in the previous section. Please refer to it for details.
 
-Install Cython::
-
-   $ pip install cython
-
 Now you can build and install graphbrain::
 
    $ pip install .
@@ -89,7 +71,7 @@ If you are working on graphbrain development or wish to modify the code for your
 
 This way, graphbrain will be added to your environment by linking to the local project directory, which means that any change in the code will reflect directly in the environment. Another important consequence of this is that you will be able to import graphbrain from the project directory and run development tools such as `pytest`, otherwise there could be conflicts caused by the `graphbrain` package in the current path not containing the compiled cython modules.
 
-It is then necessary to download a spaCy language model and optionally the coreference resolution model, as detailed above.
+It is then necessary to download a spaCy language model, as detailed above.
 
 For developers
 --------------
@@ -103,9 +85,8 @@ Run tests
 
 From the project's root directory::
 
-  $ pytest graphbrain
+  $ pytest
 
-Notice that this requires graphbrain to have been installed with the `-e` pip flag, and for the `pytest` package to be installed. The `pytest` package is included in the above mentioned development dependencies.
 
 Prerequisites
 =============
@@ -145,18 +126,3 @@ If python 3 is not already included with your current version os macOS::
 * virtualenv (Virtual Python Environment builder)::
 
    $ sudo -H pip install virtualenv
-
-* LevelDB version 1.22
-
-This version of LevelDB is no longer supported by Homebrew, but it is possible to install it using a custom formula that we provide::
-
-   $ brew tap graphbrain/homebrew-formulae git@github.com:graphbrain/homebrew-formulae.git
-   $ brew extract --version=1.22 leveldb graphbrain/formulae
-   $ brew install leveldb@1.22
-
-(this formula was forked from this repository: https://github.com/bagonyi/homebrew-formulae, our thanks to David Bagonyi for creating it!)
-
-Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) (see https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134)::
-
-   $ export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
-   $ export CPATH="$CPATH:$(brew --prefix)/include"
