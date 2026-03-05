@@ -1,4 +1,4 @@
-import pkg_resources
+from importlib.resources import files
 
 import spacy
 
@@ -74,7 +74,7 @@ class ParserEN(AlphaBeta):
              
         super().__init__(nlp, lemmas=lemmas, corefs=corefs, beta=beta, normalize=normalize, post_process=post_process)
         self.lang = LANG
-        cases_str = pkg_resources.resource_string('graphbrain', 'data/atoms-en.csv').decode('utf-8')
+        cases_str = files('graphbrain').joinpath('data/atoms-en.csv').read_text(encoding='utf-8')
         self.alpha = Alpha(cases_str)
 
     # ===========================================

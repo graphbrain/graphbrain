@@ -6,6 +6,8 @@
 
 ### Changed
 
+- Replaced pkg_resources with importlib.resources.files() in parser_en.
+
 ### Removed
 
 ## [0.7.0] - 05-03-2026
