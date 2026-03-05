@@ -1,8 +1,6 @@
 from typing import Set
 
-# semsim disabled for now
-# from graphbrain.patterns.semsim.types import SEMSIM_FUNS
-FUNS: Set[str] = {'var', 'atoms', 'lemma', 'any'} # | SEMSIM_FUNS.keys()
+FUNS: Set[str] = {'var', 'atoms', 'lemma', 'any'}
 
 def is_wildcard(atom):
     """Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
