@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 
 from graphbrain.hyperedge import hedge
-import graphbrain.memory.leveldb
 import graphbrain.memory.sqlite
 
 
@@ -16,8 +15,6 @@ def hgraph(locator_string):
         extension = filename_parts[-1]
         if extension in {'sqlite', 'sqlite3', 'db'}:
             return graphbrain.memory.sqlite.SQLite(locator_string)
-        elif extension in {'leveldb', 'hg'}:
-            return graphbrain.memory.leveldb.LevelDB(locator_string)
     raise RuntimeError('Unknown hypergraph database type.')
 
 
