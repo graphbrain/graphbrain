@@ -19,7 +19,6 @@ CYTHON_ANNOTATE = False
 CYTHON_FORCE_COMPILATION = True
 
 EXT_MODULES = [
-    'graphbrain.memory',
     'graphbrain.parsers',
     'graphbrain.patterns.argroles',
     'graphbrain.patterns.atoms',

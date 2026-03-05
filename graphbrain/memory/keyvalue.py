@@ -302,16 +302,17 @@ class KeyValue(Hypergraph, ABC):
             prefix = _edges2prefix(edges, strict)
             for perm_str in self._permutations_with_prefix(prefix):
                 tokens = split_edge_str(perm_str)
-                nper = int(tokens[-1])
-                if strict:
-                    if nper == first_permutation(len(tokens) - 1, positions):
-                        yield perm2edge(perm_str)
-                else:
-                    edge = perm2edge(perm_str)
-                    if edge:
-                        position = _prefix_position(prefix, edge)
-                        if nper == first_permutation(len(edge), (position,)):
+                if tokens:
+                    nper = int(tokens[-1])
+                    if strict:
+                        if nper == first_permutation(len(tokens) - 1, positions):
                             yield perm2edge(perm_str)
+                    else:
+                        edge = perm2edge(perm_str)
+                        if edge:
+                            position = _prefix_position(prefix, edge)
+                            if nper == first_permutation(len(edge), (position,)):
+                                yield perm2edge(perm_str)
 
     # from Hypergraph
     def _star(self, center, limit=None):
@@ -324,10 +325,12 @@ class KeyValue(Hypergraph, ABC):
             edge = perm2edge(perm_str)
             if edge:
                 position = edge.index(center)
-                nper = int(split_edge_str(perm_str)[-1])
-                if nper == first_permutation(len(edge), (position,)):
-                    count += 1
-                    yield edge
+                parts = split_edge_str(perm_str)
+                if parts:
+                    nper = int(parts[-1])
+                    if nper == first_permutation(len(edge), (position,)):
+                        count += 1
+                        yield edge
 
     def _atoms_with_root(self, root):
         prefix = ''.join((root, '/'))
@@ -344,9 +347,11 @@ class KeyValue(Hypergraph, ABC):
                 if root is None:
                     if all([item in edge for item in edges]):
                         positions = [edge.index(item) for item in edges]
-                        nper = int(split_edge_str(perm_str)[-1])
-                        if nper == first_permutation(len(edge), positions):
-                            yield edge
+                        parts = split_edge_str(perm_str)
+                        if parts:
+                            nper = int(parts[-1])
+                            if nper == first_permutation(len(edge), positions):
+                                yield edge
                 else:
                     # TODO: remove redundant results when a root is present
                     yield edge
