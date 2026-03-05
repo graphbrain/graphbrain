@@ -107,17 +107,17 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#package-functions">package functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parser-module">parser module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.__init__">package functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#readers-package">readers package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#reader-module">reader module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#txt-module">txt module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dir-module">dir module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#csv-module">csv module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wikipedia-module">wikipedia module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#reddit-module">reddit module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.reader">reader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.txt">txt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.dir">dir module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.csv">csv module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.wikipedia">wikipedia module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.reddit">reddit module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#utils-package">utils package</a><ul>
@@ -1304,32 +1304,79 @@ the second is a dictionary of attribute values
 </section>
 <section id="parsers-package">
 <h2>parsers package<a class="headerlink" href="#parsers-package" title="Link to this heading"></a></h2>
-<section id="package-functions">
-<h3>package functions<a class="headerlink" href="#package-functions" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.parsers.__init__">
+<span id="package-functions"></span><h3>package functions<a class="headerlink" href="#module-graphbrain.parsers.__init__" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.parsers.__init__.create_parser">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.parsers.__init__.</span></span><span class="sig-name descname"><span class="pre">create_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lemmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corefs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'repair'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/__init__.html#create_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.parsers.__init__.create_parser" title="Link to this definition"></a></dt>
+<dd><p>Creates and returns a parser (as an instanceof a subclass of Parser)
+for the language specified in the parameter. If parser_class is specified,
+then the parser specified by this class is instantiated instead. Throws
+exception if language is not implemented.</p>
+<p>Available parsers:
+‘en’ – English</p>
+<p>Keyword argument:
+parser_class – specify an external parser class.
+lemmas – if True, lemma edges are generated by the parser.
+corefs – if True, coreference resolution is performed.
+(default: False)
+beta – beta stage mode, current options are ‘strict’ and ‘repair’
+(default: ‘repair’)
+normalize – perform hyperedge normalization (default: True)
+post_process – perform hyperedge post-processing (default: True)</p>
+</dd></dl>
+
 </section>
-<section id="parser-module">
-<h3>parser module<a class="headerlink" href="#parser-module" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.parsers.parser">
+<span id="parser-module"></span><h3>parser module<a class="headerlink" href="#module-graphbrain.parsers.parser" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphbrain.parsers.parser.Parser">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphbrain.parsers.parser.</span></span><span class="sig-name descname"><span class="pre">Parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lemmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corefs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Link to this definition"></a></dt>
+<dd><p>Defines the common interface for parser objects.
+Parsers transofrm natural text into graphbrain hyperedges.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.parsers.parser.Parser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser.parse" title="Link to this definition"></a></dt>
+<dd><p>Transforms the given text into hyperedges + aditional information.
+Returns a dictionary with two fields:</p>
+<p>-&gt; parses: a sequence of dictionaries, with one dictionary for each
+sentence found in the text.</p>
+<p>-&gt; inferred_edges: a sequence of edges inferred during by parsing
+process (e.g. genders, ‘X is Y’ relationships)</p>
+<p>Each sentence parse dictionary contains at least the following fields:</p>
+<p>-&gt; main_edge: the hyperedge corresponding to the sentence.</p>
+<p>-&gt; extra_edges: aditional edges, e.g. connecting atoms that appear
+in the main_edge to their lemmas.</p>
+<p>-&gt; text: the string of natural language text corresponding to the
+main_edge, i.e.: the sentence itself.</p>
+<p>-&gt; edges_text: a dictionary of all edges and subedges to their
+corresponding text.</p>
+<p>-&gt; corefs: resolve coreferences.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 <section id="readers-package">
 <h2>readers package<a class="headerlink" href="#readers-package" title="Link to this heading"></a></h2>
-<section id="reader-module">
-<h3>reader module<a class="headerlink" href="#reader-module" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.readers.reader">
+<span id="reader-module"></span><h3>reader module<a class="headerlink" href="#module-graphbrain.readers.reader" title="Link to this heading"></a></h3>
 </section>
-<section id="txt-module">
-<h3>txt module<a class="headerlink" href="#txt-module" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.readers.txt">
+<span id="txt-module"></span><h3>txt module<a class="headerlink" href="#module-graphbrain.readers.txt" title="Link to this heading"></a></h3>
 </section>
-<section id="dir-module">
-<h3>dir module<a class="headerlink" href="#dir-module" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.readers.dir">
+<span id="dir-module"></span><h3>dir module<a class="headerlink" href="#module-graphbrain.readers.dir" title="Link to this heading"></a></h3>
 </section>
-<section id="csv-module">
-<h3>csv module<a class="headerlink" href="#csv-module" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.readers.csv">
+<span id="csv-module"></span><h3>csv module<a class="headerlink" href="#module-graphbrain.readers.csv" title="Link to this heading"></a></h3>
 </section>
-<section id="wikipedia-module">
-<h3>wikipedia module<a class="headerlink" href="#wikipedia-module" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.readers.wikipedia">
+<span id="wikipedia-module"></span><h3>wikipedia module<a class="headerlink" href="#module-graphbrain.readers.wikipedia" title="Link to this heading"></a></h3>
 </section>
-<section id="reddit-module">
-<h3>reddit module<a class="headerlink" href="#reddit-module" title="Link to this heading"></a></h3>
+<section id="module-graphbrain.readers.reddit">
+<span id="reddit-module"></span><h3>reddit module<a class="headerlink" href="#module-graphbrain.readers.reddit" title="Link to this heading"></a></h3>
 </section>
 </section>
 <section id="utils-package">
