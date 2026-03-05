@@ -1,11 +1,8 @@
-from typing import Dict, List, Tuple, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from graphbrain.hyperedge import Hyperedge, hedge
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.patterns.matcher import Matcher
-# SEMSIM disabled for now (see also commented code below)
-# from graphbrain.patterns.semsim.instances import SemSimInstance
-# from graphbrain.patterns.semsim.processing import match_semsim_instances
 from graphbrain.patterns.utils import _normalize_fun_patterns, _edge_tok_pos
 
 
@@ -16,8 +13,6 @@ def match_pattern(
         ref_edges: Optional[List[Union[Hyperedge, str, list, tuple]]] = None,
         skip_semsim: bool = True,
         hg: Optional[Hypergraph] = None
-# SEMSIM disabled for now
-# ) -> Union[List[Dict], Tuple[List[Dict], List[SemSimInstance]]]:
 ) -> List[Dict]:
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a list of dictionaries will be returned. If the pattern
@@ -31,20 +26,20 @@ def match_pattern(
     Patterns are themselves edges. They can match families of edges
     by employing special atoms:
 
-    -> '\*' represents a general wildcard (matches any entity)
+    -> '\\*' represents a general wildcard (matches any entity)
 
     -> '.' represents an atomic wildcard (matches any atom)
 
-    -> '(\*)' represents an edge wildcard (matches any edge)
+    -> '(\\*)' represents an edge wildcard (matches any edge)
 
     -> '...' at the end indicates an open-ended pattern.
 
-    The wildcards ('\*', '.' and '(\*)') can be used to specify variables,
-    for example '\*x', '(CLAIM)' or '.ACTOR'. In case of a match, these
+    The wildcards ('\\*', '.' and '(\\*)') can be used to specify variables,
+    for example '\\*x', '(CLAIM)' or '.ACTOR'. In case of a match, these
     variables are assigned the hyperedge they correspond to. For example,
 
     (1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd (my/Mp name/Cn) \*NAME)
+    applied to the pattern: (is/Pd (my/Mp name/Cn) \\*NAME)
     produces the result: [{'NAME', mary/Cp}]
 
     (2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
@@ -52,7 +47,7 @@ def match_pattern(
     produces the result: [{}]
 
     (3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd . \*NAME)
+    applied to the pattern: (is/Pd . \\*NAME)
     produces the result: []
     """
     edge: Hyperedge = hedge(edge)
@@ -95,11 +90,11 @@ def edge_matches_pattern(
     Patterns are themselves edges. They can match families of edges
     by employing special atoms:
 
-    -> '\*' represents a general wildcard (matches any entity)
+    -> '\\*' represents a general wildcard (matches any entity)
 
     -> '.' represents an atomic wildcard (matches any atom)
 
-    -> '(\*)' represents an edge wildcard (matches any edge)
+    -> '(\\*)' represents an edge wildcard (matches any edge)
 
     -> '...' at the end indicates an open-ended pattern.
 

@@ -4,7 +4,7 @@ FUNS: Set[str] = {'var', 'atoms', 'lemma', 'any'}
 
 def is_wildcard(atom):
     """Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.
-    (\*, ., ..., if it is surrounded by parenthesis or variable label starting with an uppercase letter)
+    (\\*, ., ..., if it is surrounded by parenthesis or variable label starting with an uppercase letter)
     """
     if atom.atom:
         return atom.parens or atom[0][0] in {'*', '.'} or atom[0][0].isupper()
@@ -23,7 +23,7 @@ def is_pattern(edge):
     one pattern matcher.
 
     Pattern matcher are:
-    - '\*', '.', '(\*)', '...'
+    - '\\*', '.', '(\\*)', '...'
     - variables (atom label starting with an uppercase letter)
     - argument role matcher (unordered argument roles surrounded by curly brackets)
     - functional patterns (var, atoms, lemma, ...)
@@ -49,7 +49,7 @@ def is_full_pattern(edge):
     """Check if every atom is a pattern matcher.
 
     Pattern matcher are:
-    '\*', '.', '(\*)', '...', variables (atom label starting with an
+    '\\*', '.', '(\\*)', '...', variables (atom label starting with an
     uppercase letter) and functional patterns.
     """
     if edge.atom:
