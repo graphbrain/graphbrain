@@ -1,2 +1,45 @@
+[project]
+name = "hyperparsers"
+version = "0.1.0"
+description = "Semantic Hypergraph Tools"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "asciitree",
+    "ipython",
+    "mwparserfromhell",
+    "networkx",
+    # fixed for now because of spacy
+    "numpy", # ==1.26.4',
+    "progressbar2",
+    "scikit-learn",
+    "spacy",
+    "spacy-transformers",
+    "termcolor",
+    "thinc",
+    "torch",
+    "trafilatura",
+]
+
+dev = [
+    "mypy>=1.8.0",
+    "ruff>=0.2.2",
+    "pre-commit>=3.6.2",
+    "types-passlib>=1.7.7.20240106",
+    "coverage>=7.4.3",
+    "Sphinx",
+    "sphinx_rtd_theme"
+]
+
+[project.scripts]
+graphbrain = "graphbrain.cli:cli"
+
 [build-system]
-requires = ["setuptools", "wheel", "Cython"]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+target-version = "py310"
