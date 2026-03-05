@@ -1,24 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>Installation &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="_static/favicon.png"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8fb39b0a"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5a057da9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -58,7 +57,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#install-with-pip">Install with pip</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#choose-language-model">Choose language model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#coreference-resolution">Coreference resolution</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#install-from-the-code-repository-github">Install from the code repository (github)</a><ul>
@@ -107,12 +105,7 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
-<p>Graphbrain requires Python &gt;=3.9 and runs on macOS, Linux and Windows.</p>
-<p>We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. <a class="reference external" href="#prerequisites">For such cases or to build from the sources, check the prerequisites for your OS</a>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p><em>Important for macOS users:</em> You will need to install a specific version of LevelDB before installing Graphbrain. <a class="reference external" href="#macos">Please refer to the prerequisites section below for details</a>.</p>
-</div>
+<p>Graphbrain requires Python &gt;=3.10.</p>
 <section id="install-with-pip">
 <h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install graphbrain
@@ -152,14 +145,6 @@ $ pip install graphbrain
 </pre></div>
 </div>
 </section>
-<section id="coreference-resolution">
-<h3>Coreference resolution<a class="headerlink" href="#coreference-resolution" title="Link to this heading"></a></h3>
-<p>If you want to perform coreference resolution, you will need to install the transformer model and also the following model:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">explosion</span><span class="o">/</span><span class="n">spacy</span><span class="o">-</span><span class="n">experimental</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">v0</span><span class="mf">.6.1</span><span class="o">/</span><span class="n">en_coreference_web_trf</span><span class="o">-</span><span class="mf">3.4.0</span><span class="n">a2</span><span class="o">-</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
-</pre></div>
-</div>
-<p>Coreference resolution currently requires version 0.6.1 of the package <code class="docutils literal notranslate"><span class="pre">spacy-experimental</span></code> (<a class="reference external" href="https://github.com/explosion/spacy-experimental/releases/tag/v0.6.1">more info</a>). Graphbrain requirements specify this version, but if you run into problems make sure you have the correct one installed.</p>
-</section>
 </section>
 <section id="install-from-the-code-repository-github">
 <h2>Install from the code repository (github)<a class="headerlink" href="#install-from-the-code-repository-github" title="Link to this heading"></a></h2>
@@ -170,10 +155,6 @@ $ cd graphbrain
 </pre></div>
 </div>
 <p>It is advisable to work with virtual environments, for reasons that are explained in the previous section. Please refer to it for details.</p>
-<p>Install Cython:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install cython
-</pre></div>
-</div>
 <p>Now you can build and install graphbrain:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install .
 </pre></div>
@@ -183,7 +164,7 @@ $ cd graphbrain
 </pre></div>
 </div>
 <p>This way, graphbrain will be added to your environment by linking to the local project directory, which means that any change in the code will reflect directly in the environment. Another important consequence of this is that you will be able to import graphbrain from the project directory and run development tools such as <cite>pytest</cite>, otherwise there could be conflicts caused by the <cite>graphbrain</cite> package in the current path not containing the compiled cython modules.</p>
-<p>It is then necessary to download a spaCy language model and optionally the coreference resolution model, as detailed above.</p>
+<p>It is then necessary to download a spaCy language model, as detailed above.</p>
 <section id="for-developers">
 <h3>For developers<a class="headerlink" href="#for-developers" title="Link to this heading"></a></h3>
 <p>If you want to help develop graphbrain, you should also install the development dependencies:</p>
@@ -194,10 +175,9 @@ $ cd graphbrain
 <section id="run-tests">
 <h3>Run tests<a class="headerlink" href="#run-tests" title="Link to this heading"></a></h3>
 <p>From the project’s root directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pytest graphbrain
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pytest
 </pre></div>
 </div>
-<p>Notice that this requires graphbrain to have been installed with the <cite>-e</cite> pip flag, and for the <cite>pytest</cite> package to be installed. The <cite>pytest</cite> package is included in the above mentioned development dependencies.</p>
 </section>
 </section>
 <section id="prerequisites">
@@ -240,20 +220,7 @@ distribution to install the prerequisites.</p>
 </pre></div>
 </div>
 </li>
-<li><p>LevelDB version 1.22</p></li>
 </ul>
-<p>This version of LevelDB is no longer supported by Homebrew, but it is possible to install it using a custom formula that we provide:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap graphbrain/homebrew-formulae git@github.com:graphbrain/homebrew-formulae.git
-$ brew extract --version=1.22 leveldb graphbrain/formulae
-$ brew install leveldb@1.22
-</pre></div>
-</div>
-<p>(this formula was forked from this repository: <a class="reference external" href="https://github.com/bagonyi/homebrew-formulae">https://github.com/bagonyi/homebrew-formulae</a>, our thanks to David Bagonyi for creating it!)</p>
-<p>Users with M-Series Macs must add the homebrew path (to .bashrc or .zshrc) (see <a class="reference external" href="https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134">https://github.com/wbolster/plyvel/issues/100#issuecomment-1162625134</a>):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export LIBRARY_PATH=&quot;$LIBRARY_PATH:$(brew --prefix)/lib&quot;
-$ export CPATH=&quot;$CPATH:$(brew --prefix)/include&quot;
-</pre></div>
-</div>
 </section>
 </section>
 </section>
@@ -269,7 +236,7 @@ $ export CPATH=&quot;$CPATH:$(brew --prefix)/include&quot;
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 CNRS.</p>
+    <p>&#169; Copyright 2026 CNRS.</p>
   </div>
 
    

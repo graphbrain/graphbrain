@@ -1,24 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Parsing natural language &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+  <title>Parsing natural language &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=8fb39b0a"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5a057da9"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -113,7 +112,7 @@
   <section id="parsing-natural-language">
 <h1>Parsing natural language<a class="headerlink" href="#parsing-natural-language" title="Link to this heading"></a></h1>
 <p>Parsing natural language to semantic hypergraphs is another crucial aspect of Graphbrain. This aspect of the library is covered by the <code class="docutils literal notranslate"><span class="pre">graphbrain.parsers</span></code> package. Let us see how to create a parser, and how to use it to parse a sentence:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="n">create_parser</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_parser</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parse_results</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Einstein first published the theory of relativity in 1905&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
@@ -168,7 +167,7 @@
 </pre></div>
 </div>
 <p>The special conjunction <code class="docutils literal notranslate"><span class="pre">lemma/J/.</span></code> indicates a lemma specification, followed by the atom and its lemma form. Notice that only the main type is considered and other role information is removed, because these are not relevant to the lemma relationship and would reduce generality. Let us see the example above with lemmas enabled:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="n">create_parser</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_parser</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">lemmas</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Einstein first published the theory of relativity in 1905&#39;</span><span class="p">)</span>
 <span class="go">{&#39;parses&#39;:</span>
@@ -268,7 +267,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 CNRS.</p>
+    <p>&#169; Copyright 2026 CNRS.</p>
   </div>
 
    

@@ -1,24 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patterns &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+  <title>Patterns &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=8fb39b0a"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5a057da9"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -128,7 +127,7 @@
 </pre></div>
 </div>
 <p>We can use them to search the hypergraph for matching hyperedges. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/P.so alice/C chess/C)&#39;</span><span class="p">)</span>
 <span class="go">(plays/P.so alice/C chess/C)</span>
@@ -158,7 +157,7 @@
 <section id="non-strict-search">
 <h2>Non-strict search<a class="headerlink" href="#non-strict-search" title="Link to this heading"></a></h2>
 <p>Non-strict search allows for patterns to match atoms in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in this example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/Pd.so alice/Cp.s chess/Cc.s)&#39;</span><span class="p">)</span>
 <span class="go">(plays/Pd.so alice/Cp.s chess/Cc.s)</span>
@@ -214,8 +213,8 @@
 </pre></div>
 </div>
 <p>Then the <code class="docutils literal notranslate"><span class="pre">match_pattern(edge,</span> <span class="pre">pattern)</span></code> function can be used to apply patterns to edges. It works like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
-<span class="o">&gt;&gt;</span> <span class="kn">from</span> <span class="nn">graphbrain.patterns</span> <span class="kn">import</span> <span class="n">match_pattern</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain</span><span class="w"> </span><span class="kn">import</span> <span class="n">hedge</span>
+<span class="o">&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain.patterns</span><span class="w"> </span><span class="kn">import</span> <span class="n">match_pattern</span>
 <span class="o">&gt;&gt;</span> <span class="n">pattern</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.</span><span class="si">{so}</span><span class="s1"> PLAYER/C *)&#39;</span><span class="p">)</span>
 <span class="o">&gt;&gt;</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so mary/C *)&#39;</span><span class="p">)</span>
 <span class="o">&gt;&gt;</span> <span class="n">match_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
@@ -318,7 +317,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 CNRS.</p>
+    <p>&#169; Copyright 2026 CNRS.</p>
   </div>
 
    

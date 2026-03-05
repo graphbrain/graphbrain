@@ -1,24 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Basic hypergraph operations &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+  <title>Basic hypergraph operations &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=8fb39b0a"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5a057da9"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -135,7 +134,7 @@
 <section id="creating-and-manipulating-hyperedges">
 <h2>Creating and manipulating hyperedges<a class="headerlink" href="#creating-and-manipulating-hyperedges" title="Link to this heading"></a></h2>
 <p>Graphbrain defines the object class <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code>, which provides a variety of methods to work with hyperedges. The full interface of this class is described in the API reference. However, these objects are not meant to be instantiated directly. Instead, the <code class="docutils literal notranslate"><span class="pre">hedge</span></code> function can be used to create such an object directly from a string representation conforming to the SH notation. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain</span><span class="w"> </span><span class="kn">import</span> <span class="n">hedge</span>
 <span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so mary/C chess/C)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -170,7 +169,7 @@
 <section id="creating-and-populating-hypergraphs">
 <h2>Creating and populating hypergraphs<a class="headerlink" href="#creating-and-populating-hypergraphs" title="Link to this heading"></a></h2>
 <p>Graphbrain hypergraphs are created and/or opened like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hgraph</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain</span><span class="w"> </span><span class="kn">import</span> <span class="n">hgraph</span>
 <span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -274,7 +273,7 @@
 <section id="degrees-and-deep-degrees">
 <h2>Degrees and deep degrees<a class="headerlink" href="#degrees-and-deep-degrees" title="Link to this heading"></a></h2>
 <p>In conventional graph theory, there is the notion of the degree of a node, which is the number of other nodes that it is directly connected to. This is a simple but generally useful measure of the <em>centrality</em> of a node in the graph. In hypergraphs we can also have the same notion of degree, with the only difference that a single hyperedge can connect one entity to several others. Graphbrain keeps track of the degree of every hyperedge, and the <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> class provides a method to obtain it:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">graphbrain</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="s1">&#39;alice/C&#39;</span><span class="p">)</span>
 <span class="go">0</span>
@@ -406,7 +405,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 CNRS.</p>
+    <p>&#169; Copyright 2026 CNRS.</p>
   </div>
 
    
