@@ -1,6 +1,14 @@
 # Changelog
 
-## [0.7.0] - ongoing
+## [0.7.1] - ongoing
+
+### Added
+
+### Changed
+
+### Removed
+
+## [0.7.0] - 05-03-2026
 ### Added
 - patterns.is_wildcard().
 - Base class hypergraph.memory.keyvalue.KeyValue for key-value hypergraph databases, removing redundant code between LevelDB and SQLite.
