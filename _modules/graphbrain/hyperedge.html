@@ -1,0 +1,1386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphbrain.hyperedge &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5a057da9"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
+    </a>
+    </div>
+    
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pubs-cases.html">Publications and Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials and examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../manual.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../thanks.html">Thanks</a></li>
+</ul>
+
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #333" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Graphbrain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">graphbrain.hyperedge</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphbrain.hyperedge</h1><div class="highlight"><pre>
+<span></span><span class="n">argrole_order</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;m&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;o&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s1">&#39;?&#39;</span><span class="p">:</span> <span class="mi">10</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="str2atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.str2atom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">str2atom</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a string into a valid atom.&quot;&quot;&quot;</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> 
+
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;%25&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%2f</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;%20&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;%28&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;%29&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%2e</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%2a</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">,</span> <span class="s1">&#39;%26&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">,</span> <span class="s1">&#39;%40&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%0a</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%0d</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_open_pars</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns number of consecutive open parenthesis at the beginning of the</span>
+<span class="sd">    string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">s</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(&#39;</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">pos</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_close_pars</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of consecutive close parenthesis at the end of the string.&quot;&quot;&quot;</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">while</span> <span class="n">s</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_edge_str_has_outer_parens</span><span class="p">(</span><span class="n">edge_str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if string representation of edge is delimited by outer</span>
+<span class="sd">    parenthesis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edge_str</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">edge_str</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(&#39;</span>
+
+
+<div class="viewcode-block" id="split_edge_str">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.split_edge_str">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_edge_str</span><span class="p">(</span><span class="n">edge_str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shallow split into tokens of a string representation of an edge,</span>
+<span class="sd">    without outer parenthesis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">str_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">edge_str</span><span class="p">)</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">str_length</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">edge_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">active</span> <span class="ow">and</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge_str</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">active</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">&#39;(&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">active</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span>
+            <span class="n">depth</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge_str</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">active</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># TODO: throw exception?</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">active</span><span class="p">:</span>
+                <span class="n">active</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">i</span>
+
+    <span class="k">if</span> <span class="n">active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># TODO: throw exception?</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge_str</span><span class="p">[</span><span class="n">start</span><span class="p">:])</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parsed_token</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_edge_str_has_outer_parens</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">hedge</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Atom</span><span class="p">((</span><span class="n">token</span><span class="p">,))</span>
+
+
+<div class="viewcode-block" id="hedge">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.hedge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hedge</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a hyperedge.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">source</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">edge_str</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">edge_inner_str</span> <span class="o">=</span> <span class="n">edge_str</span>
+
+        <span class="n">parens</span> <span class="o">=</span> <span class="n">_edge_str_has_outer_parens</span><span class="p">(</span><span class="n">edge_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parens</span><span class="p">:</span>
+            <span class="n">edge_inner_str</span> <span class="o">=</span> <span class="n">edge_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">split_edge_str</span><span class="p">(</span><span class="n">edge_inner_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_parsed_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">Hyperedge</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Atom</span><span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parens</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Hyperedge</span><span class="p">,</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">UniqueAtom</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">source</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="build_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.build_atom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_atom</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="n">parts</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an atom from text and other parts.&quot;&quot;&quot;</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">str2atom</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">parts_str</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">part</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span> <span class="k">if</span> <span class="n">part</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">atom</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">parts_str</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">Atom</span><span class="p">((</span><span class="n">atom</span><span class="p">,))</span></div>
+
+
+
+<div class="viewcode-block" id="Hyperedge">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Hyperedge</span><span class="p">(</span><span class="nb">tuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Non-atomic hyperedge.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Hyperedge</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">edges</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if edge is an atom.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">not_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if edge is not an atom.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Edge type.</span>
+<span class="sd">        (this porperty is a shortcut for Hyperedge.type())</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Edge main type.</span>
+<span class="sd">        (this porperty is a shortcut for Hyperedge.mtype())</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Edge connector type.</span>
+<span class="sd">        (this porperty is a shortcut for Hyperedge.connector_type())</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connector_type</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cmt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Edge connector main type.</span>
+<span class="sd">        (this porperty is a shortcut for Hyperedge.mconnector_type())</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connector_mtype</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Hyperedge.is_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.is_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. deprecated:: 0.6.0</span>
+<span class="sd">            Please use the properties .atom and .not_atom instead.</span>
+
+<span class="sd">        Checks if edge is an atom.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.to_str">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.to_str">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts edge to its string representation.</span>
+
+<span class="sd">        Keyword argument:</span>
+<span class="sd">        roots_only -- only the roots of the atoms will be used to create</span>
+<span class="sd">        the string representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">edge</span><span class="o">.</span><span class="n">to_str</span><span class="p">(</span><span class="n">roots_only</span><span class="o">=</span><span class="n">roots_only</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">edge</span><span class="p">])</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.label">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate human-readable label for edge.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">connector_atom</span><span class="p">()</span><span class="o">.</span><span class="n">parts</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">label</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.inner_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.inner_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The inner atom inside of a modifier structure.</span>
+
+<span class="sd">        For example, condider:</span>
+<span class="sd">        (red/M shoes/C)</span>
+<span class="sd">        The inner atom is:</span>
+<span class="sd">        shoes/C</span>
+<span class="sd">        Or, the more complex case:</span>
+<span class="sd">        ((and/J slow/M steady/M) go/P)</span>
+<span class="sd">        Yields:</span>
+<span class="sd">        gp/P</span>
+
+<span class="sd">        This method should not be used on structures that contain more than</span>
+<span class="sd">        one inner atom, for example concepts constructed with builders or</span>
+<span class="sd">        relations.</span>
+
+<span class="sd">        The inner atom of an atom is itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">inner_atom</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.connector_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.connector_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connector_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The inner atom of the connector.</span>
+
+<span class="sd">        For example, condider:</span>
+<span class="sd">        (does/M (not/M like/P.so) john/C chess/C)</span>
+<span class="sd">        The connector atom is:</span>
+<span class="sd">        like/P.so</span>
+
+<span class="sd">        The connector atom of an atom is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">inner_atom</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.atoms">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.atoms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the set of atoms contained in the edge.</span>
+
+<span class="sd">        For example, consider the edge:</span>
+<span class="sd">        (the/md (of/br mayor/cc (the/md city/cs)))</span>
+<span class="sd">        in this case, edge.atoms() returns:</span>
+<span class="sd">        [the/md, of/br, mayor/cc, city/cs]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">atom_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">atoms</span><span class="p">():</span>
+                <span class="n">atom_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">atom_set</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.all_atoms">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.all_atoms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of all the atoms contained in the edge. Unlike</span>
+<span class="sd">        atoms(), which does not return repeated atoms, all_atoms() does</span>
+<span class="sd">        return repeated atoms if they are different objects.</span>
+
+<span class="sd">        For example, consider the edge:</span>
+<span class="sd">        (the/md (of/br mayor/cc (the/md city/cs)))</span>
+<span class="sd">        in this case, edge.all_atoms() returns:</span>
+<span class="sd">        [the/md, of/br, mayor/cc, the/md, city/cs]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">atoms</span> <span class="o">+=</span> <span class="n">item</span><span class="o">.</span><span class="n">all_atoms</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.size">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.size">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The size of an edge is its total number of atoms, at all depths.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">edge</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.depth">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.depth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns maximal depth of edge, an atom has depth 0.&quot;&quot;&quot;</span>
+        <span class="n">max_d</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="n">max_d</span><span class="p">:</span>
+                <span class="n">max_d</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="k">return</span> <span class="n">max_d</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.roots">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.roots">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">roots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns edge with root-only atoms.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">roots</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.contains">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.contains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">needle</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if &#39;needle&#39; is contained in edge.</span>
+
+<span class="sd">        Keyword argument:</span>
+<span class="sd">        deep -- search recursively (default False)&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">needle</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">deep</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">needle</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.subedges">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.subedges">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subedges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns all the subedges contained in the edge, including atoms</span>
+<span class="sd">        and itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">subedges</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">edges</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.insert_first_argument">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.insert_first_argument">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_first_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an edge built by placing &#39;argument&#39; as the first item</span>
+<span class="sd">        after the connector of this edge. If this edge is an atom, then</span>
+<span class="sd">        it becomes the connector of the returned edge.</span>
+
+<span class="sd">        For example, considering the &#39;edge&#39; (a) and the &#39;argument&#39; (b), this</span>
+<span class="sd">        function returns:</span>
+<span class="sd">        (a b)</span>
+
+<span class="sd">        Considering the &#39;edge&#39; (a b c) and the &#39;argument&#39; (d e), it</span>
+<span class="sd">        returns:</span>
+<span class="sd">        (a (d e) b c)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">((</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argument</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.connect">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.connect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an edge built by adding the items in &#39;arguments&#39; to the</span>
+<span class="sd">        end of this edge. &#39;arguments&#39; must be a collection.</span>
+
+<span class="sd">        For example, connecting the edge (a b) with the &#39;arguments&#39;</span>
+<span class="sd">        (c d) produces:</span>
+<span class="sd">        (a b c d)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">arguments</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="bp">self</span> <span class="o">+</span> <span class="n">arguments</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.sequence">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.sequence">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an edge built by sequencing the &#39;entity&#39;, if it&#39;s an</span>
+<span class="sd">        atom, or the elements of &#39;entity&#39; if it is an edge, either before</span>
+<span class="sd">        or after the elements of this edge.</span>
+
+<span class="sd">        If flat is False, then both this edge and &#39;entity&#39; are treated as</span>
+<span class="sd">        self-contained edges when building the new edge.</span>
+
+<span class="sd">        For example, connecting the edge (a b) and the &#39;entity&#39; c</span>
+<span class="sd">        produces, if before is True:</span>
+<span class="sd">        (c a b)</span>
+<span class="sd">        and if before is False:</span>
+<span class="sd">        (a b c)</span>
+<span class="sd">        Connecting the edge (a b) and the &#39;entity&#39; (c d)</span>
+<span class="sd">        produces, if before is True:</span>
+<span class="sd">        (c d a b)</span>
+<span class="sd">        and if before is False:</span>
+<span class="sd">        (a b c d)</span>
+<span class="sd">        This last example, if &#39;flat&#39; is False, becomes respectively:</span>
+<span class="sd">        ((c d) (a b))</span>
+<span class="sd">        ((a b) (c d))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">before</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">entity</span> <span class="o">+</span> <span class="bp">self</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span> <span class="o">+</span> <span class="n">entity</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">before</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">((</span><span class="n">entity</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.replace_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.replace_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns edge built by replacing every instance of &#39;old&#39; in</span>
+<span class="sd">        this edge with &#39;new&#39;.</span>
+
+<span class="sd">        Keyword argument:</span>
+<span class="sd">        unique -- match only the exact same instance of the atom, i.e.</span>
+<span class="sd">        UniqueAtom(self) == UniqueAtom(old) (default: False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">replace_atom</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="n">unique</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.simplify">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.simplify">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simplify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subtypes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">argroles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">namespaces</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a version of the edge with simplified atoms, for example</span>
+<span class="sd">        removing subtypes, subroles or namespaces.</span>
+
+<span class="sd">        Keyword arguments:</span>
+<span class="sd">        subtypes -- include subtypes (default: False).</span>
+<span class="sd">        argroles --include argroles (default: False).</span>
+<span class="sd">        namespaces -- include namespaces (default: True).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">hedge</span><span class="p">([</span><span class="n">subedge</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">subtypes</span><span class="o">=</span><span class="n">subtypes</span><span class="p">,</span>
+                                       <span class="n">argroles</span><span class="o">=</span><span class="n">argroles</span><span class="p">,</span>
+                                       <span class="n">namespaces</span><span class="o">=</span><span class="n">namespaces</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.type">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the type of this edge as a string.</span>
+<span class="sd">        Type inference is performed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ptype</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ptype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span>
+            <span class="n">outter_type</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span>
+        <span class="k">elif</span> <span class="n">ptype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">ptype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span>
+            <span class="n">outter_type</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+        <span class="k">elif</span> <span class="n">ptype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+            <span class="n">outter_type</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span>
+        <span class="k">elif</span> <span class="n">ptype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;J&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Edge is malformed, type cannot be determined: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outter_type</span><span class="p">,</span> <span class="n">ptype</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.connector_type">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.connector_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connector_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the type of the edge&#39;s connector.</span>
+<span class="sd">        If the edge has no connector (i.e. it&#39;s an atom), then None is</span>
+<span class="sd">        returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.mtype">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.mtype">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the main type of this edge as a string of one character.</span>
+<span class="sd">        Type inference is performed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.connector_mtype">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.connector_mtype">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connector_mtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the main type of the edge&#39;s connector.</span>
+<span class="sd">        If the edge has no connector (i.e. it&#39;s an atom), then None is</span>
+<span class="sd">        returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connector_type</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ct</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ct</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.atom_with_type">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.atom_with_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atom_with_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the first atom found in the edge that has the given</span>
+<span class="sd">        &#39;atom_type&#39;, or whose type starts with &#39;atom_type&#39;.</span>
+<span class="sd">        If no such atom is found, returns None.</span>
+
+<span class="sd">        For example, given the edge (+/B a/Cn b/Cp) and the &#39;atom_type&#39;</span>
+<span class="sd">        c, this function returns:</span>
+<span class="sd">        a/Cn</span>
+<span class="sd">        If the &#39;atom_type&#39; is &#39;Cp&#39;, the it will return:</span>
+<span class="sd">        b/Cp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">atom</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">atom_with_type</span><span class="p">(</span><span class="n">atom_type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">atom</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.contains_atom_type">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.contains_atom_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contains_atom_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the edge contains any atom with the given type.</span>
+<span class="sd">        The edge is searched recursively, so the atom can appear at any depth.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_with_type</span><span class="p">(</span><span class="n">atom_type</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.argroles">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.argroles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">argroles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the argument roles string of the edge, if it exists.</span>
+<span class="sd">        Otherwise returns empty string.</span>
+<span class="sd">        </span>
+<span class="sd">        Argument roles can be return for the entire edge that they apply to,</span>
+<span class="sd">        which can be a relation (R) or a concept (C). For example:</span>
+
+<span class="sd">        ((not/M is/P.sc) bob/C sad/C) has argument roles &quot;sc&quot;,</span>
+<span class="sd">        (of/B.ma city/C berlin/C) has argument roles &quot;ma&quot;.</span>
+
+<span class="sd">        Argument roles can also be returned for the connectors that define </span>
+<span class="sd">        the outer edge, which can be of type predicate (P) or builder (B). For</span>
+<span class="sd">        example:</span>
+
+<span class="sd">        (not/M is/P.sc) has argument roles &quot;sc&quot;,</span>
+<span class="sd">        of/B.ma has argument roles &quot;ma&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">et</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">et</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">}</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">et</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.has_argroles">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.has_argroles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_argroles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if the edge has argroles, False otherwise.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.replace_argroles">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.replace_argroles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace_argroles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argroles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an edge with the argroles of the connector atom replaced</span>
+<span class="sd">        with the provided string.</span>
+<span class="sd">        Returns same edge if the atom does not contain a role part.&quot;&quot;&quot;</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">st</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">}:</span>
+            <span class="n">new_edge</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace_argroles</span><span class="p">(</span><span class="n">argroles</span><span class="p">)]</span>
+            <span class="n">new_edge</span> <span class="o">+=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="n">new_edge</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">st</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">}:</span>
+            <span class="n">new_edge</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace_argroles</span><span class="p">(</span><span class="n">argroles</span><span class="p">)]</span>
+            <span class="n">new_edge</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="n">new_edge</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.insert_argrole">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.insert_argrole">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_argrole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argrole</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an edge with the given argrole inserted at the specified</span>
+<span class="sd">        position in the argroles of the connector atom.</span>
+<span class="sd">        Same restrictions as in replace_argroles() apply.&quot;&quot;&quot;</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">st</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">}:</span>
+            <span class="n">new_edge</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">insert_argrole</span><span class="p">(</span><span class="n">argrole</span><span class="p">,</span> <span class="n">pos</span><span class="p">)]</span>
+            <span class="n">new_edge</span> <span class="o">+=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="n">new_edge</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">st</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">}:</span>
+            <span class="n">new_edge</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">insert_argrole</span><span class="p">(</span><span class="n">argrole</span><span class="p">,</span> <span class="n">pos</span><span class="p">)]</span>
+            <span class="n">new_edge</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="n">new_edge</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.insert_edge_with_argrole">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.insert_edge_with_argrole">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_edge_with_argrole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">argrole</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a new edge with the provided edge and its argroles inserted</span>
+<span class="sd">        at the specified position.&quot;&quot;&quot;</span>
+        <span class="n">new_edge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_argrole</span><span class="p">(</span><span class="n">argrole</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+        <span class="n">new_edge</span> <span class="o">=</span> <span class="n">new_edge</span><span class="p">[:</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">edge</span><span class="p">,)</span> <span class="o">+</span> <span class="n">new_edge</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="n">new_edge</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.edges_with_argrole">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.edges_with_argrole">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">edges_with_argrole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argrole</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of edges with the given argument role.&quot;&quot;&quot;</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">connector</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">argroles</span> <span class="o">=</span> <span class="n">connector</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">argroles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">argroles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;{&#39;</span><span class="p">:</span>
+            <span class="n">argroles</span> <span class="o">=</span> <span class="n">argroles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">argroles</span> <span class="o">=</span> <span class="n">argroles</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">role</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">argroles</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">argrole</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">edges</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.main_concepts">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.main_concepts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">main_concepts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of main concepts in an concept edge.</span>
+<span class="sd">        A main concept is a central concept in a built concept, e.g.:</span>
+<span class="sd">        in (&#39;s/Bp.am zimbabwe/Cp economy/Cn.s), economy/Cn.s is the main</span>
+<span class="sd">        concept.</span>
+
+<span class="sd">        If entity is not an edge, or its connector is not of type builder,</span>
+<span class="sd">        or the builder does not contain concept role annotations, or no</span>
+<span class="sd">        concept is annotated as the main one, then an empty list is</span>
+<span class="sd">        returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_with_argrole</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="Hyperedge.replace_main_concept">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Hyperedge.replace_main_concept">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace_main_concept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_main</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO: document and test&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">hedge</span><span class="p">((</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_main</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ma&#39;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">hedge</span><span class="p">((</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_main</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;am&#39;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">hedge</span><span class="p">((</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">new_main</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_correctness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">ct</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+        <span class="c1"># check if connector has valid type</span>
+        <span class="k">if</span> <span class="n">ct</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">}:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;connector has incorrect type: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ct</span><span class="p">))</span>
+        <span class="c1"># check if modifier structure is correct</span>
+        <span class="k">if</span> <span class="n">ct</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;modifiers can only have one argument&#39;</span><span class="p">)</span>
+        <span class="c1"># check if builder structure is correct</span>
+        <span class="k">elif</span> <span class="n">ct</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;builders can only have two arguments&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">at</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">at</span> <span class="o">!=</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="s1">&#39;builder argument </span><span class="si">{}</span><span class="s1"> has incorrect type: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span> <span class="n">at</span><span class="p">)</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="c1"># check if trigger structure is correct</span>
+        <span class="k">elif</span> <span class="n">ct</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;triggers can only have one arguments&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">at</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">at</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">}:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="s1">&#39;trigger argument </span><span class="si">{}</span><span class="s1"> has incorrect type: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span> <span class="n">at</span><span class="p">)</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="c1"># check if predicate structure is correct</span>
+        <span class="k">elif</span> <span class="n">ct</span> <span class="o">==</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">at</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">at</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">}:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="s1">&#39;predicate argument </span><span class="si">{}</span><span class="s1"> has incorrect type: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span> <span class="n">at</span><span class="p">)</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="c1"># check if conjunction structure is correct</span>
+        <span class="k">elif</span> <span class="n">ct</span> <span class="o">==</span> <span class="s1">&#39;J&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;conjunctions must have at least two arguments&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span>
+
+        <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">subedge</span><span class="o">.</span><span class="n">check_correctness</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">edge</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ar</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ar</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;{&#39;</span><span class="p">:</span>
+                <span class="n">ar</span> <span class="o">=</span> <span class="n">ar</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">roles_edges</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">roles_edges</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">roles_edges</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">role_edge</span><span class="p">:</span> <span class="n">argrole_order</span><span class="p">[</span><span class="n">role_edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">([</span><span class="n">conn</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">role_edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">role_edge</span> <span class="ow">in</span> <span class="n">roles_edges</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">edge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">hedge</span><span class="p">([</span><span class="n">subedge</span><span class="o">.</span><span class="n">normalized</span><span class="p">()</span> <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">Hyperedge</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">Hyperedge</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__add__</span><span class="p">((</span><span class="n">other</span><span class="p">,)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">Hyperedge</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Atom</span><span class="p">(</span><span class="n">Hyperedge</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Atomic hyperedge.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">parens</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Hyperedge</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">edge</span><span class="p">))</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">parens</span> <span class="o">=</span> <span class="n">parens</span> <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">atom</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if edge is an atom.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">not_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if edge is not an atom.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>    
+
+<div class="viewcode-block" id="Atom.is_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.is_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. deprecated:: 0.6.0</span>
+<span class="sd">            Please use the properties .atom and .not_atom instead.</span>
+
+<span class="sd">        Checks if edge is an atom.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Atom.parts">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.parts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Splits atom into its parts.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Atom.root">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.root">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extracts the root of an atom</span>
+<span class="sd">        (e.g. the root of graphbrain/C/1 is graphbrain).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Atom.replace_atom_part">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.replace_atom_part">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace_atom_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part_pos</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a new atom by replacing an atom part in a given atom.&quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">()</span>
+        <span class="n">parts</span><span class="p">[</span><span class="n">part_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">part</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span> <span class="k">if</span> <span class="n">part</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">Atom</span><span class="p">((</span><span class="n">atom</span><span class="p">,))</span></div>
+
+
+<div class="viewcode-block" id="Atom.to_str">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.to_str">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts atom to its string representation.</span>
+
+<span class="sd">        Keyword argument:</span>
+<span class="sd">        roots_only -- only the roots of the atoms will be used to create</span>
+<span class="sd">        the string representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">roots_only</span><span class="p">:</span>
+            <span class="n">atom_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">atom_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parens</span><span class="p">:</span> <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom_str</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">atom_str</span></div>
+
+
+<div class="viewcode-block" id="Atom.label">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate human-readable label from entity.&quot;&quot;&quot;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">()</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%25&#39;</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%2f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%20&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%28&#39;</span><span class="p">,</span> <span class="s1">&#39;(&#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%29&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%2e</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%2a</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%26&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%40&#39;</span><span class="p">,</span> <span class="s1">&#39;@&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">label</span></div>
+
+
+<div class="viewcode-block" id="Atom.inner_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.inner_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The inner atom inside of a modifier structure.</span>
+
+<span class="sd">        For example, condider:</span>
+<span class="sd">        (red/M shoes/C)</span>
+<span class="sd">        The inner atom is:</span>
+<span class="sd">        shoes/C</span>
+<span class="sd">        Or, the more complex case:</span>
+<span class="sd">        ((and/J slow/M steady/M) go/P)</span>
+<span class="sd">        Yields:</span>
+<span class="sd">        gp/P</span>
+
+<span class="sd">        This method should not be used on structures that contain more than</span>
+<span class="sd">        one inner atom, for example concepts constructed with builders or</span>
+<span class="sd">        relations.</span>
+
+<span class="sd">        The inner atom of an atom is itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Atom.connector_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.connector_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connector_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The inner atom of the connector.</span>
+
+<span class="sd">        For example, condider:</span>
+<span class="sd">        (does/M (not/M like/P.so) john/C chess/C)</span>
+<span class="sd">        The connector atom is:</span>
+<span class="sd">        like/P.so</span>
+
+<span class="sd">        The connector atom of an atom is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Atom.atoms">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.atoms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the set of atoms contained in the edge.</span>
+
+<span class="sd">        For example, consider the edge:</span>
+<span class="sd">        (the/Md (of/Br mayor/Cc (the/Md city/Cs)))</span>
+<span class="sd">        in this case, edge.atoms() returns:</span>
+<span class="sd">        [the/Md, of/Br, mayor/Cc, city/Cs]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Atom.all_atoms">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.all_atoms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of all the atoms contained in the edge. Unlike</span>
+<span class="sd">        atoms(), which does not return repeated atoms, all_atoms() does</span>
+<span class="sd">        return repeated atoms if they are different objects.</span>
+
+<span class="sd">        For example, consider the edge:</span>
+<span class="sd">        (the/Md (of/Br mayor/Cc (the/Md city/Cs)))</span>
+<span class="sd">        in this case, edge.all_atoms() returns:</span>
+<span class="sd">        [the/Md, of/Br, mayor/Cc, the/Md, city/Cs]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Atom.size">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.size">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The size of an edge is its total number of atoms, at all depths.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="Atom.depth">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.depth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns maximal depth of edge, an atom has depth 0.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="Atom.roots">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.roots">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">roots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns edge with root-only atoms.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Atom</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">(),))</span></div>
+
+
+<div class="viewcode-block" id="Atom.contains">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.contains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">needle</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if &#39;needle&#39; is contained in edge.</span>
+
+<span class="sd">        Keyword argument:</span>
+<span class="sd">        deep -- search recursively (default: False)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">needle</span></div>
+
+
+<div class="viewcode-block" id="Atom.subedges">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.subedges">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subedges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns all the subedges contained in the edge, including atoms</span>
+<span class="sd">        and itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Atom.insert_first_argument">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.insert_first_argument">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_first_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an edge built by placing &#39;argument&#39; as the first item</span>
+<span class="sd">        after the connector of this edge. If this edge is an atom, then</span>
+<span class="sd">        it becomes the connector of the returned edge.</span>
+
+<span class="sd">        For example, considering the &#39;edge&#39; (a) and the &#39;argument&#39; (b), this</span>
+<span class="sd">        function returns:</span>
+<span class="sd">        (a b)</span>
+
+<span class="sd">        Considering the &#39;edge&#39; (a b c) and the &#39;argument&#39; (d e), it</span>
+<span class="sd">        returns:</span>
+<span class="sd">        (a (d e) b c)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Atom.replace_atom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.replace_atom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns edge built by replacing every instance of &#39;old&#39; in</span>
+<span class="sd">        this edge with &#39;new&#39;.</span>
+
+<span class="sd">        Keyword argument:</span>
+<span class="sd">        unique -- match only the exact same instance of the atom, i.e.</span>
+<span class="sd">        UniqueAtom(self) == UniqueAtom(old) (default: False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">UniqueAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="n">UniqueAtom</span><span class="p">(</span><span class="n">old</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">new</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">old</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">new</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Atom.role">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.role">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">role</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the role of this atom as a list of the subrole strings.</span>
+
+<span class="sd">        The role of an atom is its second part, right after the root.</span>
+<span class="sd">        A dot notation is used to separate the subroles. For example,</span>
+<span class="sd">        the role of graphbrain/Cp.s/1 is:</span>
+
+<span class="sd">            Cp.s</span>
+
+<span class="sd">        For this case, this function returns:</span>
+
+<span class="sd">            [&#39;Cp&#39;, &#39;s&#39;]</span>
+
+<span class="sd">        If the atom only has a root, it is assumed to be a conjunction.</span>
+<span class="sd">        In this case, this function returns the role with just the</span>
+<span class="sd">        generic conjunction type:</span>
+
+<span class="sd">            [&#39;J&#39;].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Atom.simplify">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.simplify">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simplify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subtypes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">argroles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">namespaces</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a simplified version of the atom, for example removing</span>
+<span class="sd">        subtypes, subroles or namespaces.</span>
+
+<span class="sd">        Keyword arguments:</span>
+<span class="sd">        subtypes -- include subtype (default: False).</span>
+<span class="sd">        argroles --include argroles (default: False).</span>
+<span class="sd">        namespaces -- include namespaces (default: True).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="k">if</span> <span class="n">subtypes</span><span class="p">:</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">argroles</span><span class="p">:</span>
+            <span class="n">ar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">role</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">role</span><span class="p">,</span> <span class="n">ar</span><span class="p">)</span>
+
+        <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">role</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">namespaces</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">atom_str</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Atom</span><span class="p">((</span><span class="n">atom_str</span><span class="p">,))</span></div>
+
+
+<div class="viewcode-block" id="Atom.type">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the type of the atom.</span>
+
+<span class="sd">        The type of an atom is its first subrole. For example, the</span>
+<span class="sd">        type of graphbrain/Cp.s/1 is &#39;Cp&#39;.</span>
+
+<span class="sd">        If the atom only has a root, it is assumed to be a conjunction.</span>
+<span class="sd">        In this case, this function returns the generic conjunction type: &#39;J&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Atom.connector_type">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.connector_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connector_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the type of the edge&#39;s connector.</span>
+<span class="sd">        If the edge has no connector (i.e. it&#39;s an atom), then None is</span>
+<span class="sd">        returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Atom.atom_with_type">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.atom_with_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atom_with_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the first atom found in the edge that has the given</span>
+<span class="sd">        &#39;atom_type&#39;, or whose type starts with &#39;atom_type&#39;.</span>
+<span class="sd">        If no such atom is found, returns None.</span>
+
+<span class="sd">        For example, given the edge (+/B a/Cn b/Bp) and the &#39;atom_type&#39;</span>
+<span class="sd">        C, this function returns:</span>
+<span class="sd">        a/Cn</span>
+<span class="sd">        If the &#39;atom_type&#39; is &#39;Cp&#39;, the it will return:</span>
+<span class="sd">        b/Cp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_type</span><span class="p">)</span>
+        <span class="n">et</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">et</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">n</span> <span class="ow">and</span> <span class="n">et</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">==</span> <span class="n">atom_type</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Atom.argroles">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.argroles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">argroles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the argument roles string of the edge, if it exists.</span>
+<span class="sd">        Otherwise returns empty string.</span>
+<span class="sd">        </span>
+<span class="sd">        Argument roles can be return for the entire edge that they apply to,</span>
+<span class="sd">        which can be a relation (R) or a concept (C). For example:</span>
+
+<span class="sd">        ((not/M is/P.sc) bob/C sad/C) has argument roles &quot;sc&quot;,</span>
+<span class="sd">        (of/B.ma city/C berlin/C) has argument roles &quot;ma&quot;.</span>
+
+<span class="sd">        Argument roles can also be returned for the connectors that define </span>
+<span class="sd">        the outer edge, which can be of type predicate (P) or builder (B). For</span>
+<span class="sd">        example:</span>
+
+<span class="sd">        (not/M is/P.sc) has argument roles &quot;sc&quot;,</span>
+<span class="sd">        of/B.ma has argument roles &quot;ma&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">et</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">et</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">role</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">role</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Atom.replace_argroles">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.replace_argroles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace_argroles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argroles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an atom with the argroles replaced with the provided string.</span>
+<span class="sd">        Returns same atom if the atom does not contain a role part.&quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">role</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">role</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">argroles</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">role</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">argroles</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">role</span><span class="p">)]</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">Atom</span><span class="p">((</span><span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">),))</span></div>
+
+
+<div class="viewcode-block" id="Atom.insert_argrole">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.insert_argrole">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_argrole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argrole</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an atom with the given argrole inserted at the specified</span>
+<span class="sd">        position. Same restrictions as in replace_argroles() apply.&quot;&quot;&quot;</span>
+        <span class="n">argroles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+        <span class="n">argroles</span> <span class="o">=</span> <span class="n">argroles</span><span class="p">[:</span><span class="n">pos</span><span class="p">]</span> <span class="o">+</span> <span class="n">argrole</span> <span class="o">+</span> <span class="n">argroles</span><span class="p">[</span><span class="n">pos</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_argroles</span><span class="p">(</span><span class="n">argroles</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Atom.edges_with_argrole">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.edges_with_argrole">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">edges_with_argrole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argrole</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of edges with the given argument role&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="Atom.main_concepts">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.main_concepts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">main_concepts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of main concepts in an concept edge.</span>
+<span class="sd">        A main concept is a central concept in a built concept, e.g.:</span>
+<span class="sd">        in (&#39;s/Bp.am zimbabwe/Mp economy/Cn.s), economy/Cn.s is the main</span>
+<span class="sd">        concept.</span>
+
+<span class="sd">        If entity is not an edge, or its connector is not of type builder,</span>
+<span class="sd">        or the builder does not contain concept role annotations, or no</span>
+<span class="sd">        concept is annotated as the main one, then an empty list is</span>
+<span class="sd">        returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="Atom.replace_main_concept">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.Atom.replace_main_concept">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace_main_concept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_main</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO: document and test&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">new_main</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_correctness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">at</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">at</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">}:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid atom type&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">at</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtype</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">}:</span>
+            <span class="n">ar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;{&#39;</span><span class="p">:</span>
+                    <span class="n">ar</span> <span class="o">=</span> <span class="n">ar</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">unordered</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">unordered</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">ar</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">argrole</span><span class="p">:</span> <span class="n">argrole_order</span><span class="p">[</span><span class="n">argrole</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="n">unordered</span><span class="p">:</span>
+                    <span class="n">ar</span> <span class="o">=</span> <span class="s1">&#39;{{</span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_argroles</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">((</span><span class="bp">self</span><span class="p">,)</span> <span class="o">+</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hyperedge</span><span class="p">((</span><span class="bp">self</span><span class="p">,)</span> <span class="o">+</span> <span class="n">other</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UniqueAtom">
+<a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.UniqueAtom">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UniqueAtom</span><span class="p">(</span><span class="n">Atom</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_obj</span> <span class="o">=</span> <span class="n">atom</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_obj</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_obj</span><span class="p">)</span> <span class="o">==</span> <span class="nb">id</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">atom_obj</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">unique</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="o">==</span> <span class="n">UniqueAtom</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">edge</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UniqueAtom</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hedge</span><span class="p">([</span><span class="n">unique</span><span class="p">(</span><span class="n">subedge</span><span class="p">)</span> <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">non_unique</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="o">==</span> <span class="n">UniqueAtom</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom_obj</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">edge</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hedge</span><span class="p">([</span><span class="n">non_unique</span><span class="p">(</span><span class="n">subedge</span><span class="p">)</span> <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026 CNRS.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

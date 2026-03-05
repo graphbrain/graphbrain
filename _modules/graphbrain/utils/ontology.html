@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graphbrain.utils.ontology &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>graphbrain.utils.ontology &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5a057da9"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -27,12 +27,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-            <a href="../../../index.html">
-            <img src="../../../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -46,6 +50,7 @@
     
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pubs-cases.html">Publications and Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../manual.html">Manual</a></li>
@@ -67,7 +72,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">graphbrain.utils.ontology</li>
       <li class="wy-breadcrumbs-aside">
@@ -79,11 +84,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphbrain.utils.ontology</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">graphbrain.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">graphbrain.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">const</span>
 
 
-<div class="viewcode-block" id="subtypes"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.ontology.subtypes">[docs]</a><span class="k">def</span> <span class="nf">subtypes</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns all subtypes of the given edge.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="subtypes">
+<a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.ontology.subtypes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">subtypes</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns all subtypes of the given edge.&quot;&quot;&quot;</span>
     <span class="n">ont_edges</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">type_of_connector</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">edge</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">subs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">ont_edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">ont_edge</span> <span class="ow">in</span> <span class="n">ont_edges</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">deep</span><span class="p">:</span>
@@ -94,8 +101,11 @@
     <span class="k">return</span> <span class="n">subs</span></div>
 
 
-<div class="viewcode-block" id="supertypes"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.ontology.supertypes">[docs]</a><span class="k">def</span> <span class="nf">supertypes</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns all supertypes of the given edge.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="supertypes">
+<a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.ontology.supertypes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">supertypes</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns all supertypes of the given edge.&quot;&quot;&quot;</span>
     <span class="n">ont_edges</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">type_of_connector</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">sups</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">ont_edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">ont_edge</span> <span class="ow">in</span> <span class="n">ont_edges</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">deep</span><span class="p">:</span>
@@ -104,6 +114,7 @@
             <span class="n">new_sups</span> <span class="o">|=</span> <span class="n">supertypes</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">sup</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sups</span> <span class="o">|=</span> <span class="n">new_sups</span>
     <span class="k">return</span> <span class="n">sups</span></div>
+
 </pre></div>
 
            </div>
@@ -113,7 +124,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 CNRS.</p>
+    <p>&#169; Copyright 2026 CNRS.</p>
   </div>
 
    

@@ -1,23 +1,22 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graphbrain.utils.lemmas &mdash; Graphbrain 0.7.0-dev documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>graphbrain.utils.lemmas &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=8fb39b0a"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5a057da9"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -85,12 +84,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphbrain.utils.lemmas</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">graphbrain.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">graphbrain.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">const</span>
 
 
 <div class="viewcode-block" id="lemma">
 <a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.lemmas.lemma">[docs]</a>
-<span class="k">def</span> <span class="nf">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">same_if_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">same_if_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the lemma of the given atom if it exists, None otherwise.</span>
 
 <span class="sd">    Keyword argument:</span>
@@ -111,7 +110,7 @@
 
 <div class="viewcode-block" id="deep_lemma">
 <a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.lemmas.deep_lemma">[docs]</a>
-<span class="k">def</span> <span class="nf">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">same_if_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">same_if_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the lemma of an atomic edge, or the lemma of the first atom</span>
 <span class="sd">    found by recursively descending the hyperedge, always choosing the</span>
 <span class="sd">    subedge immediatly after the connector.</span>
@@ -138,7 +137,7 @@
 
 <div class="viewcode-block" id="lemma_degrees">
 <a class="viewcode-back" href="../../../manual/api.html#graphbrain.utils.lemmas.lemma_degrees">[docs]</a>
-<span class="k">def</span> <span class="nf">lemma_degrees</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lemma_degrees</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds all the atoms that share the same given lemma</span>
 <span class="sd">    and computes the sum of both their degrees and deep degrees.</span>
 <span class="sd">    These two sums are returned.</span>
@@ -175,7 +174,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 CNRS.</p>
+    <p>&#169; Copyright 2026 CNRS.</p>
   </div>
 
    

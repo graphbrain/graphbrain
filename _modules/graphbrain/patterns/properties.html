@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphbrain.patterns.properties &mdash; Graphbrain 0.7.1
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5a057da9"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
+    </a>
+    </div>
+    
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pubs-cases.html">Publications and Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials and examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../manual.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../thanks.html">Thanks</a></li>
+</ul>
+
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #333" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Graphbrain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">graphbrain.patterns.properties</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphbrain.patterns.properties</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Set</span>
+
+<span class="n">FUNS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;lemma&#39;</span><span class="p">,</span> <span class="s1">&#39;any&#39;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="is_wildcard">
+<a class="viewcode-back" href="../../../manual/api.html#graphbrain.patterns.is_wildcard">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_wildcard</span><span class="p">(</span><span class="n">atom</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if this atom defines a wildcard, i.e. if its root is a pattern matcher.</span>
+<span class="sd">    (\\*, ., ..., if it is surrounded by parenthesis or variable label starting with an uppercase letter)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">atom</span><span class="o">.</span><span class="n">parens</span> <span class="ow">or</span> <span class="n">atom</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">}</span> <span class="ow">or</span> <span class="n">atom</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_fun_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="n">FUNS</span>
+
+
+<div class="viewcode-block" id="is_pattern">
+<a class="viewcode-back" href="../../../manual/api.html#graphbrain.patterns.is_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if this edge defines a pattern, i.e. if it includes at least</span>
+<span class="sd">    one pattern matcher.</span>
+
+<span class="sd">    Pattern matcher are:</span>
+<span class="sd">    - &#39;\\*&#39;, &#39;.&#39;, &#39;(\\*)&#39;, &#39;...&#39;</span>
+<span class="sd">    - variables (atom label starting with an uppercase letter)</span>
+<span class="sd">    - argument role matcher (unordered argument roles surrounded by curly brackets)</span>
+<span class="sd">    - functional patterns (var, atoms, lemma, ...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">is_wildcard</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;{&#39;</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">is_fun_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_pattern</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_unordered_pattern">
+<a class="viewcode-back" href="../../../manual/api.html#graphbrain.patterns.is_unordered_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_unordered_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if this edge defines an unordered pattern, i.e. if it includes at least</span>
+<span class="sd">    one instance of unordered argument roles surrounded by curly brackets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;{&#39;</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">argroles</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_unordered_pattern</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_full_pattern">
+<a class="viewcode-back" href="../../../manual/api.html#graphbrain.patterns.is_full_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_full_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if every atom is a pattern matcher.</span>
+
+<span class="sd">    Pattern matcher are:</span>
+<span class="sd">    &#39;\\*&#39;, &#39;.&#39;, &#39;(\\*)&#39;, &#39;...&#39;, variables (atom label starting with an</span>
+<span class="sd">    uppercase letter) and functional patterns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">atom</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">is_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_pattern</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026 CNRS.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
