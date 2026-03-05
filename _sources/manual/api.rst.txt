@@ -39,13 +39,6 @@ processor module
 memory package
 ==============
 
-leveldb module
---------------
-
-.. automodule:: graphbrain.memory.leveldb
-    :members:
-
-
 permutations module
 -------------------
 
