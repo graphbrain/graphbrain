@@ -354,6 +354,10 @@ class ReplSession:
                 "help": "Clear all parsers from cache except the current one",
                 "handler": self.cmd_clear_parsers,
             },
+            "unload-parser": {
+                "help": "Unload the current parser and forget it on restart",
+                "handler": self.cmd_unload_parser,
+            },
             "load": {
                 "help": "Load hyperedges from a .jsonl parse-results file",
                 "handler": self.cmd_load,
@@ -534,6 +538,23 @@ class ReplSession:
             if cur is None:
                 self.settings[name] = info["default"]
         return parser
+
+    def cmd_unload_parser(self, args: list) -> bool:
+        if self.parser is None and self.parser_name is None:
+            self.console.print("[yellow]No parser loaded.[/yellow]")
+            return False
+        prev = self.parser_name
+        self._reset_plugin_state()
+        self.parser = None
+        self.parser_name = None
+        self.settings["parser"] = None
+        self.session.completer = CommandCompleter(self._all_commands())
+        save_settings(self.settings)
+        if prev is not None:
+            self.console.print(f"[green]✓[/green] Unloaded parser [cyan]{prev}[/cyan]")
+        else:
+            self.console.print("[green]✓[/green] Unloaded parser")
+        return False
 
     def _switch_parser(self, parser_name: str) -> bool:
         try:
