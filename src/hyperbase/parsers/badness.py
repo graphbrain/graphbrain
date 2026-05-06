@@ -66,12 +66,12 @@ def check_structural_quality(
                             )
                         )
                 else:
-                    if types != {"R"} and types != {"C"}:
+                    if len(types) > 1 and types != {"C", "R"}:
                         current_errors.append(
                             (
                                 "bad-junction-types",
-                                "Junction arguments should ideally be all of type 'R' "
-                                "or all of type 'C'.",
+                                "Junction arguments should ideally be all of the same "
+                                "type or a combination of 'R' and 'C' types.",
                                 3,
                             )
                         )
