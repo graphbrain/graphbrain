@@ -115,6 +115,28 @@ class TestPatterns(unittest.TestCase):
             == []
         )
 
+    def test_match_pattern_bare_main_type_matches_long_subtype(self):
+        assert match_pattern("(is/Pd john/Cmath rich/C)", "(is/Pd */C rich/C)") == [{}]
+
+    def test_match_pattern_bare_main_type_matches_short_subtype(self):
+        assert match_pattern("(is/Pd john/Cp.s rich/C)", "(is/Pd */C rich/C)") == [{}]
+
+    def test_match_pattern_exact_subtype_matches(self):
+        assert match_pattern("(is/Pd john/Cm rich/C)", "(is/Pd */Cm rich/C)") == [{}]
+
+    def test_match_pattern_short_subtype_does_not_match_long(self):
+        assert match_pattern("(is/Pd john/Cmath rich/C)", "(is/Pd */Cm rich/C)") == []
+
+    def test_match_pattern_long_subtype_exact_match(self):
+        assert match_pattern("(is/Pd john/Cmath rich/C)", "(is/Pd */Cmath rich/C)") == [
+            {}
+        ]
+
+    def test_match_pattern_long_subtype_does_not_match_other_long(self):
+        assert (
+            match_pattern("(is/Pd john/Cmath rich/C)", "(is/Pd */Cmusic rich/C)") == []
+        )
+
     def test_match_pattern_non_atomic_wildcard1(self):
         assert match_pattern(
             "(is/Pd hyperbase/Cp.s (fairly/M great/C))", "(is/Pd hyperbase/Cp.s (PROP))"

@@ -436,6 +436,24 @@ class TestHyperedge(unittest.TestCase):
     def test_non_atom_mtype10(self):
         assert hedge("(and/J (is/Pd.so hyperbase/Cp.s great/C))").mtype() == "R"
 
+    def test_atom_type_long_subtype(self):
+        assert hedge("exp/Cmath").type() == "Cmath"
+        assert hedge("exp/Cmath").mtype() == "C"
+
+    def test_atom_role_long_subtype(self):
+        assert hedge("was/Ppast.so").role() == ["Ppast", "so"]
+        assert hedge("was/Ppast.so").type() == "Ppast"
+        assert hedge("was/Ppast.so").mtype() == "P"
+        assert hedge("was/Ppast.so").argroles() == "so"
+
+    def test_non_atom_type_long_subtype(self):
+        assert hedge("(was/Ppast.so john/C art/C)").type() == "Rpast"
+        assert hedge("(was/Ppast.so john/C art/C)").mtype() == "R"
+
+    def test_non_atom_type_long_modifier_subtype(self):
+        assert hedge("(red/Mcolor shoes/Cc.p)").type() == "Cc"
+        assert hedge("(before/Tlong noon/C)").type() == "Slong"
+
     def test_connector_type1(self):
         assert hedge("hyperbase/Cp.s/1").connector_type() is None
 
@@ -552,6 +570,26 @@ class TestHyperedge(unittest.TestCase):
 
     def test_atom_with_type7(self):
         assert hedge("a/Cn").atom_with_type("P") is None
+
+    def test_atom_with_type_long_subtype1(self):
+        edge = hedge("(is/Pd.so john/Cmath rich/C)")
+        assert edge.atom_with_type("Cmath") == hedge("john/Cmath")
+
+    def test_atom_with_type_long_subtype2(self):
+        edge = hedge("(is/Pd.so john/Cmath rich/C)")
+        assert edge.atom_with_type("C") == hedge("john/Cmath")
+
+    def test_atom_with_type_long_subtype3(self):
+        edge = hedge("(is/Pd.so john/Cmath rich/C)")
+        assert edge.atom_with_type("Cmusic") is None
+
+    def test_atom_with_type_partial_subtype_no_match(self):
+        edge = hedge("(is/Pd.so john/Cmath rich/C)")
+        assert edge.atom_with_type("Cm") is None
+
+    def test_atom_with_type_short_subtype_no_match_against_long(self):
+        edge = hedge("(is/Pd.so john/Cmath rich/Cm)")
+        assert edge.atom_with_type("Cm") == hedge("rich/Cm")
 
     def test_argroles_connector_atom1(self):
         edge = hedge("s/Bp.am")

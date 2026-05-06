@@ -163,12 +163,15 @@ def _matches_atomic_pattern(edge: Hyperedge, atomic_pattern: Atom) -> bool:
     if len(ap_parts) > 1:
         pos = 1
 
-        # type match
+        # type match: a bare main type (single character) matches any
+        # subtype; a type that includes a subtype must match exactly.
         ap_role = atomic_pattern.role()
         ap_type = ap_role[0]
         e_type = edge.type()
-        n = len(ap_type)
-        if len(e_type) < n or e_type[:n] != ap_type:
+        if len(ap_type) == 1:
+            if not e_type or e_type[0] != ap_type:
+                return False
+        elif e_type != ap_type:
             return False
 
         e_atom = edge.inner_atom()

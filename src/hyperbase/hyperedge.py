@@ -330,14 +330,17 @@ class Hyperedge:
 
     def atom_with_type(self, atom_type: str) -> Atom | None:
         """Returns the first atom found in the edge that has the given
-        'atom_type', or whose type starts with 'atom_type'.
+        'atom_type'. A bare main type (single character) matches any subtype;
+        a type with a subtype must match exactly.
         If no such atom is found, returns None.
 
         For example, given the edge (+/B a/Cn b/Cp) and the 'atom_type'
-        c, this function returns:
+        'C', this function returns:
         a/Cn
         If the 'atom_type' is 'Cp', the it will return:
         b/Cp
+        Querying for 'Cm' would NOT match an atom typed 'Cmath' --
+        only an exact 'Cm' would.
         """
         for item in self:
             atom: Atom | None = item.atom_with_type(atom_type)
@@ -612,11 +615,12 @@ class Atom(Hyperedge):
 
     def atom_with_type(self, atom_type: str) -> Atom | None:
         et = self.type()
-        n = len(atom_type)
-        if len(et) >= n and et[:n] == atom_type:
+        if len(atom_type) == 1:
+            if et and et[0] == atom_type:
+                return self
+        elif et == atom_type:
             return self
-        else:
-            return None
+        return None
 
     def argroles(self) -> str:
         if "argroles" in self._cache:

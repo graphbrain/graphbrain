@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.10.1] - work in progress
+## [0.11.0] - work in progress
 
 ### Added
 
@@ -15,6 +15,7 @@
 
 ### Changed
 
+- subtypes can have any length, pattern matching treats such cases correctly.
 - transforms propagate per-atom `tok_pos`/`text_span` through rewrites.
 - REPL `/load` now uses `ParseResult.from_dict` (was dropping `tokens`/`tok_pos`).
 - REPL shows multiple results if available.
