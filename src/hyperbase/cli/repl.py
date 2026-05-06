@@ -769,6 +769,8 @@ class ReplSession:
 
         self.edges = edges
         self.edges_source = path
+        self.settings["edges_path"] = str(path)
+        save_settings(self.settings)
         self.console.print(
             f"[green]✓[/green] Loaded [cyan]{len(edges)}[/cyan] hyperedge(s) "
             f"from [cyan]{path}[/cyan]"
@@ -1852,5 +1854,12 @@ def run_repl(args: argparse.Namespace) -> None:
 
     if load_path:
         session.cmd_load([load_path])
+    elif saved.get("edges_path"):
+        saved_path = Path(saved["edges_path"]).expanduser()
+        if saved_path.is_file():
+            session.cmd_load([str(saved_path)])
+        else:
+            session.settings.pop("edges_path", None)
+            save_settings(session.settings)
 
     session.run()
