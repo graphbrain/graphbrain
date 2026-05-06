@@ -263,9 +263,14 @@ class CommandCompleter(Completer):
     # command name.
     PATH_ARG_COMMANDS = frozenset({"load", "save", "count-csv", "classify"})
 
-    def __init__(self, commands: dict) -> None:
+    def __init__(
+        self,
+        commands: dict,
+        path_settings: frozenset[str] | None = None,
+    ) -> None:
         self.commands = commands
         self.path_completer = PathCompleter(expanduser=True)
+        self.path_settings: frozenset[str] = path_settings or frozenset()
 
     def get_completions(
         self,
@@ -282,6 +287,14 @@ class CommandCompleter(Completer):
             if cmd_name in self.PATH_ARG_COMMANDS:
                 sub_doc = Document(text=arg, cursor_position=len(arg))
                 yield from self.path_completer.get_completions(sub_doc, complete_event)
+                return
+            if cmd_name == "set" and " " in arg:
+                setting_name, _, value = arg.partition(" ")
+                if setting_name in self.path_settings:
+                    sub_doc = Document(text=value, cursor_position=len(value))
+                    yield from self.path_completer.get_completions(
+                        sub_doc, complete_event
+                    )
             return
 
         word = stripped
@@ -411,7 +424,7 @@ class ReplSession:
 
         self.session = PromptSession(
             history=self.history,
-            completer=CommandCompleter(self._all_commands()),
+            completer=CommandCompleter(self._all_commands(), self._path_settings()),
             complete_while_typing=False,
         )
 
@@ -548,7 +561,9 @@ class ReplSession:
         self.parser = None
         self.parser_name = None
         self.settings["parser"] = None
-        self.session.completer = CommandCompleter(self._all_commands())
+        self.session.completer = CommandCompleter(
+            self._all_commands(), self._path_settings()
+        )
         save_settings(self.settings)
         if prev is not None:
             self.console.print(f"[green]✓[/green] Unloaded parser [cyan]{prev}[/cyan]")
@@ -562,7 +577,9 @@ class ReplSession:
             self.parser_name = parser_name
             self.settings["parser"] = parser_name
             # Refresh completer with the new command set.
-            self.session.completer = CommandCompleter(self._all_commands())
+            self.session.completer = CommandCompleter(
+                self._all_commands(), self._path_settings()
+            )
             return True
         except Exception as e:
             self.console.print(f"[red]Failed to load parser {parser_name!r}: {e}[/red]")
@@ -577,6 +594,17 @@ class ReplSession:
         merged.update(self._builtin_commands)
         merged.update(self._extra_commands)
         return merged
+
+    def _path_settings(self) -> frozenset[str]:
+        names: set[str] = set()
+        if self.parser is not None:
+            for name, info in type(self.parser).accepted_params().items():
+                if info.get("is_path"):
+                    names.add(name)
+        for name, info in self._extra_settings.items():
+            if info.get("is_path"):
+                names.add(name)
+        return frozenset(names)
 
     def show_banner(self) -> None:
         available = sorted(list_parsers().keys())
