@@ -358,6 +358,10 @@ class ReplSession:
                 "help": "Load hyperedges from a .jsonl parse-results file",
                 "handler": self.cmd_load,
             },
+            "unload": {
+                "help": "Unload the current dataset and forget it on restart",
+                "handler": self.cmd_unload,
+            },
             "save": {
                 "help": "Save in-memory edges to a .jsonl file",
                 "handler": self.cmd_save,
@@ -779,6 +783,21 @@ class ReplSession:
             self.console.print(
                 f"[yellow]Skipped {skipped} line(s) that could not be parsed[/yellow]"
             )
+        return False
+
+    def cmd_unload(self, args: list) -> bool:
+        if not self.edges and self.edges_source is None:
+            self.console.print("[yellow]No dataset loaded.[/yellow]")
+            return False
+        prev = self.edges_source
+        self.edges = []
+        self.edges_source = None
+        self.settings.pop("edges_path", None)
+        save_settings(self.settings)
+        if prev is not None:
+            self.console.print(f"[green]✓[/green] Unloaded dataset [cyan]{prev}[/cyan]")
+        else:
+            self.console.print("[green]✓[/green] Unloaded dataset")
         return False
 
     def cmd_save(self, args: list) -> bool:
