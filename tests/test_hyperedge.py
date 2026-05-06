@@ -34,6 +34,24 @@ class TestHyperedge(unittest.TestCase):
             == "((is my) (brain/1) (super great/1))"
         )
 
+    def test_hedge_double_parens_atom_type(self):
+        # Regression: collapsing nested parens around a single atom must not
+        # bake the inner parens into the new atom_str (which would corrupt
+        # type/role parsing -- e.g. type "Ci" misread as "Ci)").
+        edge = hedge("((foo/Ci))")
+        assert edge.atom
+        atom = edge.all_atoms()[0]
+        assert atom.atom_str == "foo/Ci"
+        assert atom.type() == "Ci"
+        assert str(edge) == "(foo/Ci)"
+
+        # Triple-wrapping must collapse identically.
+        edge3 = hedge("(((foo/Ci)))")
+        atom3 = edge3.all_atoms()[0]
+        assert atom3.atom_str == "foo/Ci"
+        assert atom3.type() == "Ci"
+        assert str(edge3) == "(foo/Ci)"
+
     def test_atom1(self):
         assert hedge("a").atom
 

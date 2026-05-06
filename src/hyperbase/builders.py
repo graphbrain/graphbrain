@@ -90,7 +90,14 @@ def _hedge_from_str(source: str) -> Hyperedge:
             children: list[Hyperedge] = frame[3]
             frame_parens: bool = frame[0]
             if len(children) == 1 and isinstance(children[0], Atom):
-                built: Hyperedge = Atom(str(children[0]), frame_parens)
+                child_atom: Atom = children[0]
+                built: Hyperedge = Atom(
+                    child_atom.atom_str,
+                    frame_parens or child_atom.parens,
+                    text=child_atom._text,
+                    tok_pos=child_atom.tok_pos,
+                    text_span=child_atom.text_span,
+                )
             elif children:
                 built = Hyperedge(tuple(children))
             else:
@@ -167,14 +174,16 @@ def _rebuild_with_metadata(
         atom = cast(Atom, edge)
         pos = int(str(tok_pos))
         if pos < 0:
-            return Atom(str(atom), atom.parens)
+            return Atom(atom.atom_str, atom.parens)
         span = offsets[pos] if 0 <= pos < len(offsets) else None
         atom_text = (
             text[span[0] : span[1]]
             if span is not None
             else (tokens[pos] if 0 <= pos < len(tokens) else None)
         )
-        return Atom(str(atom), atom.parens, text=atom_text, tok_pos=pos, text_span=span)
+        return Atom(
+            atom.atom_str, atom.parens, text=atom_text, tok_pos=pos, text_span=span
+        )
     else:
         new_children = tuple(
             _rebuild_with_metadata(
