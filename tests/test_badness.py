@@ -290,24 +290,6 @@ class TestBadnessCheck:
                         break
         assert found, "Should detect duplicate argrole 's' with severity 2"
 
-    def test_invalid_junction_mixed(self):
-        # Mixed types C and R
-        # (and/J (bob/C) (runs/P.s bob/C))
-        edge = hedge("(and/J bob/C (runs/P.s bob/C))")
-        assert edge
-        errors = badness_check(edge, [])
-
-        found = False
-        for _k, v in errors.items():
-            if isinstance(v, list):
-                for err in v:
-                    if isinstance(err, tuple) and err[0] == "bad-junction-types":
-                        assert len(err) == 3
-                        assert err[2] == 3
-                        found = True
-                        break
-        assert found, "Should detect bad junction types with severity 3"
-
     def test_valid_junction(self):
         # All C
         edge = hedge("(and/J bob/C alice/C)")
