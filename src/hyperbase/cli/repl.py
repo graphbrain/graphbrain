@@ -659,6 +659,22 @@ class ReplSession:
         return False
 
     def cmd_settings(self, args: list) -> bool:
+        main_names = sorted({"parser", *BUILTIN_REPL_SETTINGS.keys()})
+        self.console.print()
+        self._render_settings_section("Main Settings", main_names)
+        if self.parser is not None and self.parser_name is not None:
+            parser_names = sorted(
+                set(type(self.parser).accepted_params().keys())
+                | set(self._extra_settings.keys())
+            )
+            self._render_settings_section(
+                f"{self.parser_name} Parser Settings",
+                parser_names,
+            )
+        self.console.print()
+        return False
+
+    def _render_settings_section(self, title: str, names: list[str]) -> None:
         table = Table(
             show_header=True,
             header_style="bold magenta",
@@ -667,17 +683,27 @@ class ReplSession:
         )
         table.add_column("Setting", style="cyan")
         table.add_column("Value", style="green")
-
-        for key, value in self.settings.items():
-            if value is not None:
-                table.add_row(key, str(value))
-
-        self.console.print()
+        table.add_column("Description", style="dim white")
+        for name in names:
+            value = self.settings.get(name)
+            value_text = "[dim]—[/dim]" if value is None else str(value)
+            table.add_row(name, value_text, self._setting_description(name))
         self.console.print(
-            Panel(table, title="[bold]Current Settings[/bold]", border_style="blue")
+            Panel(table, title=f"[bold]{title}[/bold]", border_style="blue")
         )
-        self.console.print()
-        return False
+
+    def _setting_description(self, name: str) -> str:
+        if name == "parser":
+            return "Active parser plugin."
+        if name in BUILTIN_REPL_SETTINGS:
+            return BUILTIN_REPL_SETTINGS[name].get("description", "")
+        if name in self._extra_settings:
+            return self._extra_settings[name].get("description", "")
+        if self.parser is not None:
+            params = type(self.parser).accepted_params()
+            if name in params:
+                return params[name].get("description", "")
+        return ""
 
     def _setting_type(self, name: str) -> type | None:
         """Look up the declared type for *name* across all sources."""
