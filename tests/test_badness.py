@@ -273,23 +273,6 @@ class TestBadnessCheck:
                         break
         assert found, "Should detect bad argrole 'z' with severity 2"
 
-    def test_duplicate_argrole(self):
-        # 's' appearing twice
-        edge = hedge("(is/P.ss bob/C alice/C)")
-        assert edge
-        errors = badness_check(edge, [])
-
-        found = False
-        for _k, v in errors.items():
-            if isinstance(v, list):
-                for err in v:
-                    if isinstance(err, tuple) and err[0] == "duplicate-argrole-s":
-                        assert len(err) == 3
-                        assert err[2] == 2
-                        found = True
-                        break
-        assert found, "Should detect duplicate argrole 's' with severity 2"
-
     def test_valid_junction(self):
         # All C
         edge = hedge("(and/J bob/C alice/C)")

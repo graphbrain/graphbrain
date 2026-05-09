@@ -1098,11 +1098,6 @@ class TestHyperedge(unittest.TestCase):
         output = edge.check_correctness()
         assert hedge("(likes/P.ss x/C y/C)") in output
 
-    def test_check_correctness_wrong_argroles2(self):
-        edge = hedge("(likes/P.cc x/C y/C)")
-        output = edge.check_correctness()
-        assert hedge("(likes/P.cc x/C y/C)") in output
-
     def test_check_correctness_wrong_argroles3(self):
         edge = hedge("(likes/P.scx x/C y/C)")
         output = edge.check_correctness()

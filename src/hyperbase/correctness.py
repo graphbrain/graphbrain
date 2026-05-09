@@ -122,7 +122,7 @@ def _check_edge(edge: Hyperedge) -> dict[Hyperedge, list[tuple[str, str]]]:
                     )
 
                 ars_counts = Counter(ars)
-                for role in "socipam":
+                for role in "soam":
                     if ars_counts[role] > 1:
                         errors.append(
                             (

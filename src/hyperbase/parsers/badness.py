@@ -29,23 +29,39 @@ def check_structural_quality(
             ars = current_edge.argroles()
             ar_counts: Counter[str] = Counter()
             for ar in ars:
-                if ar not in "masoxr?":
+                if ar not in "masox?":
                     current_errors.append(
                         (
                             "bad-argrole",
-                            f"Bad argument role '{ar}'. Should be one of 'masoxr?'.",
+                            f"Bad argument role '{ar}'. Should be one of 'masox?'.",
                             2,
                         )
                     )
                 ar_counts[ar] += 1
+        except Exception:
+            pass
 
-            for role in "soam":
-                if ar_counts[role] > 1:
+        # Modifier checks
+        try:
+            connector_type = current_edge[0].type()
+            if len(current_edge) >= 2:
+                target_mt = current_edge[1].mt
+                if connector_type in {"Md", "Mq", "Mp"} and target_mt != "C":
                     current_errors.append(
                         (
-                            f"duplicate-argrole-{role}",
-                            f"Argument role '{role}' should only be used once.",
-                            2,
+                            f"bad-{connector_type.lower()}-target",
+                            f"Modifiers of type '{connector_type}' should only be "
+                            "applied to concepts (type 'C').",
+                            3,
+                        )
+                    )
+                elif connector_type == "Mm" and target_mt != "P":
+                    current_errors.append(
+                        (
+                            "bad-mm-target",
+                            "Modifiers of type 'Mm' should only be applied to "
+                            "predicates (type 'P').",
+                            3,
                         )
                     )
         except Exception:
