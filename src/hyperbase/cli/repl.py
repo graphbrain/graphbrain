@@ -26,6 +26,7 @@ from hyperbase.constants import EdgeType
 from hyperbase.hyperedge import Atom, Hyperedge
 from hyperbase.parsers import Parser, get_parser, list_parsers
 from hyperbase.parsers.badness import badness_check
+from hyperbase.parsers.parse_result import ParseResult
 from hyperbase.parsers.repl_api import (
     CommandHandler,
     PostResultHook,
@@ -69,6 +70,12 @@ BUILTIN_REPL_SETTINGS: dict[str, dict[str, Any]] = {
         "type": int,
         "default": 20,
         "description": "Number of results shown per page in paginated commands.",
+    },
+    "save_parses_to": {
+        "type": str,
+        "default": None,
+        "description": "Path to a .jsonl file where /save-parse appends parse results.",
+        "is_path": True,
     },
 }
 
@@ -328,6 +335,9 @@ class ReplSession:
         self.edges: list[Hyperedge] = []
         self.edges_source: Path | None = None
 
+        # Last result of parse_text(), exposed for /save-parse.
+        self.last_parse_result: list[ParseResult] | None = None
+
         # Per-parser registrations -- everything in these collections is
         # cleared and re-installed whenever the active parser changes.
         self._extra_settings: dict[str, dict[str, Any]] = {}
@@ -382,6 +392,10 @@ class ReplSession:
             "save": {
                 "help": "Save in-memory edges to a .jsonl file",
                 "handler": self.cmd_save,
+            },
+            "save-parse": {
+                "help": "Append the last parse results to the file in save_parses_to",
+                "handler": self.cmd_save_parse,
             },
             "edges": {
                 "help": "Show in-memory edges (count and source file)",
@@ -597,6 +611,9 @@ class ReplSession:
 
     def _path_settings(self) -> frozenset[str]:
         names: set[str] = set()
+        for name, info in BUILTIN_REPL_SETTINGS.items():
+            if info.get("is_path"):
+                names.add(name)
         if self.parser is not None:
             for name, info in type(self.parser).accepted_params().items():
                 if info.get("is_path"):
@@ -906,6 +923,37 @@ class ReplSession:
             f"[green]✓[/green] Saved [cyan]{len(self.edges)}[/cyan] edge(s) "
             f"to [cyan]{path}[/cyan] "
             f"[dim]({with_metadata} with source-position metadata)[/dim]"
+        )
+        return False
+
+    def cmd_save_parse(self, args: list) -> bool:
+        path_str = self.settings.get("save_parses_to")
+        if not path_str:
+            self.console.print(
+                "[red]Error:[/red] no destination file set. "
+                "Use [cyan]/set save_parses_to <path>[/cyan] first."
+            )
+            return False
+        if not self.last_parse_result:
+            self.console.print(
+                "[yellow]No parse to save.[/yellow] "
+                "[dim]Parse some text first, then run /save-parse.[/dim]"
+            )
+            return False
+
+        path = Path(path_str).expanduser()
+        try:
+            with open(path, "a") as f:
+                for result in self.last_parse_result:
+                    f.write(result.to_json() + "\n")
+        except OSError as e:
+            self.console.print(f"[red]Error:[/red] failed to write {path}: {e}")
+            return False
+
+        n = len(self.last_parse_result)
+        self.console.print(
+            f"[green]✓[/green] Appended [cyan]{n}[/cyan] parse result(s) "
+            f"to [cyan]{path}[/cyan]"
         )
         return False
 
@@ -1595,8 +1643,6 @@ class ReplSession:
         self.console.print()
 
     def _load_edges_from_jsonl(self, path: Path) -> tuple[list[Hyperedge], int]:
-        from hyperbase.parsers.parse_result import ParseResult
-
         edges: list[Hyperedge] = []
         skipped = 0
         with open(path) as f:
@@ -1681,6 +1727,7 @@ class ReplSession:
             start_time = time.perf_counter()
             parse_result = self.parser.parse(text)
             elapsed_time = time.perf_counter() - start_time
+            self.last_parse_result = parse_result
 
             if not parse_result:
                 self.console.print()
