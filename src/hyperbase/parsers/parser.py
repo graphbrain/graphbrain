@@ -24,6 +24,11 @@ class Parser:
         - ``"default"``: the default value (or ``None`` if required).
         - ``"description"``: a short human-readable description.
         - ``"required"``: whether the parameter must be provided.
+        - ``"reload"`` (optional, default ``True``): whether changing
+          this setting via ``/set`` requires re-instantiating the
+          parser. When ``False`` the REPL calls
+          :meth:`apply_live_setting` on the live instance instead, and
+          the value is excluded from :meth:`cache_key_from_settings`.
 
         Subclasses should merge their own parameters with the result of
         ``super().accepted_params()`` so that common parameters like
@@ -40,6 +45,7 @@ class Parser:
                     "blowing the Python stack."
                 ),
                 "required": False,
+                "reload": False,
             },
         }
 
@@ -48,12 +54,32 @@ class Parser:
         """Build a cache key tuple from a settings dict.
 
         The default implementation produces one ``(name, value)`` pair
-        per entry in :meth:`accepted_params`, sorted by name. Two
+        per init-time entry in :meth:`accepted_params` (i.e. params
+        whose ``"reload"`` is not ``False``), sorted by name. Two
         settings dicts that yield the same key are guaranteed to
-        produce equivalent parser instances.
+        produce equivalent parser instances; live-applicable settings
+        are excluded because they're mutated on the existing instance.
         """
-        names = sorted(cls.accepted_params())
+        params = cls.accepted_params()
+        names = sorted(
+            name for name, info in params.items() if info.get("reload", True)
+        )
         return tuple((name, settings.get(name)) for name in names)
+
+    def apply_live_setting(self, name: str, value: Any) -> None:  # noqa: ANN401
+        """Apply a live-changeable setting (``"reload": False``) to this
+        running parser instance, without rebuilding it.
+
+        The default implementation updates ``self.params[name]`` and
+        ``setattr(self, name, value)``. Subclasses should override when
+        the attribute name differs from the param name, when the value
+        needs clamping/coercion beyond the REPL's type cast, or when a
+        side effect is required (e.g. updating a library's RNG seed).
+        Overrides may delegate to ``super().apply_live_setting(...)``
+        after performing their custom step.
+        """
+        self.params[name] = value
+        setattr(self, name, value)
 
     @classmethod
     def format_cache_key(cls, cache_key: tuple) -> str:

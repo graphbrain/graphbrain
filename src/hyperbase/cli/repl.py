@@ -503,9 +503,16 @@ class ReplSession:
         return False
 
     def _reset_plugin_state(self) -> None:
-        """Drop everything that was registered by the previous parser."""
-        for name in self._extra_settings:
-            self.settings.pop(name, None)
+        """Drop everything that was registered by the previous parser.
+
+        The *registration map* of extra settings is cleared so the next
+        ``install_repl`` starts fresh, but the *values* are left in
+        ``self.settings``. That way, a parser reload that re-registers
+        the same extras finds the user's prior ``/set`` value and skips
+        the default. Stale entries from extras the new parser doesn't
+        register are harmless: ``cmd_settings`` iterates the registered
+        names and ``_setting_type`` rejects unknown ones in ``/set``.
+        """
         self._extra_settings.clear()
         self._extra_commands.clear()
         self._pre_result_hooks.clear()
@@ -788,15 +795,25 @@ class ReplSession:
             f"[green]✓[/green] Set [cyan]{setting_name}[/cyan] = [green]{value}[/green]"
         )
 
-        # If this setting affects parser instantiation, re-init the parser.
+        # If this setting belongs to the parser, decide whether to
+        # reload it or apply the change in place.
         if self.parser is not None and self.parser_name is not None:
             parser_params = type(self.parser).accepted_params()
-            if setting_name in parser_params and not self._switch_parser(
-                self.parser_name
-            ):
-                self.console.print(
-                    "[red]Failed to reload parser. Keeping previous parser.[/red]"
-                )
+            info = parser_params.get(setting_name)
+            if info is not None:
+                if info.get("reload", True):
+                    if not self._switch_parser(self.parser_name):
+                        self.console.print(
+                            "[red]Failed to reload parser. "
+                            "Keeping previous parser.[/red]"
+                        )
+                else:
+                    try:
+                        self.parser.apply_live_setting(setting_name, value)
+                    except Exception as e:
+                        self.console.print(
+                            f"[red]Failed to apply {setting_name} live:[/red] {e}"
+                        )
         return False
 
     def cmd_clear(self, args: list) -> bool:
