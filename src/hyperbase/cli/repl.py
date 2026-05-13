@@ -397,6 +397,24 @@ class ReplSession:
                 "help": "Append the last parse results to the file in save_parses_to",
                 "handler": self.cmd_save_parse,
             },
+            "parse-results": {
+                "help": "Show the current parse results JSON",
+                "handler": self.cmd_parse_results,
+            },
+            "tag": {
+                "help": (
+                    "Add a boolean tag (name=true) to the current parse results' "
+                    "extra dict"
+                ),
+                "handler": self.cmd_tag,
+            },
+            "tags": {
+                "help": (
+                    "List keys in the current parse results' extra dict whose "
+                    "value is True"
+                ),
+                "handler": self.cmd_tags,
+            },
             "edges": {
                 "help": "Show in-memory edges (count and source file)",
                 "handler": self.cmd_edges,
@@ -972,6 +990,89 @@ class ReplSession:
             f"[green]✓[/green] Appended [cyan]{n}[/cyan] parse result(s) "
             f"to [cyan]{path}[/cyan]"
         )
+        return False
+
+    def cmd_parse_results(self, args: list) -> bool:
+        if not self.last_parse_result:
+            self.console.print(
+                "[yellow]No parse results.[/yellow] [dim]Parse some text first.[/dim]"
+            )
+            return False
+        payload = [r.to_dict() for r in self.last_parse_result]
+        self.console.print(
+            json.dumps(payload, indent=2, ensure_ascii=False, default=str)
+        )
+        return False
+
+    def _choose_parse_indices(self) -> list[int] | None:
+        """Return indices into self.last_parse_result to act on, or None on abort."""
+        assert self.last_parse_result is not None
+        n = len(self.last_parse_result)
+        if n == 1:
+            return [0]
+        try:
+            answer = self.session.prompt(
+                f"{n} parse results. (a)ll or index 0..{n - 1}: "
+            ).strip()
+        except (KeyboardInterrupt, EOFError):
+            self.console.print("[dim](aborted)[/dim]")
+            return None
+        if answer.lower() in ("a", "all"):
+            return list(range(n))
+        try:
+            idx = int(answer)
+        except ValueError:
+            self.console.print(
+                f"[red]Error:[/red] expected 'all' or an integer in [0, {n - 1}]"
+            )
+            return None
+        if not 0 <= idx < n:
+            self.console.print(
+                f"[red]Error:[/red] index {idx} out of range [0, {n - 1}]"
+            )
+            return None
+        return [idx]
+
+    def cmd_tag(self, args: list) -> bool:
+        if len(args) != 1:
+            self.console.print("[dim]Usage:[/dim] [cyan]/tag <name>[/cyan]")
+            return False
+        name = args[0]
+        if not self.last_parse_result:
+            self.console.print(
+                "[yellow]No parse results.[/yellow] [dim]Parse some text first.[/dim]"
+            )
+            return False
+        indices = self._choose_parse_indices()
+        if indices is None:
+            return False
+        for i in indices:
+            self.last_parse_result[i].extra[name] = True
+        self.console.print(
+            f"[green]✓[/green] Tagged [cyan]'{name}'[/cyan] on "
+            f"[cyan]{len(indices)}[/cyan] result(s)"
+        )
+        return False
+
+    def cmd_tags(self, args: list) -> bool:
+        if not self.last_parse_result:
+            self.console.print(
+                "[yellow]No parse results.[/yellow] [dim]Parse some text first.[/dim]"
+            )
+            return False
+        indices = self._choose_parse_indices()
+        if indices is None:
+            return False
+        if len(indices) == 1:
+            extra = self.last_parse_result[indices[0]].extra
+            keys = [k for k, v in extra.items() if v is True]
+            self.console.print(", ".join(keys) if keys else "[dim](none)[/dim]")
+        else:
+            for i in indices:
+                extra = self.last_parse_result[i].extra
+                keys = [k for k, v in extra.items() if v is True]
+                rendered = ", ".join(keys) if keys else "[dim](none)[/dim]"
+                self.console.print(f"[cyan][{i}][/cyan] {rendered}")
         return False
 
     def _build_tok_pos_tree(self, edge: Hyperedge) -> Hyperedge:
