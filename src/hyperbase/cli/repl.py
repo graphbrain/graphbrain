@@ -270,6 +270,13 @@ class CommandCompleter(Completer):
     # command name.
     PATH_ARG_COMMANDS = frozenset({"load", "save", "count-csv", "classify"})
 
+    # Commands that take multiple path arguments. Unlike the single-arg
+    # case above (which feeds PathCompleter everything after the first
+    # space), these complete only the current word — the slice between
+    # the cursor and the previous space — so that successive paths can
+    # each be completed independently.
+    MULTI_PATH_ARG_COMMANDS = frozenset({"genparse"})
+
     def __init__(
         self,
         commands: dict,
@@ -293,6 +300,12 @@ class CommandCompleter(Completer):
             cmd_name, _, arg = stripped.partition(" ")
             if cmd_name in self.PATH_ARG_COMMANDS:
                 sub_doc = Document(text=arg, cursor_position=len(arg))
+                yield from self.path_completer.get_completions(sub_doc, complete_event)
+                return
+            if cmd_name in self.MULTI_PATH_ARG_COMMANDS:
+                last_space = text.rfind(" ")
+                word = text[last_space + 1 :]
+                sub_doc = Document(text=word, cursor_position=len(word))
                 yield from self.path_completer.get_completions(sub_doc, complete_event)
                 return
             if cmd_name == "set" and " " in arg:

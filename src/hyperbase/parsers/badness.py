@@ -29,11 +29,11 @@ def check_structural_quality(
             ars = current_edge.argroles()
             ar_counts: Counter[str] = Counter()
             for ar in ars:
-                if ar not in "masox?":
+                if ar not in "masox":
                     current_errors.append(
                         (
                             "bad-argrole",
-                            f"Bad argument role '{ar}'. Should be one of 'masox?'.",
+                            f"Bad argument role '{ar}'. Should be one of 'masox'.",
                             2,
                         )
                     )
@@ -46,7 +46,7 @@ def check_structural_quality(
             connector_type = current_edge[0].type()
             if len(current_edge) >= 2:
                 target_mt = current_edge[1].mt
-                if connector_type in {"Md", "Mq", "Mp"} and target_mt != "C":
+                if connector_type in {"Ma", "Md", "Mq", "Mp"} and target_mt != "C":
                     current_errors.append(
                         (
                             f"bad-{connector_type.lower()}-target",
@@ -61,6 +61,15 @@ def check_structural_quality(
                             "bad-mm-target",
                             "Modifiers of type 'Mm' should only be applied to "
                             "predicates (type 'P').",
+                            3,
+                        )
+                    )
+                elif connector_type == "Mn" and target_mt not in {"C", "P"}:
+                    current_errors.append(
+                        (
+                            "bad-mn-target",
+                            "Modifiers of type 'Mn' should only be applied to "
+                            "concepts (type 'C') or predicates (type 'P').",
                             3,
                         )
                     )
