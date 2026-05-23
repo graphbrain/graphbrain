@@ -134,15 +134,25 @@ def _build_parser_kwargs(parser_cls: type[Parser], settings: dict) -> dict[str, 
 class FilteredFileHistory(FileHistory):
     """Custom history that filters out blanks and consecutive duplicates.
 
-    Set ``paused = True`` to skip persistence around prompts whose input
-    should not pollute the REPL's command history (e.g. classification
-    labels typed during ``/classify``).
+    Set ``paused = True`` to skip both in-memory recall and disk
+    persistence around prompts whose input should not pollute the REPL's
+    command history (e.g. classification labels typed during
+    ``/classify``, or the manual-picker prompts in ``/genparse``).
     """
 
     def __init__(self, filename: str) -> None:
         super().__init__(filename)
         self.last_saved: str | None = None
         self.paused: bool = False
+
+    def append_string(self, string: str) -> None:
+        # prompt_toolkit's base History.append_string adds to the
+        # in-memory list (used by up-arrow / Ctrl-R) *before* calling
+        # store_string. Skip the whole call while paused so those
+        # entries don't surface in arrow-key recall either.
+        if self.paused:
+            return
+        super().append_string(string)
 
     def store_string(self, string: str) -> None:
         if self.paused:
