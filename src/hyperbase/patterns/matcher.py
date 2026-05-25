@@ -642,5 +642,30 @@ class Matcher:
                 if len(matches) > 0:
                     return matches
             return []
+        elif fun == "deep":
+            if len(fun_pattern) != 2:
+                raise RuntimeError("deep pattern function must have one argument")
+            inner_pattern = fun_pattern[1]
+            results: list[dict[str, Hyperedge]] = []
+
+            def _walk(node: Hyperedge, node_tok_pos: TokPos) -> None:
+                for variables in self.match(
+                    node, inner_pattern, curvars=curvars, tok_pos=node_tok_pos
+                ):
+                    merged = {**curvars, **variables}
+                    if merged not in results:
+                        results.append(merged)
+                if node.not_atom:
+                    if node_tok_pos is not None:
+                        for child, child_tok_pos in zip(
+                            node, node_tok_pos, strict=False
+                        ):
+                            _walk(child, child_tok_pos)
+                    else:
+                        for child in node:
+                            _walk(child, None)
+
+            _walk(edge, tok_pos)
+            return results
         else:
             raise NotImplementedError(f"Pattern function '{fun}' not implemented.")

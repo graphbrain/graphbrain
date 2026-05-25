@@ -213,3 +213,35 @@ This way, a complex expression such as the following can be captured in a variab
 ```clojure
 (var (atoms not/M (lemma be/P)) PREDICATE)
 ```
+
+### Deep
+
+The `deep` functional pattern matches an edge if the inner pattern matches the edge itself or any sub-edge at any nesting depth. It has the general form:
+
+```clojure
+(deep pattern)
+```
+
+For example, this pattern:
+
+```clojure
+(deep red/M)
+```
+
+would match any of:
+
+```clojure
+red/M
+(red/M piano/C)
+(the/M (red/M piano/C))
+```
+
+The inner pattern can itself be a functional pattern. For instance:
+
+```clojure
+(deep (any piano/C (grand/M piano/C)))
+```
+
+matches any edge that contains `piano/C` or `(grand/M piano/C)` anywhere within it.
+
+When the inner pattern contains a variable, `deep` returns one result dictionary for each distinct binding. Matching `(deep COLOR/M)` against `(the/M (red/M piano/C))` produces two results, with `COLOR` bound to `the/M` and `red/M` respectively.

@@ -1069,6 +1069,44 @@ class TestPatterns(unittest.TestCase):
         edge = hedge(s)
         assert match_pattern(edge, pattern) == [{}]
 
+    def test_match_pattern_fun_deep1(self):
+        pattern = hedge("(deep red/M)")
+        edge = hedge("red/M")
+        assert match_pattern(edge, pattern) == [{}]
+
+    def test_match_pattern_fun_deep2(self):
+        pattern = hedge("(deep red/M)")
+        edge = hedge("(red/M piano/C)")
+        assert match_pattern(edge, pattern) == [{}]
+
+    def test_match_pattern_fun_deep3(self):
+        pattern = hedge("(deep red/M)")
+        edge = hedge("(the/M (red/M piano/C))")
+        assert match_pattern(edge, pattern) == [{}]
+
+    def test_match_pattern_fun_deep4(self):
+        pattern = hedge("(deep red/M)")
+        edge = hedge("(the/M (blue/M piano/C))")
+        assert match_pattern(edge, pattern) == []
+
+    def test_match_pattern_fun_deep5(self):
+        pattern = hedge("(deep COLOR/M)")
+        edge = hedge("(the/M (red/M piano/C))")
+        result = match_pattern(edge, pattern)
+        assert {"COLOR": hedge("the/M")} in result
+        assert {"COLOR": hedge("red/M")} in result
+        assert len(result) == 2
+
+    def test_match_pattern_fun_deep6(self):
+        pattern = hedge("(deep (any piano/C (grand/M piano/C)))")
+        edge = hedge("(the/M (red/M (grand/M piano/C)))")
+        assert match_pattern(edge, pattern) == [{}]
+
+    def test_match_pattern_fun_deep7(self):
+        pattern = hedge("(deep red/M)")
+        edge = hedge("(red/M (red/M (red/M piano/C)))")
+        assert match_pattern(edge, pattern) == [{}]
+
     def test_match_pattern_fun_argroles2(self):
         s = "((atoms has/M said/P.{so}) */C */C)"
         pattern = hedge(s)
