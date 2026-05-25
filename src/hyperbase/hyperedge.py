@@ -44,7 +44,11 @@ class Hyperedge:
         return len(self._edges)
 
     def __hash__(self) -> int:
-        return hash(self._edges)
+        h = self._cache.get("_hash")
+        if h is None:
+            h = hash(self._edges)
+            self._cache["_hash"] = h
+        return h
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Hyperedge):
@@ -183,9 +187,13 @@ class Hyperedge:
         in this case, edge.all_atoms() returns:
         [the/md, of/br, mayor/cc, the/md, city/cs]
         """
+        cached = self._cache.get("all_atoms")
+        if cached is not None:
+            return cached
         atoms: list[Atom] = []
         for item in self:
             atoms += item.all_atoms()
+        self._cache["all_atoms"] = atoms
         return atoms
 
     def size(self) -> int:
