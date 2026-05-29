@@ -105,6 +105,12 @@ class Parser:
           parse result panel is rendered.
         - ``register_stats_provider(provider)`` -- supply extra
           ``(label, value)`` rows for the statistics table.
+        - ``register_diagnostics_provider(provider)`` -- render
+          detailed parse diagnostics (atoms, attempts, traces, ...)
+          to ``ctx.session.console``. Invoked after the result panel
+          only when the built-in ``diagnostics`` setting is enabled
+          (``/set diagnostics on``). Use this to expose information for
+          debugging and improving the parser.
 
         Hooks receive a :class:`~hyperbase.parsers.repl_api.ReplContext`
         object. The default implementation is a no-op.

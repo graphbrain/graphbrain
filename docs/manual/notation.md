@@ -19,9 +19,9 @@ This is enough to represent any sentence in natural language, for example "The s
 
 SH notation offers two optional features: subtypes and namespaces.
 
-Subtypes provide additional information about an atome type, for exemple `maria/Cp` indicates that this conceot is a proper noun. Unlike the main types, subtypes are meant to be arbitrarily extendable and can have any length, for example, we could define the subtype math and use it in a predicate such as: `union/Pmath`. SH natural language parsers are expected to produce single-character subtypes according to the tables provided below,
+**Subtypes** provide additional information about an atome type, for exemple `maria/Cp` indicates that this conceot is a proper noun. Unlike the main types, subtypes are meant to be arbitrarily extendable and can have any length, for example, we could define the subtype math and use it in a predicate such as: `union/Pmath`. SH natural language parsers are expected to produce single-character subtypes according to the tables provided below,
 
-Namespaces allow us to distinguish atoms with the same root and type but that correspond to different things, for example: `paris/Cp/1` and `paris/Cp/2` to distinguish Paris (France) and Paris (Texas). They can also be used to distinguish the language from which an atom was extracted, for example: `ciel/Cc/fr`, `céu/Cc/pt` and `sky/Cc/en`. Like subtypes, namespaces are strings of lowercase alphanumeric characters of arbitrary length.
+**Namespaces** allow us to distinguish atoms with the same root and type but that correspond to different things, for example: `paris/Cp/1` and `paris/Cp/2` to distinguish Paris (France) and Paris (Texas). They can also be used to distinguish the language from which an atom was extracted, for example: `ciel/Cc/fr`, `céu/Cc/pt` and `sky/Cc/en`. Like subtypes, namespaces are strings of lowercase alphanumeric characters of arbitrary length.
 
 Then, the additional notational devices can be employed when useful. Of course, it is always possible to utilize full notation for machine tasks while presented a simplified version for human-friendliness.
 

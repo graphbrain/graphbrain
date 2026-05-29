@@ -62,6 +62,10 @@ PostResultHook = Callable[[ReplContext], None]
 StatsProvider = Callable[[ReplContext], list[tuple[str, str]]]
 """Provider returning extra ``(label, value)`` rows for the stats table."""
 
+DiagnosticsProvider = Callable[[ReplContext], None]
+"""Provider that renders detailed parse diagnostics to ``ctx.session.console``.
+Only invoked when the built-in ``diagnostics`` setting is enabled."""
+
 CommandHandler = Callable[[list[str]], bool]
 """REPL command handler. Receives the command arguments and returns
 ``True`` if the REPL should exit."""

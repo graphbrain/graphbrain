@@ -29,6 +29,7 @@ from hyperbase.parsers.badness import badness_check
 from hyperbase.parsers.parse_result import ParseResult
 from hyperbase.parsers.repl_api import (
     CommandHandler,
+    DiagnosticsProvider,
     PostResultHook,
     PreResultHook,
     ReplContext,
@@ -58,6 +59,13 @@ BUILTIN_REPL_SETTINGS: dict[str, dict[str, Any]] = {
         "type": bool,
         "default": False,
         "description": "Run badness_check after each parse.",
+    },
+    "diagnostics": {
+        "type": bool,
+        "default": False,
+        "description": (
+            "Show detailed parser diagnostics (per-parser trace) after each parse."
+        ),
     },
     "search_recursive": {
         "type": bool,
@@ -368,6 +376,7 @@ class ReplSession:
         self._pre_result_hooks: list[PreResultHook] = []
         self._post_result_hooks: list[PostResultHook] = []
         self._stats_providers: list[StatsProvider] = []
+        self._diagnostics_providers: list[DiagnosticsProvider] = []
 
         # Parser cache: cache_key -> Parser instance.
         self.parser_cache: dict[tuple, Parser] = {}
@@ -523,6 +532,9 @@ class ReplSession:
     def register_stats_provider(self, provider: StatsProvider) -> None:
         self._stats_providers.append(provider)
 
+    def register_diagnostics_provider(self, provider: DiagnosticsProvider) -> None:
+        self._diagnostics_providers.append(provider)
+
     # ------------------------------------------------------------------
     # Parser lifecycle
     # ------------------------------------------------------------------
@@ -559,6 +571,7 @@ class ReplSession:
         self._pre_result_hooks.clear()
         self._post_result_hooks.clear()
         self._stats_providers.clear()
+        self._diagnostics_providers.clear()
 
     def _init_parser(self, parser_name: str) -> Parser:
         """Instantiate *parser_name*, run its REPL installer, cache it."""
@@ -1934,6 +1947,15 @@ class ReplSession:
                             self.console.print(
                                 f"[red]post-result hook failed: {e}[/red]"
                             )
+
+                    if self.settings.get("diagnostics", False):
+                        for provider in self._diagnostics_providers:
+                            try:
+                                provider(ctx)
+                            except Exception as e:
+                                self.console.print(
+                                    f"[red]diagnostics provider failed: {e}[/red]"
+                                )
 
                     if self.settings.get("check_badness", False):
                         self._render_badness(ctx)

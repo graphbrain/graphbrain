@@ -10,8 +10,9 @@
 - `transforms.tok_pos_tree(edge)` rebuilds the parallel `tok_pos` tree from in-memory atoms.
 - readers provide source information.
 - `hyperbase.parsers.badness` module for parser-agnostic combined structural + token-matching validation.
-- built-in REPL setting `check_badness` to render a badness panel after each parse, available regardless of the active parser plugin.
 - more REPL commands: /load, /unload, /save, /save-parse, /search, /count, /count-csv, /types, /transform, /classify, /unload-parser, /parse-results, /tag and /tags.
+- built-in REPL setting `diagnostics` for parsers to produce detailed diagnostics reports on each parse (for debug and improvement purposes).
+- built-in REPL setting `check_badness` to render a badness panel after each parse, available regardless of the active parser plugin.
 - parser plugin settings have an optional flag to indicate that no parser reload is nodes, REPL adjusted to accommodate this mechanism.
 - functional pattern `deep`.
 
