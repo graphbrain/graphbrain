@@ -428,7 +428,7 @@ class Hyperedge:
                 edges.append(self[pos + 1])
         return edges
 
-    def check_correctness(self) -> dict[Hyperedge, list[tuple[str, str]]]:
+    def check_correctness(self) -> dict[Hyperedge, list[tuple[str, str, int]]]:
         from hyperbase.correctness import check_correctness
 
         return check_correctness(self)

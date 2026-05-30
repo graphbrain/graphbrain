@@ -9,7 +9,7 @@ import pytest
 
 from hyperbase.builders import hedge
 from hyperbase.loaders import load_edges
-from hyperbase.parsers.parse_result import ParseResult
+from hyperbase.parsers.result import ParseResult
 
 
 def _make_parse_result() -> ParseResult:

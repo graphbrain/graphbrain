@@ -1,9 +1,9 @@
 from importlib.metadata import EntryPoint, entry_points
 from typing import Any
 
-from hyperbase.parsers.parse_result import ParseResult
 from hyperbase.parsers.parser import Parser
-from hyperbase.parsers.repl_api import ReplContext
+from hyperbase.parsers.repl import ReplContext
+from hyperbase.parsers.result import ParseResult
 
 
 def list_parsers() -> dict[str, EntryPoint]:

@@ -4,7 +4,7 @@ from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from hyperbase.parsers.parse_result import ParseResult
+    from hyperbase.parsers.result import ParseResult
 
 
 DEFAULT_MAX_DEPTH = 25
@@ -112,7 +112,7 @@ class Parser:
           (``/set diagnostics on``). Use this to expose information for
           debugging and improving the parser.
 
-        Hooks receive a :class:`~hyperbase.parsers.repl_api.ReplContext`
+        Hooks receive a :class:`~hyperbase.parsers.repl.ReplContext`
         object. The default implementation is a no-op.
         """
 

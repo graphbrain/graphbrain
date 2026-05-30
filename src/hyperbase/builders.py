@@ -6,7 +6,7 @@ from typing import Any, cast
 
 from hyperbase.constants import ATOM_ENCODE_TABLE
 from hyperbase.hyperedge import Atom, Hyperedge, UniqueAtom
-from hyperbase.parsers.parse_result import ParseResult
+from hyperbase.parsers.result import ParseResult
 
 
 def str_to_atom(s: str) -> str:

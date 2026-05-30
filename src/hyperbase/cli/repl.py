@@ -25,9 +25,8 @@ from hyperbase.builders import hedge, split_edge_str
 from hyperbase.constants import EdgeType
 from hyperbase.hyperedge import Atom, Hyperedge
 from hyperbase.parsers import Parser, get_parser, list_parsers
-from hyperbase.parsers.badness import badness_check
-from hyperbase.parsers.parse_result import ParseResult
-from hyperbase.parsers.repl_api import (
+from hyperbase.parsers.correctness import check_parse_correctness
+from hyperbase.parsers.repl import (
     CommandHandler,
     DiagnosticsProvider,
     PostResultHook,
@@ -35,6 +34,7 @@ from hyperbase.parsers.repl_api import (
     ReplContext,
     StatsProvider,
 )
+from hyperbase.parsers.result import ParseResult
 
 SETTINGS_FILE = Path.home() / ".hyperbase_repl_settings.json"
 
@@ -2001,7 +2001,7 @@ class ReplSession:
         _edge = hedge(ctx.edge)
         if _edge is None:
             return
-        badness_errors = badness_check(_edge, ctx.tokens)
+        badness_errors = check_parse_correctness(_edge, ctx.tokens)
 
         self.console.print()
         if not badness_errors:

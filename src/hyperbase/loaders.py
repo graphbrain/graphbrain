@@ -7,7 +7,7 @@ from pathlib import Path
 
 from hyperbase.builders import hedge
 from hyperbase.hyperedge import Hyperedge
-from hyperbase.parsers.parse_result import ParseResult
+from hyperbase.parsers.result import ParseResult
 
 
 def load_edges(

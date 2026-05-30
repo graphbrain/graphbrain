@@ -1,5 +1,5 @@
 from hyperbase import hedge
-from hyperbase.parsers.badness import badness_check
+from hyperbase.parsers.correctness import check_parse_correctness
 from hyperbase.parsers.utils import filter_alphanumeric_strings
 
 
@@ -54,8 +54,8 @@ class TestFilterAlphanumericStrings:
         assert result == ["testc", "word123", "foobar"]
 
 
-class TestBadnessCheck:
-    """Tests for badness_check function"""
+class TestCheckParseCorrectness:
+    """Tests for check_parse_correctness function"""
 
     def test_valid_parse_matching_tokens(self):
         """Test with valid parse and matching tokens"""
@@ -63,7 +63,7 @@ class TestBadnessCheck:
         tokens = ["the", "sky", "is", "blue"]
         edge = hedge(valid_parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_with_original_text(self):
@@ -72,7 +72,7 @@ class TestBadnessCheck:
         tokens = ["the", "sky", "is", "blue"]
         edge = hedge(valid_parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_contiguous_token_sequence(self):
@@ -83,7 +83,7 @@ class TestBadnessCheck:
         tokens = ["new", "york", "is"]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_valid_parse_missing_token(self):
@@ -92,7 +92,7 @@ class TestBadnessCheck:
         tokens = ["sky", "is", "blue"]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         # Should have error: "sky" not used
         assert len(errors) > 0
 
@@ -102,7 +102,7 @@ class TestBadnessCheck:
         tokens = ["sky", "is", "blue"]  # Missing "the"
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         # Should have error: "the" used but not in tokens
         assert len(errors) > 0
 
@@ -112,7 +112,7 @@ class TestBadnessCheck:
         tokens = ["blue", "blue", "is"]  # "blue" appears twice
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         # Should have error: "blue" used less than it appears
         assert len(errors) > 0
 
@@ -122,7 +122,7 @@ class TestBadnessCheck:
         tokens = ["(", "is", "blue", ")"]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_empty_tokens_list(self):
@@ -131,7 +131,7 @@ class TestBadnessCheck:
         tokens = []
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         # Should have errors: roots used but no tokens
         assert len(errors) > 0
 
@@ -155,7 +155,7 @@ class TestBadnessCheck:
         ]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_tokenization_mismatch_us_case_error1(self):
@@ -174,7 +174,7 @@ class TestBadnessCheck:
         ]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) > 0
 
     def test_tokenization_mismatch_us_case_error2(self):
@@ -194,7 +194,7 @@ class TestBadnessCheck:
         ]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) > 0
 
     def test_tokenization_combined_token_case(self):
@@ -206,7 +206,7 @@ class TestBadnessCheck:
         tokens = ["raf", "flies", "1m", "euros", "to", "cyprus"]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
 
         # Should successfully match token '1m' with root sequence ['1', 'm']
         assert len(errors) == 0
@@ -220,7 +220,7 @@ class TestBadnessCheck:
         tokens = ["malawi", "gets", "37m", "in", "uk", "health", "aid"]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_contraction_case_d(self):
@@ -232,7 +232,7 @@ class TestBadnessCheck:
         tokens = ["don", "t", "rip", "me", "off"]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_simple_contraction_case(self):
@@ -242,13 +242,13 @@ class TestBadnessCheck:
         tokens = ["don", "t", "is", "blue"]
         edge = hedge(parse)
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
     def test_valid_edge(self):
         edge = hedge("(is/P.s bob/C)")
         assert edge
-        errors = badness_check(edge, [])
+        errors = check_parse_correctness(edge, [])
 
         # Filter out token matching errors
         structural_errors = {k: v for k, v in errors.items() if k != "token-matching"}
@@ -258,7 +258,7 @@ class TestBadnessCheck:
         # 'z' is not in mspaoixtjr
         edge = hedge("(is/P.z bob/C)")
         assert edge
-        errors = badness_check(edge, [])
+        errors = check_parse_correctness(edge, [])
         # errors is a dict {edge: list of errors} or {string: list of errors}
         # We look for 'bad-argrole' in the errors
 
@@ -277,7 +277,7 @@ class TestBadnessCheck:
         # All C
         edge = hedge("(and/J bob/C alice/C)")
         assert edge
-        errors = badness_check(edge, [])
+        errors = check_parse_correctness(edge, [])
 
         # Ignore token matching errors if any (tokens is empty so maybe some?)
         # But structural errors should be absent.
@@ -301,7 +301,7 @@ class TestBadnessCheck:
         edge = hedge("(is/P.s blue/C)")
         tokens = ["is"]  # blue/C is missing
         assert edge
-        errors = badness_check(edge, tokens)
+        errors = check_parse_correctness(edge, tokens)
 
         found = False
         if "token-matching" in errors:
@@ -315,7 +315,7 @@ class TestBadnessCheck:
         # builders can only have two arguments
         edge = hedge("(+/B a/C b/C c/C)")
         assert edge
-        errors = badness_check(edge, [])
+        errors = check_parse_correctness(edge, [])
 
         found = False
         for _k, v in errors.items():

@@ -1,7 +1,7 @@
 import unittest
 
 from hyperbase.builders import hedge
-from hyperbase.parsers.parse_result import ParseResult
+from hyperbase.parsers.result import ParseResult
 
 
 class TestHyperedgeText(unittest.TestCase):

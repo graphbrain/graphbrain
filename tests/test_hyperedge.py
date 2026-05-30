@@ -1313,7 +1313,7 @@ class TestHyperedge(unittest.TestCase):
         assert str(result) == "apples/C"
 
     def test_tok_pos_tree_round_trip(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
         from hyperbase.transforms import tok_pos_tree
 
         original = "(2 (0 1) 3)"
@@ -1328,7 +1328,7 @@ class TestHyperedge(unittest.TestCase):
         assert str(regenerated) == original
 
     def test_tok_pos_tree_synthetic_atom(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
         from hyperbase.transforms import tok_pos_tree
 
         original = "(-1 0 2)"
@@ -1343,7 +1343,7 @@ class TestHyperedge(unittest.TestCase):
         assert str(regenerated) == original
 
     def test_transform_preserves_metadata_on_atoms(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
         from hyperbase.transforms import tok_pos_tree
 
         pr = ParseResult(
@@ -1367,7 +1367,7 @@ class TestHyperedge(unittest.TestCase):
         assert str(tok_pos_tree(result)) == "(1 0 2)"
 
     def test_simplify_preserves_tok_pos(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(is/Pd.so (the/Md sky/Cn) blue/Cc)"),
@@ -1382,7 +1382,7 @@ class TestHyperedge(unittest.TestCase):
         assert simplified[2].text_span == (11, 15)
 
     def test_replace_argroles_preserves_tok_pos(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(is/P.sc john/C tired/C)"),
@@ -1408,7 +1408,7 @@ class TestHyperedge(unittest.TestCase):
         assert result == edge
 
     def test_transform_preserves_root_text_same_roots(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(eats/Pd.so john/C apples/C)"),
@@ -1427,7 +1427,7 @@ class TestHyperedge(unittest.TestCase):
         assert result.tokens == ("John", "eats", "apples")
 
     def test_transform_derives_root_text_when_roots_change(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(eats/Pd.so john/C apples/C)"),
@@ -1447,7 +1447,7 @@ class TestHyperedge(unittest.TestCase):
         assert result.text == "apples"
 
     def test_replace_argroles_preserves_root_text(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(is/P.sc john/C tired/C)"),
@@ -1461,7 +1461,7 @@ class TestHyperedge(unittest.TestCase):
         assert result.tokens == ("John", "is", "tired")
 
     def test_add_argument_preserves_root_text_when_arg_in_source(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(eats/Pd.so john/C)"),
@@ -1484,7 +1484,7 @@ class TestHyperedge(unittest.TestCase):
         assert result.text == "John eats apples"
 
     def test_transform_constant_inherits_metadata_by_root(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(yesterday/Mt died/Mn fido/Cc)"),
@@ -1502,7 +1502,7 @@ class TestHyperedge(unittest.TestCase):
         assert result[1].text_span == (10, 14)
 
     def test_replace_atom_inherits_metadata_when_same_root(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(eats/Pd.so john/C apples/C)"),
@@ -1520,7 +1520,7 @@ class TestHyperedge(unittest.TestCase):
         assert result[2].text_span == (10, 16)
 
     def test_replace_atom_no_inherit_when_root_differs(self):
-        from hyperbase.parsers.parse_result import ParseResult
+        from hyperbase.parsers.result import ParseResult
 
         pr = ParseResult(
             edge=hedge("(eats/Pd.so john/C apples/C)"),
