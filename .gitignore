@@ -65,3 +65,4 @@ __pycache__
 /venv
 /dist
 /site
+.claude
