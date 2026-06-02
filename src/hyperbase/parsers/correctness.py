@@ -8,6 +8,11 @@ validation so any parser plugin can score the output of a parse against the
 original tokens. The third value in each error tuple is a severity (lower is
 worse): ``0`` for hard correctness failures, ``1`` for token-mismatch issues,
 ``2`` for argrole problems, ``3`` for junction issues.
+
+When ``strict`` is ``True``, the underlying :func:`check_correctness` also
+enforces that every predicate specification-role (``x``) argument is a
+specifier (``S``), emitting a ``spec-arg-not-specifier`` failure otherwise.
+Default (``strict=False``) behaviour is unchanged.
 """
 
 from hyperbase.correctness import check_structural_quality
@@ -18,11 +23,12 @@ from hyperbase.parsers.utils import filter_alphanumeric_strings
 def check_parse_correctness(
     edge: Hyperedge,
     tokens: list[str],
+    strict: bool = False,
 ) -> dict[str | Hyperedge, list[tuple[str, str, int]]]:
 
     # Hard grammar failures (severity 0), keyed by subedge.
     errors: dict[str | Hyperedge, list[tuple[str, str, int]]] = {
-        k: list(v) for k, v in edge.check_correctness().items()
+        k: list(v) for k, v in edge.check_correctness(strict=strict).items()
     }
 
     structural_errors = check_structural_quality(edge)

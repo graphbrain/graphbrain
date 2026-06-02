@@ -10,15 +10,21 @@ if TYPE_CHECKING:
     from hyperbase.hyperedge import Atom, Hyperedge
 
 
-def check_correctness(edge: Hyperedge) -> dict[Hyperedge, list[tuple[str, str, int]]]:
+def check_correctness(
+    edge: Hyperedge, strict: bool = False
+) -> dict[Hyperedge, list[tuple[str, str, int]]]:
     """Check correctness of a hyperedge, returning errors keyed by subedge.
 
     Each error is ``(code, message, severity)``. Correctness failures are hard
     grammar violations, so they all carry severity ``0`` (the most serious).
+
+    When ``strict`` is ``True``, additional grammar rules are enforced: every
+    argument filling a predicate's specification role (``x``) must be of type
+    specifier (``S``). Default (``strict=False``) behaviour is unchanged.
     """
     if edge.atom:
         return _check_atom(edge)  # type: ignore[arg-type]
-    return _check_edge(edge)
+    return _check_edge(edge, strict)
 
 
 def _check_atom(atom: Atom) -> dict[Hyperedge, list[tuple[str, str, int]]]:
@@ -42,7 +48,9 @@ def _check_atom(atom: Atom) -> dict[Hyperedge, list[tuple[str, str, int]]]:
     return output
 
 
-def _check_edge(edge: Hyperedge) -> dict[Hyperedge, list[tuple[str, str, int]]]:
+def _check_edge(
+    edge: Hyperedge, strict: bool = False
+) -> dict[Hyperedge, list[tuple[str, str, int]]]:
     output: dict[Hyperedge, list[tuple[str, str, int]]] = {}
     errors: list[tuple[str, str]] = []
 
@@ -96,6 +104,27 @@ def _check_edge(edge: Hyperedge) -> dict[Hyperedge, list[tuple[str, str, int]]]:
             if at not in {EdgeType.CONCEPT, EdgeType.RELATION, EdgeType.SPECIFIER}:
                 e = f"predicate argument '{arg}' of '{edge}' has incorrect type: {at}"
                 errors.append(("pred-arg-bad-type", e))
+        # strict: every specification-role (x) argument must be a specifier (S)
+        if strict:
+            try:
+                ars = edge.argroles()
+            except RuntimeError:
+                ars = ""
+            for i, arg in enumerate(edge[1:]):
+                if (
+                    i < len(ars)
+                    and ars[i] == const.ArgRole.SPECIFICATION
+                    and arg.mtype() != EdgeType.SPECIFIER
+                ):
+                    errors.append(
+                        (
+                            "spec-arg-not-specifier",
+                            f"specification argument '{arg}' of '{edge}' must "
+                            f"be a specifier (type 'S'), but has type "
+                            f"{arg.mtype()}. Wrap it in a trigger (e.g. a "
+                            f"special trigger atom like _/Tt/.).",
+                        )
+                    )
     # check if conjunction structure is correct
     elif ct == EdgeType.CONJUNCTION and len(edge) < 3:
         errors.append(
@@ -165,7 +194,7 @@ def _check_edge(edge: Hyperedge) -> dict[Hyperedge, list[tuple[str, str, int]]]:
         output[edge] = [(code, msg, 0) for code, msg in errors]
 
     for subedge in edge:
-        output.update(check_correctness(subedge))
+        output.update(check_correctness(subedge, strict))
 
     return output
 
@@ -212,7 +241,10 @@ def check_structural_quality(
             connector_type = current_edge[0].type()
             if len(current_edge) >= 2:
                 target_mt = current_edge[1].mt
-                if connector_type in {"Ma", "Md", "Mq", "Mp"} and target_mt != "C":
+                if (
+                    connector_type in {"Ma", "Md", "Mq", "Mp", "Me", "Mw"}
+                    and target_mt != "C"
+                ):
                     current_errors.append(
                         (
                             f"bad-{connector_type.lower()}-target",
@@ -225,10 +257,31 @@ def check_structural_quality(
                 elif connector_type == "Mm" and target_mt != "P":
                     current_errors.append(
                         (
-                            "bad-mm-target",
-                            f"Modifier '{current_edge}' of type 'Mm' should only be "
-                            "applied to predicates (type 'P'), but its target "
-                            f"'{current_edge[1]}' has type '{target_mt}'.",
+                            f"bad-{connector_type.lower()}-target",
+                            f"Modifier '{current_edge}' of type '{connector_type}' "
+                            "should only be applied to predicates (type 'P'), but its "
+                            f"target '{current_edge[1]}' has type '{target_mt}'.",
+                            3,
+                        )
+                    )
+                elif connector_type == "Mb" and target_mt not in {"P", "T"}:
+                    current_errors.append(
+                        (
+                            f"bad-{connector_type.lower()}-target",
+                            f"Modifier '{current_edge}' of type '{connector_type}' "
+                            "should only be applied to predicates/triggers "
+                            f"(type 'P' or 'T'), but its target '{current_edge[1]}' "
+                            f"has type '{target_mt}'.",
+                            3,
+                        )
+                    )
+                elif connector_type == "Mg" and target_mt not in {"C", "M"}:
+                    current_errors.append(
+                        (
+                            "bad-mg-target",
+                            f"Modifier '{current_edge}' of type 'Mg' should only be "
+                            "applied to adjectives/adverbs (type 'C' or 'M'), but its "
+                            f"target '{current_edge[1]}' has type '{target_mt}'.",
                             3,
                         )
                     )

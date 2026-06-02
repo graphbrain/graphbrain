@@ -92,6 +92,14 @@ Specifications can be other relations, for example in "Maria plays chess when it
 (plays/P.sox maria/C chess/C (when/T (rains/P.o it/C)))
 ```
 
+**Every argument filling the specification role (`x`) must be of type specifier (`S`).** Specifiers are produced by triggers (`(T [CR])` → `S`), so a specification is normally introduced by a trigger word, as in `(in/Tt ...)` or `(when/Tt ...)` above. When a specification has no natural trigger word in the surface text — for example a bare indirect object — the argument must still be turned into an `S` by enclosing it in the appropriate special trigger atom `_/T*/.` (see [Special atoms](#special-atoms)). For instance, "Maria gave Peter a book" has Peter as a recipient with no preposition:
+
+```
+(gave/P.sox maria/Cp book/Cc (_/Ti/. peter/Cp))
+```
+
+Here `(_/Ti/. peter/Cp)` is a specifier of indirect-object subtype, satisfying the requirement that the `x` argument be of type `S`.
+
 ### Builders
 
 In builders, the two argument roles are used to identify the main concept and the auxiliary concept
@@ -125,20 +133,33 @@ The following tables present the subtypes that SH semantic parsers are expected 
 | Cq | quantitative | 27/Cn |
 | Ca | adjective | 27/Ca |
 | Cd | determinant | some/Cd |
+| Cw | interrogative / wh (nominal) | who/Cw, what/Cw, which/Cw |
+| Ce | demonstrative pronoun | this/Ce, that/Ce |
+| Cg | nominalized verb / gerund | swimming/Cg |
 | Cx | unclassified | |
 
 ### Predicate
 
+`Pv` is the default declarative verbal predicate. The mood/kind subtypes below take precedence when they apply; a predicate carries exactly one single-character subtype.
+
 | Code | Subtype | Example |
 |------|---------|---------|
-| Pv | verbal | is/Pv |
+| Pv | verbal (declarative, default) | is/Pv |
+| Pi | interrogative | is/Pi (Is the sky blue?) |
+| Pj | imperative / jussive | close/Pj (Close the door) |
+| Pn | nominal / copular | non-verbal / copula-drop predicate |
+| Pe | existential | there is/are |
 | Px | unclassified | |
 
 ### Builder
 
 | Code | Subtype | Example |
 |------|---------|---------|
+| Bp | genitive / relational | of/Bp.ma (capital of France) |
+| Bm | partitive / measure | cup of coffee, slice of bread |
 | Bx | unclassified | |
+
+Appositives ("Obama, the president") are *not* builders: express them with the generic conjunction `:/J/.`, e.g. `(:/J/. obama/Cp (the/Md president/Cc))`.
 
 ### Modifier
 
@@ -147,9 +168,13 @@ The following tables present the subtypes that SH semantic parsers are expected 
 | Md | determinant | the/Md |
 | Ma | adjective | green/Ma |
 | Mq | quantitative | 100/Mq |
-| Mm | modal | will/Mv |
+| Mm | modal / tense / auxiliary | will/Mm, was/Mm |
+| Mb | adverbial / manner | quickly/Mb, carefully/Mb |
+| Mg | degree / intensifier | very/Mg, more/Mg, too/Mg |
 | Mn | negation | not/Mn |
 | Mp | possessive | my/Mp |
+| Me | demonstrative determiner | this/Me, that/Me |
+| Mw | interrogative determiner | which/Mw, whose/Mw |
 | Mx | unclassified | |
 
 ### Trigger
@@ -184,4 +209,29 @@ Special atoms are annotated with the reserved `.` namespace.
 |------|---------|---------|
 | +/B/. | Define compound nouns | (+/B.am/. alan/Cp turing/Cp) |
 | :/J/. | Generic conjunction | |
-| _/Ti/. | Indirect object | |
+
+### Special trigger atoms
+
+There is one special trigger atom per trigger subtype. Use them to turn a bare concept or relation into a specifier (`S`) when a specification argument (the `x` role of a predicate) has no natural trigger word in the surface text. The subtype is chosen to match the semantic role the specification plays.
+
+| Atom | Subtype | Example |
+|------|---------|---------|
+| _/Tt/. | temporal | (_/Tt/. monday/Cc) |
+| _/Tl/. | locative | (_/Tl/. berlin/Cp) |
+| _/Ti/. | indirect object | (_/Ti/. peter/Cp) |
+| _/Ta/. | passive actor / agent | (_/Ta/. dog/Cc) |
+| _/Tb/. | beneficiary | (_/Tb/. him/Ci) |
+| _/Ts/. | source / ablative | (_/Ts/. paris/Cp) |
+| _/Tn/. | manner / means / instrument | (_/Tn/. hammer/Cc) |
+| _/Tw/. | comitative | (_/Tw/. john/Cp) |
+| _/Tr/. | reference / topic | (_/Tr/. politics/Cc) |
+| _/Tq/. | quantitative / measure | (_/Tq/. (5/Mq percent/Cc)) |
+| _/Tv/. | privative / negative | (_/Tv/. money/Cc) |
+| _/Tf/. | conditional | (_/Tf/. (rains/Pv.s it/Ci)) |
+| _/Tc/. | causal | (_/Tc/. rain/Cc) |
+| _/Tp/. | purpose / final | (_/Tp/. safety/Cc) |
+| _/To/. | result / consecutive | (_/To/. victory/Cc) |
+| _/Tg/. | concessive | (_/Tg/. rain/Cc) |
+| _/Te/. | comparative | (_/Te/. lion/Cc) |
+| _/Td/. | declarative complementizer | (_/Td/. (won/Pv.s she/Ci)) |
+| _/Tx/. | unclassified | (_/Tx/. thing/Cc) |

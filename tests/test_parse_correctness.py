@@ -324,3 +324,70 @@ class TestCheckParseCorrectness:
                     assert err[2] == 0
                     found = True
         assert found, "Should have build-2-args with severity 0"
+
+
+def _codes(errors):
+    return {code for v in errors.values() for code, _msg, _sev in v}
+
+
+class TestStrictMode:
+    """Strict mode enforces that x-role arguments are specifiers (S)."""
+
+    def test_strict_flags_bare_specification_argument(self):
+        # "peter" fills the x slot but is a bare concept, not a specifier
+        edge = hedge("(gave/Pv.sox maria/Cp book/Cc peter/Cp)")
+        assert edge
+        errors = check_parse_correctness(edge, [], strict=True)
+        assert "spec-arg-not-specifier" in _codes(errors)
+
+    def test_strict_error_has_severity_zero(self):
+        edge = hedge("(gave/Pv.sox maria/Cp book/Cc peter/Cp)")
+        assert edge
+        errors = check_parse_correctness(edge, [], strict=True)
+        severities = [
+            sev
+            for v in errors.values()
+            for code, _msg, sev in v
+            if code == "spec-arg-not-specifier"
+        ]
+        assert severities == [0]
+
+    def test_default_mode_does_not_flag_bare_specification(self):
+        # Same edge, default (non-strict) mode: behaviour unchanged.
+        edge = hedge("(gave/Pv.sox maria/Cp book/Cc peter/Cp)")
+        assert edge
+        errors = check_parse_correctness(edge, [])
+        assert "spec-arg-not-specifier" not in _codes(errors)
+
+    def test_strict_passes_wrapped_specification(self):
+        # Wrapping the recipient in a special trigger atom makes it an S.
+        edge = hedge("(gave/Pv.sox maria/Cp book/Cc (_/Ti/. peter/Cp))")
+        assert edge
+        errors = check_parse_correctness(edge, [], strict=True)
+        assert "spec-arg-not-specifier" not in _codes(errors)
+
+    def test_strict_allows_relation_specification(self):
+        # A trigger applied to a relation is an S and is accepted in the x slot.
+        edge = hedge("(plays/Pv.sox maria/Cp chess/Cc (when/Tt (rains/Pv.s it/Ci)))")
+        assert edge
+        errors = check_parse_correctness(edge, [], strict=True)
+        assert "spec-arg-not-specifier" not in _codes(errors)
+
+
+class TestNewSubtypeModifierRules:
+    """Soft modifier-target checks cover the newly added modifier subtypes."""
+
+    def test_interrogative_determiner_on_predicate_flagged(self):
+        edge = hedge("(which/Mw (ran/Pv.sox he/Ci))")
+        assert edge
+        assert "bad-mw-target" in _codes(check_parse_correctness(edge, []))
+
+    def test_demonstrative_determiner_on_concept_ok(self):
+        edge = hedge("(this/Me book/Cc)")
+        assert edge
+        assert "bad-me-target" not in _codes(check_parse_correctness(edge, []))
+
+    def test_manner_adverb_on_concept_flagged(self):
+        edge = hedge("(quickly/Mb sky/Cc)")
+        assert edge
+        assert "bad-mb-target" in _codes(check_parse_correctness(edge, []))

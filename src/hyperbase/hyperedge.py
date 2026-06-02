@@ -428,10 +428,12 @@ class Hyperedge:
                 edges.append(self[pos + 1])
         return edges
 
-    def check_correctness(self) -> dict[Hyperedge, list[tuple[str, str, int]]]:
+    def check_correctness(
+        self, strict: bool = False
+    ) -> dict[Hyperedge, list[tuple[str, str, int]]]:
         from hyperbase.correctness import check_correctness
 
-        return check_correctness(self)
+        return check_correctness(self, strict=strict)
 
     def normalise(self) -> Hyperedge:
         from hyperbase.transforms import _propagate_root_text, normalise
