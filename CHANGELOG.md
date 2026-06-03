@@ -15,6 +15,7 @@
 - built-in REPL setting `check_badness` to render a badness panel after each parse, available regardless of the active parser plugin.
 - parser plugin settings have an optional flag to indicate that no parser reload is nodes, REPL adjusted to accommodate this mechanism.
 - functional pattern `deep`.
+- CLI `stats` command.
 
 ### Changed
 

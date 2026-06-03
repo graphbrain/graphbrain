@@ -171,6 +171,23 @@ def main() -> None:
         help="Path to a .jsonl parse-results file to pre-load into memory",
     )
 
+    # --- stats subcommand --------------------------------------------------
+    stats_parser = subparsers.add_parser(
+        "stats",
+        help="Print statistics about a JSONL parse-results file",
+    )
+    stats_parser.add_argument(
+        "file",
+        type=str,
+        help="Path to a .jsonl parse-results file",
+    )
+    stats_parser.add_argument(
+        "--bins",
+        type=int,
+        default=None,
+        help="Number of histogram bins (default: auto)",
+    )
+
     # Dynamically inject parser-specific args, derived from the active
     # parser's ``accepted_params()``. We do this in two passes so that
     # plugin packages stay the source of truth for their CLI surface.
@@ -200,6 +217,12 @@ def main() -> None:
         from hyperbase.cli.read import run_read
 
         run_read(args)
+        sys.exit(0)
+
+    if args.command == "stats":
+        from hyperbase.cli.stats import run_stats
+
+        run_stats(args)
         sys.exit(0)
 
     if args.command == "repl":
