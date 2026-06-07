@@ -31,6 +31,14 @@ def get_parser(
     compatibility, keyword arguments are merged into *params* (explicit
     *params* entries take precedence).
 
+    Any parameter the caller does not supply is seeded with the
+    ``"default"`` declared in the parser's :meth:`Parser.accepted_params`,
+    so a programmatic caller gets the same effective configuration as the
+    REPL/CLI front-ends (which pre-fill those defaults before constructing
+    the parser). A declared default of ``None`` means "no default" — it is
+    left unset so the parser's own ``__init__`` fallback or validation
+    applies.
+
     Raises :class:`ValueError` if the parser is not installed.
     """
     parsers = list_parsers()
@@ -41,6 +49,9 @@ def get_parser(
         )
     merged: dict[str, Any] = {**kwargs, **(params or {})}
     cls = parsers[name].load()
+    for pname, info in cls.accepted_params().items():
+        if pname not in merged and info.get("default") is not None:
+            merged[pname] = info["default"]
     return cls(merged)
 
 

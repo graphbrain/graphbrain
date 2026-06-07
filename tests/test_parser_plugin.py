@@ -82,7 +82,15 @@ class TestGetParser:
 
         parser = get_parser("mock", params={"lang": "en"})
         assert isinstance(parser, MockParser)
-        assert parser.params == {"lang": "en"}
+        # get_parser seeds any unset accepted_params() default (here the base
+        # class's max_depth) so programmatic callers match the REPL/CLI, while
+        # preserving the caller's own values.
+        default_depth = MockParser.accepted_params()["max_depth"]["default"]
+        assert parser.params == {"lang": "en", "max_depth": default_depth}
+
+        # A caller-supplied value wins over the seeded schema default.
+        overridden = get_parser("mock", params={"max_depth": 7})
+        assert overridden.params["max_depth"] == 7
 
     @patch("hyperbase.parsers.entry_points")
     def test_plugin_load_failure(self, mock_eps):
