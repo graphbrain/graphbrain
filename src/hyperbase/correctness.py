@@ -10,6 +10,21 @@ if TYPE_CHECKING:
     from hyperbase.hyperedge import Atom, Hyperedge
 
 
+def _safe_mtype(edge: Hyperedge) -> str:
+    """Main type of ``edge``, or the sentinel ``'?'`` when it cannot be determined.
+
+    A malformed-but-parseable subedge (e.g. a concept used as a connector) makes
+    :meth:`Hyperedge.type` raise. The correctness checker must *report* that as a
+    bad-type error rather than crash, so an undeterminable type is returned as
+    ``'?'`` — a value no valid-type set accepts, so it surfaces as a bad-type
+    error at whichever connector/argument slot it occupies.
+    """
+    try:
+        return edge.mtype()
+    except (RuntimeError, IndexError):
+        return "?"
+
+
 def check_correctness(
     edge: Hyperedge, strict: bool = False
 ) -> dict[Hyperedge, list[tuple[str, str, int]]]:
@@ -31,7 +46,7 @@ def _check_atom(atom: Atom) -> dict[Hyperedge, list[tuple[str, str, int]]]:
     output: dict[Hyperedge, list[tuple[str, str, int]]] = {}
     errors: list[tuple[str, str]] = []
 
-    at = atom.mtype()
+    at = _safe_mtype(atom)
     if at not in {
         EdgeType.CONCEPT,
         EdgeType.PREDICATE,
@@ -54,7 +69,7 @@ def _check_edge(
     output: dict[Hyperedge, list[tuple[str, str, int]]] = {}
     errors: list[tuple[str, str]] = []
 
-    ct = edge[0].mtype()
+    ct = _safe_mtype(edge[0])
     # check if connector has valid type
     if ct not in {
         EdgeType.PREDICATE,
@@ -82,7 +97,7 @@ def _check_edge(
                 ("build-2-args", f"builder edge '{edge}' can only have two arguments")
             )
         for arg in edge[1:]:
-            at = arg.mtype()
+            at = _safe_mtype(arg)
             if at != EdgeType.CONCEPT:
                 e = f"builder argument '{arg}' of '{edge}' has incorrect type: {at}"
                 errors.append(("build-arg-bad-type", e))
@@ -93,14 +108,14 @@ def _check_edge(
                 ("trig-1-arg", f"trigger edge '{edge}' can only have one argument")
             )
         for arg in edge[1:]:
-            at = arg.mtype()
+            at = _safe_mtype(arg)
             if at not in {EdgeType.CONCEPT, EdgeType.RELATION}:
                 e = f"trigger argument '{arg}' of '{edge}' has incorrect type: {at}"
                 errors.append(("trig-bad-arg-type", e))
     # check if predicate structure is correct
     elif ct == EdgeType.PREDICATE:
         for arg in edge[1:]:
-            at = arg.mtype()
+            at = _safe_mtype(arg)
             if at not in {EdgeType.CONCEPT, EdgeType.RELATION, EdgeType.SPECIFIER}:
                 e = f"predicate argument '{arg}' of '{edge}' has incorrect type: {at}"
                 errors.append(("pred-arg-bad-type", e))
@@ -111,17 +126,18 @@ def _check_edge(
             except RuntimeError:
                 ars = ""
             for i, arg in enumerate(edge[1:]):
+                am = _safe_mtype(arg)
                 if (
                     i < len(ars)
                     and ars[i] == const.ArgRole.SPECIFICATION
-                    and arg.mtype() != EdgeType.SPECIFIER
+                    and am != EdgeType.SPECIFIER
                 ):
                     errors.append(
                         (
                             "spec-arg-not-specifier",
                             f"specification argument '{arg}' of '{edge}' must "
                             f"be a specifier (type 'S'), but has type "
-                            f"{arg.mtype()}. Wrap it in a trigger (e.g. a "
+                            f"{am}. Wrap it in a trigger (e.g. a "
                             f"special trigger atom like _/Tt/.).",
                         )
                     )

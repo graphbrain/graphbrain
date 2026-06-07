@@ -234,6 +234,40 @@ class TestArgroleErrors:
         assert "no-argroles" in codes
 
 
+class TestUntypeableSubedgeIsReportedNotRaised:
+    """A malformed-but-parseable subedge whose type can't be determined (e.g. a
+    concept used as a connector) must be REPORTED as a bad-type error, never
+    crash the checker. Regression: typing such a subedge as an argument used to
+    raise ``RuntimeError: Edge is malformed, type cannot be determined`` and take
+    down the whole parse.
+    """
+
+    def test_concept_headed_edge_as_predicate_arg(self):
+        # (media/C content/C) is a concept heading a concept: its type cannot be
+        # determined, so typing it (as the predicate's argument) used to raise.
+        edge = hedge("(is/P.s (media/C content/C))")
+        errors = check_correctness(edge)  # must not raise
+        all_codes = {c for errs in errors.values() for c, _m, _s in errs}
+        # both the bad inner connector and the bad predicate argument are flagged
+        assert "conn-bad-type" in all_codes
+        assert "pred-arg-bad-type" in all_codes
+
+    def test_untypeable_through_modifier_chain(self):
+        # Mirrors the real failure: a predicate argument is a modifier chain whose
+        # innermost element is concept-headed (and therefore untypeable).
+        edge = hedge("(is/P.s (interesting/M (media/C content/C)))")
+        errors = check_correctness(edge)  # must not raise
+        all_codes = {c for errs in errors.values() for c, _m, _s in errs}
+        assert "conn-bad-type" in all_codes
+
+    def test_strict_mode_handles_untypeable_spec_arg(self):
+        # strict mode types the x-role argument too; that path must also be safe.
+        edge = hedge("(give/P.sx bob/C (media/C content/C))")
+        errors = check_correctness(edge, strict=True)  # must not raise
+        all_codes = {c for errs in errors.values() for c, _m, _s in errs}
+        assert "conn-bad-type" in all_codes
+
+
 class TestRecursiveErrorPropagation:
     """Errors in deeply nested subedges should propagate to root."""
 
