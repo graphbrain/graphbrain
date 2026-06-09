@@ -23,6 +23,10 @@ _MAX_INT_BINS = 30
 _DEFAULT_BINS = 20
 # How many distinct error messages to list in the failure breakdown.
 _TOP_ERRORS = 10
+# How many of the most-repeated sentences to list in the duplicates breakdown.
+_TOP_DUPLICATES = 10
+# Width to truncate sentences to when listing duplicates.
+_SENTENCE_WIDTH = 80
 
 
 def run_stats(args: argparse.Namespace) -> None:
@@ -40,6 +44,7 @@ def run_stats(args: argparse.Namespace) -> None:
     token_counts: list[int] = []
     type_counter: Counter[str] = Counter()
     error_counter: Counter[str] = Counter()
+    text_counter: Counter[str] = Counter()
 
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -52,6 +57,7 @@ def run_stats(args: argparse.Namespace) -> None:
             except Exception:
                 malformed += 1
                 continue
+            text_counter.update([pr.text])
             if pr.failed:
                 failed += 1
                 error_counter.update(pr.errors or ["(no error message)"])
@@ -74,6 +80,14 @@ def run_stats(args: argparse.Namespace) -> None:
     successful = len(sizes)
 
     console.print(_overview_table(path, total, successful, failed, malformed))
+
+    total_texts = sum(text_counter.values())
+    if total_texts:
+        console.print()
+        console.print(_duplicates_table(text_counter, total_texts))
+        if any(c > 1 for c in text_counter.values()):
+            console.print()
+            console.print(_top_duplicates_table(text_counter))
 
     if successful:
         console.print()
@@ -208,4 +222,40 @@ def _failure_table(error_counter: Counter[str], failed: int) -> Table:
     remaining = len(error_counter) - _TOP_ERRORS
     if remaining > 0:
         table.add_row(f"… and {remaining} more distinct messages", "")
+    return table
+
+
+def _truncate(text: str, width: int = _SENTENCE_WIDTH) -> str:
+    text = text.replace("\n", " ").strip()
+    return text if len(text) <= width else text[: width - 1] + "…"
+
+
+def _duplicates_table(text_counter: Counter[str], total_texts: int) -> Table:
+    unique = len(text_counter)
+    duplicated = sum(1 for c in text_counter.values() if c > 1)
+    redundant = sum(c - 1 for c in text_counter.values() if c > 1)
+
+    table = Table(title="Duplicate sentences", show_header=False)
+    table.add_column("Metric", style="bold")
+    table.add_column("Value")
+    table.add_row("Total sentences", str(total_texts))
+    table.add_row("Unique sentences", f"{unique} ({_pct(unique, total_texts)})")
+    table.add_row(
+        "Duplicated sentences",
+        f"{duplicated} ({_pct(duplicated, unique)} of unique)",
+    )
+    table.add_row("Redundant copies", f"{redundant} ({_pct(redundant, total_texts)})")
+    return table
+
+
+def _top_duplicates_table(text_counter: Counter[str]) -> Table:
+    duplicated = [(t, c) for t, c in text_counter.most_common() if c > 1]
+    table = Table(title="Most duplicated sentences")
+    table.add_column("Count", justify="right")
+    table.add_column("Sentence")
+    for text, count in duplicated[:_TOP_DUPLICATES]:
+        table.add_row(str(count), _truncate(text))
+    remaining = len(duplicated) - _TOP_DUPLICATES
+    if remaining > 0:
+        table.add_row("", f"… and {remaining} more duplicated sentences")
     return table
