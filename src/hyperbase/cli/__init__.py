@@ -211,6 +211,35 @@ def main() -> None:
         help="Overwrite the input file in place",
     )
 
+    # --- shuffle subcommand ------------------------------------------------
+    shuffle_parser = subparsers.add_parser(
+        "shuffle",
+        help="Randomly shuffle the lines of a JSONL parse-results file",
+    )
+    shuffle_parser.add_argument(
+        "file",
+        type=str,
+        help="Path to a .jsonl parse-results file",
+    )
+    shuffle_parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default=None,
+        help="Output .jsonl path (required unless --in-place)",
+    )
+    shuffle_parser.add_argument(
+        "--in-place",
+        action="store_true",
+        help="Overwrite the input file in place",
+    )
+    shuffle_parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for a reproducible shuffle (default: random)",
+    )
+
     # Dynamically inject parser-specific args, derived from the active
     # parser's ``accepted_params()``. We do this in two passes so that
     # plugin packages stay the source of truth for their CLI surface.
@@ -252,6 +281,12 @@ def main() -> None:
         from hyperbase.cli.dedup import run_dedup
 
         run_dedup(args)
+        sys.exit(0)
+
+    if args.command == "shuffle":
+        from hyperbase.cli.shuffle import run_shuffle
+
+        run_shuffle(args)
         sys.exit(0)
 
     if args.command == "repl":
