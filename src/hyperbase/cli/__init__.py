@@ -188,6 +188,29 @@ def main() -> None:
         help="Number of histogram bins (default: auto)",
     )
 
+    # --- dedup subcommand --------------------------------------------------
+    dedup_parser = subparsers.add_parser(
+        "dedup",
+        help="Remove duplicate sentences from a JSONL parse-results file",
+    )
+    dedup_parser.add_argument(
+        "file",
+        type=str,
+        help="Path to a .jsonl parse-results file",
+    )
+    dedup_parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default=None,
+        help="Output .jsonl path (required unless --in-place)",
+    )
+    dedup_parser.add_argument(
+        "--in-place",
+        action="store_true",
+        help="Overwrite the input file in place",
+    )
+
     # Dynamically inject parser-specific args, derived from the active
     # parser's ``accepted_params()``. We do this in two passes so that
     # plugin packages stay the source of truth for their CLI surface.
@@ -223,6 +246,12 @@ def main() -> None:
         from hyperbase.cli.stats import run_stats
 
         run_stats(args)
+        sys.exit(0)
+
+    if args.command == "dedup":
+        from hyperbase.cli.dedup import run_dedup
+
+        run_dedup(args)
         sys.exit(0)
 
     if args.command == "repl":
