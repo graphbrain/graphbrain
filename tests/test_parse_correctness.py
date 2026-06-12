@@ -1,6 +1,46 @@
 from hyperbase import hedge
-from hyperbase.parsers.correctness import check_parse_correctness
+from hyperbase.parsers.correctness import check_parse_correctness, parse_coverage
 from hyperbase.parsers.utils import filter_alphanumeric_strings
+
+
+class TestParseCoverage:
+    """Tests for parse_coverage: coverage failures attributed to their sources."""
+
+    def test_full_coverage(self):
+        edge = hedge("(plays/Pv.so maria/Cp chess/Cc)")
+        unused, overused = parse_coverage(edge, ["Maria", "plays", "chess"])
+        assert unused == []
+        assert overused == []
+
+    def test_unused_token_reported_with_original_index(self):
+        edge = hedge("(plays/Pv.s maria/Cp)")
+        unused, overused = parse_coverage(edge, ["Maria", "plays", "chess"])
+        assert unused == [2]
+        assert overused == []
+
+    def test_punctuation_tokens_never_unused(self):
+        # ',' cleans to empty and is excluded from matching, exactly as in
+        # check_parse_correctness; indices still refer to the original list.
+        edge = hedge("(plays/Pv.s maria/Cp)")
+        unused, overused = parse_coverage(edge, ["Maria", ",", "plays", "chess"])
+        assert unused == [3]
+        assert overused == []
+
+    def test_overused_root_returns_the_atom(self):
+        edge = hedge("(plays/Pv.so maria/Cp maria/Cp)")
+        unused, overused = parse_coverage(edge, ["Maria", "plays", "chess"])
+        assert unused == [2]
+        assert [str(a) for a in overused] == ["maria/Cp"]
+
+    def test_agrees_with_check_parse_correctness(self):
+        edge = hedge("(plays/Pv.s maria/Cp)")
+        tokens = ["Maria", "plays", "chess"]
+        unused, overused = parse_coverage(edge, tokens)
+        issues = check_parse_correctness(edge, tokens).get("token-matching", [])
+        assert len([c for c, _, _ in issues if c == "token-unused"]) == len(unused)
+        assert len([c for c, _, _ in issues if c == "root-without-token"]) == len(
+            overused
+        )
 
 
 class TestFilterAlphanumericStrings:

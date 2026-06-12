@@ -1,6 +1,11 @@
 from hyperbase.hyperedge import Hyperedge
 
 
+def clean_alphanumeric(s: str) -> str:
+    """Lowercase ``s`` and strip every non-alphanumeric character."""
+    return "".join(c.lower() for c in s if c.isalnum())
+
+
 def filter_alphanumeric_strings(strings: list[str]) -> list[str]:
     """
     Filter a list of strings to include only those containing alphanumeric characters,
@@ -12,14 +17,7 @@ def filter_alphanumeric_strings(strings: list[str]) -> list[str]:
     Returns:
         Filtered list containing only lowercased alphanumeric characters
     """
-    filtered: list[str] = []
-    for s in strings:
-        # Remove non-alphanumeric characters and lowercase
-        cleaned = "".join(c.lower() for c in s if c.isalnum())
-        # Only include if result is non-empty
-        if cleaned:
-            filtered.append(cleaned)
-    return filtered
+    return [cleaned for s in strings if (cleaned := clean_alphanumeric(s))]
 
 
 def edge_depth_exceeds(edge: Hyperedge, limit: int) -> bool:
