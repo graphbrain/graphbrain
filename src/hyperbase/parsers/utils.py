@@ -1,8 +1,17 @@
+from functools import lru_cache
+
 from hyperbase.hyperedge import Hyperedge
 
 
+@lru_cache(maxsize=2048)
 def clean_alphanumeric(s: str) -> str:
-    """Lowercase ``s`` and strip every non-alphanumeric character."""
+    """Lowercase ``s`` and strip every non-alphanumeric character.
+
+    Memoized: this is a pure ``str -> str`` map called many times on the same
+    small set of token / atom-label strings (e.g. the correctness check runs it
+    per token per candidate during the parser's correctness search). The cache
+    is bounded so long-running workers / REPLs don't grow it without limit.
+    """
     return "".join(c.lower() for c in s if c.isalnum())
 
 
