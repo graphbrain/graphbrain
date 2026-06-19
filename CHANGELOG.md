@@ -5,6 +5,7 @@
 ### Added
 
 - `Hyperedge.transform()`: pattern-based rewrites.
+- `Hyperedge.distance()`: distance metric based on tree edit distance.
 - per-atom `tok_pos`/`text_span` and per-root `Hyperedge.tokens` source-position metadata.
 - continuity-aware sub-edge text derivation with verbatim character-offset slicing.
 - `transforms.tok_pos_tree(edge)` rebuilds the parallel `tok_pos` tree from in-memory atoms.

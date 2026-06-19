@@ -440,6 +440,30 @@ class Hyperedge:
 
         return _propagate_root_text(self, normalise(self))
 
+    def distance(
+        self,
+        other: Hyperedge,
+        *,
+        normalize: bool = True,
+        canonical: bool = True,
+        root_weight: float = 0.5,
+        type_weight: float = 0.5,
+    ) -> float:
+        """Tree edit distance between this edge and ``other``.
+
+        See ``hyperbase.distance.edge_distance`` for details.
+        """
+        from hyperbase.distance import edge_distance
+
+        return edge_distance(
+            self,
+            other,
+            normalize=normalize,
+            canonical=canonical,
+            root_weight=root_weight,
+            type_weight=type_weight,
+        )
+
     ############
     # patterns #
     ############
