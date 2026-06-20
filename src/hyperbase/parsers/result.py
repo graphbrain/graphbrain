@@ -17,6 +17,7 @@ class ParseResult:
     errors: list[str] = field(default_factory=list)
     extra: dict[str, Any] = field(default_factory=dict)
     source: dict[str, Any] = field(default_factory=dict)
+    parser: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {
@@ -28,6 +29,7 @@ class ParseResult:
             "errors": self.errors,
             "extra": self.extra,
             "source": self.source,
+            "parser": self.parser,
         }
         return d
 
@@ -63,6 +65,7 @@ class ParseResult:
             errors=d.get("errors", []),
             extra=d.get("extra", {}),
             source=d.get("source", {}),
+            parser=d.get("parser"),
         )
 
     @classmethod
