@@ -116,6 +116,16 @@ class Parser:
         object. The default implementation is a no-op.
         """
 
+    def close(self) -> None:
+        """Release any resources held by this parser (subprocess pools, open
+        files, GPU contexts, ...).
+
+        The default is a no-op. Drivers that run to completion and then exit
+        hard (e.g. via ``os._exit``, which skips atexit and ``__del__``) should
+        call this first, so a parser's worker subprocesses are shut down rather
+        than orphaned. Implementations must be idempotent.
+        """
+
     def get_sentences(self, text: str) -> list[str]:
         raise NotImplementedError
 
