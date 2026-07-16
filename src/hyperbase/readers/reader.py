@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
+from importlib.metadata import entry_points
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -9,6 +10,8 @@ if TYPE_CHECKING:
 
 
 _REGISTRY: dict[str, type[Reader]] = {}
+
+_plugins_loaded = False
 
 
 def split_blocks(text: str) -> list[str]:
@@ -37,14 +40,44 @@ def register_reader(name: str, reader_cls: type[Reader]) -> None:
     """Register a reader class by name.
 
     Built-in readers call this at import time. Users may call it to
-    register their own readers, which take priority over built-ins
-    with the same name.
+    register their own readers, which take priority over both built-ins
+    and reader plugins with the same name.
     """
     _REGISTRY[name] = reader_cls
 
 
+def _load_plugins() -> None:
+    """Register the readers installed via the ``hyperbase.readers`` entry point.
+
+    Each plugin declares itself in its ``pyproject.toml``::
+
+        [project.entry-points."hyperbase.readers"]
+        myreader = "my_package.mymodule:MyReader"
+
+    Unlike parser plugins, every reader plugin has to be loaded rather than
+    just enumerated: :meth:`Reader.accepts` lives on the class, so
+    auto-detection cannot ask an unloaded entry point whether it wants a
+    source.
+
+    Discovery is deferred until the registry is first queried instead of
+    running at import time. Plugin modules import this one, so loading them
+    from ``hyperbase/readers/__init__.py`` would re-enter a half-initialized
+    plugin module whenever the plugin package is what got imported first.
+    """
+    global _plugins_loaded
+    if _plugins_loaded:
+        return
+    # Set before loading: a plugin that imports this module back must not recurse.
+    _plugins_loaded = True
+    for entry_point in entry_points(group="hyperbase.readers"):
+        # setdefault: an explicit register_reader() call wins over a plugin,
+        # whichever happened first.
+        _REGISTRY.setdefault(entry_point.name, entry_point.load())
+
+
 def list_readers() -> dict[str, type[Reader]]:
     """Return a copy of all registered readers."""
+    _load_plugins()
     return dict(_REGISTRY)
 
 
@@ -67,6 +100,8 @@ def get_reader(
     Raises :class:`ValueError` if no reader is found or if neither
     *source* nor *reader* is provided.
     """
+    _load_plugins()
+
     if reader != "auto":
         if reader not in _REGISTRY:
             available = ", ".join(sorted(_REGISTRY)) or "(none)"

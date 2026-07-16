@@ -84,7 +84,7 @@ parser.parse_to_jsonl("The sky is blue. Birds are singing.", "output.jsonl")
 
 ### Reading and parsing sources
 
-The `Parser` class integrates with the [readers](readers.md) module to parse text from files, URLs and Wikipedia articles in a single call:
+The `Parser` class integrates with the [readers](readers.md) module to read a source and parse its text in a single call:
 
 ```python
 # Iterate over parse results block by block
@@ -98,7 +98,7 @@ parser.parse_source_to_jsonl("article.txt", "output.jsonl", progress=True)
 
 Both methods accept an optional `reader` argument to force a specific reader instead of relying on auto-detection. See the [readers](readers.md) documentation for details.
 
-When parsing through a reader, each `ParseResult` has its `source` field populated with metadata from the reader (e.g. source type, file name or URL, page title). See the [readers](readers.md) documentation for the metadata provided by each reader.
+When parsing through a reader, each `ParseResult` has its `source` field populated with metadata from the reader (e.g. source type and file name). See the [readers](readers.md) documentation for the metadata a reader provides.
 
 ## ParseResult
 
@@ -177,8 +177,8 @@ Inside the REPL, type a sentence to parse it. Use `/help` to see available comma
 # Parse a file to JSONL
 hyperbase read article.txt -o output.jsonl --parser alphabeta --lang en
 
-# Parse a Wikipedia article
-hyperbase read https://en.wikipedia.org/wiki/Hypergraph -o output.jsonl
+# Extract raw text blocks, without parsing
+hyperbase read article.txt -o output.txt
 ```
 
 See the [readers](readers.md) documentation for the full set of `hyperbase read` options.

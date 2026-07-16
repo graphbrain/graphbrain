@@ -17,9 +17,12 @@
 - parser plugin settings have an optional flag to indicate that no parser reload is nodes, REPL adjusted to accommodate this mechanism.
 - functional pattern `deep`.
 - CLI `stats`, `dedup`, and `shuffle` commands.
+- `hyperbase.readers` entry-point group: readers can now be distributed as plugins, like parsers.
 
 ### Changed
 
+- readers use a plugin architecture: the core package ships the `Reader` interface and the `plain_text` reader, and readers for other formats are installed separately.
+- `plain_text` no longer accepts files with an extension of a known binary format, so that a missing reader plugin raises instead of decoding binary data as text.
 - subtypes can have any length, pattern matching treats such cases correctly.
 - transforms propagate per-atom `tok_pos`/`text_span` through rewrites.
 - REPL `/load` now uses `ParseResult.from_dict` (was dropping `tokens`/`tok_pos`).
@@ -30,6 +33,8 @@
 - pattern matcher no longer returns partial bindings on structural mismatch in `{...}` argrole patterns.
 
 ### Removed
+
+- `url` and `wikipedia` readers: moved out of the core package, which drops the `mwparserfromhell`, `trafilatura` and `requests` runtime dependencies.
 
 ## [0.10.0] - 11-04-2026
 

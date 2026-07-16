@@ -6,6 +6,10 @@ from typing import Any
 
 from hyperbase.readers.reader import Reader, register_reader, split_blocks
 
+# Binary formats that are never plain text. Without this, accepts() matches any
+# local file and yields mojibake when no reader plugin handles the format.
+_BINARY_EXTS = (".pdf", ".doc", ".docx", ".epub", ".odt", ".rtf")
+
 
 class TxtReader(Reader):
     def __init__(self) -> None:
@@ -13,7 +17,7 @@ class TxtReader(Reader):
 
     @staticmethod
     def accepts(source: str) -> bool:
-        return os.path.isfile(source)
+        return os.path.isfile(source) and not source.lower().endswith(_BINARY_EXTS)
 
     def _load(self, source: str) -> list[str]:
         if self._blocks is None:

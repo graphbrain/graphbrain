@@ -1,6 +1,8 @@
 # Readers
 
-The `hyperbase.readers` module provides a way to read and parse text from various sources directly into Semantic Hypergraphs. A reader handles the extraction and segmentation of text into paragraph-sized blocks, which can then be fed to a parser. Hyperbase ships with three built-in readers -- plain text files, URLs and Wikipedia articles -- and provides a registration mechanism for custom readers.
+The `hyperbase.readers` module provides a way to read and parse text from various sources directly into Semantic Hypergraphs. A reader handles the extraction and segmentation of text into paragraph-sized blocks, which can then be fed to a parser.
+
+Hyperbase uses a plugin architecture for readers. The core package ships the `Reader` interface and a single built-in reader for plain text files -- readers for other formats bring their own extraction dependencies and are installed separately as Python packages that register themselves via entry points.
 
 ## Reading and parsing sources
 
@@ -23,10 +25,8 @@ parser.parse_source_to_jsonl("article.txt", "output.jsonl", progress=True)
 Both methods accept an optional `reader` argument to force a specific reader instead of auto-detection:
 
 ```python
-# Force the generic URL reader on a Wikipedia link
-for results in parser.parse_source(
-    "https://en.wikipedia.org/wiki/Hypergraph", reader="url"
-):
+# Force the plain text reader on a file that another reader would also accept
+for results in parser.parse_source("notes.txt", reader="plain_text"):
     ...
 ```
 
@@ -50,7 +50,7 @@ reader.read_to_text("article.txt", "output.txt", progress=True)
 When a named reader is given, the source is not required to obtain the reader instance:
 
 ```python
-reader = get_reader(reader="wikipedia")
+reader = get_reader(reader="plain_text")
 ```
 
 Either `source` or a named `reader` must be provided -- calling `get_reader()` with neither raises a `ValueError`.
@@ -65,9 +65,6 @@ hyperbase read article.txt -o output.jsonl
 
 # Extract raw text blocks (no parsing)
 hyperbase read article.txt -o output.txt
-
-# Parse a Wikipedia article
-hyperbase read https://en.wikipedia.org/wiki/Hypergraph -o output.jsonl
 
 # Specify reader and parser explicitly
 hyperbase read source.txt -o output.jsonl --reader plain_text --parser alphabeta --lang en
@@ -84,37 +81,42 @@ for results in parser.parse_source("article.txt"):
         # {"source_type": "txt", "source": "article.txt"}
 ```
 
-Each built-in reader provides the following source metadata:
+The `source_info()` dict always includes `source_type` and `source`. Readers may add their own fields -- a reader for a source that has a title, for example, would typically add a `title` key. Custom readers override `source_info(source)` to provide their own metadata.
 
-| Reader | Fields |
-| ------ | ------ |
-| `plain_text` | `source_type`, `source` (file name) |
-| `url` | `source_type`, `source` (URL), `title` (page title, if available) |
-| `wikipedia` | `source_type`, `source` (URL), `title` (article title) |
-
-Custom readers can override `source_info(source)` to provide their own metadata.
-
-## Built-in readers
+## Built-in reader
 
 ### `plain_text`
 
-Reads local text files. Accepts any source that is a valid file path. The text is split into paragraph-sized blocks: if blank lines are found, they are used as paragraph separators; otherwise each line becomes its own block.
+Reads local text files. The text is split into paragraph-sized blocks: if blank lines are found, they are used as paragraph separators; otherwise each line becomes its own block.
 
-### `url`
+It accepts any local file except those with an extension of a known binary format (`.pdf`, `.doc`, `.docx`, `.epub`, `.odt`, `.rtf`). Those are left to reader plugins, so that a missing plugin raises a `ValueError` rather than silently decoding binary data as text.
 
-Reads web pages via HTTP/HTTPS. Uses [trafilatura](https://trafilatura.readthedocs.io/) to extract the main text content from the HTML, stripping navigation, ads and other boilerplate.
-
-### `wikipedia`
-
-Reads Wikipedia articles directly from the MediaWiki API. Accepts any URL matching `*.wikipedia.org/wiki/*`. It parses the wikicode markup to extract clean text, organized by section. Boilerplate sections (e.g. "References", "See also", "External links") are automatically discarded based on the article language. The Wikipedia reader declares `url` as `more_general`, so it takes priority over the URL reader when the source is a Wikipedia link.
+Its source metadata is `source_type` and `source` (the file name).
 
 ## Auto-detection
 
-When a reader is not explicitly specified, all registered readers are checked and those whose `accepts()` method returns `True` for the given source are collected. If more than one reader matches, the `more_general` mechanism is used to pick the most specific one. For example, a Wikipedia URL is accepted by both the `url` and `wikipedia` readers, but because `WikipediaReader` declares `more_general = ['url']`, the Wikipedia reader is selected.
+When a reader is not explicitly specified, all registered readers are checked and those whose `accepts()` method returns `True` for the given source are collected. If more than one reader matches, the `more_general` mechanism is used to pick the most specific one.
+
+For example, a reader for RSS feeds accepts a subset of what a generic URL reader accepts. Declaring `more_general = ("url",)` on the RSS reader means it is selected whenever both accept a source.
+
+If no registered reader accepts the source, `get_reader()` raises a `ValueError`.
+
+## Reader plugins
+
+A reader plugin is a Python package that registers one or more readers via the `hyperbase.readers` entry-point group in its `pyproject.toml`:
+
+```toml
+[project.entry-points."hyperbase.readers"]
+rss = "my_package.rss:RSSReader"
+```
+
+Installing the package is all that is required -- the readers it provides are discovered automatically the first time the registry is queried, and participate in auto-detection like any other reader. Nothing needs to be imported by the calling code.
+
+Note that every reader plugin is imported when the registry is first queried, because auto-detection has to ask each reader whether it accepts a source. Keep module-level work in a reader module cheap.
 
 ## Custom readers
 
-You can create and register your own readers. A custom reader must subclass `Reader` and implement two methods:
+A custom reader must subclass `Reader` and implement two methods:
 
 - `accepts(source)` -- a static method that returns `True` if the reader can handle the given source string.
 - `read(source)` -- a generator that yields text blocks from the source.
@@ -124,10 +126,10 @@ Optionally, you can implement `block_count(source)` to return the total number o
 Here is an example:
 
 ```python
-from hyperbase.readers import Reader, register_reader
+from hyperbase.readers import Reader
 
 class RSSReader(Reader):
-    more_general = ("url",)  # take priority over the generic URL reader
+    more_general = ("url",)  # take priority over a generic URL reader
 
     @staticmethod
     def accepts(source: str) -> bool:
@@ -142,11 +144,17 @@ class RSSReader(Reader):
 
     def source_info(self, source: str):
         return {"source_type": "rss", "source": source}
+```
+
+To ship it as a plugin, declare it in the `hyperbase.readers` entry-point group as shown above. To register it directly from your own code instead -- useful for one-off readers that do not warrant a package -- call `register_reader()`:
+
+```python
+from hyperbase.readers import register_reader
 
 register_reader("rss", RSSReader)
 ```
 
-After registration, the new reader is automatically considered during auto-detection. It can also be requested by name:
+A reader registered this way takes priority over a plugin of the same name. After registration, the new reader is automatically considered during auto-detection, and can also be requested by name:
 
 ```python
 parser.parse_source_to_jsonl("https://example.com/feed", "feed.jsonl", reader="rss")
@@ -154,7 +162,7 @@ parser.parse_source_to_jsonl("https://example.com/feed", "feed.jsonl", reader="r
 
 ## Listing registered readers
 
-To see all currently registered readers:
+To see all currently registered readers, including those provided by plugins:
 
 ```python
 from hyperbase.readers import list_readers

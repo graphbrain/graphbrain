@@ -9,6 +9,7 @@ import tempfile
 
 import pytest
 
+from hyperbase.readers import reader as reader_module
 from hyperbase.readers.reader import (
     _REGISTRY,
     Reader,
@@ -17,6 +18,7 @@ from hyperbase.readers.reader import (
     register_reader,
     split_blocks,
 )
+from hyperbase.readers.txt import TxtReader
 
 
 class TestSplitBlocks:
@@ -85,11 +87,19 @@ class TestReaderRegistry:
     def setup_method(self):
         """Save registry state to restore after each test."""
         self._saved_registry = dict(_REGISTRY)
+        self._saved_loaded = reader_module._plugins_loaded
 
     def teardown_method(self):
-        """Restore registry state."""
+        """Restore registry state.
+
+        ``_plugins_loaded`` is restored alongside the registry: a plugin scan
+        triggered inside a test would otherwise leave the flag set while this
+        rolls the plugins back out of the registry, so no later test could get
+        them back.
+        """
         _REGISTRY.clear()
         _REGISTRY.update(self._saved_registry)
+        reader_module._plugins_loaded = self._saved_loaded
 
     def test_register_and_list(self):
         class DummyReader(Reader):
@@ -196,8 +206,129 @@ class TestReaderRegistry:
         assert isinstance(reader, SpecificReader)
 
 
+class TestPluginDiscovery:
+    """Readers installed via the 'hyperbase.readers' entry-point group."""
+
+    def setup_method(self):
+        self._saved_registry = dict(_REGISTRY)
+        self._saved_loaded = reader_module._plugins_loaded
+
+    def teardown_method(self):
+        _REGISTRY.clear()
+        _REGISTRY.update(self._saved_registry)
+        reader_module._plugins_loaded = self._saved_loaded
+
+    def _install_fake_plugin(self, monkeypatch, name, reader_cls):
+        """Make a fake entry point the only member of the reader group."""
+
+        class FakeEntryPoint:
+            def __init__(self):
+                self.name = name
+
+            def load(self):
+                return reader_cls
+
+        def fake_entry_points(group):
+            assert group == "hyperbase.readers"
+            return [FakeEntryPoint()]
+
+        monkeypatch.setattr(reader_module, "entry_points", fake_entry_points)
+        reader_module._plugins_loaded = False
+
+    def test_plugin_is_registered_on_first_query(self, monkeypatch):
+        class PluginReader(Reader):
+            @staticmethod
+            def accepts(source):
+                return source == "plugin://x"
+
+            def read(self, source):
+                yield "from plugin"
+
+        self._install_fake_plugin(monkeypatch, "fake", PluginReader)
+
+        assert list_readers()["fake"] is PluginReader
+        assert isinstance(get_reader(source="plugin://x"), PluginReader)
+
+    def test_plugin_does_not_override_explicit_registration(self, monkeypatch):
+        """register_reader() wins over an entry point of the same name."""
+
+        class PluginReader(Reader):
+            @staticmethod
+            def accepts(source):
+                return False
+
+            def read(self, source):
+                yield "plugin"
+
+        class MineReader(Reader):
+            @staticmethod
+            def accepts(source):
+                return False
+
+            def read(self, source):
+                yield "mine"
+
+        self._install_fake_plugin(monkeypatch, "clash", PluginReader)
+        register_reader("clash", MineReader)
+
+        assert list_readers()["clash"] is MineReader
+
+    def test_discovery_runs_only_once(self, monkeypatch):
+        class PluginReader(Reader):
+            @staticmethod
+            def accepts(source):
+                return False
+
+            def read(self, source):
+                yield "plugin"
+
+        calls = []
+
+        class FakeEntryPoint:
+            name = "counted"
+
+            def load(self):
+                return PluginReader
+
+        def fake_entry_points(group):
+            calls.append(group)
+            return [FakeEntryPoint()]
+
+        monkeypatch.setattr(reader_module, "entry_points", fake_entry_points)
+        reader_module._plugins_loaded = False
+
+        list_readers()
+        list_readers()
+        get_reader(reader="counted")
+
+        assert len(calls) == 1
+
+
 class TestTxtReader:
     """Integration tests for the built-in TxtReader."""
+
+    def test_accepts_text_file(self):
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as f:
+            path = f.name
+        try:
+            assert TxtReader.accepts(path) is True
+        finally:
+            os.unlink(path)
+
+    def test_rejects_binary_extensions(self):
+        """Binary formats are left to reader plugins, not read as text.
+
+        Asserted on accepts() rather than through get_reader(): a pdf reader
+        plugin may well be installed alongside, in which case get_reader()
+        legitimately returns it.
+        """
+        for suffix in (".pdf", ".docx", ".epub", ".PDF"):
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as f:
+                path = f.name
+            try:
+                assert TxtReader.accepts(path) is False
+            finally:
+                os.unlink(path)
 
     def test_reads_file(self):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
