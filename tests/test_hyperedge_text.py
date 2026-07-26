@@ -21,7 +21,9 @@ class TestHyperedgeText(unittest.TestCase):
             tok_pos=hedge("(2 (0 1) 3)"),
         )
         result = hedge(pr)
-        assert result.text == "The sky is blue."
+        # Root text spans first atom -> last atom; the trailing "." (token 4)
+        # is not an atom, so it is excluded.
+        assert result.text == "The sky is blue"
 
     def test_hedge_parse_result_atom_text(self):
         pr = ParseResult(
@@ -85,7 +87,8 @@ class TestHyperedgeText(unittest.TestCase):
             tok_pos=hedge("(-1 0 2)"),
         )
         result = hedge(pr)
-        # top-level overridden with full text
+        # Root spans first atom (pos 0, "a") -> last atom (pos 2, "b"); the
+        # interior "and" is kept, no prefix/suffix to trim.
         assert result.text == "a and b"
 
     def test_hedge_parse_result_single_atom(self):
@@ -110,7 +113,8 @@ class TestHyperedgeText(unittest.TestCase):
             tok_pos=hedge("(2 (0 1) (3 (6 (4 5) 7)))"),
         )
         result = hedge(pr)
-        assert result.text == "The man says that the sky is blue."
+        # Trailing "." (token 8) is not an atom -> excluded from the root span.
+        assert result.text == "The man says that the sky is blue"
         # say/P.so -> "says"
         assert result[0].text == "says"
         # (the/M man/C) -> "The man"
@@ -181,7 +185,8 @@ class TestHyperedgeText(unittest.TestCase):
             tok_pos=hedge("(-1 0 8)"),
         )
         result = hedge(pr)
-        # Top-level text override is the full sentence (verbatim from pr.text).
+        # Root spans first atom (pos 0, "John") -> last atom (pos 8, "apples").
+        # "apples" is the last token, so the whole sentence is kept here.
         assert result.text == "John, who I met yesterday, eats apples"
         # john/Cp atom: position 0
         assert result[1].tok_pos == 0

@@ -14,6 +14,13 @@ class Hyperedge:
     _edges: tuple[Hyperedge, ...]
     _text: str | None
     tokens: tuple[str, ...] | None = field(default=None, compare=False, hash=False)
+    # Full original-source sentence, kept only on a loaded root. ``_text`` is the
+    # trimmed display span (first atom -> last atom); ``_source_text`` is the
+    # untrimmed buffer that transform-time span slicing indexes into with the
+    # atoms' absolute ``text_span`` offsets.
+    _source_text: str | None = field(
+        default=None, repr=False, compare=False, hash=False
+    )
     _cache: dict[str, Any] = field(
         default_factory=dict, repr=False, compare=False, hash=False
     )
@@ -27,6 +34,7 @@ class Hyperedge:
         object.__setattr__(self, "_edges", tuple(edges))
         object.__setattr__(self, "_text", text)
         object.__setattr__(self, "tokens", tokens)
+        object.__setattr__(self, "_source_text", None)
         object.__setattr__(self, "_cache", {})
 
     def __iter__(self) -> Iterator[Hyperedge]:
@@ -531,6 +539,7 @@ class Atom(Hyperedge):
         object.__setattr__(self, "tok_pos", tok_pos)
         object.__setattr__(self, "text_span", text_span)
         object.__setattr__(self, "tokens", None)
+        object.__setattr__(self, "_source_text", None)
         object.__setattr__(self, "_edges", ())
         object.__setattr__(self, "_cache", {})
 

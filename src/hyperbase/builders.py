@@ -278,10 +278,14 @@ def hedge(
             offsets,
             claimed,
         )
-        # Override the root's text with the verbatim original sentence and
-        # store tokens on the root for any later derivation.
-        object.__setattr__(edge, "_text", _source.text)
+        # Keep the atom-span text that _rebuild_with_metadata already derived
+        # for the root (first atom -> last atom, excluding any prefix/suffix
+        # tokens that no atom maps to, e.g. a trailing "-" or "."). Store the
+        # full-sentence tokens and the untrimmed source text on the root so
+        # later span-based derivation (transforms) can slice against the
+        # original coordinate space that the atoms' text_span offsets index.
         object.__setattr__(edge, "tokens", tuple(_source.tokens))
+        object.__setattr__(edge, "_source_text", _source.text)
         return edge
     if type(source) in {tuple, list}:
         _source = cast(Iterable, source)

@@ -545,6 +545,10 @@ def _propagate_root_text(original: Hyperedge, result: Hyperedge) -> Hyperedge:
     src_text = original.text
     if src_text is None:
         return result
+    # The atoms' text_span offsets are absolute into the untrimmed sentence, so
+    # span-based re-derivation must slice against the full buffer, not the
+    # trimmed display text. Fall back to src_text for edges built without it.
+    src_full = original._source_text or src_text
 
     orig_roots = sorted(a.root() for a in original.all_atoms())
     new_roots = sorted(a.root() for a in result.all_atoms())
@@ -552,13 +556,15 @@ def _propagate_root_text(original: Hyperedge, result: Hyperedge) -> Hyperedge:
     if orig_roots == new_roots:
         new_text: str | None = src_text
     else:
-        new_text = _derive_text_from_spans(result, src_text)
+        new_text = _derive_text_from_spans(result, src_full)
         if new_text is None:
             return result
 
     object.__setattr__(result, "_text", new_text)
     if original.tokens is not None:
         object.__setattr__(result, "tokens", original.tokens)
+    if original._source_text is not None:
+        object.__setattr__(result, "_source_text", original._source_text)
     return result
 
 
