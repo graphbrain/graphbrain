@@ -65,6 +65,29 @@ def match_pattern(
     return matcher.results
 
 
+def normalise_pattern(
+    pattern: Hyperedge | str | list[object] | tuple[object, ...],
+) -> Hyperedge | None:
+    """Pre-normalise a pattern so it can be matched repeatedly without rework.
+
+    :func:`match_pattern` parses and normalises its ``pattern`` argument on
+    *every* call, which dominates when one pattern is matched against millions
+    of edges. Callers in that situation should normalise once here and then
+    match with :class:`Matcher` directly::
+
+        npattern = normalise_pattern("(*/P *SUBJ *OBJ)")
+        for edge in edges:
+            results = Matcher(edge=edge, pattern=npattern).results
+
+    Returns ``None`` for an empty pattern. A malformed pattern string
+    raises ``ValueError``, as it does in :func:`hedge`.
+    """
+    _pattern = hedge(pattern)
+    if _pattern is None:
+        return None
+    return _normalise_fun_patterns(_pattern)
+
+
 def _normalise_fun_patterns(pattern: Hyperedge) -> Hyperedge:
     if pattern.atom:
         return pattern
