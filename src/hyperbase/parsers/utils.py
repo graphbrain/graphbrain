@@ -15,18 +15,16 @@ def clean_alphanumeric(s: str) -> str:
     return "".join(c.lower() for c in s if c.isalnum())
 
 
-def filter_alphanumeric_strings(strings: list[str]) -> list[str]:
-    """
-    Filter a list of strings to include only those containing alphanumeric characters,
-    and remove all non-alphanumeric characters from each string.
+def is_structural_atom(edge: Hyperedge) -> bool:
+    """True if *edge* is a no-token structural atom (reserved ``.`` namespace).
 
-    Args:
-        strings: List of strings to filter
-
-    Returns:
-        Filtered list containing only lowercased alphanumeric characters
+    ``+/B.am/.``, ``:/J/.`` and ``_/Tt/.`` stand for connectors the surface text
+    does not spell out, so they consume no token and are exempt from the
+    token-coverage checks. The namespace slot is what marks them -- the root
+    alone cannot, since the same characters also occur as ordinary token-backed
+    atoms (``-/Bx.ma`` from a literal hyphen, ``&/Jx`` from a literal ampersand).
     """
-    return [cleaned for s in strings if (cleaned := clean_alphanumeric(s))]
+    return bool(edge.atom) and edge.parts()[-1] == "."
 
 
 def edge_depth_exceeds(edge: Hyperedge, limit: int) -> bool:

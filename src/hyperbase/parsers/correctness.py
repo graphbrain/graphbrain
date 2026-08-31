@@ -14,228 +14,36 @@ enforces that every predicate specification-role (``x``) argument is a
 specifier (``S``), emitting a ``spec-arg-not-specifier`` failure otherwise.
 Default (``strict=False``) behaviour is unchanged.
 
-:func:`parse_coverage` exposes the same token↔root matching as structured
-data — which original tokens went unused and which atoms over-use their root —
+:func:`parse_coverage` exposes the same token↔atom matching as structured
+data — which original tokens went unused and which atoms no token accounts for —
 so callers (e.g. a correctness-guided search) can attribute coverage failures
 to specific tokens instead of only reading the error messages.
+
+Matching is by exact, case-insensitive surface identity: an atom's root must
+*be* one of the tokens. It used to be fuzzy — punctuation stripped from both
+sides, then a cascade of concatenation fallbacks so a parse built on one
+tokenizer could be scored against another's tokens (spaCy's ``U.S.`` against
+``u`` + ``s``, an atom pair ``1`` + ``m`` against the token ``1m``). Every
+parser in the ecosystem now shares one tokenizer, and that tolerance quietly
+accepted parses no per-token model can represent: ``c'`` cleaned to ``c`` and
+matched the token ``c``, so nothing flagged an atom that no token can carry.
 """
 
+from hyperbase.constants import atom_decode
 from hyperbase.correctness import check_structural_quality
 from hyperbase.hyperedge import Hyperedge
-from hyperbase.parsers.utils import clean_alphanumeric, filter_alphanumeric_strings
+from hyperbase.parsers.utils import clean_alphanumeric, is_structural_atom
 
 
-def _match_tokens_to_roots(
-    tokens: list[str], roots: list[str]
-) -> tuple[set[int], set[int]]:
-    """Greedily match source tokens against parse atom roots.
+def _surface(text: str) -> str:
+    """Comparable surface form of a token or an atom root.
 
-    Both lists must already be cleaned (see ``filter_alphanumeric_strings``):
-    lowercased, alphanumeric-only, empties dropped. Matching tries, in order:
-    exact match, several consecutive roots concatenating to one token, one root
-    spanning several consecutive tokens, positional multi-token↔multi-root
-    concatenation, and non-positional two-token contractions. Returns the sets
-    of matched token indices and matched root indices (into the given lists).
+    Atom roots are percent-encoded (``str_to_atom`` maps ``%`` to ``%25``, ``.``
+    to ``%2e``, ...), and a gold corpus written by hand may spell either form,
+    so both sides are decoded before they meet. Case is folded because atom
+    roots are lowercased where tokens keep their casing.
     """
-    # Track which tokens and roots have been matched
-    matched_tokens: set[int] = set()
-    matched_roots: set[int] = set()
-
-    # Count remaining unmatched instances of each root
-    def count_unmatched_roots(root_value: str) -> int:
-        count = 0
-        for root_idx, root in enumerate(roots):
-            if root == root_value and root_idx not in matched_roots:
-                count += 1
-        return count
-
-    # Go through each token and try to find matching roots
-    for token_idx, token in enumerate(tokens):
-        if token_idx in matched_tokens:
-            continue  # Already matched this token
-
-        # Try exact match first
-        unmatched_root_count = count_unmatched_roots(token)
-        if unmatched_root_count > 0:
-            matched_tokens.add(token_idx)
-            # Find an unmatched instance of this root
-            for root_idx, root in enumerate(roots):
-                if root == token and root_idx not in matched_roots:
-                    matched_roots.add(root_idx)
-                    break
-
-        else:
-            # Try to find a root that matches this token exactly (case (a))
-            for root_idx, root in enumerate(roots):
-                if root_idx in matched_roots:
-                    continue  # Already matched this root
-
-                if root == token:
-                    matched_tokens.add(token_idx)
-                    matched_roots.add(root_idx)
-                    break
-
-            # If no exact match, try to find combination of roots
-            # that form this token (case (b))
-            if token_idx not in matched_tokens:
-                # Look for sequence of consecutive roots that concatenate
-                # to form the token
-                for root_start_idx in range(len(roots)):
-                    if root_start_idx in matched_roots:
-                        continue  # This root is already matched
-
-                    concatenated = ""
-                    root_sequence: list[int] = []
-
-                    for root_idx in range(root_start_idx, len(roots)):
-                        if root_idx in matched_roots:
-                            # Can't use matched roots in sequence
-                            break
-
-                        root = roots[root_idx]
-                        concatenated += root
-                        root_sequence.append(root_idx)
-
-                        if concatenated == token:
-                            # Found a matching sequence
-                            matched_tokens.add(token_idx)
-                            for idx in root_sequence:
-                                matched_roots.add(idx)
-                            break
-
-                        if len(concatenated) >= len(token):
-                            # Gone too far or exact match found
-                            break
-
-                    if token_idx in matched_tokens:
-                        break  # Found a match, no need to try other
-                        # starting positions
-
-            # If still no match, try case (c): root that matches this token
-            # and subsequent tokens
-            if token_idx not in matched_tokens:
-                # Look for a root that can match this token plus some
-                # following tokens
-                for root_idx, root in enumerate(roots):
-                    if root_idx in matched_roots:
-                        continue  # Already matched
-
-                    concatenated = ""
-                    token_sequence: list[int] = []
-
-                    for next_token_idx in range(token_idx, len(tokens)):
-                        if next_token_idx in matched_tokens:
-                            continue  # Already matched
-
-                        concatenated += tokens[next_token_idx]
-                        token_sequence.append(next_token_idx)
-
-                        if concatenated == root:
-                            # Found a root that matches multiple tokens
-                            matched_roots.add(root_idx)
-                            for idx in token_sequence:
-                                matched_tokens.add(idx)
-                            break
-
-                        if len(concatenated) >= len(root):
-                            break
-
-            # If still no match, try case (d): multi-token to multi-root
-            # concatenation matching
-            if token_idx not in matched_tokens:
-                # First, try positional matching (existing logic)
-                for root_start_idx in range(len(roots)):
-                    if root_start_idx in matched_roots:
-                        continue  # This root is already matched
-
-                    tokens_concatenated = ""
-                    roots_concatenated = ""
-                    token_sequence_d: list[int] = []
-                    root_sequence_d: list[int] = []
-
-                    max_tokens = min(
-                        len(tokens) - token_idx, len(roots) - root_start_idx
-                    )
-
-                    for i in range(max_tokens):
-                        current_token_idx = token_idx + i
-                        current_root_idx = root_start_idx + i
-
-                        if (
-                            current_token_idx in matched_tokens
-                            or current_root_idx in matched_roots
-                        ):
-                            break  # Can't use already matched items
-
-                        tokens_concatenated += tokens[current_token_idx]
-                        roots_concatenated += roots[current_root_idx]
-                        token_sequence_d.append(current_token_idx)
-                        root_sequence_d.append(current_root_idx)
-
-                        # Check if concatenations match
-                        if (
-                            tokens_concatenated == roots_concatenated
-                            and tokens_concatenated
-                        ):
-                            # Found a match - mark all as matched
-                            for idx in token_sequence_d:
-                                matched_tokens.add(idx)
-                            for idx in root_sequence_d:
-                                matched_roots.add(idx)
-                            break
-
-                        # Stop if we've gone too far
-                        # (tokens longer than reasonable)
-                        if (
-                            len(tokens_concatenated) > 10
-                            or len(roots_concatenated) > 10
-                        ):
-                            break
-
-                    if token_idx in matched_tokens:
-                        break  # Found a match, no need to try
-                        # other root positions
-
-                # If still no match, try non-positional contraction matching
-                if (
-                    token_idx not in matched_tokens
-                    # Look for contractions by trying to combine this token
-                    # with the next one and matching against any two available
-                    # roots in the roots list (not necessarily consecutive)
-                    and (
-                        token_idx + 1 < len(tokens)
-                        and token_idx + 1 not in matched_tokens
-                    )
-                ):
-                    token_concat = tokens[token_idx] + tokens[token_idx + 1]
-
-                    # Try to find any two available roots
-                    # (not necessarily consecutive) that concatenate
-                    # to the same value
-                    for root_idx1 in range(len(roots)):
-                        if root_idx1 in matched_roots:
-                            continue  # Can't use already matched roots
-
-                        for root_idx2 in range(len(roots)):
-                            if root_idx2 in matched_roots or root_idx2 == root_idx1:
-                                continue  # Can't use already matched roots
-                                # or same root
-
-                            root_concat = roots[root_idx1] + roots[root_idx2]
-
-                            if token_concat == root_concat:
-                                # Found a contraction match!
-                                matched_tokens.add(token_idx)
-                                matched_tokens.add(token_idx + 1)
-                                matched_roots.add(root_idx1)
-                                matched_roots.add(root_idx2)
-                                break
-
-                        if token_idx in matched_tokens:
-                            break  # Found a match, no need to try
-                            # other combinations
-
-    return matched_tokens, matched_roots
+    return atom_decode(text).lower()
 
 
 def parse_coverage(
@@ -243,35 +51,39 @@ def parse_coverage(
 ) -> tuple[list[int], list[Hyperedge]]:
     """Attribute a parse's token-coverage failures to their sources.
 
-    Runs the same token↔root matching as :func:`check_parse_correctness` and
-    returns ``(unused_tokens, overused_atoms)``: the indices (into the
-    *original* ``tokens`` list) of tokens no atom accounts for, and the atoms
-    whose root is used more times than it appears in the sentence. Returns
-    ``([], [])`` when matching cannot run (e.g. a malformed edge).
+    Runs the same token↔atom matching as :func:`check_parse_correctness` and
+    returns ``(unused_tokens, unaligned_atoms)``: the indices (into ``tokens``)
+    of tokens no atom claims, and the non-structural atoms left without one --
+    either because the root is nowhere in the sentence or because earlier atoms
+    used up every instance of it. Returns ``([], [])`` when matching cannot run
+    (e.g. a malformed edge).
     """
     try:
-        cleaned_tokens: list[str] = []
-        original_idx: list[int] = []
+        # Every token instance, by surface form: an atom claims one of them, and
+        # a second atom with the same root needs a second instance.
+        available: dict[str, list[int]] = {}
         for i, tok in enumerate(tokens):
-            cleaned = clean_alphanumeric(tok)
-            if cleaned:
-                cleaned_tokens.append(cleaned)
-                original_idx.append(i)
-        atoms: list[Hyperedge] = []
-        roots: list[str] = []
+            available.setdefault(_surface(tok), []).append(i)
+
+        claimed: set[int] = set()
+        unaligned: list[Hyperedge] = []
         for atom in edge.all_atoms():
-            cleaned = clean_alphanumeric(atom.label())
-            if cleaned:
-                atoms.append(atom)
-                roots.append(cleaned)
-        matched_tokens, matched_roots = _match_tokens_to_roots(cleaned_tokens, roots)
+            if is_structural_atom(atom):
+                continue  # stands for a connector the text does not spell out
+            instances = available.get(_surface(atom.root()))
+            if instances:
+                claimed.add(instances.pop(0))
+            else:
+                unaligned.append(atom)
+
+        # A token no atom claimed is only a failure if it carries content:
+        # punctuation is expected to go unused.
         unused = [
-            original_idx[i]
-            for i in range(len(cleaned_tokens))
-            if i not in matched_tokens
+            i
+            for i in range(len(tokens))
+            if i not in claimed and clean_alphanumeric(tokens[i])
         ]
-        overused = [atoms[i] for i in range(len(roots)) if i not in matched_roots]
-        return unused, overused
+        return unused, unaligned
     except Exception:
         return [], []
 
@@ -297,17 +109,13 @@ def check_parse_correctness(
     # Only check token matching if we have a valid edge
     if edge:
         try:
-            tokens = filter_alphanumeric_strings(tokens)
-            roots: list[str] = filter_alphanumeric_strings(
-                [atom.label() for atom in edge.all_atoms()]
-            )
-
-            matched_tokens, matched_roots = _match_tokens_to_roots(tokens, roots)
+            unused, unaligned = parse_coverage(edge, tokens)
+            present = {_surface(token) for token in tokens}
 
             token_matching_errors: list[tuple[str, str, int]] = []
-            # Report unmatched roots
-            for root_idx, root in enumerate(roots):
-                if root_idx not in matched_roots:
+            for atom in unaligned:
+                root = atom.root()
+                if _surface(root) in present:
                     token_matching_errors.append(
                         (
                             "root-without-token",
@@ -316,18 +124,25 @@ def check_parse_correctness(
                             1,
                         )
                     )
-
-            # Report unmatched tokens
-            for token_idx, token in enumerate(tokens):
-                if token_idx not in matched_tokens:
+                else:
                     token_matching_errors.append(
                         (
-                            "token-unused",
-                            f"Token '{token}' from the source sentence is not used by "
-                            "any atom in the parse.",
+                            "atom-not-a-token",
+                            f"Atom root '{root}' is not one of the source tokens; an "
+                            "atom must carry exactly one token's surface form.",
                             1,
                         )
                     )
+
+            for token_idx in unused:
+                token_matching_errors.append(
+                    (
+                        "token-unused",
+                        f"Token '{tokens[token_idx]}' from the source sentence is not "
+                        "used by any atom in the parse.",
+                        1,
+                    )
+                )
 
             if len(token_matching_errors) > 0:
                 errors["token-matching"] = token_matching_errors

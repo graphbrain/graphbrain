@@ -1,6 +1,6 @@
 from hyperbase import hedge
 from hyperbase.parsers.correctness import check_parse_correctness, parse_coverage
-from hyperbase.parsers.utils import filter_alphanumeric_strings
+from hyperbase.parsers.utils import clean_alphanumeric
 
 
 class TestParseCoverage:
@@ -43,55 +43,20 @@ class TestParseCoverage:
         )
 
 
-class TestFilterAlphanumericStrings:
-    """Tests for filter_alphanumeric_strings function"""
+class TestCleanAlphanumeric:
+    """The helper that decides whether an unclaimed token is worth reporting."""
 
-    def test_filter_basic(self):
-        """Test basic filtering"""
-        strings = ["hello", "(", ")", "world"]
-        result = filter_alphanumeric_strings(strings)
-        assert result == ["hello", "world"]
+    def test_lowercases_and_strips_punctuation(self):
+        assert clean_alphanumeric("Test/C") == "testc"
+        assert clean_alphanumeric("WORD-123") == "word123"
 
-    def test_filter_mixed(self):
-        """Test filtering with mixed content"""
-        strings = ["test/C", "...", "word123", "   ", ""]
-        result = filter_alphanumeric_strings(strings)
-        # Special characters removed: "test/C" -> "testc", "word123" -> "word123"
-        assert result == ["testc", "word123"]
+    def test_punctuation_only_cleans_to_empty(self):
+        # This is what exempts '.' and ',' from the token-unused report.
+        assert clean_alphanumeric("...") == ""
+        assert clean_alphanumeric("(") == ""
 
-    def test_filter_empty_list(self):
-        """Test with empty list"""
-        assert filter_alphanumeric_strings([]) == []
-
-    def test_filter_all_special(self):
-        """Test with only special characters"""
-        strings = ["(", ")", "/", ":", "..."]
-        result = filter_alphanumeric_strings(strings)
-        assert result == []
-
-    def test_filter_all_alphanumeric(self):
-        """Test with all alphanumeric strings"""
-        strings = ["abc", "123", "test"]
-        result = filter_alphanumeric_strings(strings)
-        assert result == strings
-
-    def test_remove_special_characters(self):
-        """Test that special characters are removed"""
-        strings = ["hello!", "test-123", "foo/bar", "a.b.c"]
-        result = filter_alphanumeric_strings(strings)
-        assert result == ["hello", "test123", "foobar", "abc"]
-
-    def test_lowercase_conversion(self):
-        """Test that strings are converted to lowercase"""
-        strings = ["HELLO", "TeSt", "WoRlD123"]
-        result = filter_alphanumeric_strings(strings)
-        assert result == ["hello", "test", "world123"]
-
-    def test_mixed_case_and_special(self):
-        """Test with mixed case and special characters"""
-        strings = ["Test/C", "WORD-123", "Foo.Bar"]
-        result = filter_alphanumeric_strings(strings)
-        assert result == ["testc", "word123", "foobar"]
+    def test_keeps_non_ascii_letters(self):
+        assert clean_alphanumeric("Ῥωμαϊκά") == "ῥωμαϊκά"
 
 
 class TestCheckParseCorrectness:
@@ -115,16 +80,16 @@ class TestCheckParseCorrectness:
         errors = check_parse_correctness(edge, tokens)
         assert len(errors) == 0
 
-    def test_contiguous_token_sequence(self):
-        """Test that contiguous sequences of roots are recognized"""
-        # Parse with "newyork" as a single root
+    def test_atom_spanning_several_tokens_is_reported(self):
+        """An atom must carry one token: 'newyork' over ['new', 'york'] cannot."""
         parse = "(is/P.s newyork/C)"
-        # Input has "new" and "york" as separate tokens
         tokens = ["new", "york", "is"]
         edge = hedge(parse)
         assert edge
         errors = check_parse_correctness(edge, tokens)
-        assert len(errors) == 0
+        found = [e[0] for e in errors["token-matching"]]
+        assert "atom-not-a-token" in found  # newyork
+        assert found.count("token-unused") == 2  # new, york
 
     def test_valid_parse_missing_token(self):
         """Test when parse doesn't use all tokens"""
@@ -175,11 +140,16 @@ class TestCheckParseCorrectness:
         # Should have errors: roots used but no tokens
         assert len(errors) > 0
 
-    def test_tokenization_mismatch_us_case(self):
-        """Test U.S. case: tokens ['u', 's'] should match root 'us' even if 's' appears elsewhere"""
-        # Simplified version of: Russia regrets U.S. not pressing charges over boy's death
-        # Tokens: 'u' and 's' (from U.S.) and 's' (from boy's)
-        # Root: 'us' (combined) and 's' (possessive marker)
+    # -- parses tokenized differently from the token list --------------------- #
+    # These four came from the spaCy-based Alpha-Beta parser, whose atoms were
+    # scored against another tokenizer's tokens; matching used to strip
+    # punctuation and try concatenations so they passed. Every parser in the
+    # ecosystem now shares one tokenizer, and an atom that carries no single
+    # token is a parse no per-token model can produce -- so they are reported.
+
+    def test_atom_joining_tokens_the_tokenizer_split(self):
+        """'U.S.' as one atom over the tokens ['u', 's']."""
+        # From: Russia regrets U.S. not pressing charges over boy's death
         parse = "(regrets/P.so russia/C (pressing/P.so us/C (over/B.ma charges/C (s/B.am boy/C death/C))))"
         tokens = [
             "russia",
@@ -196,10 +166,12 @@ class TestCheckParseCorrectness:
         edge = hedge(parse)
         assert edge
         errors = check_parse_correctness(edge, tokens)
-        assert len(errors) == 0
+        found = [e[0] for e in errors["token-matching"]]
+        assert "atom-not-a-token" in found  # us
+        assert "token-unused" in found  # the 'u' it was built from
 
     def test_tokenization_mismatch_us_case_error1(self):
-        """Test U.S. case: tokens ['u', 's'] should match root 'us' even if 's' appears elsewhere (error 1)"""
+        """Same parse with a missing token: still an error, as it always was."""
         parse = "(regrets/P.sr russia/C (pressing/P.so us/C (over/B.ma charges/C (s/B.am boy/C death/C))))"
         tokens = [
             "russia",
@@ -218,7 +190,7 @@ class TestCheckParseCorrectness:
         assert len(errors) > 0
 
     def test_tokenization_mismatch_us_case_error2(self):
-        """Test U.S. case: tokens ['u', 's'] should match root 'us' even if 's' appears elsewhere (error 2)"""
+        """Same parse with a bad argrole: still an error, as it always was."""
         parse = "(regrets/P.sr russia/C (pressing/P us/C (over/B.ma charges/C (s/B.am boy/C death/C))))"
         tokens = [
             "russia",
@@ -237,35 +209,32 @@ class TestCheckParseCorrectness:
         errors = check_parse_correctness(edge, tokens)
         assert len(errors) > 0
 
-    def test_tokenization_combined_token_case(self):
-        """Test '1m' case: token '1m' should match root sequence ['1', 'm']"""
-        # Simplified version of: RAF flies 1m euros to Cyprus
-        # Token: '1m' (combined)
-        # Roots: '1' and 'm' (separate)
+    def test_atoms_splitting_a_token_the_tokenizer_kept_whole(self):
+        """Atoms '1' + 'm' over the single token '1m'."""
+        # From: RAF flies 1m euros to Cyprus
         parse = "(flies/P.sxox raf/C (1/M m/C) euros/C (to/T cyprus/C))"
         tokens = ["raf", "flies", "1m", "euros", "to", "cyprus"]
         edge = hedge(parse)
         assert edge
         errors = check_parse_correctness(edge, tokens)
+        found = [e[0] for e in errors["token-matching"]]
+        assert found.count("atom-not-a-token") == 2  # 1, m
+        assert "token-unused" in found  # 1m
 
-        # Should successfully match token '1m' with root sequence ['1', 'm']
-        assert len(errors) == 0
-
-    def test_overlapping_substring_case(self):
-        """Test Malawi/37m case: avoid matching 'm' inside 'malawi'"""
-        # Simplified version of: Malawi gets 37m in UK health aid
-        # Token '37m' should match roots ['37', 'm']
-        # Root 'm' should NOT match the 'm' inside 'malawi'
+    def test_atom_never_matches_a_substring_of_a_token(self):
+        """'m' must not be satisfied by the 'm' inside 'malawi'."""
+        # From: Malawi gets 37m in UK health aid
         parse = "(gets/P.sox malawi/C (37/M m/C) (in/T (uk/M (health/M aid/C))))"
         tokens = ["malawi", "gets", "37m", "in", "uk", "health", "aid"]
         edge = hedge(parse)
         assert edge
         errors = check_parse_correctness(edge, tokens)
-        assert len(errors) == 0
+        found = [e[0] for e in errors["token-matching"]]
+        assert found.count("atom-not-a-token") == 2  # 37, m -- not 'malawi'
+        assert "token-unused" in found  # 37m
 
-    def test_contraction_case_d(self):
-        """Test case (d): multi-token to multi-root concatenation matching"""
-        # Don't contraction case: tokens ['don', 't'] should match roots ['do', 'nt']
+    def test_contraction_split_differently_from_the_tokens(self):
+        """Atoms 'do' + \"n't\" over the tokens ['don', 't']."""
         parse = (
             "((off/Ml/en (do/Mv.-i-----/en (n't/Mn/en rip/P!.o.-i-----/en))) me/Ci/en)"
         )
@@ -273,17 +242,17 @@ class TestCheckParseCorrectness:
         edge = hedge(parse)
         assert edge
         errors = check_parse_correctness(edge, tokens)
-        assert len(errors) == 0
+        found = [e[0] for e in errors["token-matching"]]
+        assert found.count("atom-not-a-token") == 2  # do, n't
+        assert found.count("token-unused") == 2  # don, t
 
-    def test_simple_contraction_case(self):
-        """Test a simple contraction case"""
-        # Simple contraction: tokens ['don', 't'] should match roots ['do', 'nt']
-        parse = "((do/Mv.-i-----/en (n't/Mn/en is/P.o)) blue/C)"
-        tokens = ["don", "t", "is", "blue"]
+    def test_contraction_matching_the_tokens_passes(self):
+        """The same contraction is clean once the atoms carry the real tokens."""
+        parse = "((doesn/Mv.-i-----/en ('t/Mn/en is/P.o)) blue/C)"
+        tokens = ["doesn", "'t", "is", "blue"]
         edge = hedge(parse)
         assert edge
-        errors = check_parse_correctness(edge, tokens)
-        assert len(errors) == 0
+        assert "token-matching" not in check_parse_correctness(edge, tokens)
 
     def test_valid_edge(self):
         edge = hedge("(is/P.s bob/C)")
@@ -339,17 +308,26 @@ class TestCheckParseCorrectness:
 
     def test_token_matching_severity(self):
         edge = hedge("(is/P.s blue/C)")
-        tokens = ["is"]  # blue/C is missing
+        tokens = ["is"]  # blue/C is not a token at all
         assert edge
         errors = check_parse_correctness(edge, tokens)
+        assert [(e[0], e[2]) for e in errors["token-matching"]] == [
+            ("atom-not-a-token", 1)
+        ]
 
-        found = False
-        if "token-matching" in errors:
-            for err in errors["token-matching"]:
-                if err[0] == "root-without-token":
-                    assert err[2] == 1
-                    found = True
-        assert found, "Should have root-without-token with severity 1"
+    def test_percent_encoded_root_matches_its_token(self):
+        # The assembler encodes an atom root ('%' -> '%25'); the token does not.
+        edge = hedge("(is/P.so (el/M (25/M %25/C)) mujeres/C)")
+        tokens = ["el", "25", "%", "is", "mujeres"]
+        assert "token-matching" not in check_parse_correctness(edge, tokens)
+
+    def test_overused_root_is_distinguished_from_a_missing_one(self):
+        # 'blue' IS a token, but two atoms want it and there is only one.
+        edge = hedge("(is/P.so blue/C blue/C)")
+        errors = check_parse_correctness(edge, ["blue", "is"])
+        assert [(e[0], e[2]) for e in errors["token-matching"]] == [
+            ("root-without-token", 1)
+        ]
 
     def test_check_correctness_severity(self):
         # builders can only have two arguments
