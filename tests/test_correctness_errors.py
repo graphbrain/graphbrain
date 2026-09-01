@@ -169,7 +169,7 @@ class TestPredicateErrors:
 
     def test_predicate_valid_args(self):
         """Predicate with C and R args should be valid."""
-        edge = hedge("(is/P.sc bob/C happy/C)")
+        edge = hedge("(is/P.so bob/C happy/C)")
         errors = check_correctness(edge)
         assert edge not in errors
 
@@ -211,7 +211,7 @@ class TestArgroleErrors:
 
     def test_argrole_count_mismatch(self):
         """Argrole count doesn't match argument count."""
-        edge = hedge("(is/P.sco bob/C happy/C)")
+        edge = hedge("(is/P.sox bob/C happy/C)")
         errors = check_correctness(edge)
         assert edge in errors
         codes = [e[0] for e in errors[edge]]
@@ -274,7 +274,7 @@ class TestRecursiveErrorPropagation:
     def test_error_in_nested_subedge(self):
         """A broken inner edge should appear in the error dict."""
         # Inner: (big/M a/C b/C) — modifier with 2 args
-        edge = hedge("(is/P.sc (big/M a/C b/C) happy/C)")
+        edge = hedge("(is/P.so (big/M a/C b/C) happy/C)")
         errors = check_correctness(edge)
         inner = hedge("(big/M a/C b/C)")
         assert inner in errors
@@ -285,7 +285,7 @@ class TestRecursiveErrorPropagation:
         """Multiple broken subedges should all appear."""
         # Outer: predicate with bad arg type (M)
         # Inner: builder with 3 args
-        edge = hedge("(is/P.sc (+/B.ma a/C b/C c/C) happy/C)")
+        edge = hedge("(is/P.so (+/B.ma a/C b/C c/C) happy/C)")
         errors = check_correctness(edge)
         # The outer edge should flag pred-arg-bad-type for the builder connector
         # The inner builder should flag build-2-args
@@ -298,7 +298,7 @@ class TestRecursiveErrorPropagation:
     def test_deeply_nested_error(self):
         """Error 5 levels deep should still be found."""
         edge = hedge(
-            "(is/P.sc (the/M (big/M (very/M (super/M (bad/M a/C b/C))))) happy/C)"
+            "(is/P.so (the/M (big/M (very/M (super/M (bad/M a/C b/C))))) happy/C)"
         )
         errors = check_correctness(edge)
         # The innermost (bad/M a/C b/C) has too many args

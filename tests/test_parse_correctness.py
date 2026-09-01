@@ -1,5 +1,9 @@
 from hyperbase import hedge
-from hyperbase.parsers.correctness import check_parse_correctness, parse_coverage
+from hyperbase.parsers.correctness import (
+    check_parse_correctness,
+    check_vocabulary,
+    parse_coverage,
+)
 from hyperbase.parsers.utils import clean_alphanumeric
 
 
@@ -64,7 +68,7 @@ class TestCheckParseCorrectness:
 
     def test_valid_parse_matching_tokens(self):
         """Test with valid parse and matching tokens"""
-        valid_parse = "(is/P.so (the/M sky/C) blue/C)"
+        valid_parse = "(is/Pv.so (the/Md sky/Cc) blue/Ca)"
         tokens = ["the", "sky", "is", "blue"]
         edge = hedge(valid_parse)
         assert edge
@@ -73,7 +77,7 @@ class TestCheckParseCorrectness:
 
     def test_with_original_text(self):
         """Test that passing original text orders roots correctly"""
-        valid_parse = "(is/P.so (the/M sky/C) blue/C)"
+        valid_parse = "(is/Pv.so (the/Md sky/Cc) blue/Ca)"
         tokens = ["the", "sky", "is", "blue"]
         edge = hedge(valid_parse)
         assert edge
@@ -82,7 +86,7 @@ class TestCheckParseCorrectness:
 
     def test_atom_spanning_several_tokens_is_reported(self):
         """An atom must carry one token: 'newyork' over ['new', 'york'] cannot."""
-        parse = "(is/P.s newyork/C)"
+        parse = "(is/Pv.s newyork/Cp)"
         tokens = ["new", "york", "is"]
         edge = hedge(parse)
         assert edge
@@ -93,7 +97,7 @@ class TestCheckParseCorrectness:
 
     def test_valid_parse_missing_token(self):
         """Test when parse doesn't use all tokens"""
-        parse = "(is/P.so blue/C)"
+        parse = "(is/Pv.so blue/Ca)"
         tokens = ["sky", "is", "blue"]
         edge = hedge(parse)
         assert edge
@@ -103,7 +107,7 @@ class TestCheckParseCorrectness:
 
     def test_valid_parse_extra_root(self):
         """Test when parse uses root not in tokens"""
-        parse = "(is/P.so (the/M sky/C) blue/C)"
+        parse = "(is/Pv.so (the/Md sky/Cc) blue/Ca)"
         tokens = ["sky", "is", "blue"]  # Missing "the"
         edge = hedge(parse)
         assert edge
@@ -113,7 +117,7 @@ class TestCheckParseCorrectness:
 
     def test_token_count_mismatch(self):
         """Test when token appears multiple times"""
-        parse = "(is/P.s blue/C)"
+        parse = "(is/Pv.s blue/Ca)"
         tokens = ["blue", "blue", "is"]  # "blue" appears twice
         edge = hedge(parse)
         assert edge
@@ -123,7 +127,7 @@ class TestCheckParseCorrectness:
 
     def test_special_characters_filtered(self):
         """Test that special characters in tokens are filtered"""
-        parse = "(is/P.s blue/C)"
+        parse = "(is/Pv.s blue/Ca)"
         tokens = ["(", "is", "blue", ")"]
         edge = hedge(parse)
         assert edge
@@ -132,7 +136,7 @@ class TestCheckParseCorrectness:
 
     def test_empty_tokens_list(self):
         """Test with empty tokens list"""
-        parse = "(is/P.s blue/C)"
+        parse = "(is/Pv.s blue/Ca)"
         tokens = []
         edge = hedge(parse)
         assert edge
@@ -150,7 +154,7 @@ class TestCheckParseCorrectness:
     def test_atom_joining_tokens_the_tokenizer_split(self):
         """'U.S.' as one atom over the tokens ['u', 's']."""
         # From: Russia regrets U.S. not pressing charges over boy's death
-        parse = "(regrets/P.so russia/C (pressing/P.so us/C (over/B.ma charges/C (s/B.am boy/C death/C))))"
+        parse = "(regrets/Pv.so russia/Cp (pressing/Pv.so us/Cp (over/Bp.ma charges/Cc (s/Bp.am boy/Cc death/Cc))))"
         tokens = [
             "russia",
             "regrets",
@@ -172,7 +176,7 @@ class TestCheckParseCorrectness:
 
     def test_tokenization_mismatch_us_case_error1(self):
         """Same parse with a missing token: still an error, as it always was."""
-        parse = "(regrets/P.sr russia/C (pressing/P.so us/C (over/B.ma charges/C (s/B.am boy/C death/C))))"
+        parse = "(regrets/Pv.sr russia/Cp (pressing/Pv.so us/Cp (over/Bp.ma charges/Cc (s/Bp.am boy/Cc death/Cc))))"
         tokens = [
             "russia",
             "regrets",
@@ -191,7 +195,7 @@ class TestCheckParseCorrectness:
 
     def test_tokenization_mismatch_us_case_error2(self):
         """Same parse with a bad argrole: still an error, as it always was."""
-        parse = "(regrets/P.sr russia/C (pressing/P us/C (over/B.ma charges/C (s/B.am boy/C death/C))))"
+        parse = "(regrets/Pv.sr russia/Cp (pressing/Pv us/Cp (over/Bp.ma charges/Cc (s/Bp.am boy/Cc death/Cc))))"
         tokens = [
             "russia",
             "regrets",
@@ -212,7 +216,7 @@ class TestCheckParseCorrectness:
     def test_atoms_splitting_a_token_the_tokenizer_kept_whole(self):
         """Atoms '1' + 'm' over the single token '1m'."""
         # From: RAF flies 1m euros to Cyprus
-        parse = "(flies/P.sxox raf/C (1/M m/C) euros/C (to/T cyprus/C))"
+        parse = "(flies/Pv.sxox raf/Cp (1/Mq m/Cc) euros/Cc (to/Tl cyprus/Cp))"
         tokens = ["raf", "flies", "1m", "euros", "to", "cyprus"]
         edge = hedge(parse)
         assert edge
@@ -224,7 +228,9 @@ class TestCheckParseCorrectness:
     def test_atom_never_matches_a_substring_of_a_token(self):
         """'m' must not be satisfied by the 'm' inside 'malawi'."""
         # From: Malawi gets 37m in UK health aid
-        parse = "(gets/P.sox malawi/C (37/M m/C) (in/T (uk/M (health/M aid/C))))"
+        parse = (
+            "(gets/Pv.sox malawi/Cp (37/Mq m/Cc) (in/Tl (uk/Md (health/Md aid/Cc))))"
+        )
         tokens = ["malawi", "gets", "37m", "in", "uk", "health", "aid"]
         edge = hedge(parse)
         assert edge
@@ -248,14 +254,14 @@ class TestCheckParseCorrectness:
 
     def test_contraction_matching_the_tokens_passes(self):
         """The same contraction is clean once the atoms carry the real tokens."""
-        parse = "((doesn/Mv.-i-----/en ('t/Mn/en is/P.o)) blue/C)"
+        parse = "((doesn/Mv.-i-----/en ('t/Mn/en is/Pv.o)) blue/Ca)"
         tokens = ["doesn", "'t", "is", "blue"]
         edge = hedge(parse)
         assert edge
         assert "token-matching" not in check_parse_correctness(edge, tokens)
 
     def test_valid_edge(self):
-        edge = hedge("(is/P.s bob/C)")
+        edge = hedge("(is/Pv.s bob/Cp)")
         assert edge
         errors = check_parse_correctness(edge, [])
 
@@ -265,7 +271,7 @@ class TestCheckParseCorrectness:
 
     def test_invalid_argrole(self):
         # 'z' is not in mspaoixtjr
-        edge = hedge("(is/P.z bob/C)")
+        edge = hedge("(is/Pv.z bob/Cp)")
         assert edge
         errors = check_parse_correctness(edge, [])
         # errors is a dict {edge: list of errors} or {string: list of errors}
@@ -284,7 +290,7 @@ class TestCheckParseCorrectness:
 
     def test_valid_junction(self):
         # All C
-        edge = hedge("(and/J bob/C alice/C)")
+        edge = hedge("(and/Jx bob/Cp alice/Cp)")
         assert edge
         errors = check_parse_correctness(edge, [])
 
@@ -307,8 +313,8 @@ class TestCheckParseCorrectness:
         assert not structural_errors, "Should be valid junction"
 
     def test_token_matching_severity(self):
-        edge = hedge("(is/P.s blue/C)")
-        tokens = ["is"]  # blue/C is not a token at all
+        edge = hedge("(is/Pv.s blue/Ca)")
+        tokens = ["is"]  # blue/Ca is not a token at all
         assert edge
         errors = check_parse_correctness(edge, tokens)
         assert [(e[0], e[2]) for e in errors["token-matching"]] == [
@@ -317,13 +323,13 @@ class TestCheckParseCorrectness:
 
     def test_percent_encoded_root_matches_its_token(self):
         # The assembler encodes an atom root ('%' -> '%25'); the token does not.
-        edge = hedge("(is/P.so (el/M (25/M %25/C)) mujeres/C)")
+        edge = hedge("(is/Pv.so (el/Md (25/Mq %25/Cc)) mujeres/Cc)")
         tokens = ["el", "25", "%", "is", "mujeres"]
         assert "token-matching" not in check_parse_correctness(edge, tokens)
 
     def test_overused_root_is_distinguished_from_a_missing_one(self):
         # 'blue' IS a token, but two atoms want it and there is only one.
-        edge = hedge("(is/P.so blue/C blue/C)")
+        edge = hedge("(is/Pv.so blue/Ca blue/Ca)")
         errors = check_parse_correctness(edge, ["blue", "is"])
         assert [(e[0], e[2]) for e in errors["token-matching"]] == [
             ("root-without-token", 1)
@@ -331,7 +337,7 @@ class TestCheckParseCorrectness:
 
     def test_check_correctness_severity(self):
         # builders can only have two arguments
-        edge = hedge("(+/B a/C b/C c/C)")
+        edge = hedge("(+/Bp.ma a/Cc b/Cc c/Cc)")
         assert edge
         errors = check_parse_correctness(edge, [])
 
@@ -409,3 +415,55 @@ class TestNewSubtypeModifierRules:
         edge = hedge("(quickly/Mb sky/Cc)")
         assert edge
         assert "bad-mb-target" in _codes(check_parse_correctness(edge, []))
+
+
+class TestVocabulary:
+    """A parse may only use admissible atom types and special atoms."""
+
+    def test_fully_subtyped_parse_is_clean(self):
+        edge = hedge("(is/Pv.so (the/Md sky/Cc) blue/Ca)")
+        assert check_vocabulary(edge) == {}
+
+    def test_bare_main_type_is_rejected(self):
+        # Parsers must commit to a subtype, even though core hyperbase accepts
+        # 'C' as a perfectly valid atom type.
+        edge = hedge("(is/Pv.so sky/C blue/Ca)")
+        assert "atom-type-unknown" in _codes(check_parse_correctness(edge, []))
+
+    def test_unknown_subtype_is_rejected(self):
+        edge = hedge("(is/Pv.so thing/Cz blue/Ca)")
+        assert "atom-type-unknown" in _codes(check_parse_correctness(edge, []))
+
+    def test_namespace_does_not_hide_the_type(self):
+        edge = hedge("(is/Pv.so sky/Cc/en blue/Ca/en)")
+        assert check_vocabulary(edge) == {}
+
+    def test_vocabulary_failure_is_severity_zero(self):
+        edge = hedge("(is/Pv.so sky/C blue/Ca)")
+        errors = check_vocabulary(edge)
+        assert [(c, sev) for v in errors.values() for c, _m, sev in v] == [
+            ("atom-type-unknown", 0)
+        ]
+
+    def test_known_special_atom_is_clean(self):
+        edge = hedge("(+/B.am/. alan/Cp turing/Cp)")
+        assert check_vocabulary(edge) == {}
+
+    def test_special_trigger_is_clean(self):
+        edge = hedge("(gave/Pv.sox maria/Cp book/Cc (_/Ti/. peter/Cp))")
+        assert check_vocabulary(edge) == {}
+
+    def test_unknown_special_atom_is_rejected(self):
+        edge = hedge("(&/Jz/. a/Cc b/Cc)")
+        assert "special-atom-unknown" in _codes(check_parse_correctness(edge, []))
+
+    def test_token_backed_atom_in_dot_namespace_is_not_a_special_atom(self):
+        # '&/Jx' spells a real token and is an ordinary atom; only the reserved
+        # '.' namespace makes an atom special.
+        edge = hedge("(&/Jx a/Cc b/Cc)")
+        assert check_vocabulary(edge) == {}
+
+    def test_special_atom_is_exempt_from_the_atom_type_check(self):
+        # ':/J/.' has type 'J', which is not an admissible atom type -- it is
+        # checked whole, against the special-atom inventory instead.
+        assert check_vocabulary(hedge("(:/J/. a/Cc b/Cc)")) == {}

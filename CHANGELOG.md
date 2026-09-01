@@ -18,6 +18,7 @@
 - functional pattern `deep`.
 - CLI `stats`, `dedup`, and `shuffle` commands.
 - `hyperbase.readers` entry-point group: readers can now be distributed as plugins, like parsers.
+- single source of truth for parser vocabulary.
 
 ### Changed
 

@@ -4,6 +4,16 @@ from typing import Any
 from hyperbase.parsers.parser import Parser
 from hyperbase.parsers.repl import ReplContext
 from hyperbase.parsers.result import ParseResult
+from hyperbase.parsers.vocabulary import (
+    ARGROLE_LETTERS,
+    ATOM_TYPES,
+    SINGLETON_ARGROLES,
+    SPECIAL_ATOMS,
+    VALID_B_ARGROLES,
+    VALID_P_ARGROLES,
+    is_admissible_atom_type,
+    is_admissible_special_atom,
+)
 
 
 def list_parsers() -> dict[str, EntryPoint]:
@@ -55,4 +65,18 @@ def get_parser(
     return cls(merged)
 
 
-__all__ = ["ParseResult", "Parser", "ReplContext", "get_parser", "list_parsers"]
+__all__ = [
+    "ARGROLE_LETTERS",
+    "ATOM_TYPES",
+    "SINGLETON_ARGROLES",
+    "SPECIAL_ATOMS",
+    "VALID_B_ARGROLES",
+    "VALID_P_ARGROLES",
+    "ParseResult",
+    "Parser",
+    "ReplContext",
+    "get_parser",
+    "is_admissible_atom_type",
+    "is_admissible_special_atom",
+    "list_parsers",
+]

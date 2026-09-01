@@ -1004,7 +1004,7 @@ class TestHyperedge(unittest.TestCase):
         assert output == {}
 
     def test_check_correctness_ok6(self):
-        edge = hedge("(likes/P.sc x/C y/C)")
+        edge = hedge("(likes/P.so x/C y/C)")
         output = edge.check_correctness()
         assert output == {}
 

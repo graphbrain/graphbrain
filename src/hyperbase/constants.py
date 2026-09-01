@@ -16,7 +16,12 @@ class EdgeType(str, Enum):
 
 
 class ArgRole(str, Enum):
-    """Argument roles for predicates and builders."""
+    """Argument roles for predicates and builders.
+
+    Every role letter that can occur in a *pattern* or in legacy data, which is
+    why the ordering table below covers all of them. What a *parser* may emit is
+    the much narrower vocabulary in :mod:`hyperbase.parsers.vocabulary`.
+    """
 
     MAIN = "m"
     SUBJECT = "s"
@@ -32,7 +37,9 @@ class ArgRole(str, Enum):
     UNDETERMINED = "?"
 
 
-# Pre-defined system atoms
+# Pre-defined system atoms. These belong to the pattern machinery, not to
+# parser output -- the special atoms a parser may produce are listed in
+# hyperbase.parsers.vocabulary.SPECIAL_ATOMS.
 compound_noun_builder = "+/B/."
 possessive_builder = "poss/Bp.am/."
 list_of_matches_builder = "list/J/."
@@ -55,22 +62,6 @@ argrole_order: dict[str, int] = {
     ArgRole.RELATIVE: 9,
     ArgRole.UNDETERMINED: 10,
 }
-
-# Valid argument roles by connector type
-valid_p_argroles: set[str] = {
-    ArgRole.SUBJECT,
-    ArgRole.PASSIVE,
-    ArgRole.AGENT,
-    ArgRole.COMPLEMENT,
-    ArgRole.OBJECT,
-    ArgRole.INDIRECT,
-    ArgRole.PARATAXIS,
-    ArgRole.INTERJECTION,
-    ArgRole.SPECIFICATION,
-    ArgRole.RELATIVE,
-    ArgRole.UNDETERMINED,
-}
-valid_b_argroles: set[str] = {ArgRole.MAIN, ArgRole.AGENT}
 
 # Atom URL-encoding table: char -> percent-encoded form
 # Order matters for sequential replace, but with translate/re.sub it doesn't.

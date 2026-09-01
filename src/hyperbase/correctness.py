@@ -5,6 +5,12 @@ from typing import TYPE_CHECKING
 
 import hyperbase.constants as const
 from hyperbase.constants import EdgeType
+from hyperbase.parsers.vocabulary import (
+    ARGROLE_LETTERS,
+    SINGLETON_ARGROLES,
+    VALID_B_ARGROLES,
+    VALID_P_ARGROLES,
+)
 
 if TYPE_CHECKING:
     from hyperbase.hyperedge import Atom, Hyperedge
@@ -157,7 +163,7 @@ def _check_edge(
             if len(ars) > 0:
                 if ct == EdgeType.PREDICATE:
                     for ar in ars:
-                        if ar not in const.valid_p_argroles:
+                        if ar not in VALID_P_ARGROLES:
                             errors.append(
                                 (
                                     "pred-bad-arg-role",
@@ -167,7 +173,7 @@ def _check_edge(
                             )
                 elif ct == EdgeType.BUILDER:
                     for ar in ars:
-                        if ar not in const.valid_b_argroles:
+                        if ar not in VALID_B_ARGROLES:
                             errors.append(
                                 (
                                     "build-bad-arg-role",
@@ -186,7 +192,7 @@ def _check_edge(
                     )
 
                 ars_counts = Counter(ars)
-                for role in "soam":
+                for role in SINGLETON_ARGROLES:
                     if ars_counts[role] > 1:
                         errors.append(
                             (
@@ -237,14 +243,15 @@ def check_structural_quality(
         try:
             ars = current_edge.argroles()
             ar_counts: Counter[str] = Counter()
+            letters = "".join(ARGROLE_LETTERS)
             for ar in ars:
-                if ar not in "masox":
+                if ar not in ARGROLE_LETTERS:
                     current_errors.append(
                         (
                             "bad-argrole",
                             f"Bad argument role '{ar}' on connector "
                             f"'{current_edge[0]}' in '{current_edge}'. "
-                            "Should be one of 'masox'.",
+                            f"Should be one of '{letters}'.",
                             2,
                         )
                     )

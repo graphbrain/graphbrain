@@ -130,8 +130,8 @@ The following tables present the subtypes that SH semantic parsers are expected 
 | Cc | common | apple/Cc |
 | Cp | proper | mary/Cp |
 | Ci | pronoun | she/Ci |
-| Cq | quantitative | 27/Cn |
-| Ca | adjective | 27/Ca |
+| Cq | quantitative | 27/Cq |
+| Ca | adjective | blue/Ca |
 | Cd | determinant | some/Cd |
 | Cw | interrogative / wh (nominal) | who/Cw, what/Cw, which/Cw |
 | Ce | demonstrative pronoun | this/Ce, that/Ce |
@@ -205,9 +205,11 @@ Appositives ("Obama, the president") are *not* builders: express them with the g
 
 Special atoms are annotated with the reserved `.` namespace.
 
+The machine-readable inventory of the atom types and special atoms below lives in `hyperbase.parsers.vocabulary`, and `hyperbase.parsers.correctness` checks every parse against it: an atom with a type outside those tables, or an atom in the reserved `.` namespace that is not one of the special atoms, is reported as a correctness failure. This stricter contract applies to *parser output* only — a hand-written or domain-specific hyperedge may still use any subtype it likes.
+
 | Atom | Purpose | Example |
 |------|---------|---------|
-| +/B/. | Define compound nouns | (+/B.am/. alan/Cp turing/Cp) |
+| +/B.am/., +/B.ma/. | Define compound nouns | (+/B.am/. alan/Cp turing/Cp) |
 | :/J/. | Generic conjunction | |
 
 ### Special trigger atoms

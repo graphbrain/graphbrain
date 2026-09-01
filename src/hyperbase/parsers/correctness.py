@@ -6,8 +6,9 @@ onto the original tokens. :func:`check_parse_correctness` combines the hard
 grammar errors, the soft structural-quality errors, and token-matching
 validation so any parser plugin can score the output of a parse against the
 original tokens. The third value in each error tuple is a severity (lower is
-worse): ``0`` for hard correctness failures, ``1`` for token-mismatch issues,
-``2`` for argrole problems, ``3`` for junction issues.
+worse): ``0`` for hard correctness failures -- which includes the vocabulary
+failures of :func:`check_vocabulary` -- ``1`` for token-mismatch issues, ``2``
+for argrole problems, ``3`` for junction issues.
 
 When ``strict`` is ``True``, the underlying :func:`check_correctness` also
 enforces that every predicate specification-role (``x``) argument is a
@@ -33,6 +34,10 @@ from hyperbase.constants import atom_decode
 from hyperbase.correctness import check_structural_quality
 from hyperbase.hyperedge import Hyperedge
 from hyperbase.parsers.utils import clean_alphanumeric, is_structural_atom
+from hyperbase.parsers.vocabulary import (
+    is_admissible_atom_type,
+    is_admissible_special_atom,
+)
 
 
 def _surface(text: str) -> str:
@@ -88,6 +93,53 @@ def parse_coverage(
         return [], []
 
 
+def check_vocabulary(
+    edge: Hyperedge,
+) -> dict[Hyperedge, list[tuple[str, str, int]]]:
+    """Check every atom against the vocabulary a parser is allowed to produce.
+
+    Core :func:`hyperbase.correctness.check_correctness` only validates *main*
+    types, because a hand-written or domain-specific hyperedge may carry any
+    subtype it likes (``union/Pmath``). A parse is held to the narrower contract
+    of :mod:`hyperbase.parsers.vocabulary`: the subtype tables of
+    ``docs/manual/notation.md``, and the fixed inventory of special atoms. These
+    are hard failures, so they carry severity ``0``.
+    """
+    errors: dict[Hyperedge, list[tuple[str, str, int]]] = {}
+    if not edge:
+        return errors
+
+    for atom in edge.all_atoms():
+        if is_structural_atom(atom):
+            # A reserved-namespace atom is matched whole: it carries its
+            # argroles in the type slot, so its ``type()`` is only a main type.
+            if not is_admissible_special_atom(str(atom)):
+                errors[atom] = [
+                    (
+                        "special-atom-unknown",
+                        f"Atom '{atom}' uses the reserved '.' namespace but is "
+                        "not one of the special atoms a parser may produce.",
+                        0,
+                    )
+                ]
+            continue
+
+        atom_type = atom.type()
+        if not is_admissible_atom_type(atom_type):
+            errors[atom] = [
+                (
+                    "atom-type-unknown",
+                    f"Atom '{atom}' has type '{atom_type}', which is not an "
+                    "admissible atom type; a parser must annotate every atom "
+                    "with a main type and a subtype from the tables in "
+                    "docs/manual/notation.md.",
+                    0,
+                )
+            ]
+
+    return errors
+
+
 def check_parse_correctness(
     edge: Hyperedge,
     tokens: list[str],
@@ -99,12 +151,12 @@ def check_parse_correctness(
         k: list(v) for k, v in edge.check_correctness(strict=strict).items()
     }
 
-    structural_errors = check_structural_quality(edge)
-    for k, v in structural_errors.items():
-        if k in errors:
-            errors[k].extend(v)
-        else:
-            errors[k] = v
+    for extra in (check_vocabulary(edge), check_structural_quality(edge)):
+        for k, v in extra.items():
+            if k in errors:
+                errors[k].extend(v)
+            else:
+                errors[k] = v
 
     # Only check token matching if we have a valid edge
     if edge:
