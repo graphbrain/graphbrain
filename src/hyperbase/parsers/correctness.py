@@ -7,8 +7,18 @@ grammar errors, the soft structural-quality errors, and token-matching
 validation so any parser plugin can score the output of a parse against the
 original tokens. The third value in each error tuple is a severity (lower is
 worse): ``0`` for hard correctness failures -- which includes the vocabulary
-failures of :func:`check_vocabulary` -- ``1`` for token-mismatch issues, ``2``
-for argrole problems, ``3`` for junction issues.
+failures of :func:`check_vocabulary` -- ``1`` for token-mismatch issues -- which
+includes the alignment failures of :func:`check_alignment` -- ``2`` for argrole
+problems, ``3`` for junction issues.
+
+Token matching alone is a *multiset* check: it asks whether the parse's atom
+roots and the sentence's tokens account for each other, not which atom sits on
+which token. When the caller also has the ``tok_pos`` tree -- the parallel tree
+naming, per atom, the token it was aligned to -- passing it turns on
+:func:`check_alignment`, which checks that correspondence position by position.
+The two are not redundant: a sentence whose text spells out a connector
+character (``19:18``) balances perfectly as a multiset while the alignment has
+the no-token ``:/J/.`` sitting on the colon and the real ``:/Bx.ma`` on nothing.
 
 When ``strict`` is ``True``, the underlying :func:`check_correctness` also
 enforces that every predicate specification-role (``x``) argument is a
@@ -140,10 +150,132 @@ def check_vocabulary(
     return errors
 
 
+def check_alignment(
+    edge: Hyperedge, tok_pos: Hyperedge, tokens: list[str]
+) -> list[tuple[str, str, int]]:
+    """Check the atom->token alignment a parse is stored with.
+
+    ``tok_pos`` mirrors *edge* node for node, each atom replaced by the index of
+    the token it was aligned to, or ``-1`` for none. That tree -- not the edge --
+    is what the trainer reads to build per-token supervision, so an alignment
+    that disagrees with the edge corrupts the targets even when the edge itself
+    is impeccable. Returns ``(code, message, severity)`` triples, all at
+    severity ``1`` (the token-matching class):
+
+    ``alignment-shape-mismatch``
+        ``tok_pos`` is not parallel to *edge*.
+    ``structural-atom-aligned``
+        A no-token atom (reserved ``.`` namespace) claims a token. It stands
+        for a connector the text does not spell out, so the token it took
+        belongs to some other atom -- and, if that atom's root is the same
+        character, was stolen from it.
+    ``atom-unaligned``
+        A token-backed atom was aligned to nothing.
+    ``alignment-out-of-range`` / ``alignment-not-an-index``
+        The index names no token / is not an integer.
+    ``alignment-token-mismatch``
+        The atom sits on a token that is not its surface form.
+    ``alignment-token-reused``
+        Two atoms claim the same token.
+    """
+    errors: list[tuple[str, str, int]] = []
+    claimed: dict[int, Hyperedge] = {}
+
+    def walk(sub: Hyperedge, pos: Hyperedge) -> None:
+        if sub.atom != pos.atom or (not sub.atom and len(sub) != len(pos)):
+            errors.append(
+                (
+                    "alignment-shape-mismatch",
+                    f"The tok_pos tree '{pos}' is not parallel to the edge "
+                    f"'{sub}' it aligns.",
+                    1,
+                )
+            )
+            return
+        if not sub.atom:
+            for child, child_pos in zip(sub, pos, strict=True):
+                walk(child, child_pos)
+            return
+
+        try:
+            index = int(str(pos))
+        except ValueError:
+            errors.append(
+                (
+                    "alignment-not-an-index",
+                    f"Atom '{sub}' is aligned to '{pos}', which is not a token index.",
+                    1,
+                )
+            )
+            return
+
+        if is_structural_atom(sub):
+            if index >= 0:
+                took = (
+                    f"token {index} ('{tokens[index]}')"
+                    if index < len(tokens)
+                    else f"token {index}"
+                )
+                errors.append(
+                    (
+                        "structural-atom-aligned",
+                        f"Atom '{sub}' stands for a connector the text does not "
+                        f"spell out, so it must consume no token, but it claims "
+                        f"{took}.",
+                        1,
+                    )
+                )
+            return
+
+        if index < 0:
+            errors.append(
+                (
+                    "atom-unaligned",
+                    f"Atom '{sub}' carries a surface form but is aligned to no token.",
+                    1,
+                )
+            )
+            return
+        if index >= len(tokens):
+            errors.append(
+                (
+                    "alignment-out-of-range",
+                    f"Atom '{sub}' is aligned to token {index}, but the sentence "
+                    f"has {len(tokens)} token(s).",
+                    1,
+                )
+            )
+            return
+        if _surface(sub.root()) != _surface(tokens[index]):
+            errors.append(
+                (
+                    "alignment-token-mismatch",
+                    f"Atom '{sub}' is aligned to token {index} "
+                    f"('{tokens[index]}'), which is not its surface form.",
+                    1,
+                )
+            )
+            return
+        if index in claimed:
+            errors.append(
+                (
+                    "alignment-token-reused",
+                    f"Atoms '{claimed[index]}' and '{sub}' are both aligned to "
+                    f"token {index} ('{tokens[index]}').",
+                    1,
+                )
+            )
+        claimed[index] = sub
+
+    walk(edge, tok_pos)
+    return errors
+
+
 def check_parse_correctness(
     edge: Hyperedge,
     tokens: list[str],
     strict: bool = False,
+    tok_pos: Hyperedge | None = None,
 ) -> dict[str | Hyperedge, list[tuple[str, str, int]]]:
 
     # Hard grammar failures (severity 0), keyed by subedge.
@@ -202,5 +334,13 @@ def check_parse_correctness(
         except (AttributeError, Exception):
             # If token counting fails (e.g., edge is invalid), skip it
             pass
+
+        # Positional atom<->token correspondence, when the caller has it. Kept
+        # out of the try above so an alignment bug is reported rather than
+        # swallowed by the token-matching guard.
+        if tok_pos is not None:
+            alignment_errors = check_alignment(edge, tok_pos, tokens)
+            if alignment_errors:
+                errors["alignment"] = alignment_errors
 
     return errors

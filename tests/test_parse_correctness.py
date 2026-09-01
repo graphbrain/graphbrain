@@ -1,5 +1,6 @@
 from hyperbase import hedge
 from hyperbase.parsers.correctness import (
+    check_alignment,
     check_parse_correctness,
     check_vocabulary,
     parse_coverage,
@@ -467,3 +468,69 @@ class TestVocabulary:
         # ':/J/.' has type 'J', which is not an admissible atom type -- it is
         # checked whole, against the special-atom inventory instead.
         assert check_vocabulary(hedge("(:/J/. a/Cc b/Cc)")) == {}
+
+
+class TestAlignment:
+    """The atom->token alignment, checked position by position.
+
+    Token matching alone is a multiset check; these are the failures only the
+    ``tok_pos`` tree can show.
+    """
+
+    def test_correct_alignment_is_clean(self):
+        edge = hedge("(plays/Pv.so maria/Cp chess/Cc)")
+        tokens = ["Maria", "plays", "chess"]
+        assert check_alignment(edge, hedge("(1 0 2)"), tokens) == []
+        assert "alignment" not in check_parse_correctness(
+            edge, tokens, tok_pos=hedge("(1 0 2)")
+        )
+
+    def test_structural_atom_may_not_claim_a_token(self):
+        # The colon of '19:18' belongs to the ':/Bx.ma' builder that spells it;
+        # the ':/J/.' junction stands for a connector the text never writes, so
+        # its taking that token leaves the builder with none. The edge itself
+        # accounts for the tokens perfectly -- only the alignment is wrong.
+        edge = hedge("(:/J/. inés/Cp (:/Bx.ma 19/Cq 18/Cq))")
+        tokens = ["Inés", "19", ":", "18"]
+        assert "token-matching" not in check_parse_correctness(edge, tokens)
+        errors = check_parse_correctness(edge, tokens, tok_pos=hedge("(2 0 (-1 1 3))"))
+        assert [e[0] for e in errors["alignment"]] == [
+            "structural-atom-aligned",
+            "atom-unaligned",
+        ]
+        assert {e[2] for e in errors["alignment"]} == {1}
+
+    def test_atom_on_the_wrong_token_is_reported(self):
+        edge = hedge("(plays/Pv.so maria/Cp chess/Cc)")
+        errors = check_alignment(edge, hedge("(1 2 0)"), ["Maria", "plays", "chess"])
+        assert [e[0] for e in errors] == [
+            "alignment-token-mismatch",
+            "alignment-token-mismatch",
+        ]
+
+    def test_two_atoms_on_one_token_are_reported(self):
+        edge = hedge("(is/Pv.so blue/Ca blue/Ca)")
+        errors = check_alignment(edge, hedge("(1 0 0)"), ["blue", "is"])
+        assert [e[0] for e in errors] == ["alignment-token-reused"]
+
+    def test_index_outside_the_sentence_is_reported(self):
+        edge = hedge("(is/Pv.s blue/Ca)")
+        errors = check_alignment(edge, hedge("(1 7)"), ["blue", "is"])
+        assert [e[0] for e in errors] == ["alignment-out-of-range"]
+
+    def test_non_parallel_tree_is_reported(self):
+        edge = hedge("(is/Pv.so blue/Ca sky/Cc)")
+        errors = check_alignment(edge, hedge("(0 1)"), ["blue", "is", "sky"])
+        assert [e[0] for e in errors] == ["alignment-shape-mismatch"]
+
+    def test_a_percent_encoded_root_matches_its_token(self):
+        # Same decoding as token matching: the atom root is encoded, the token
+        # is not, and they are still the same surface form.
+        edge = hedge("(is/Pv.so %25/Cc mujeres/Cc)")
+        tokens = ["%", "is", "mujeres"]
+        assert check_alignment(edge, hedge("(1 0 2)"), tokens) == []
+
+    def test_alignment_is_only_checked_when_a_tree_is_given(self):
+        # Every caller that has no tok_pos keeps its old result.
+        edge = hedge("(:/J/. inés/Cp (:/Bx.ma 19/Cq 18/Cq))")
+        assert check_parse_correctness(edge, ["Inés", "19", ":", "18"]) == {}
