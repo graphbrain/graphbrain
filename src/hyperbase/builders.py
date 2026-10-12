@@ -126,10 +126,19 @@ def _hedge_from_str(source: str) -> Hyperedge:
     return final
 
 
+def tok_pos_index(atom: Hyperedge) -> int:
+    """The token position a ``tok_pos`` atom holds.
+
+    Read from the atom string, so a position stored in parentheses (``(16)``,
+    which ``hedge`` keeps as a parenthesized atom) reads as 16.
+    """
+    return int(getattr(atom, "atom_str", str(atom)))
+
+
 def _collect_positions(tok_pos: Hyperedge) -> list[int]:
     """Collect all valid (>= 0) token positions from a tok_pos tree."""
     if tok_pos.atom:
-        pos = int(str(tok_pos))
+        pos = tok_pos_index(tok_pos)
         return [pos] if pos >= 0 else []
     else:
         positions: list[int] = []
@@ -172,7 +181,7 @@ def _rebuild_with_metadata(
     """
     if edge.atom:
         atom = cast(Atom, edge)
-        pos = int(str(tok_pos))
+        pos = tok_pos_index(tok_pos)
         if pos < 0:
             return Atom(atom.atom_str, atom.parens)
         span = offsets[pos] if 0 <= pos < len(offsets) else None

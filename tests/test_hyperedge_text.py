@@ -25,6 +25,18 @@ class TestHyperedgeText(unittest.TestCase):
         # is not an atom, so it is excluded.
         assert result.text == "The sky is blue"
 
+    def test_hedge_parse_result_parenthesized_position(self):
+        # "(16)"-style positions, as stored for a one-element edge, read back
+        # as parenthesized atoms; their index is still the number inside
+        pr = ParseResult(
+            edge=hedge("(and/Jx (given/Pv.x he/Ci) (hampered/Pv))"),
+            text="he given and hampered",
+            tokens=["he", "given", "and", "hampered"],
+            tok_pos=hedge("(2 (1 0) (3))"),
+        )
+        result = hedge(pr)
+        assert result[2].tok_pos == 3
+
     def test_hedge_parse_result_atom_text(self):
         pr = ParseResult(
             edge=hedge("(is/P.so (the/M sky/C) blue/C)"),

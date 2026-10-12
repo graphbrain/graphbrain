@@ -295,7 +295,7 @@ def check_alignment(
             return
 
         try:
-            index = int(str(pos))
+            index = int(getattr(pos, "atom_str", str(pos)))
         except ValueError:
             errors.append(
                 (
@@ -396,7 +396,7 @@ def _claimed_tokens(tree: Hyperedge, out: set[int] | None = None) -> set[int]:
     out = set() if out is None else out
     if tree.atom:
         try:
-            index = int(str(tree))
+            index = int(getattr(tree, "atom_str", str(tree)))
         except ValueError:
             return out
         if index >= 0:
