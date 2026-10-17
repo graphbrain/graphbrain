@@ -59,6 +59,7 @@ from hyperbase.parsers.vocabulary import (
     SPECIAL_ATOMS,
     is_admissible_atom_type,
     is_admissible_special_atom,
+    is_number,
     may_carry_argroles,
     pair_symbols,
 )
@@ -133,9 +134,24 @@ def parse_coverage(
 
         claimed: set[int] = set()
         unaligned: list[Hyperedge] = []
-        for atom in edge.all_atoms():
-            if is_structural_atom(atom):
-                continue  # stands for a connector the text does not spell out
+        atoms = [a for a in edge.all_atoms() if not is_structural_atom(a)]
+        # A number spelling a run of consecutive tokens (-100,000) claims it
+        # first: matched later, its ',' or '5' could already have gone to an
+        # atom that only needed some ',' or '5'. Any other atom carries one token.
+        rest: list[Hyperedge] = []
+        for atom in atoms:
+            surface = _surface(atom.root())
+            if surface in available or not is_number(surface):
+                rest.append(atom)
+                continue
+            run = _token_run(tokens, claimed, surface)
+            if run is None:
+                unaligned.append(atom)
+                continue
+            for i in run:
+                claimed.add(i)
+                available[_surface(tokens[i])].remove(i)
+        for atom in rest:
             pair = pair_symbols(atom_decode(atom.root()))
             if pair is not None:
                 # a pair atom spells two tokens, its opener and its closer;
@@ -165,6 +181,27 @@ def parse_coverage(
         return unused, unaligned
     except Exception:
         return [], []
+
+
+def _spans_tokens(atom: Hyperedge) -> bool:
+    """True for the atoms that may spell several tokens: pairs and numbers."""
+    decoded = atom_decode(atom.root())
+    return pair_symbols(decoded) is not None or is_number(decoded)
+
+
+def _token_run(tokens: list[str], claimed: set[int], surface: str) -> range | None:
+    """The first run of consecutive unclaimed tokens spelling *surface*."""
+    for start in range(len(tokens)):
+        spelled = ""
+        for i in range(start, len(tokens)):
+            if i in claimed:
+                break
+            spelled += _surface(tokens[i])
+            if spelled == surface:
+                return range(start, i + 1) if i > start else None
+            if not surface.startswith(spelled):
+                break
+    return None
 
 
 def check_vocabulary(
@@ -286,8 +323,11 @@ def check_alignment(
     ``alignment-out-of-range`` / ``alignment-not-an-index``
         The index names no token / is not an integer.
     ``alignment-token-mismatch``
-        The atom sits on a token that is not its surface form (for a pair
-        atom, its opener and closer).
+        The atom sits on a token that is not its surface form. Only a pair
+        atom or a number may span several tokens, and its leaf ``(p0 p1 ...)``
+        must spell it in full (``(`` + ``)`` for a
+        pair atom, ``-`` + ``100`` + ``,`` + ``000`` for ``-100,000``); a pair
+        atom with a single index sits on its opener.
     ``alignment-token-reused``
         Two atoms claim the same token.
     """
@@ -295,17 +335,14 @@ def check_alignment(
     claimed: dict[int, Hyperedge] = {}
 
     def walk(sub: Hyperedge, pos: Hyperedge) -> None:
-        pair = pair_symbols(atom_decode(sub.root())) if sub.atom else None
         if (
-            pair is not None
+            sub.atom
             and not pos.atom
-            and len(pos) == 2
-            and pos[0].atom
-            and pos[1].atom
+            and len(pos) >= 2
+            and all(c.atom for c in pos)
+            and _spans_tokens(sub)
         ):
-            # a pair atom's leaf is (opener closer): it claims both tokens
-            claim(sub, pos[0], _surface(pair[0]))
-            claim(sub, pos[1], _surface(pair[1]))
+            claim(sub, list(pos))  # a multi-token atom's (p0 p1 ...)
             return
         if sub.atom != pos.atom or (not sub.atom and len(sub) != len(pos)):
             errors.append(
@@ -321,21 +358,24 @@ def check_alignment(
             for child, child_pos in zip(sub, pos, strict=True):
                 walk(child, child_pos)
             return
-        # a pair atom without its closer is aligned to its opener
-        claim(sub, pos, _surface(pair[0]) if pair else _surface(sub.root()))
+        claim(sub, [pos])
 
-    def claim(sub: Hyperedge, pos: Hyperedge, surface: str) -> None:
-        try:
-            index = int(getattr(pos, "atom_str", str(pos)))
-        except ValueError:
-            errors.append(
-                (
-                    "alignment-not-an-index",
-                    f"Atom '{sub}' is aligned to '{pos}', which is not a token index.",
-                    1,
+    def claim(sub: Hyperedge, leaves: list[Hyperedge]) -> None:
+        indices: list[int] = []
+        for pos in leaves:
+            try:
+                indices.append(int(getattr(pos, "atom_str", str(pos))))
+            except ValueError:
+                errors.append(
+                    (
+                        "alignment-not-an-index",
+                        f"Atom '{sub}' is aligned to '{pos}', which is not a "
+                        "token index.",
+                        1,
+                    )
                 )
-            )
-            return
+                return
+        index = indices[0]
 
         if is_structural_atom(sub):
             if index >= 0:
@@ -355,7 +395,7 @@ def check_alignment(
                 )
             return
 
-        if index < 0:
+        if min(indices) < 0:
             errors.append(
                 (
                     "atom-unaligned",
@@ -364,36 +404,47 @@ def check_alignment(
                 )
             )
             return
-        if index >= len(tokens):
+        if max(indices) >= len(tokens):
             errors.append(
                 (
                     "alignment-out-of-range",
-                    f"Atom '{sub}' is aligned to token {index}, but the sentence "
-                    f"has {len(tokens)} token(s).",
+                    f"Atom '{sub}' is aligned to token {max(indices)}, but the "
+                    f"sentence has {len(tokens)} token(s).",
                     1,
                 )
             )
             return
-        if surface != _surface(tokens[index]):
+        expected = _surface(sub.root())
+        pair = pair_symbols(atom_decode(sub.root()))
+        if pair is not None and len(indices) == 1:
+            expected = _surface(pair[0])  # a pair atom without its closer
+        spelled = "".join(_surface(tokens[i]) for i in indices)
+        if spelled != expected:
+            where = (
+                f"token {index}"
+                if len(indices) == 1
+                else f"tokens {' '.join(map(str, indices))}"
+            )
             errors.append(
                 (
                     "alignment-token-mismatch",
-                    f"Atom '{sub}' is aligned to token {index} "
-                    f"('{tokens[index]}'), which is not its surface form.",
+                    f"Atom '{sub}' is aligned to {where} "
+                    f"('{spelled}'), which is not its surface form.",
                     1,
                 )
             )
             return
-        if index in claimed:
-            errors.append(
-                (
-                    "alignment-token-reused",
-                    f"Atoms '{claimed[index]}' and '{sub}' are both aligned to "
-                    f"token {index} ('{tokens[index]}').",
-                    1,
+        for i in indices:
+            if i in claimed:
+                errors.append(
+                    (
+                        "alignment-token-reused",
+                        f"Atoms '{claimed[i]}' and '{sub}' are both aligned to "
+                        f"token {i} ('{tokens[i]}').",
+                        1,
+                    )
                 )
-            )
-        claimed[index] = sub
+            claimed[i] = sub
 
     walk(edge, tok_pos)
     return errors

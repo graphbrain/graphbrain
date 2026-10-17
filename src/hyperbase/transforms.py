@@ -64,7 +64,7 @@ def simplify(
             atom_str,
             tok_pos=atom.tok_pos,
             text_span=atom.text_span,
-            close_tok_pos=atom.close_tok_pos,
+            extra_tok_pos=atom.extra_tok_pos,
         )
     else:
         return hedge(
@@ -115,7 +115,7 @@ def _maybe_inherit_atom_metadata(new: Hyperedge, source: Atom) -> Hyperedge:
         text=source._text,
         tok_pos=source.tok_pos,
         text_span=source.text_span,
-        close_tok_pos=source.close_tok_pos,
+        extra_tok_pos=source.extra_tok_pos,
     )
 
 
@@ -167,7 +167,7 @@ def replace_argroles(edge: Hyperedge, argroles: str | None) -> Hyperedge:
             "/".join(parts),
             tok_pos=atom.tok_pos,
             text_span=atom.text_span,
-            close_tok_pos=atom.close_tok_pos,
+            extra_tok_pos=atom.extra_tok_pos,
         )
     else:
         st = edge.mtype()
@@ -207,7 +207,7 @@ def _remove_argroles(atom: Atom) -> Atom:
         "/".join(parts),
         tok_pos=atom.tok_pos,
         text_span=atom.text_span,
-        close_tok_pos=atom.close_tok_pos,
+        extra_tok_pos=atom.extra_tok_pos,
     )
 
 
@@ -440,7 +440,7 @@ def _attach_metadata_from_original(target_atom: Atom, original: Hyperedge) -> At
                 text=atom._text,
                 tok_pos=atom.tok_pos,
                 text_span=atom.text_span,
-                close_tok_pos=atom.close_tok_pos,
+                extra_tok_pos=atom.extra_tok_pos,
             )
     return target_atom
 
@@ -476,7 +476,7 @@ def _substitute_var_atom(
             text=binding_atom._text,
             tok_pos=binding_atom.tok_pos,
             text_span=binding_atom.text_span,
-            close_tok_pos=binding_atom.close_tok_pos,
+            extra_tok_pos=binding_atom.extra_tok_pos,
         )
 
     origin_atom = _find_var_atom(origin, name)
@@ -506,7 +506,7 @@ def _substitute_var_atom(
             text=inner._text,
             tok_pos=inner.tok_pos,
             text_span=inner.text_span,
-            close_tok_pos=inner.close_tok_pos,
+            extra_tok_pos=inner.extra_tok_pos,
         )
         return replace_atom(binding, inner, new_inner)
 

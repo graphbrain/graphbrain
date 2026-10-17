@@ -203,7 +203,16 @@ Appositives ("Obama, the president") are *not* builders: express them with the g
 
 ### Pair conjunctions
 
-Text enclosed in a pair of brackets or quotes is wrapped in a conjunction with a single argument, whose root spells both symbols (percent-encoded as usual): `(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))` for "in Coimbra (Portugal)", `(as/Te (""/Jx (red/Ma mary/Cp)))` for 'as "Red Mary"'. This is the one conjunction that may take a single argument. The atom spells both symbols, so in a `tok_pos` tree its leaf names both tokens, `(opener closer)`: `(3 (-1 4 ((5 7) 6)))` for the first example. The closing symbol is then part of the text of every edge that holds the atom. A reader that wants one position per atom (`tok_pos_index`) gets the opener. The admissible pairs are `SYMBOL_PAIRS` in `hyperbase.parsers.vocabulary`.
+Text enclosed in a pair of brackets or quotes is wrapped in a conjunction with a single argument, whose root spells both symbols (percent-encoded as usual): `(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))` for "in Coimbra (Portugal)", `(as/Te (""/Jx (red/Ma mary/Cp)))` for 'as "Red Mary"'. This is the one conjunction that may take a single argument. The admissible pairs are `SYMBOL_PAIRS` in `hyperbase.parsers.vocabulary`.
+
+### Multi-token atoms
+
+An atom normally carries one token. Two kinds of atom may carry several:
+
+- a pair atom spells its opening and closing symbols (`%28%29/Jx` over `(` and `)`);
+- a number written across several tokens is a single quantitative concept spelling it as written: `-100,000/Cq` over `-` `100` `,` `000`, `134%2e34/Cq` over `134` `.` `34`. What counts as a number is `NUMBER_PATTERN` in `hyperbase.parsers.vocabulary`.
+
+In a `tok_pos` tree such an atom's leaf lists all its tokens: `(3 (-1 4 ((5 7) 6)))` for "in Coimbra (Portugal)", `(1 0 (2 3 4 5))` for "temperature is -100,000". The tokens must spell the atom's root, and they are part of the text of every edge that holds the atom. A reader that wants one position per atom (`tok_pos_index`) gets the first.
 
 ## Special atoms
 

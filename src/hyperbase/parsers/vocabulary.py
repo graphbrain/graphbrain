@@ -9,6 +9,8 @@ written down; :mod:`hyperbase.parsers.correctness` enforces them and parser
 plugins build their label vocabularies from them.
 """
 
+import re
+
 # Admissible full atom types (main type + subtype), per the subtype tables of
 # ``docs/manual/notation.md``. Only the six atomic types appear: ``R`` and ``S``
 # are always implicit and can never annotate an atom.
@@ -126,6 +128,24 @@ _PAIR_ROOTS: dict[str, tuple[str, str]] = {
     opener + closer: (opener, closer) for opener, closer in SYMBOL_PAIRS.items()
 }
 
+# A written number, as one atom may spell it across several tokens
+# (``-100,000/Cq`` over ``-`` ``100`` ``,`` ``000``): an optional sign, digits
+# grouped in threes by one separator with an optional fraction after the other
+# (``10,000``, ``10.000,34``), or plain digits with an optional fraction (``3.5``,
+# ``3,5``, ``.5``), then an optional exponent (``7.51E-9``, ``3.5^10``). Whether
+# ``,`` or ``.`` is the fraction does not matter, only that it is a number.
+# Spaces never separate: ``10 000`` is two numbers. No anchors, so a parser can
+# embed it in a scanning pattern; :func:`is_number` matches it whole.
+_SIGN = r"[+\-\u2212]"
+NUMBER_PATTERN: str = (
+    rf"{_SIGN}?"
+    r"(?:\d{1,3}(?P<sep>[.,])\d{3}(?:(?P=sep)\d{3})*(?:(?!(?P=sep))[.,]\d+)?"
+    r"|\d+(?:[.,]\d+)?"
+    r"|[.,]\d+)"
+    rf"(?:[eE]{_SIGN}?\d+|\^{_SIGN}?\d+(?:[.,]\d+)?)?"
+)
+_NUMBER = re.compile(NUMBER_PATTERN)
+
 # Concept subtype a modifier's atom becomes when a modifier construction is
 # rewritten as a builder -- ``(low/Ma density/Cc)`` spells a hyphen the parse
 # dropped, and ``(-/Bx.am low/Ca density/Cc)`` puts it back. A builder is
@@ -214,6 +234,14 @@ def is_admissible_special_atom(atom: str) -> bool:
     special atom carries its argroles and its reserved namespace with it.
     """
     return atom in _SPECIAL_ATOM_SET
+
+
+def is_number(decoded_root: str) -> bool:
+    """True if *decoded_root* is a written number (:data:`NUMBER_PATTERN`).
+
+    Expects a percent-decoded root (``'134.34'``, not ``'134%2e34'``).
+    """
+    return _NUMBER.fullmatch(decoded_root) is not None
 
 
 def pair_symbols(decoded_root: str) -> tuple[str, str] | None:

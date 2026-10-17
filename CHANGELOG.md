@@ -22,6 +22,7 @@
 - `Parser.correctness_checks()`: parser plugins can extend the set of correctness checks.
 - `check_parse_correctness(..., checks=...)` and `run_checks()`: run parser checks where no `Parser` object is in reach, such as a parser's own worker subprocesses.
 - pair conjunctions (`(%28%29/Jx portugal/Cp)`): single-argument conjunctions for bracketed or quoted text, with `SYMBOL_PAIRS` in the parser vocabulary and support in the correctness, coverage and alignment checks.
+- multi-token atoms: pair atoms and numbers written across tokens (`-100,000/Cq`) carry all their tokens (`Atom.extra_tok_pos`, `tok_pos` leaves `(p0 p1 ...)`), with `NUMBER_PATTERN`/`is_number` in the parser vocabulary.
 
 ### Changed
 

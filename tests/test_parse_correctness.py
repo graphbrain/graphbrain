@@ -56,6 +56,20 @@ class TestParseCoverage:
         _unused, unaligned = parse_coverage(edge, ["as", '"', "Mary"])
         assert [str(a) for a in unaligned] == ['""/Jx']
 
+    def test_number_atom_claims_its_run_of_tokens(self):
+        edge = hedge("(is/Pv.so reading/Cc 134%2e34/Cq)")
+        tokens = ["reading", "is", "134", ".", "34", "."]
+        assert parse_coverage(edge, tokens) == ([], [])
+        # without the run, the atom is not a token
+        _unused, unaligned = parse_coverage(edge, ["reading", "is", "134", "34"])
+        assert [str(a) for a in unaligned] == ["134%2e34/Cq"]
+
+    def test_number_run_is_claimed_before_single_tokens(self):
+        # '5/Cq' alone must not take the '5' that '7.5' is written with
+        edge = hedge("(and/Jx 5/Cq 7%2e5/Cq)")
+        tokens = ["7", ".", "5", "and", "5"]
+        assert parse_coverage(edge, tokens) == ([], [])
+
     def test_agrees_with_check_parse_correctness(self):
         edge = hedge("(plays/Pv.s maria/Cp)")
         tokens = ["Maria", "plays", "chess"]
@@ -622,6 +636,16 @@ class TestAlignment:
         # a two-index leaf is only a pair atom's
         errors = check_alignment(edge, hedge("((-1 0) 0 ((1 3) 2))"), tokens)
         assert [e[0] for e in errors] == ["alignment-shape-mismatch"]
+
+    def test_number_atom_leaf_spells_the_number(self):
+        edge = hedge("(is/Pv.so temperature/Cc -100,000/Cq)")
+        tokens = ["temperature", "is", "-", "100", ",", "000"]
+        tok_pos = hedge("(1 0 (2 3 4 5))")
+        assert check_alignment(edge, tok_pos, tokens) == []
+        assert check_parse_correctness(edge, tokens, tok_pos=tok_pos) == {}
+        # the leaf must spell the whole number
+        errors = check_alignment(edge, hedge("(1 0 (3 4 5))"), tokens)
+        assert [e[0] for e in errors] == ["alignment-token-mismatch"]
 
     def test_alignment_is_only_checked_when_a_tree_is_given(self):
         # Every caller that has no tok_pos keeps its old result.

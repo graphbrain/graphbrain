@@ -49,10 +49,25 @@ class TestHyperedgeText(unittest.TestCase):
         result = hedge(pr)
         pair = result[1][2]
         assert pair[0].tok_pos == 3
-        assert pair[0].close_tok_pos == 5
+        assert pair[0].extra_tok_pos == (5,)
         assert pair[0].text == "()"
         assert pair.text == "(Portugal)"
         assert result.text == "in Coimbra (Portugal)"
+
+    def test_hedge_parse_result_number_atom_spells_its_tokens(self):
+        # a number written across tokens is one atom whose leaf lists them all
+        pr = ParseResult(
+            edge=hedge("(is/Pv.so temperature/Cc (+/B.am/. -100,000/Cq degrees/Cc))"),
+            text="temperature is -100,000 degrees.",
+            tokens=["temperature", "is", "-", "100", ",", "000", "degrees", "."],
+            tok_pos=hedge("(1 0 (-1 (2 3 4 5) 6))"),
+        )
+        result = hedge(pr)
+        number = result[2][1]
+        assert number.tok_pos == 2
+        assert number.extra_tok_pos == (3, 4, 5)
+        assert number.text == "-100,000"
+        assert result[2].text == "-100,000 degrees"
 
     def test_hedge_parse_result_atom_text(self):
         pr = ParseResult(

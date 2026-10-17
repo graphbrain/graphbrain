@@ -97,7 +97,7 @@ def _hedge_from_str(source: str) -> Hyperedge:
                     text=child_atom._text,
                     tok_pos=child_atom.tok_pos,
                     text_span=child_atom.text_span,
-                    close_tok_pos=child_atom.close_tok_pos,
+                    extra_tok_pos=child_atom.extra_tok_pos,
                 )
             elif children:
                 built = Hyperedge(tuple(children))
@@ -131,28 +131,37 @@ def tok_pos_index(atom: Hyperedge) -> int:
     """The token position a ``tok_pos`` atom holds.
 
     Read from the atom string, so a position stored in parentheses (``(16)``,
-    which ``hedge`` keeps as a parenthesized atom) reads as 16. A pair atom's
-    leaf ``(opener closer)`` reads as its opener (see :func:`tok_pos_close`).
+    which ``hedge`` keeps as a parenthesized atom) reads as 16. A multi-token
+    atom's leaf ``(p0 p1 ...)`` reads as its first token (see
+    :func:`tok_pos_extra`).
     """
-    if not atom.atom and len(atom) == 2:
+    if _is_multi_leaf(atom):
         return tok_pos_index(atom[0])
     return int(getattr(atom, "atom_str", str(atom)))
 
 
-def tok_pos_close(leaf: Hyperedge) -> int | None:
-    """The closing token of a pair atom's ``(opener closer)`` leaf, else None."""
-    if leaf.atom or len(leaf) != 2:
-        return None
-    pos = tok_pos_index(leaf[1])
-    return pos if pos >= 0 else None
+def _is_multi_leaf(leaf: Hyperedge) -> bool:
+    return not leaf.atom and len(leaf) >= 2 and all(c.atom for c in leaf)
+
+
+def tok_pos_extra(leaf: Hyperedge) -> tuple[int, ...]:
+    """The tokens after the first in a multi-token atom's leaf, else ``()``.
+
+    A multi-token atom spells several tokens: a pair atom its opener and closer
+    (``(5 7)``), a number written across tokens all of them (``(3 4 5 6)``).
+    """
+    if not _is_multi_leaf(leaf):
+        return ()
+    extra = tuple(tok_pos_index(c) for c in leaf[1:])
+    return extra if all(p >= 0 for p in extra) else ()
 
 
 def tok_pos_leaf(atom: Atom) -> Hyperedge:
     """The ``tok_pos`` leaf for *atom*: its index, ``-1`` for none, or
-    ``(opener closer)`` for a pair atom that carries its closer."""
+    ``(p0 p1 ...)`` for a multi-token atom."""
     pos = atom.tok_pos if atom.tok_pos is not None else -1
-    if atom.close_tok_pos is not None and pos >= 0:
-        return Hyperedge((Atom(str(pos)), Atom(str(atom.close_tok_pos))))
+    if atom.extra_tok_pos and pos >= 0:
+        return Hyperedge(tuple(Atom(str(p)) for p in (pos, *atom.extra_tok_pos)))
     return Atom(str(pos))
 
 
@@ -211,16 +220,16 @@ def _rebuild_with_metadata(
             if span is not None
             else (tokens[pos] if 0 <= pos < len(tokens) else None)
         )
-        close = tok_pos_close(tok_pos)
-        if close is not None and atom_text is not None and close < len(tokens):
-            atom_text += tokens[close]  # a pair atom spells both symbols
+        extra = tok_pos_extra(tok_pos)
+        if extra:
+            atom_text = _multi_token_text((pos, *extra), text, tokens, offsets)
         return Atom(
             atom.atom_str,
             atom.parens,
             text=atom_text,
             tok_pos=pos,
             text_span=span,
-            close_tok_pos=close,
+            extra_tok_pos=extra,
         )
     else:
         new_children = tuple(
@@ -231,6 +240,23 @@ def _rebuild_with_metadata(
         )
         sub_text = _derive_subedge_text(new_children, text, tokens, offsets, claimed)
         return Hyperedge(new_children, text=sub_text)
+
+
+def _multi_token_text(
+    positions: tuple[int, ...],
+    text: str,
+    tokens: list[str],
+    offsets: list[tuple[int, int] | None],
+) -> str | None:
+    """Text of a multi-token atom: the source slice when its tokens are
+    consecutive (``-100,000``), else the tokens joined (a pair's ``()``)."""
+    if any(not 0 <= p < len(tokens) for p in positions):
+        return None
+    spans = [offsets[p] if p < len(offsets) else None for p in positions]
+    consecutive = all(b == a + 1 for a, b in itertools.pairwise(positions))
+    if consecutive and spans[0] is not None and spans[-1] is not None:
+        return text[spans[0][0] : spans[-1][1]]
+    return "".join(tokens[p] for p in positions)
 
 
 def _derive_subedge_text(
@@ -256,12 +282,11 @@ def _derive_subedge_text(
         if atom.tok_pos is not None:
             used_positions.add(atom.tok_pos)
             span_by_pos.setdefault(atom.tok_pos, atom.text_span)
-        # a pair atom's closer belongs to whatever edge holds the atom
-        close = atom.close_tok_pos
-        if close is not None:
-            used_positions.add(close)
+        # a multi-token atom's further tokens belong to whatever edge holds it
+        for extra in atom.extra_tok_pos:
+            used_positions.add(extra)
             span_by_pos.setdefault(
-                close, offsets[close] if 0 <= close < len(offsets) else None
+                extra, offsets[extra] if 0 <= extra < len(offsets) else None
             )
     used: list[int] = sorted(used_positions)
     if not used:
