@@ -4,7 +4,7 @@ from collections.abc import Iterator
 from typing import cast
 
 import hyperbase.constants as const
-from hyperbase.builders import hedge
+from hyperbase.builders import hedge, tok_pos_leaf
 from hyperbase.constants import EdgeType
 from hyperbase.hyperedge import Atom, Hyperedge, UniqueAtom
 
@@ -60,7 +60,12 @@ def simplify(
         if len(parts) > 2 and not namespaces:
             parts = parts[:2]
         atom_str = "/".join(parts)
-        return Atom(atom_str, tok_pos=atom.tok_pos, text_span=atom.text_span)
+        return Atom(
+            atom_str,
+            tok_pos=atom.tok_pos,
+            text_span=atom.text_span,
+            close_tok_pos=atom.close_tok_pos,
+        )
     else:
         return hedge(
             [
@@ -110,6 +115,7 @@ def _maybe_inherit_atom_metadata(new: Hyperedge, source: Atom) -> Hyperedge:
         text=source._text,
         tok_pos=source.tok_pos,
         text_span=source.text_span,
+        close_tok_pos=source.close_tok_pos,
     )
 
 
@@ -157,7 +163,12 @@ def replace_argroles(edge: Hyperedge, argroles: str | None) -> Hyperedge:
         else:
             role[1] = argroles
         parts = [parts[0], ".".join(role), *parts[2:]]
-        return Atom("/".join(parts), tok_pos=atom.tok_pos, text_span=atom.text_span)
+        return Atom(
+            "/".join(parts),
+            tok_pos=atom.tok_pos,
+            text_span=atom.text_span,
+            close_tok_pos=atom.close_tok_pos,
+        )
     else:
         st = edge.mtype()
         if st in {EdgeType.CONCEPT, EdgeType.RELATION}:
@@ -192,7 +203,12 @@ def _remove_argroles(atom: Atom) -> Atom:
         return atom
     role = parts[1].split(".")
     parts[1] = role[0]
-    return Atom("/".join(parts), tok_pos=atom.tok_pos, text_span=atom.text_span)
+    return Atom(
+        "/".join(parts),
+        tok_pos=atom.tok_pos,
+        text_span=atom.text_span,
+        close_tok_pos=atom.close_tok_pos,
+    )
 
 
 def insert_argrole(edge: Hyperedge, argrole: str, pos: int) -> Hyperedge:
@@ -246,9 +262,7 @@ def tok_pos_tree(edge: Hyperedge) -> Hyperedge:
     JSONL row.
     """
     if edge.atom:
-        atom = cast(Atom, edge)
-        pos = atom.tok_pos if atom.tok_pos is not None else -1
-        return Atom(str(pos))
+        return tok_pos_leaf(cast(Atom, edge))
     return Hyperedge(tuple(tok_pos_tree(c) for c in edge))
 
 
@@ -426,6 +440,7 @@ def _attach_metadata_from_original(target_atom: Atom, original: Hyperedge) -> At
                 text=atom._text,
                 tok_pos=atom.tok_pos,
                 text_span=atom.text_span,
+                close_tok_pos=atom.close_tok_pos,
             )
     return target_atom
 
@@ -461,6 +476,7 @@ def _substitute_var_atom(
             text=binding_atom._text,
             tok_pos=binding_atom.tok_pos,
             text_span=binding_atom.text_span,
+            close_tok_pos=binding_atom.close_tok_pos,
         )
 
     origin_atom = _find_var_atom(origin, name)
@@ -490,6 +506,7 @@ def _substitute_var_atom(
             text=inner._text,
             tok_pos=inner.tok_pos,
             text_span=inner.text_span,
+            close_tok_pos=inner.close_tok_pos,
         )
         return replace_atom(binding, inner, new_inner)
 

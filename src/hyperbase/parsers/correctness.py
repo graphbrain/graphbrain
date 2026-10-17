@@ -267,7 +267,8 @@ def check_alignment(
     """Check the atom->token alignment a parse is stored with.
 
     ``tok_pos`` mirrors *edge* node for node, each atom replaced by the index of
-    the token it was aligned to, or ``-1`` for none. That tree -- not the edge --
+    the token it was aligned to, or ``-1`` for none; a pair atom (``%28%29/Jx``)
+    may be replaced by ``(opener closer)``. That tree -- not the edge --
     is what the trainer reads to build per-token supervision, so an alignment
     that disagrees with the edge corrupts the targets even when the edge itself
     is impeccable. Returns ``(code, message, severity)`` triples, all at
@@ -286,7 +287,7 @@ def check_alignment(
         The index names no token / is not an integer.
     ``alignment-token-mismatch``
         The atom sits on a token that is not its surface form (for a pair
-        atom such as ``%28%29/Jx``, its opener).
+        atom, its opener and closer).
     ``alignment-token-reused``
         Two atoms claim the same token.
     """
@@ -294,6 +295,18 @@ def check_alignment(
     claimed: dict[int, Hyperedge] = {}
 
     def walk(sub: Hyperedge, pos: Hyperedge) -> None:
+        pair = pair_symbols(atom_decode(sub.root())) if sub.atom else None
+        if (
+            pair is not None
+            and not pos.atom
+            and len(pos) == 2
+            and pos[0].atom
+            and pos[1].atom
+        ):
+            # a pair atom's leaf is (opener closer): it claims both tokens
+            claim(sub, pos[0], _surface(pair[0]))
+            claim(sub, pos[1], _surface(pair[1]))
+            return
         if sub.atom != pos.atom or (not sub.atom and len(sub) != len(pos)):
             errors.append(
                 (
@@ -308,7 +321,10 @@ def check_alignment(
             for child, child_pos in zip(sub, pos, strict=True):
                 walk(child, child_pos)
             return
+        # a pair atom without its closer is aligned to its opener
+        claim(sub, pos, _surface(pair[0]) if pair else _surface(sub.root()))
 
+    def claim(sub: Hyperedge, pos: Hyperedge, surface: str) -> None:
         try:
             index = int(getattr(pos, "atom_str", str(pos)))
         except ValueError:
@@ -358,9 +374,6 @@ def check_alignment(
                 )
             )
             return
-        # a pair atom ('%28%29') is aligned to its opener
-        pair = pair_symbols(atom_decode(sub.root()))
-        surface = _surface(pair[0]) if pair is not None else _surface(sub.root())
         if surface != _surface(tokens[index]):
             errors.append(
                 (

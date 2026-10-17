@@ -524,6 +524,9 @@ class Atom(Hyperedge):
     parens: bool
     tok_pos: int | None = field(default=None, compare=False, hash=False)
     text_span: tuple[int, int] | None = field(default=None, compare=False, hash=False)
+    # A pair atom (``%28%29/Jx``) spells two tokens: ``tok_pos`` is the opener,
+    # this is the closer. Its ``tok_pos`` leaf is then ``(opener closer)``.
+    close_tok_pos: int | None = field(default=None, compare=False, hash=False)
 
     def __init__(
         self,
@@ -532,12 +535,14 @@ class Atom(Hyperedge):
         text: str | None = None,
         tok_pos: int | None = None,
         text_span: tuple[int, int] | None = None,
+        close_tok_pos: int | None = None,
     ) -> None:
         object.__setattr__(self, "atom_str", atom_str)
         object.__setattr__(self, "parens", parens)
         object.__setattr__(self, "_text", text)
         object.__setattr__(self, "tok_pos", tok_pos)
         object.__setattr__(self, "text_span", text_span)
+        object.__setattr__(self, "close_tok_pos", close_tok_pos)
         object.__setattr__(self, "tokens", None)
         object.__setattr__(self, "_source_text", None)
         object.__setattr__(self, "_edges", ())
@@ -573,7 +578,8 @@ class Atom(Hyperedge):
     def replace_atom_part(self, part_pos: int, part: str) -> Atom:
         """Build a new atom by replacing an atom part in a given atom.
 
-        Source-position metadata (``tok_pos`` / ``text_span``) is preserved.
+        Source-position metadata (``tok_pos`` / ``text_span`` /
+        ``close_tok_pos``) is preserved.
         """
         parts = self.parts()
         parts[part_pos] = part
@@ -583,6 +589,7 @@ class Atom(Hyperedge):
             text=self._text,
             tok_pos=self.tok_pos,
             text_span=self.text_span,
+            close_tok_pos=self.close_tok_pos,
         )
 
     def label(self) -> str:

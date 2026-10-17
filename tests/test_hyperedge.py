@@ -1327,6 +1327,23 @@ class TestHyperedge(unittest.TestCase):
         regenerated = tok_pos_tree(loaded)
         assert str(regenerated) == original
 
+    def test_tok_pos_tree_round_trips_a_pair_leaf(self):
+        from hyperbase.builders import tok_pos_index
+        from hyperbase.parsers.result import ParseResult
+        from hyperbase.transforms import tok_pos_tree
+
+        original = "(0 ((1 3) 2))"
+        pr = ParseResult(
+            edge=hedge('(as/Te (""/Jx mary/Cp))'),
+            text='as "Mary"',
+            tokens=["as", '"', "Mary", '"'],
+            tok_pos=hedge(original),
+        )
+        loaded = hedge(pr)
+        assert str(tok_pos_tree(loaded)) == original
+        # a reader that wants one position per atom gets the opener
+        assert tok_pos_index(hedge(original)[1][0]) == 1
+
     def test_tok_pos_tree_synthetic_atom(self):
         from hyperbase.parsers.result import ParseResult
         from hyperbase.transforms import tok_pos_tree

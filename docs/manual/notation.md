@@ -203,7 +203,7 @@ Appositives ("Obama, the president") are *not* builders: express them with the g
 
 ### Pair conjunctions
 
-Text enclosed in a pair of brackets or quotes is wrapped in a conjunction with a single argument, whose root spells both symbols (percent-encoded as usual): `(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))` for "in Coimbra (Portugal)", `(as/Te (""/Jx (red/Ma mary/Cp)))` for 'as "Red Mary"'. This is the one conjunction that may take a single argument. The atom is aligned to the opening token and accounts for the closing one too. The admissible pairs are `SYMBOL_PAIRS` in `hyperbase.parsers.vocabulary`.
+Text enclosed in a pair of brackets or quotes is wrapped in a conjunction with a single argument, whose root spells both symbols (percent-encoded as usual): `(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))` for "in Coimbra (Portugal)", `(as/Te (""/Jx (red/Ma mary/Cp)))` for 'as "Red Mary"'. This is the one conjunction that may take a single argument. The atom spells both symbols, so in a `tok_pos` tree its leaf names both tokens, `(opener closer)`: `(3 (-1 4 ((5 7) 6)))` for the first example. The closing symbol is then part of the text of every edge that holds the atom. A reader that wants one position per atom (`tok_pos_index`) gets the opener. The admissible pairs are `SYMBOL_PAIRS` in `hyperbase.parsers.vocabulary`.
 
 ## Special atoms
 

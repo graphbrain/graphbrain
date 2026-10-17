@@ -21,7 +21,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from hyperbase.builders import hedge, split_edge_str
+from hyperbase.builders import hedge, split_edge_str, tok_pos_leaf
 from hyperbase.constants import EdgeType
 from hyperbase.hyperedge import Atom, Hyperedge
 from hyperbase.parsers import Parser, get_parser, list_parsers
@@ -1115,9 +1115,7 @@ class ReplSession:
         """Build a tok_pos mirror tree where each atom is replaced by its
         ``tok_pos`` (or ``-1`` for synthetic atoms with no position)."""
         if edge.atom:
-            atom = cast(Atom, edge)
-            pos = atom.tok_pos if atom.tok_pos is not None else -1
-            return Atom(str(pos))
+            return tok_pos_leaf(cast(Atom, edge))
         return Hyperedge(tuple(self._build_tok_pos_tree(sub) for sub in edge))
 
     def cmd_edges(self, args: list) -> bool:

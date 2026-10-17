@@ -610,6 +610,19 @@ class TestAlignment:
             check_parse_correctness(edge, tokens, tok_pos=hedge("(-1 0 (1 2))")) == {}
         )
 
+    def test_pair_atom_leaf_claims_opener_and_closer(self):
+        edge = hedge("(:/J/. coimbra/Cp (%28%29/Jx portugal/Cp))")
+        tokens = ["Coimbra", "(", "Portugal", ")"]
+        tok_pos = hedge("(-1 0 ((1 3) 2))")
+        assert check_alignment(edge, tok_pos, tokens) == []
+        assert check_parse_correctness(edge, tokens, tok_pos=tok_pos) == {}
+        # the closer must be the pair's closing symbol, and not reused
+        errors = check_alignment(edge, hedge("(-1 0 ((1 2) 2))"), tokens)
+        assert [e[0] for e in errors] == ["alignment-token-mismatch"]
+        # a two-index leaf is only a pair atom's
+        errors = check_alignment(edge, hedge("((-1 0) 0 ((1 3) 2))"), tokens)
+        assert [e[0] for e in errors] == ["alignment-shape-mismatch"]
+
     def test_alignment_is_only_checked_when_a_tree_is_given(self):
         # Every caller that has no tok_pos keeps its old result.
         edge = hedge("(:/J/. inés/Cp (:/Bx.ma 19/Cq 18/Cq))")

@@ -37,6 +37,23 @@ class TestHyperedgeText(unittest.TestCase):
         result = hedge(pr)
         assert result[2].tok_pos == 3
 
+    def test_hedge_parse_result_pair_atom_carries_its_closer(self):
+        # the pair atom's leaf (5 7) names both symbols, so the closer belongs
+        # to every edge holding the atom
+        pr = ParseResult(
+            edge=hedge("(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))"),
+            text="born in Coimbra (Portugal) today",
+            tokens=["born", "in", "Coimbra", "(", "Portugal", ")", "today"],
+            tok_pos=hedge("(1 (-1 2 ((3 5) 4)))"),
+        )
+        result = hedge(pr)
+        pair = result[1][2]
+        assert pair[0].tok_pos == 3
+        assert pair[0].close_tok_pos == 5
+        assert pair[0].text == "()"
+        assert pair.text == "(Portugal)"
+        assert result.text == "in Coimbra (Portugal)"
+
     def test_hedge_parse_result_atom_text(self):
         pr = ParseResult(
             edge=hedge("(is/P.so (the/M sky/C) blue/C)"),

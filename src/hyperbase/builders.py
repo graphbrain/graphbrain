@@ -97,6 +97,7 @@ def _hedge_from_str(source: str) -> Hyperedge:
                     text=child_atom._text,
                     tok_pos=child_atom.tok_pos,
                     text_span=child_atom.text_span,
+                    close_tok_pos=child_atom.close_tok_pos,
                 )
             elif children:
                 built = Hyperedge(tuple(children))
@@ -130,9 +131,29 @@ def tok_pos_index(atom: Hyperedge) -> int:
     """The token position a ``tok_pos`` atom holds.
 
     Read from the atom string, so a position stored in parentheses (``(16)``,
-    which ``hedge`` keeps as a parenthesized atom) reads as 16.
+    which ``hedge`` keeps as a parenthesized atom) reads as 16. A pair atom's
+    leaf ``(opener closer)`` reads as its opener (see :func:`tok_pos_close`).
     """
+    if not atom.atom and len(atom) == 2:
+        return tok_pos_index(atom[0])
     return int(getattr(atom, "atom_str", str(atom)))
+
+
+def tok_pos_close(leaf: Hyperedge) -> int | None:
+    """The closing token of a pair atom's ``(opener closer)`` leaf, else None."""
+    if leaf.atom or len(leaf) != 2:
+        return None
+    pos = tok_pos_index(leaf[1])
+    return pos if pos >= 0 else None
+
+
+def tok_pos_leaf(atom: Atom) -> Hyperedge:
+    """The ``tok_pos`` leaf for *atom*: its index, ``-1`` for none, or
+    ``(opener closer)`` for a pair atom that carries its closer."""
+    pos = atom.tok_pos if atom.tok_pos is not None else -1
+    if atom.close_tok_pos is not None and pos >= 0:
+        return Hyperedge((Atom(str(pos)), Atom(str(atom.close_tok_pos))))
+    return Atom(str(pos))
 
 
 def _collect_positions(tok_pos: Hyperedge) -> list[int]:
@@ -190,8 +211,16 @@ def _rebuild_with_metadata(
             if span is not None
             else (tokens[pos] if 0 <= pos < len(tokens) else None)
         )
+        close = tok_pos_close(tok_pos)
+        if close is not None and atom_text is not None and close < len(tokens):
+            atom_text += tokens[close]  # a pair atom spells both symbols
         return Atom(
-            atom.atom_str, atom.parens, text=atom_text, tok_pos=pos, text_span=span
+            atom.atom_str,
+            atom.parens,
+            text=atom_text,
+            tok_pos=pos,
+            text_span=span,
+            close_tok_pos=close,
         )
     else:
         new_children = tuple(
@@ -221,19 +250,22 @@ def _derive_subedge_text(
     no atom maps to) keep the run continuous.
     """
     used_positions: set[int] = set()
-    for a in _walk_atoms(children):
-        pos = cast(Atom, a).tok_pos
-        if pos is not None:
-            used_positions.add(pos)
-    used: list[int] = sorted(used_positions)
-    if not used:
-        return None
-
     span_by_pos: dict[int, tuple[int, int] | None] = {}
     for a in _walk_atoms(children):
         atom = cast(Atom, a)
-        if atom.tok_pos is not None and atom.tok_pos not in span_by_pos:
-            span_by_pos[atom.tok_pos] = atom.text_span
+        if atom.tok_pos is not None:
+            used_positions.add(atom.tok_pos)
+            span_by_pos.setdefault(atom.tok_pos, atom.text_span)
+        # a pair atom's closer belongs to whatever edge holds the atom
+        close = atom.close_tok_pos
+        if close is not None:
+            used_positions.add(close)
+            span_by_pos.setdefault(
+                close, offsets[close] if 0 <= close < len(offsets) else None
+            )
+    used: list[int] = sorted(used_positions)
+    if not used:
+        return None
 
     # Group used positions into runs, splitting whenever a claimed-but-unused
     # position falls between two consecutive used positions.
