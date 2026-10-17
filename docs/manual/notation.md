@@ -201,6 +201,10 @@ Appositives ("Obama, the president") are *not* builders: express them with the g
 | Td | declarative complementizer | introduces propositional argument | that/Td (I think that X) | optional in EN/PT, obligatory in DE *dass*, FR *que* |
 | Tx | unclassified | | | |
 
+### Pair conjunctions
+
+Text enclosed in a pair of brackets or quotes is wrapped in a conjunction with a single argument, whose root spells both symbols (percent-encoded as usual): `(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))` for "in Coimbra (Portugal)", `(as/Te (""/Jx (red/Ma mary/Cp)))` for 'as "Red Mary"'. This is the one conjunction that may take a single argument. The atom is aligned to the opening token and accounts for the closing one too. The admissible pairs are `SYMBOL_PAIRS` in `hyperbase.parsers.vocabulary`.
+
 ## Special atoms
 
 Special atoms are annotated with the reserved `.` namespace.

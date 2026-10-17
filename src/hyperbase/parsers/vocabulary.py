@@ -98,6 +98,34 @@ CONNECTIVE_SYMBOLS: frozenset[str] = frozenset(
 # ``19.3`` joins, ``... Live. Neville`` ends a sentence:
 FLUSH_ONLY_SYMBOLS: frozenset[str] = frozenset(".,;:")
 
+# Bracket and quote pairs, opener -> closer. Text enclosed in a pair is wrapped
+# in a one-argument *pair conjunction* whose root spells both symbols:
+# ``(%28%29/Jx portugal/Cp)``, ``(""/Jx (red/Ma mary/Cp))``. The atom is aligned
+# to the opener and claims the closer too. Curly single quotes are absent
+# because tokenizers fold them onto ``'``; ``<>`` is absent because it is
+# far more often a comparison than a bracket.
+SYMBOL_PAIRS: dict[str, str] = {
+    "(": ")",
+    "[": "]",
+    "{": "}",
+    "\uff08": "\uff09",  # fullwidth parentheses
+    "\uff3b": "\uff3d",  # fullwidth square brackets
+    '"': '"',
+    "'": "'",
+    "\u201c": "\u201d",  # English double quotes
+    "\u201e": "\u201c",  # German double quotes
+    "\u00ab": "\u00bb",  # guillemets
+    "\u2039": "\u203a",  # single guillemets
+    "\u300c": "\u300d",  # CJK corner brackets
+    "\u300e": "\u300f",  # CJK white corner brackets
+    "\u300a": "\u300b",  # CJK double angle brackets
+    "\u3008": "\u3009",  # CJK angle brackets
+    "\u3010": "\u3011",  # CJK black lenticular brackets
+}
+_PAIR_ROOTS: dict[str, tuple[str, str]] = {
+    opener + closer: (opener, closer) for opener, closer in SYMBOL_PAIRS.items()
+}
+
 # Concept subtype a modifier's atom becomes when a modifier construction is
 # rewritten as a builder -- ``(low/Ma density/Cc)`` spells a hyphen the parse
 # dropped, and ``(-/Bx.am low/Ca density/Cc)`` puts it back. A builder is
@@ -186,3 +214,11 @@ def is_admissible_special_atom(atom: str) -> bool:
     special atom carries its argroles and its reserved namespace with it.
     """
     return atom in _SPECIAL_ATOM_SET
+
+
+def pair_symbols(decoded_root: str) -> tuple[str, str] | None:
+    """``(opener, closer)`` if *decoded_root* spells a pair of :data:`SYMBOL_PAIRS`.
+
+    Expects a percent-decoded root (``'()'``, not ``'%28%29'``).
+    """
+    return _PAIR_ROOTS.get(decoded_root)

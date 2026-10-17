@@ -10,6 +10,7 @@ from hyperbase.parsers.vocabulary import (
     SINGLETON_ARGROLES,
     VALID_B_ARGROLES,
     VALID_P_ARGROLES,
+    pair_symbols,
 )
 
 if TYPE_CHECKING:
@@ -175,8 +176,17 @@ def _check_edge(
                             f"_/Td/.) should be dropped rather than moved.",
                         )
                     )
-    # check if conjunction structure is correct
-    elif ct == EdgeType.CONJUNCTION and len(edge) < 3:
+    # check if conjunction structure is correct; a pair conjunction
+    # ((%28%29/Jx portugal/Cp)) wraps exactly the one thing it encloses
+    elif (
+        ct == EdgeType.CONJUNCTION
+        and len(edge) < 3
+        and not (
+            len(edge) == 2
+            and edge[0].atom
+            and pair_symbols(const.atom_decode(edge[0].root()))
+        )
+    ):
         errors.append(
             (
                 "conj-2-args-min",

@@ -45,6 +45,17 @@ class TestParseCoverage:
         assert unused == [2]
         assert [str(a) for a in overused] == ["maria/Cp"]
 
+    def test_pair_atom_claims_opener_and_closer(self):
+        edge = hedge("(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))")
+        tokens = ["in", "Coimbra", "(", "Portugal", ")"]
+        assert parse_coverage(edge, tokens) == ([], [])
+
+    def test_symmetric_pair_atom_needs_two_quotes(self):
+        edge = hedge('(as/Te (""/Jx mary/Cp))')
+        assert parse_coverage(edge, ["as", '"', "Mary", '"']) == ([], [])
+        _unused, unaligned = parse_coverage(edge, ["as", '"', "Mary"])
+        assert [str(a) for a in unaligned] == ['""/Jx']
+
     def test_agrees_with_check_parse_correctness(self):
         edge = hedge("(plays/Pv.s maria/Cp)")
         tokens = ["Maria", "plays", "chess"]
@@ -588,6 +599,16 @@ class TestAlignment:
         edge = hedge("(is/Pv.so %25/Cc mujeres/Cc)")
         tokens = ["%", "is", "mujeres"]
         assert check_alignment(edge, hedge("(1 0 2)"), tokens) == []
+
+    def test_pair_atom_is_aligned_to_its_opener(self):
+        edge = hedge("(:/J/. coimbra/Cp (%28%29/Jx portugal/Cp))")
+        tokens = ["Coimbra", "(", "Portugal", ")"]
+        assert check_alignment(edge, hedge("(-1 0 (1 2))"), tokens) == []
+        errors = check_alignment(edge, hedge("(-1 0 (3 2))"), tokens)
+        assert [e[0] for e in errors] == ["alignment-token-mismatch"]
+        assert (
+            check_parse_correctness(edge, tokens, tok_pos=hedge("(-1 0 (1 2))")) == {}
+        )
 
     def test_alignment_is_only_checked_when_a_tree_is_given(self):
         # Every caller that has no tok_pos keeps its old result.

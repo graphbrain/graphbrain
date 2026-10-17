@@ -60,6 +60,7 @@ from hyperbase.parsers.vocabulary import (
     is_admissible_atom_type,
     is_admissible_special_atom,
     may_carry_argroles,
+    pair_symbols,
 )
 
 if TYPE_CHECKING:
@@ -135,6 +136,19 @@ def parse_coverage(
         for atom in edge.all_atoms():
             if is_structural_atom(atom):
                 continue  # stands for a connector the text does not spell out
+            pair = pair_symbols(atom_decode(atom.root()))
+            if pair is not None:
+                # a pair atom spells two tokens, its opener and its closer;
+                # a symmetric pair ("") draws both from the same list
+                opener = available.get(_surface(pair[0]), [])
+                closer = available.get(_surface(pair[1]), [])
+                needed = 2 if opener is closer else 1
+                if len(opener) >= needed and closer:
+                    claimed.add(opener.pop(0))
+                    claimed.add(closer.pop(0))
+                else:
+                    unaligned.append(atom)
+                continue
             instances = available.get(_surface(atom.root()))
             if instances:
                 claimed.add(instances.pop(0))
@@ -271,7 +285,8 @@ def check_alignment(
     ``alignment-out-of-range`` / ``alignment-not-an-index``
         The index names no token / is not an integer.
     ``alignment-token-mismatch``
-        The atom sits on a token that is not its surface form.
+        The atom sits on a token that is not its surface form (for a pair
+        atom such as ``%28%29/Jx``, its opener).
     ``alignment-token-reused``
         Two atoms claim the same token.
     """
@@ -343,7 +358,10 @@ def check_alignment(
                 )
             )
             return
-        if _surface(sub.root()) != _surface(tokens[index]):
+        # a pair atom ('%28%29') is aligned to its opener
+        pair = pair_symbols(atom_decode(sub.root()))
+        surface = _surface(pair[0]) if pair is not None else _surface(sub.root())
+        if surface != _surface(tokens[index]):
             errors.append(
                 (
                     "alignment-token-mismatch",

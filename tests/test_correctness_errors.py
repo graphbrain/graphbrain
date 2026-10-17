@@ -189,6 +189,16 @@ class TestConjunctionErrors:
         errors = check_correctness(edge)
         assert edge not in errors
 
+    def test_pair_conjunction_takes_one_arg(self):
+        for src in ("(%28%29/Jx portugal/Cp)", '(""/Jx (red/Ma mary/Cp))'):
+            edge = hedge(src)
+            assert edge not in check_correctness(edge)
+
+    def test_non_pair_symbol_conjunction_still_needs_two_args(self):
+        edge = hedge("(%28/Jx portugal/Cp)")
+        codes = [e[0] for e in check_correctness(edge)[edge]]
+        assert "conj-2-args-min" in codes
+
 
 class TestArgroleErrors:
     """Argrole validation on predicates and builders."""

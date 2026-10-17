@@ -21,6 +21,7 @@
 - single source of truth for parser vocabulary.
 - `Parser.correctness_checks()`: parser plugins can extend the set of correctness checks.
 - `check_parse_correctness(..., checks=...)` and `run_checks()`: run parser checks where no `Parser` object is in reach, such as a parser's own worker subprocesses.
+- pair conjunctions (`(%28%29/Jx portugal/Cp)`): single-argument conjunctions for bracketed or quoted text, with `SYMBOL_PAIRS` in the parser vocabulary and support in the correctness, coverage and alignment checks.
 
 ### Changed
 
