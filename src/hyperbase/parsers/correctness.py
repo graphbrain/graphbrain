@@ -57,9 +57,11 @@ from hyperbase.parsers.vocabulary import (
     CONVERTIBLE_MODIFIERS,
     FLUSH_ONLY_SYMBOLS,
     SPECIAL_ATOMS,
+    SYMBOL_PAIRS,
     is_admissible_atom_type,
     is_admissible_special_atom,
     is_number,
+    is_punctuation,
     may_carry_argroles,
     pair_symbols,
 )
@@ -227,6 +229,78 @@ def _token_run(tokens: list[str], claimed: set[int], surface: str) -> range | No
             if not surface.startswith(spelled):
                 break
     return None
+
+
+_PAIR_CHARS = frozenset("".join([*SYMBOL_PAIRS, *SYMBOL_PAIRS.values()]))
+
+
+def check_dangling_symbols(
+    edge: Hyperedge,
+) -> dict[Hyperedge, list[tuple[str, str, int]]]:
+    """Report punctuation left as an atom where it does nothing.
+
+    ``dangling-pair-symbol``
+        A bracket or quote atom anywhere but a pair conjunction's atom
+        (``%28%29/Jx``) or a builder's connector (the possessive ``'/Bp.am`` of
+        "students' union"). Brackets and quotes enclose: a parse writes them as
+        a pair conjunction, or not at all.
+    ``dangling-punctuation``
+        Any other punctuation atom (:data:`~hyperbase.parsers.vocabulary.
+        PUNCTUATION_SYMBOLS`) as an argument of a conjunction.
+
+    Severity ``0``: worse than a conjunction left with one argument
+    (``conj-2-args-min``, severity ``1``), so a repair or a parse search
+    trades the second for the first.
+    """
+    errors: dict[Hyperedge, list[tuple[str, str, int]]] = {}
+
+    def mtype(sub: Hyperedge) -> str:
+        try:
+            return sub.mtype()
+        except (RuntimeError, IndexError):
+            return "?"
+
+    def walk(sub: Hyperedge, parent: Hyperedge | None, index: int) -> None:
+        if not sub.atom:
+            for i, child in enumerate(sub):
+                walk(child, sub, i)
+            return
+        if is_structural_atom(sub):
+            return
+        decoded = atom_decode(sub.root())
+        if not is_punctuation(decoded):
+            return
+        connector_of = mtype(parent[0]) if parent is not None and index == 0 else None
+        if set(decoded) <= _PAIR_CHARS:
+            if connector_of == EdgeType.BUILDER or (
+                connector_of == EdgeType.CONJUNCTION and pair_symbols(decoded)
+            ):
+                return
+            errors.setdefault(sub, []).append(
+                (
+                    "dangling-pair-symbol",
+                    f"Atom '{sub}' is a bracket or quote outside a pair "
+                    "conjunction; a parse writes it as one, or not at all.",
+                    0,
+                )
+            )
+        elif (
+            parent is not None
+            and index > 0
+            and mtype(parent[0]) == EdgeType.CONJUNCTION
+        ):
+            errors.setdefault(sub, []).append(
+                (
+                    "dangling-punctuation",
+                    f"Atom '{sub}' is punctuation left as an argument of "
+                    f"'{parent[0]}'; punctuation joins as a connector, or not "
+                    "at all.",
+                    0,
+                )
+            )
+
+    walk(edge, None, 0)
+    return errors
 
 
 def check_vocabulary(
@@ -765,7 +839,11 @@ def check_parse_correctness(
         k: list(v) for k, v in edge.check_correctness(strict=strict).items()
     }
 
-    for extra in (check_vocabulary(edge), check_structural_quality(edge)):
+    for extra in (
+        check_vocabulary(edge),
+        check_dangling_symbols(edge),
+        check_structural_quality(edge),
+    ):
         _merge_errors(errors, extra)
 
     # Only check token matching if we have a valid edge

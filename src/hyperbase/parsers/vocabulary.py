@@ -131,6 +131,14 @@ _PAIR_ROOTS: dict[str, tuple[str, str]] = {
     opener + closer: (opener, closer) for opener, closer in SYMBOL_PAIRS.items()
 }
 
+# Punctuation: symbols that only mark up text, never stand for anything. Sentence
+# punctuation, dashes, and every bracket and quote. Left as an atom where no rule
+# put it to use, it is dangling (``dangling-punctuation``); symbols that mean
+# something (``$``, ``%``, ``&``, ``/``) are not punctuation.
+PUNCTUATION_SYMBOLS: frozenset[str] = frozenset(
+    ".,;:!?\u00bf\u00a1\u2026-\u2012\u2013\u2014"
+) | frozenset("".join([*SYMBOL_PAIRS, *SYMBOL_PAIRS.values()]))
+
 # A written number, as one atom may spell it across several tokens
 # (``-100,000/Cq`` over ``-`` ``100`` ``,`` ``000``): an optional sign, digits
 # grouped in threes by one separator with an optional fraction after the other
@@ -237,6 +245,11 @@ def is_admissible_special_atom(atom: str) -> bool:
     special atom carries its argroles and its reserved namespace with it.
     """
     return atom in _SPECIAL_ATOM_SET
+
+
+def is_punctuation(decoded_root: str) -> bool:
+    """True if *decoded_root* is made only of :data:`PUNCTUATION_SYMBOLS`."""
+    return bool(decoded_root) and set(decoded_root) <= PUNCTUATION_SYMBOLS
 
 
 def is_number(decoded_root: str) -> bool:

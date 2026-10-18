@@ -184,6 +184,11 @@ class TestConjunctionErrors:
         codes = [e[0] for e in errors[edge]]
         assert "conj-2-args-min" in codes
 
+    def test_conjunction_one_arg_is_a_lesser_error(self):
+        # severity 1: a repair may leave it rather than dangling punctuation
+        edge = hedge("(and/J bob/C)")
+        assert [e[2] for e in check_correctness(edge)[edge]] == [1]
+
     def test_conjunction_two_args_valid(self):
         edge = hedge("(and/J bob/C alice/C)")
         errors = check_correctness(edge)

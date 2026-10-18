@@ -22,6 +22,12 @@ if TYPE_CHECKING:
 # so these are exactly the slots it can be wrong in.
 _CORE_P_ARGROLES = VALID_P_ARGROLES - {const.ArgRole.SPECIFICATION}
 
+# Grammar errors less serious than the rest (severity 0). A conjunction left with
+# one argument is still readable, and it is the lesser evil next to punctuation
+# left dangling in it (``dangling-punctuation``, severity 0): a repair may trade
+# the second for the first, and a parse search should prefer it.
+_SEVERITY: dict[str, int] = {"conj-2-args-min": 1}
+
 
 def _safe_mtype(edge: Hyperedge) -> str:
     """Main type of ``edge``, or the sentinel ``'?'`` when it cannot be determined.
@@ -44,7 +50,8 @@ def check_correctness(
     """Check correctness of a hyperedge, returning errors keyed by subedge.
 
     Each error is ``(code, message, severity)``. Correctness failures are hard
-    grammar violations, so they all carry severity ``0`` (the most serious).
+    grammar violations, so they carry severity ``0`` (the most serious), except
+    ``conj-2-args-min`` (a one-argument conjunction), at ``1``.
 
     When ``strict`` is ``True``, additional grammar rules are enforced: every
     argument filling a predicate's specification role (``x``) must be of type
@@ -251,7 +258,7 @@ def _check_edge(
             pass
 
     if len(errors) > 0:
-        output[edge] = [(code, msg, 0) for code, msg in errors]
+        output[edge] = [(code, msg, _SEVERITY.get(code, 0)) for code, msg in errors]
 
     for subedge in edge:
         output.update(check_correctness(subedge, strict))

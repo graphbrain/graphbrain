@@ -203,7 +203,7 @@ Appositives ("Obama, the president") are *not* builders: express them with the g
 
 ### Pair conjunctions
 
-Text enclosed in a pair of brackets or quotes is wrapped in a conjunction with a single argument, whose root spells both symbols (percent-encoded as usual): `(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))` for "in Coimbra (Portugal)", `(as/Te (""/Jx (red/Ma mary/Cp)))` for 'as "Red Mary"'. This is the one conjunction that may take a single argument. The admissible pairs are `SYMBOL_PAIRS` in `hyperbase.parsers.vocabulary`.
+Text enclosed in a pair of brackets or quotes is wrapped in a conjunction with a single argument, whose root spells both symbols (percent-encoded as usual): `(in/Tl (:/J/. coimbra/Cp (%28%29/Jx portugal/Cp)))` for "in Coimbra (Portugal)", `(as/Te (""/Jx (red/Ma mary/Cp)))` for 'as "Red Mary"'. This is the one conjunction that may take a single argument. Any other is an error (`conj-2-args-min`), but a lesser one (severity 1) than a bracket, quote or other punctuation left as an atom where it does nothing (`dangling-pair-symbol`, `dangling-punctuation`, severity 0). The admissible pairs are `SYMBOL_PAIRS` in `hyperbase.parsers.vocabulary`.
 
 ### Multi-token atoms
 

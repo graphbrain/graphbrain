@@ -2,6 +2,7 @@ from hyperbase import hedge
 from hyperbase.parsers.correctness import (
     CheckContext,
     check_alignment,
+    check_dangling_symbols,
     check_parse_correctness,
     check_vocabulary,
     parse_coverage,
@@ -561,6 +562,39 @@ class TestVocabulary:
         # ':/J/.' has type 'J', which is not an admissible atom type -- it is
         # checked whole, against the special-atom inventory instead.
         assert check_vocabulary(hedge("(:/J/. a/Cc b/Cc)")) == {}
+
+
+class TestDanglingSymbols:
+    """Punctuation left as an atom where it does nothing."""
+
+    def _codes(self, src: str) -> list[str]:
+        errors = check_dangling_symbols(hedge(src))
+        return sorted(c for issues in errors.values() for c, _, _ in issues)
+
+    def test_punctuation_argument_of_a_conjunction(self):
+        assert self._codes("(and/Jx a/Cc ,/Cc)") == ["dangling-punctuation"]
+        assert self._codes("(:/J/. a/Cc %2e/Ci)") == ["dangling-punctuation"]
+
+    def test_bracket_or_quote_anywhere(self):
+        assert self._codes('(the/Md ("/Mx troubles/Cc))') == ["dangling-pair-symbol"]
+        assert self._codes("(says/Pv.so a/Cc %28/Cc)") == ["dangling-pair-symbol"]
+
+    def test_what_is_not_dangling(self):
+        for src in (
+            "(%28%29/Jx portugal/Cp)",  # a pair conjunction
+            "('/Bp.am students/Cc union/Cc)",  # a possessive builder
+            "(,/Jx a/Cc b/Cc)",  # a connector
+            "(+/B.am/. 6/Cq %25/Cc)",  # a symbol that means something
+            "(says/Pv.so a/Cc ,/Cc)",  # punctuation outside a conjunction
+        ):
+            assert self._codes(src) == [], src
+
+    def test_dangling_is_worse_than_a_one_argument_conjunction(self):
+        tokens = ["a", ",", "and"]
+        dangling = check_parse_correctness(hedge("(and/Jx a/Cc ,/Cc)"), tokens)
+        lone = check_parse_correctness(hedge("(and/Jx a/Cc)"), tokens)
+        assert min(s for v in dangling.values() for _, _, s in v) == 0
+        assert min(s for v in lone.values() for _, _, s in v) == 1
 
 
 class TestAlignment:
