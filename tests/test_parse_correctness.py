@@ -64,6 +64,15 @@ class TestParseCoverage:
         _unused, unaligned = parse_coverage(edge, ["reading", "is", "134", "34"])
         assert [str(a) for a in unaligned] == ["134%2e34/Cq"]
 
+    def test_double_apostrophe_pair_spans_split_closer(self):
+        # the tokenizer merges the opening '' but splits the closing one
+        edge = hedge("(as/Te (''''/Jx mary/Cp))")
+        tokens = ["as", "''", "Mary", "'", "'"]
+        assert parse_coverage(edge, tokens) == ([], [])
+        tok_pos = hedge("(0 ((1 3 4) 2))")
+        assert check_alignment(edge, tok_pos, tokens) == []
+        assert check_parse_correctness(edge, tokens, tok_pos=tok_pos) == {}
+
     def test_number_run_is_claimed_before_single_tokens(self):
         # '5/Cq' alone must not take the '5' that '7.5' is written with
         edge = hedge("(and/Jx 5/Cq 7%2e5/Cq)")
@@ -808,13 +817,22 @@ class TestConnectiveSymbolCoverage:
         assert "connective-symbol-dropped" not in self._codes(
             "(:/J/. live/Cp neville/Cp)", spaced, "(-1 1 3)", "205 Live. Neville"
         )
-        # Flush: part of a number, so it joins.
+        # Flush: it joins.
         assert "connective-symbol-dropped" in self._codes(
-            "(+/B.am/. 19/Cq 3/Cq)", ["19", ".", "3"], "(-1 0 2)", "19.3"
+            "(:/J/. thestar/Cp com/Cp)",
+            ["thestar", ".", "com"],
+            "(-1 0 2)",
+            "thestar.com",
         )
         # Without text the two cannot be told apart, so neither is reported.
         assert "connective-symbol-dropped" not in self._codes(
-            "(+/B.am/. 19/Cq 3/Cq)", ["19", ".", "3"], "(-1 0 2)"
+            "(:/J/. thestar/Cp com/Cp)", ["thestar", ".", "com"], "(-1 0 2)"
+        )
+
+    def test_a_full_stop_never_joins_a_compound(self):
+        # an abbreviation's point (U.N.); a number's is part of the number atom
+        assert "connective-symbol-dropped" not in self._codes(
+            "(+/B.am/. u/Cp n/Cp)", ["U", ".", "N"], "(-1 0 2)", "U.N"
         )
 
     def test_a_never_punctuation_symbol_needs_no_text(self):

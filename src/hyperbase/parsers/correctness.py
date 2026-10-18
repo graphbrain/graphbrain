@@ -48,7 +48,7 @@ from itertools import pairwise
 from typing import TYPE_CHECKING, Any
 
 from hyperbase.builders import str_to_atom
-from hyperbase.constants import atom_decode
+from hyperbase.constants import EdgeType, atom_decode
 from hyperbase.correctness import check_structural_quality
 from hyperbase.hyperedge import Hyperedge
 from hyperbase.parsers.utils import clean_alphanumeric, is_structural_atom
@@ -154,15 +154,19 @@ def parse_coverage(
         for atom in rest:
             pair = pair_symbols(atom_decode(atom.root()))
             if pair is not None:
-                # a pair atom spells two tokens, its opener and its closer;
-                # a symmetric pair ("") draws both from the same list
-                opener = available.get(_surface(pair[0]), [])
-                closer = available.get(_surface(pair[1]), [])
-                needed = 2 if opener is closer else 1
-                if len(opener) >= needed and closer:
-                    claimed.add(opener.pop(0))
-                    claimed.add(closer.pop(0))
-                else:
+                # a pair atom spells its opener and its closer, each one token
+                # or a run of them ('' as ' '); a symmetric pair ("") draws
+                # both from the same tokens
+                halves = [
+                    _claim_surface(tokens, available, claimed, _surface(half))
+                    for half in pair
+                ]
+                if any(half is None for half in halves):
+                    for half in halves:
+                        for i in half or ():
+                            claimed.discard(i)
+                            available[_surface(tokens[i])].append(i)
+                            available[_surface(tokens[i])].sort()
                     unaligned.append(atom)
                 continue
             instances = available.get(_surface(atom.root()))
@@ -181,6 +185,27 @@ def parse_coverage(
         return unused, unaligned
     except Exception:
         return [], []
+
+
+def _claim_surface(
+    tokens: list[str],
+    available: dict[str, list[int]],
+    claimed: set[int],
+    surface: str,
+) -> list[int] | None:
+    """Claim a token spelling *surface*, else a run of tokens; None if neither."""
+    instances = available.get(surface)
+    if instances:
+        index = instances.pop(0)
+        claimed.add(index)
+        return [index]
+    run = _token_run(tokens, claimed, surface)
+    if run is None:
+        return None
+    for i in run:
+        claimed.add(i)
+        available[_surface(tokens[i])].remove(i)
+    return list(run)
 
 
 def _spans_tokens(atom: Hyperedge) -> bool:
@@ -551,8 +576,13 @@ def check_symbol_coverage(
             if len(gaps) == 1:
                 index = gaps.pop()
                 symbol = tokens[index] if 0 <= index < len(tokens) else ""
+                # a full stop inside a compound is an abbreviation's (U.N.),
+                # not a connector; a number's is part of the number's atom
+                compound = connector.mtype() != EdgeType.CONJUNCTION
                 joins = symbol in CONNECTIVE_SYMBOLS or (
-                    symbol in FLUSH_ONLY_SYMBOLS and flush(index)
+                    symbol in FLUSH_ONLY_SYMBOLS
+                    and flush(index)
+                    and not (compound and symbol == ".")
                 )
                 if joins and index not in claimed:
                     errors.append(

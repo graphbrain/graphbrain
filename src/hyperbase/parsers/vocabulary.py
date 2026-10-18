@@ -97,7 +97,9 @@ CONNECTIVE_SYMBOLS: frozenset[str] = frozenset(
     "-\u2013\u2014~|/+=&*\u00b1\u00b7^<>#@\\_"
 )
 # These do, so they only join when written flush against both neighbours --
-# ``19.3`` joins, ``... Live. Neville`` ends a sentence:
+# ``thestar.com`` joins, ``... Live. Neville`` ends a sentence. A full stop never
+# joins a compound: there it is an abbreviation's (``U.N.``), and a number's
+# (``19.3``) is part of the number's atom.
 FLUSH_ONLY_SYMBOLS: frozenset[str] = frozenset(".,;:")
 
 # Bracket and quote pairs, opener -> closer. Text enclosed in a pair is wrapped
@@ -114,6 +116,7 @@ SYMBOL_PAIRS: dict[str, str] = {
     "\uff3b": "\uff3d",  # fullwidth square brackets
     '"': '"',
     "'": "'",
+    "''": "''",  # double apostrophe as a quote; the tokenizer may split it
     "\u201c": "\u201d",  # English double quotes
     "\u201e": "\u201c",  # German double quotes
     "\u00ab": "\u00bb",  # guillemets
